@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 221 34% 7%;
+  --foreground: 38 32% 92%;
+  --muted: 222 26% 16%;
+  --muted-foreground: 38 14% 67%;
+  --card: 224 28% 10%;
+  --border: 223 17% 24%;
+  --primary: 41 44% 62%;
+  --primary-foreground: 220 35% 7%;
+  --accent: 205 40% 58%;
+  --success: 143 48% 60%;
+  --warning: 33 92% 65%;
+  --danger: 4 78% 62%;
+  --radius: 0.9rem;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: hsl(var(--foreground));
+  background:
+    radial-gradient(circle at 12% 14%, rgba(186, 164, 126, 0.2), transparent 45%),
+    radial-gradient(circle at 85% -5%, rgba(83, 128, 181, 0.16), transparent 45%),
+    radial-gradient(circle at 50% 110%, rgba(194, 106, 67, 0.2), transparent 55%),
+    linear-gradient(170deg, #090d19 0%, #111827 50%, #171622 100%);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+.grain-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f7ead2' fill-opacity='1'%3E%3Ccircle cx='2' cy='2' r='1'/%3E%3Ccircle cx='51' cy='44' r='1'/%3E%3Ccircle cx='88' cy='100' r='1'/%3E%3Ccircle cx='139' cy='72' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  z-index: -1;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+a {
+  color: hsl(var(--accent));
+}
+
+a:hover {
+  color: hsl(var(--primary));
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.markdown {
+  @apply space-y-4 text-sm leading-7 text-muted-foreground;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  @apply font-display text-foreground;
+}
+
+.markdown p code,
+.markdown li code {
+  @apply rounded bg-muted px-1.5 py-0.5 text-foreground;
+}
+
+.markdown pre {
+  @apply overflow-x-auto rounded-lg border border-border bg-black/30 p-4 text-xs;
+}
+
+.markdown ul {
+  @apply list-disc pl-6;
+}
+
+.markdown img {
+  @apply rounded-md border border-border;
+}
+
+.question-grid-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 280px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

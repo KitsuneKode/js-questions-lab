@@ -1,0 +1,56 @@
+name: Weekly Upstream Sync
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Sync upstream README
+        run: node scripts/sync-upstream.mjs
+
+      - name: Regenerate content
+        run: node scripts/parse-readme.mjs
+
+      - name: Detect changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore(content): weekly sync from upstream javascript-questions'
+          title: 'chore(content): weekly upstream sync'
+          body: |
+            Automated weekly refresh from https://github.com/lydiahallie/javascript-questions.
+
+            This PR updates:
+            - content/source/README.upstream.md
+            - content/generated/questions.v1.json
+            - content/generated/manifest.v1.json
+          branch: chore/weekly-content-sync
+          delete-branch: true
+          labels: |
+            content
+            automation

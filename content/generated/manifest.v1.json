@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-02-27T20:42:37.546Z",
+  "source": {
+    "repo": "https://github.com/lydiahallie/javascript-questions",
+    "file": "README.md",
+    "localPath": "content/source/README.upstream.md"
+  },
+  "totals": {
+    "questions": 155,
+    "runnable": 149,
+    "withImages": 6
+  },
+  "tags": [
+    "arrays",
+    "async",
+    "dom-events",
+    "fundamentals",
+    "modules",
+    "objects",
+    "prototypes",
+    "scope",
+    "types"
+  ],
+  "translations": [
+    {
+      "label": "🇸🇦 العربية",
+      "href": "./ar-AR/README_AR.md"
+    },
+    {
+      "label": "🇪🇬 اللغة العامية",
+      "href": "./ar-EG/README_ar-EG.md"
+    },
+    {
+      "label": "🇧🇦 Bosanski",
+      "href": "./bs-BS/README-bs_BS.md"
+    },
+    {
+      "label": "🇩🇪 Deutsch",
+      "href": "./de-DE/README.md"
+    },
+    {
+      "label": "🇪🇸 Español",
+      "href": "./es-ES/README-ES.md"
+    },
+    {
+      "label": "🇫🇷 Français",
+      "href": "./fr-FR/README_fr-FR.md"
+    },
+    {
+      "label": "🇮🇩 Indonesia",
+      "href": "./id-ID/README.md"
+    },
+    {
+      "label": "🇮🇹 Italiano",
+      "href": "./it-IT/README.md"
+    },
+    {
+      "label": "🇯🇵 日本語",
+      "href": "./ja-JA/README-ja_JA.md"
+    },
+    {
+      "label": "🇰🇷 한국어",
+      "href": "./ko-KR/README-ko_KR.md"
+    },
+    {
+      "label": "🇳🇱 Nederlands",
+      "href": "./nl-NL/README.md"
+    },
+    {
+      "label": "🇵🇱 Polski",
+      "href": "./pl-PL/README.md"
+    },
+    {
+      "label": "🇧🇷 Português Brasil",
+      "href": "./pt-BR/README_pt_BR.md"
+    },
+    {
+      "label": "🇷o Română",
+      "href": "./ro-RO/README.ro.md"
+    },
+    {
+      "label": "🇷🇺 Русский",
+      "href": "./ru-RU/README.md"
+    },
+    {
+      "label": "🇽🇰 Shqip",
+      "href": "./sq-KS/README_sq_KS.md"
+    },
+    {
+      "label": "🇹🇭 ไทย",
+      "href": "./th-TH/README-th_TH.md"
+    },
+    {
+      "label": "🇹🇷 Türkçe",
+      "href": "./tr-TR/README-tr_TR.md"
+    },
+    {
+      "label": "🇺🇦 Українська мова",
+      "href": "./uk-UA/README.md"
+    },
+    {
+      "label": "🇻🇳 Tiếng Việt",
+      "href": "./vi-VI/README-vi.md"
+    },
+    {
+      "label": "🇨🇳 简体中文",
+      "href": "./zh-CN/README-zh_CN.md"
+    },
+    {
+      "label": "🇹🇼 繁體中文",
+      "href": "./zh-TW/README_zh-TW.md"
+    }
+  ],
+  "attribution": {
+    "creator": "Lydia Hallie",
+    "repo": "https://github.com/lydiahallie/javascript-questions",
+    "requestReference": true
+  }
+}

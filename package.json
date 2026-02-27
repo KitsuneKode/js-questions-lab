@@ -1,0 +1,17 @@
+{
+  "name": "lydia-js-questions-platform",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "sync:upstream": "bun scripts/sync-upstream.mjs",
+    "parse:questions": "bun scripts/parse-readme.mjs",
+    "content:refresh": "bun run sync:upstream && bun run parse:questions",
+    "dev": "cd apps/web && bun dev --hostname 0.0.0.0",
+    "build": "cd apps/web && bun build",
+    "start": "cd apps/web && bun start",
+    "lint": "cd apps/web && bun lint",
+    "typecheck": "cd apps/web && bun tsc --noEmit"
+  }
+}
