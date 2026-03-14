@@ -38,6 +38,12 @@ export interface DailyActivity {
   correct: number;
 }
 
+export interface PracticeSuggestion {
+  question: QuestionRecord | null;
+  label: string;
+  description: string;
+}
+
 // ---------------------------------------------------------------------------
 // Pure computation functions
 // ---------------------------------------------------------------------------
@@ -243,4 +249,68 @@ export function getReviewQueue(
     .sort((a, b) => b.priority - a.priority)
     .slice(0, limit)
     .map((s) => s.question);
+}
+
+export function getContinueLearningSuggestion(
+  progress: ProgressState,
+  questions: QuestionRecord[],
+): PracticeSuggestion {
+  const attempted = Object.values(progress.questions)
+    .filter((item) => item.attempts.length > 0)
+    .sort((a, b) => {
+      const aTime = new Date(a.updatedAt).getTime();
+      const bTime = new Date(b.updatedAt).getTime();
+      return bTime - aTime;
+    });
+
+  const latest = attempted[0];
+  if (!latest) {
+    return {
+      question: questions[0] ?? null,
+      label: 'Start your first run',
+      description: 'Pick an early question and get one answer on the board.',
+    };
+  }
+
+  const target = questions.find((question) => question.id === latest.questionId) ?? null;
+
+  return {
+    question: target,
+    label: 'Continue where you left off',
+    description: 'Jump back into your most recently touched question and finish the loop.',
+  };
+}
+
+export function getRecommendedSuggestion(
+  progress: ProgressState,
+  questions: QuestionRecord[],
+  weakestTopics: TagStats[],
+): PracticeSuggestion {
+  const attemptedIds = new Set(
+    Object.values(progress.questions)
+      .filter((item) => item.attempts.length > 0)
+      .map((item) => item.questionId),
+  );
+
+  const weakestTag = weakestTopics[0]?.tag ?? null;
+  const topicCandidate =
+    weakestTag
+      ? questions.find((question) => question.tags.includes(weakestTag) && !attemptedIds.has(question.id))
+      : null;
+
+  if (topicCandidate) {
+    return {
+      question: topicCandidate,
+      label: `Sharpen ${weakestTag}`,
+      description: 'Target your weakest topic with a fresh question before moving on.',
+    };
+  }
+
+  const nextFresh = questions.find((question) => !attemptedIds.has(question.id)) ?? null;
+
+  return {
+    question: nextFresh,
+    label: 'Next best question',
+    description: 'Keep forward momentum with the next unanswered problem.',
+  };
 }

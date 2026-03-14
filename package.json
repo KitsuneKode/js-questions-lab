@@ -12,6 +12,6 @@
     "build": "cd apps/web && bun run build",
     "start": "cd apps/web && bun start",
     "lint": "cd apps/web && bun lint",
-    "typecheck": "cd apps/web && bun tsc --noEmit"
+    "typecheck": "cd apps/web && bun run typecheck"
   }
 }

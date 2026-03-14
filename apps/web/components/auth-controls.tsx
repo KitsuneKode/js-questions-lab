@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { Show, UserButton } from '@clerk/nextjs';
 import { clerkEnabled } from '@/lib/auth-utils';
 
@@ -16,10 +16,6 @@ export function AuthControls() {
           <span className="hidden sm:inline">Sign In</span>
         </Link>
       }>
-        <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm no-underline text-muted-foreground hover:bg-muted hover:text-foreground">
-          <LayoutDashboard className="h-4 w-4" />
-          <span className="hidden sm:inline">Dashboard</span>
-        </Link>
         <UserButton />
       </Show>
     </>

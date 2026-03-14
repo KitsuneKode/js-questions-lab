@@ -9,9 +9,12 @@ import {
   computeDailyActivity,
   getWeakestTopics,
   getReviewQueue,
+  getContinueLearningSuggestion,
+  getRecommendedSuggestion,
   type OverallStats,
   type TagStats,
   type DailyActivity,
+  type PracticeSuggestion,
 } from '@/lib/progress/analytics';
 import type { QuestionRecord } from '@/lib/content/types';
 
@@ -43,5 +46,24 @@ export function useAnalytics(questions: QuestionRecord[]) {
     [state, questions],
   );
 
-  return { ready, overall, tagStats, dailyActivity, weakestTopics, reviewQueue };
+  const continueLearning = useMemo<PracticeSuggestion>(
+    () => getContinueLearningSuggestion(state, questions),
+    [state, questions],
+  );
+
+  const recommended = useMemo<PracticeSuggestion>(
+    () => getRecommendedSuggestion(state, questions, weakestTopics),
+    [questions, state, weakestTopics],
+  );
+
+  return {
+    ready,
+    overall,
+    tagStats,
+    dailyActivity,
+    weakestTopics,
+    reviewQueue,
+    continueLearning,
+    recommended,
+  };
 }

@@ -7,6 +7,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
   type ReactNode,
 } from 'react';
 import {
@@ -121,23 +122,21 @@ const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(progressReducer, defaultProgressState);
-  const readyRef = useRef(false);
+  const [ready, setReady] = useState(false);
   const prevStateRef = useRef(state);
+  const pendingSyncRef = useRef<Set<number>>(new Set());
   const { isSignedIn } = useSafeAuth();
-
-  // Track ready state separately for SSR safety
-  const ready = readyRef.current;
 
   // Init: load from localStorage
   useEffect(() => {
     const loaded = readProgress();
     dispatch({ type: 'init', state: loaded });
-    readyRef.current = true;
+    setReady(true);
   }, []);
 
   // Merge server progress on sign-in
   useEffect(() => {
-    if (!isSignedIn || !readyRef.current) return;
+    if (!isSignedIn || !ready) return;
 
     let cancelled = false;
     (async () => {
@@ -158,54 +157,50 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn]);
+  }, [isSignedIn, ready]);
 
   // Persist to localStorage on every state change
   useEffect(() => {
-    if (!readyRef.current) return;
+    if (!ready) return;
     if (state === prevStateRef.current) return;
     prevStateRef.current = state;
     writeProgress(state);
-  }, [state]);
+  }, [ready, state]);
 
-  // Dual-write helper: detect changed question and sync to server
-  const syncToServer = useCallback(
-    (questionId: number, nextState: ProgressState) => {
-      if (!isSignedIn) return;
-      const item = nextState.questions[String(questionId)];
-      if (item) {
-        upsertSingleQuestion(item).catch((err) =>
-          console.error('Server sync failed:', err),
-        );
-      }
-    },
-    [isSignedIn],
-  );
+  useEffect(() => {
+    if (!ready || !isSignedIn || pendingSyncRef.current.size === 0) return;
+
+    const pendingIds = Array.from(pendingSyncRef.current);
+    pendingSyncRef.current.clear();
+
+    void Promise.all(
+      pendingIds.map(async (questionId) => {
+        const item = state.questions[String(questionId)];
+        if (!item) return;
+
+        try {
+          await upsertSingleQuestion(item);
+        } catch (err) {
+          console.error('Server sync failed:', err);
+        }
+      }),
+    );
+  }, [isSignedIn, ready, state]);
 
   const saveAttempt = useCallback(
     (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => {
-      const action: ProgressAction = { type: 'attempt', questionId, selected, status };
-      dispatch(action);
-      // We need to compute what the next state would be for the server sync
-      // Use a timeout to let the reducer run first
-      setTimeout(() => {
-        const current = readProgress();
-        // Re-read from localStorage (just wrote it)
-        syncToServer(questionId, current);
-      }, 0);
+      pendingSyncRef.current.add(questionId);
+      dispatch({ type: 'attempt', questionId, selected, status });
     },
-    [syncToServer],
+    [],
   );
 
   const toggleBookmark = useCallback(
     (questionId: number) => {
+      pendingSyncRef.current.add(questionId);
       dispatch({ type: 'bookmark', questionId });
-      setTimeout(() => {
-        const current = readProgress();
-        syncToServer(questionId, current);
-      }, 0);
     },
-    [syncToServer],
+    [],
   );
 
   const value: ProgressContextValue = {

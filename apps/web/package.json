@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "bun eslint .",
-    "typecheck": "tsc --noEmit"
+    "lint": "ESLINT_USE_FLAT_CONFIG=false bun eslint .",
+    "typecheck": "rm -f tsconfig.tsbuildinfo && bun tsc --noEmit"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.0.1",
