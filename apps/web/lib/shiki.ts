@@ -19,6 +19,10 @@ export async function getHighlighter(): Promise<Highlighter> {
   highlighterPromise = createHighlighter({
     themes: ['github-dark-default'],
     langs: ['javascript', 'typescript', 'json', 'html', 'css'],
+  }).catch((error) => {
+    highlighterPromise = null;
+    console.error('Failed to create shiki highlighter:', error);
+    throw error;
   });
 
   highlighterInstance = await highlighterPromise;

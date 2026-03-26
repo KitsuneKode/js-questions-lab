@@ -4,18 +4,35 @@ import path from 'node:path';
 
 import type { QuestionRecord, QuestionsManifest } from '@/lib/content/types';
 
+function findProjectRoot(startPath: string): string {
+  let current = startPath;
+  for (let i = 0; i < 10; i++) {
+    const contentPath = path.join(current, 'content', 'generated');
+    if (fs.existsSync(contentPath)) {
+      return current;
+    }
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  return startPath;
+}
+
 function resolveDataFile(relativePath: string): string {
+  const projectRoot = findProjectRoot(process.cwd());
+  
   const candidates = [
-    path.resolve(process.cwd(), '../../', relativePath),
-    path.resolve(process.cwd(), relativePath),
+    path.resolve(projectRoot, relativePath),
+    path.resolve(projectRoot, 'apps/web', relativePath),
   ];
 
-  const found = candidates.find((candidate) => fs.existsSync(candidate));
-  if (!found) {
-    throw new Error(`Data file not found: ${relativePath}`);
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
   }
 
-  return found;
+  throw new Error(`Data file not found: ${relativePath}`);
 }
 
 export const getQuestions = cache((): QuestionRecord[] => {

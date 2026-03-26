@@ -64,8 +64,15 @@ export function QuestionClientShell({ question, prevId, nextId }: QuestionClient
 
   function handleRecallSubmit() {
     if (!recallAnswer.trim()) return;
+    
+    if (!question.correctOption) {
+      console.warn('Question missing correctOption, cannot save attempt');
+      setHasSubmittedRecall(true);
+      return;
+    }
+    
     setHasSubmittedRecall(true);
-    saveAttempt(question.correctOption || 'A', 'correct');
+    saveAttempt(question.correctOption, 'correct');
   }
 
   function handleSelfGrade(grade: 'hard' | 'good' | 'easy') {

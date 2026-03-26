@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -10,6 +11,10 @@ const OUT_MANIFEST = path.join(ROOT, 'content/generated/manifest.v1.json');
 
 function normalizeWhitespace(input) {
   return input.replace(/\r\n/g, '\n');
+}
+
+function sha256(input) {
+  return crypto.createHash('sha256').update(input, 'utf8').digest('hex');
 }
 
 function stripPTags(input) {
@@ -174,15 +179,18 @@ function main() {
   }
 
   const raw = normalizeWhitespace(fs.readFileSync(SOURCE_PATH, 'utf8'));
+  const sourceStats = fs.statSync(SOURCE_PATH);
+  const sourceHash = sha256(raw);
   const questions = parseQuestions(raw);
 
   const manifest = {
     schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
+    generatedAt: new Date(sourceStats.mtimeMs).toISOString(),
     source: {
       repo: 'https://github.com/lydiahallie/javascript-questions',
       file: 'README.md',
       localPath: 'content/source/README.upstream.md',
+      sha256: sourceHash,
     },
     totals: {
       questions: questions.length,

@@ -1,5 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "bun.lock",
+    "content/generated/**",
+    "content/source/**",
+    "eslint.config.mjs"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -12,15 +18,9 @@
         "!.next/cache/**"
       ]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "typecheck": {
-      "dependsOn": ["^typecheck"]
-    },
-    "test": {
-      "dependsOn": ["^test"]
-    },
+    "lint": {},
+    "typecheck": {},
+    "test": {},
     "dev": {
       "cache": false,
       "persistent": true

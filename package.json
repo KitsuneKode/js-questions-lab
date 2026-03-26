@@ -9,7 +9,8 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "start": "turbo run start",
-    "lint": "turbo run lint",
+    "lint:repo": "eslint . --config eslint.config.mjs",
+    "lint": "bun run lint:repo && turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "prepare": "husky"
@@ -18,19 +19,26 @@
     "apps/web"
   ],
   "lint-staged": {
-    "*.{js,ts,tsx,mjs,cjs}": [
-      "bunx eslint --fix"
+    "apps/web/**/*.{js,ts,tsx,mjs,cjs}": [
+      "bunx eslint --config apps/web/eslint.config.mjs --fix"
+    ],
+    "*.{js,mjs,cjs}": [
+      "bunx eslint --config eslint.config.mjs --fix"
+    ],
+    "scripts/**/*.{js,mjs,cjs}": [
+      "bunx eslint --config eslint.config.mjs --fix"
     ],
     "*.md": [
       "bunx markdownlint-cli2"
     ]
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.4.4",
-    "@commitlint/config-conventional": "^20.4.4",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "eslint": "9.39.4",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "markdownlint-cli2": "^0.21.0",
-    "turbo": "^2.8.17"
+    "markdownlint-cli2": "^0.22.0",
+    "turbo": "^2.8.20"
   }
 }

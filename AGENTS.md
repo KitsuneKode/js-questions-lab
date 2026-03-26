@@ -2,6 +2,16 @@
 
 This repository is no longer just the upstream JavaScript questions source. It now contains a product app in `apps/web` plus a content pipeline in `scripts/` and `content/`.
 
+## Source of Truth
+
+**The canonical source is `content/source/README.upstream.md`** — synced directly from [Lydia Hallie's javascript-questions](https://github.com/lydiahallie/javascript-questions) repository. This file is the source of truth.
+
+The content pipeline generates:
+- `content/generated/questions.v1.json` — parsed question data
+- `content/generated/manifest.v1.json` — metadata/index
+
+All generated content derives from `README.upstream.md`. Do not edit generated files directly.
+
 ## Current Product State
 
 - The app is an interactive JavaScript interview practice product built on Next.js 16 (App Router) and Tailwind CSS v4.

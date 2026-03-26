@@ -29,7 +29,9 @@ const KIND_LABELS: Record<TimelineKind, string> = {
 };
 
 function getConceptualSteps(tags: string[]): string[] {
-  if (tags.includes('async')) {
+  const lowerTags = tags.map(t => t.toLowerCase());
+  
+  if (lowerTags.includes('async')) {
     return [
       'Synchronous execution starts',
       'Async tasks enqueue in micro/macro queues',
@@ -38,7 +40,7 @@ function getConceptualSteps(tags: string[]): string[] {
     ];
   }
 
-  if (tags.includes('scope')) {
+  if (lowerTags.includes('scope')) {
     return [
       'Execution context is created',
       'Declarations are hoisted',
@@ -47,7 +49,7 @@ function getConceptualSteps(tags: string[]): string[] {
     ];
   }
 
-  if (tags.includes('objects')) {
+  if (lowerTags.includes('objects')) {
     return [
       'Values are assigned',
       'Reference/value behavior applies',

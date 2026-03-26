@@ -16,16 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '22'
+          bun-version: '1.3.9'
 
-      - name: Sync upstream README
-        run: node scripts/sync-upstream.mjs
-
-      - name: Regenerate content
-        run: node scripts/parse-readme.mjs
+      - name: Refresh canonical Lydia Hallie source and generated data
+        run: bun run content:refresh
 
       - name: Detect changes
         id: changes
@@ -44,6 +41,10 @@ jobs:
           title: 'chore(content): weekly upstream sync'
           body: |
             Automated weekly refresh from https://github.com/lydiahallie/javascript-questions.
+
+            Source of truth:
+            - `content/source/README.upstream.md` is the canonical upstream snapshot from Lydia Hallie's repo
+            - `content/generated/*.json` is regenerated from that source
 
             This PR updates:
             - content/source/README.upstream.md

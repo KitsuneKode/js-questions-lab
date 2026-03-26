@@ -164,8 +164,13 @@ function createWorker(): { worker: Worker; url: string } {
 }
 
 export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunResult> {
-  // Strip import/export statements to prevent SyntaxError in new Function
-  const executableCode = code.replace(/^\s*(import|export)\s+.*$/gm, '');
+  let executableCode = code;
+
+  executableCode = executableCode
+    .replace(/^\s*import\s+.*$/gm, '')
+    .replace(/^\s*export\s+(const|let|var|function|class)\s+/gm, '$1 ')
+    .replace(/^\s*export\s+default\s+/gm, '')
+    .replace(/import\s*\(['"]([^'"]+)['"]\)/g, 'require($1)');
 
   const { worker, url } = createWorker();
   const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
