@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 import { Container } from '@/components/container';
-import { QuestionClientShell } from '@/components/question-client-shell';
+import { QuestionIDEClient } from '@/components/ide/question-ide-client';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
 import { QuestionCard } from '@/components/question-card';
 
@@ -32,44 +32,42 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
   const related = getRelatedQuestions(question, 3);
 
   return (
-    <main className="py-8 md:py-12">
-      <Container>
-        <div className="space-y-16">
-          <QuestionClientShell
-            key={question.id}
-            question={question}
-            prevId={prev?.id ?? null}
-            nextId={next?.id ?? null}
-          />
+    <main className="h-[calc(100vh-4rem)]">
+      <QuestionIDEClient
+        key={question.id}
+        question={question}
+        prevId={prev?.id ?? null}
+        nextId={next?.id ?? null}
+      />
 
-          {related.length > 0 && (
-            <section className="space-y-6 border-t border-border/30 pt-12">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h2 className="font-display text-xl font-medium tracking-tight text-foreground">
-                    Keep Practicing
-                  </h2>
-                  <p className="text-sm text-muted-foreground/70">
-                    Related questions covering similar concepts
-                  </p>
-                </div>
-                <Link
-                  href="/questions"
-                  className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-primary transition-opacity hover:opacity-80"
-                >
-                  View All
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
+      {related.length > 0 && (
+        <Container>
+          <section className="space-y-6 border-t border-border/30 pt-8 pb-8">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h2 className="font-display text-lg font-medium tracking-tight text-foreground">
+                  Keep Practicing
+                </h2>
+                <p className="text-sm text-muted-foreground/70">
+                  Related questions
+                </p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {related.map((item) => (
-                  <QuestionCard key={item.id} question={item} />
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      </Container>
+              <Link
+                href="/questions"
+                className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-primary transition-opacity hover:opacity-80"
+              >
+                View All
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((item) => (
+                <QuestionCard key={item.id} question={item} />
+              ))}
+            </div>
+          </section>
+        </Container>
+      )}
     </main>
   );
 }
