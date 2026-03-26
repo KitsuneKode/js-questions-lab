@@ -210,10 +210,25 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                 </div>
 
                 {question.codeBlocks.length > 0 && (
-                  <div className="rounded-xl border border-border/30 bg-[#0d1117] p-4">
-                    <pre className="font-mono text-xs text-muted-foreground/80 overflow-x-auto">
-                      {question.codeBlocks[0]?.code}
-                    </pre>
+                  <div className="flex flex-col h-64 rounded-xl border border-border/30 overflow-hidden">
+                    <div className="flex items-center justify-between px-3 py-1.5 bg-muted/20 border-b border-border/30">
+                      <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Question Code</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setCode(question.codeBlocks[0]?.code || '')}
+                        className="h-6 text-[10px]"
+                      >
+                        Copy to Scratchpad
+                      </Button>
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <MonacoCodeEditor 
+                        value={question.codeBlocks[0]?.code || ''} 
+                        onChange={() => {}} 
+                        readOnly 
+                      />
+                    </div>
                   </div>
                 )}
 
