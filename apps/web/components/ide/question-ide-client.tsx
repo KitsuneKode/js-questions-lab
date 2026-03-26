@@ -204,23 +204,37 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="practice" className="mt-0 space-y-6">
+              <TabsContent value="practice" className="mt-0 space-y-4">
                 <div className="prose prose-invert max-w-none text-sm leading-relaxed text-muted-foreground/90">
                   <Streamdown>{question.promptMarkdown}</Streamdown>
                 </div>
 
                 {question.codeBlocks.length > 0 && (
-                  <div className="flex flex-col h-64 rounded-xl border border-border/30 overflow-hidden">
+                  <div className="flex flex-col h-56 rounded-xl border border-border/30 overflow-hidden">
                     <div className="flex items-center justify-between px-3 py-1.5 bg-muted/20 border-b border-border/30">
                       <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Question Code</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setCode(question.codeBlocks[0]?.code || '')}
-                        className="h-6 text-[10px]"
-                      >
-                        Copy to Scratchpad
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            setCode(question.codeBlocks[0]?.code || '');
+                            setActiveTab('scratchpad');
+                          }}
+                          className="h-6 text-[10px]"
+                        >
+                          Copy to Scratchpad
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={runCode}
+                          disabled={isRunning}
+                          className="h-6 text-[10px] gap-1"
+                        >
+                          <Play className="h-3 w-3" />
+                          {isRunning ? 'Run' : 'Run'}
+                        </Button>
+                      </div>
                     </div>
                     <div className="flex-1 overflow-hidden">
                       <MonacoCodeEditor 
@@ -231,6 +245,11 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                     </div>
                   </div>
                 )}
+
+                {/* Terminal Output - Always Visible */}
+                <div className="h-40">
+                  <TerminalOutput logs={logs} isRunning={isRunning} />
+                </div>
 
                 <AnimatePresence>
                   {isAnswered && (
