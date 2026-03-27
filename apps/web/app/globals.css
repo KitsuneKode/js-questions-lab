@@ -2,8 +2,8 @@
 @plugin "@tailwindcss/typography";
 
 /* ───────────────────────────────────────────────
-   Obsidian Terminal — Design Tokens
-   Cool slate base + warm amber accent
+   Elevated Cyber-Minimalism — Design Tokens
+   Deep obsidian base + Electric Lime accent
    ─────────────────────────────────────────────── */
 
 @theme {
@@ -32,12 +32,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* Shadows */
-  --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.15), 0 8px 40px hsl(var(--background) / 0.6);
-  --shadow-card: 0 1px 2px hsl(var(--background) / 0.3), 0 4px 16px hsl(var(--background) / 0.2);
-  --shadow-card-hover: 0 2px 4px hsl(var(--background) / 0.3), 0 8px 32px hsl(var(--background) / 0.3);
-  --shadow-button: 0 1px 2px hsl(var(--background) / 0.4);
-  --shadow-button-primary: 0 1px 2px hsl(var(--background) / 0.4), 0 0 20px hsl(var(--primary) / 0.15);
+  /* Shadows - Elevated Glass look */
+  --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.15), 0 8px 40px hsl(var(--primary) / 0.1);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.8), 0 1px 2px -1px rgb(0 0 0 / 0.8);
+  --shadow-card-hover: 0 4px 12px -2px rgb(0 0 0 / 0.9), 0 24px 32px -4px rgb(0 0 0 / 0.4), inset 0 1px 0 0 hsl(220 10% 20%);
+  --shadow-button: 0 1px 2px hsl(var(--background) / 1);
+  --shadow-button-primary: 0 4px 14px 0 hsl(var(--primary) / 0.39);
 
   /* Transitions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -49,40 +49,40 @@
 
 @layer base {
   :root {
-    /* ── Obsidian Palette ── */
-    --background:         220 14% 6%;
-    --foreground:         210 20% 93%;
-    --surface:            220 13% 9%;
-    --surface-elevated:   220 12% 12%;
-    --muted:              220 12% 14%;
-    --muted-foreground:   215 12% 55%;
-    --card:               220 13% 9%;
-    --card-hover:         220 12% 11%;
-    --border:             220 10% 16%;
-    --border-strong:      220 10% 24%;
+    /* ── Cyber Obsidian Palette ── */
+    --background:         0 0% 1.5%;       /* #040405 */
+    --foreground:         210 20% 98%;     /* Pure crisp white */
+    --surface:            0 0% 4%;         /* Slightly lighter black */
+    --surface-elevated:   0 0% 7%;         /* Lifted surfaces */
+    --muted:              0 0% 9%;
+    --muted-foreground:   0 0% 60%;
+    --card:               0 0% 3%;         
+    --card-hover:         0 0% 6%;
+    --border:             0 0% 12%;        /* Precise sharp borders */
+    --border-strong:      0 0% 20%;
 
-    /* ── Amber Accent ── */
-    --primary:            45 80% 60%;
-    --primary-foreground: 220 20% 6%;
-    --primary-muted:      45 40% 25%;
+    /* ── Electric Lime Accent ── */
+    --primary:            74 90% 58%;      /* #ccff00 */
+    --primary-foreground: 0 0% 0%;         /* Black text on lime */
+    --primary-muted:      74 90% 15%;
 
-    /* ── Info Blue ── */
-    --accent:             200 80% 62%;
-    --accent-foreground:  220 20% 6%;
+    /* ── Info Blue Accent ── */
+    --accent:             200 100% 50%;
+    --accent-foreground:  0 0% 0%;
 
     /* ── Semantic ── */
-    --success:            152 55% 52%;
-    --warning:            38 90% 58%;
-    --danger:             0 70% 58%;
+    --success:            152 70% 50%;
+    --warning:            38 92% 50%;
+    --danger:             0 80% 55%;
 
     /* ── Radii ── */
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
     /* ── Chart Colors ── */
-    --chart-1: 45 80% 60%;
-    --chart-2: 200 80% 62%;
-    --chart-3: 152 55% 52%;
-    --chart-4: 38 90% 58%;
+    --chart-1: 74 90% 58%;
+    --chart-2: 200 100% 50%;
+    --chart-3: 152 70% 50%;
+    --chart-4: 38 92% 50%;
     --chart-5: 270 50% 62%;
   }
 
@@ -97,10 +97,10 @@
 
   body {
     color: var(--color-foreground);
-    background:
-      radial-gradient(ellipse 80% 60% at 10% 0%, hsl(var(--primary) / 0.04), transparent 50%),
-      radial-gradient(ellipse 60% 50% at 90% 5%, hsl(var(--accent) / 0.03), transparent 45%),
-      linear-gradient(175deg, hsl(220, 14%, 5%) 0%, hsl(220, 14%, 6%) 40%, hsl(222, 13%, 7%) 100%);
+    background-color: hsl(var(--background));
+    /* Subtle radial glow of primary light at the top left */
+    background-image: radial-gradient(circle at 15% 0%, hsl(var(--primary) / 0.03) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 10%, hsl(var(--accent) / 0.02) 0%, transparent 50%);
     background-attachment: fixed;
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
     text-rendering: optimizeLegibility;
@@ -112,7 +112,7 @@
 /* ── Font Utilities ── */
 
 @utility font-display {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 @utility font-mono {
@@ -122,32 +122,27 @@
 /* ── Components ── */
 
 @layer components {
-  /* Subtle noise grain */
+  /* Ultra-premium subtle noise grain */
   .grain-overlay::before {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='3' cy='3' r='0.8'/%3E%3Ccircle cx='53' cy='47' r='0.6'/%3E%3Ccircle cx='97' cy='11' r='0.7'/%3E%3Ccircle cx='141' cy='68' r='0.5'/%3E%3Ccircle cx='29' cy='92' r='0.6'/%3E%3Ccircle cx='178' cy='134' r='0.7'/%3E%3Ccircle cx='72' cy='161' r='0.5'/%3E%3Ccircle cx='123' cy='188' r='0.6'/%3E%3Ccircle cx='192' cy='23' r='0.5'/%3E%3Ccircle cx='61' cy='119' r='0.7'/%3E%3Ccircle cx='156' cy='97' r='0.5'/%3E%3Ccircle cx='14' cy='172' r='0.6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     z-index: 9999;
+    mix-blend-mode: overlay;
   }
 
   /* Selection */
   ::selection {
-    background: hsl(var(--primary) / 0.25);
-    color: var(--color-foreground);
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
   }
 
   /* Links */
   a {
-    color: var(--color-primary);
-    text-decoration: none;
     transition: color var(--duration-fast) ease;
-  }
-
-  a:hover {
-    color: hsl(var(--primary) / 0.8);
   }
 
   /* Code */
@@ -157,43 +152,51 @@
 
   /* Markdown prose */
   .markdown {
-    @apply space-y-4 text-sm leading-7 text-muted-foreground;
+    @apply space-y-5 text-[15px] leading-relaxed text-muted-foreground;
   }
 
   .markdown h1,
   .markdown h2,
   .markdown h3,
   .markdown h4 {
-    @apply font-display text-foreground;
+    @apply font-display tracking-tight text-foreground font-semibold mt-8 mb-4;
   }
 
   .markdown p code,
   .markdown li code {
-    @apply rounded-md bg-surface-elevated px-1.5 py-0.5 text-[13px] font-mono text-foreground;
+    @apply rounded-md bg-surface-elevated/80 border border-border/50 px-1.5 py-0.5 text-[13.5px] font-mono text-foreground;
   }
 
   .markdown pre {
-    @apply overflow-x-auto rounded-lg border border-border bg-[#0c0e14] p-4 text-[13px] leading-6;
+    @apply overflow-x-auto rounded-xl border border-border/60 bg-[#080808] p-5 text-[13.5px] leading-6 shadow-card my-6;
+    white-space: pre !important;
+  }
+  
+  .markdown pre code {
+    @apply block min-w-full;
+    white-space: inherit !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
   }
 
   .markdown ul {
-    @apply list-disc pl-6;
+    @apply list-disc pl-6 marker:text-muted-foreground/50;
   }
 
   .markdown ol {
-    @apply list-decimal pl-6;
+    @apply list-decimal pl-6 marker:text-muted-foreground/80 font-medium;
   }
 
   .markdown img {
-    @apply rounded-md border border-border;
+    @apply rounded-xl border border-border/60 shadow-lg my-6;
   }
 
   .markdown blockquote {
-    @apply border-l-2 border-primary/30 pl-4 italic text-muted-foreground/80;
+    @apply border-l-2 border-primary/40 pl-5 italic text-muted-foreground/90 bg-primary/5 py-2 pr-4 rounded-r-xl;
   }
 
   .markdown a {
-    @apply text-primary underline underline-offset-2 decoration-primary/30 hover:decoration-primary/60;
+    @apply text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary/80 transition-all font-medium;
   }
 
   /* Question grid virtualization */
@@ -216,19 +219,60 @@
     scrollbar-color: hsl(var(--border-strong)) transparent;
   }
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
+    height: 4px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: hsl(var(--border-strong));
-    border-radius: 3px;
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
   }
 
   /* Focus ring utility */
   .focus-ring {
-    @apply outline-none ring-2 ring-primary/40 ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-primary/60 ring-offset-2 ring-offset-background;
+  }
+  
+  /* Animated Border Utilities */
+  .animated-border {
+    position: relative;
+    background: linear-gradient(0deg, hsl(var(--surface)), hsl(var(--surface)));
+    background-clip: padding-box;
+    border: 1px solid transparent;
+  }
+
+  .animated-border::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    margin: -1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--angle),
+      hsl(var(--surface-elevated)) 0%,
+      hsl(var(--surface-elevated)) 80%,
+      hsl(var(--primary)) 95%,
+      hsl(var(--surface-elevated)) 100%
+    );
+    animation: rotate 4s linear infinite;
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes rotate {
+    to {
+      --angle: 360deg;
+    }
   }
 }
 

@@ -138,10 +138,11 @@ export function QuestionClientShell({ question, prevId, nextId }: QuestionClient
         {/* Left Pane: Question Reading */}
         <div className="space-y-10">
           <section className="space-y-6">
-            <div className="prose prose-invert max-w-none text-base leading-relaxed text-muted-foreground/90 markdown">
-              <Streamdown>{question.promptMarkdown}</Streamdown>
+            <div className="flex-1 overflow-y-auto">
+              <div className="markdown text-base leading-relaxed text-muted-foreground/90">
+                <Streamdown>{question.promptMarkdown}</Streamdown>
+              </div>
             </div>
-
             {question.codeBlocks.length > 0 && (
               <div className="space-y-4">
                 {question.codeBlocks.map((codeBlock) => (

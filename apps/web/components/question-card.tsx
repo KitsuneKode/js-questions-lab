@@ -30,7 +30,7 @@ export function QuestionCard({ question }: QuestionCardProps) {
   return (
     <Link
       href={`/questions/${question.id}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-card/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-card/80 hover:shadow-lg hover:shadow-primary/5"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/50 p-6 backdrop-blur-md transition-all duration-500 ease-out-expo hover:-translate-y-1.5 hover:border-primary/50 hover:bg-surface-elevated/60 hover:shadow-[0_8px_32px_rgba(204,255,0,0.1)]"
     >
       {/* Status indicators - top right */}
       {ready && (hasAttempts || isBookmarked) && (
@@ -73,7 +73,7 @@ export function QuestionCard({ question }: QuestionCardProps) {
       </div>
 
       {/* Title */}
-      <h3 className="mb-4 line-clamp-2 min-h-[2.75rem] font-display text-base font-medium leading-snug tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
+      <h3 className="mb-5 line-clamp-2 min-h-12 font-display text-lg font-semibold leading-snug tracking-tight text-foreground shadow-sm transition-colors group-hover:text-primary">
         {question.title}
       </h3>
 
@@ -83,7 +83,7 @@ export function QuestionCard({ question }: QuestionCardProps) {
           <Badge
             key={tag}
             variant="secondary"
-            className="bg-muted/40 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70"
+            className="bg-white/5 border border-white/5 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90 transition-colors group-hover:border-primary/30 group-hover:bg-primary/10 group-hover:text-primary"
           >
             {tag}
           </Badge>

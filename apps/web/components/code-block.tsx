@@ -100,7 +100,7 @@ export function CodeBlock({
             <div
               // biome-ignore lint/security/noDangerouslySetInnerHtml: shiki output is trusted
               dangerouslySetInnerHTML={{ __html: highlightedHtml }}
-              className="[&>pre]:!bg-transparent [&>pre]:!p-0 [&_code]:!bg-transparent"
+              className="[&>pre]:!bg-transparent [&>pre]:!p-0 [&_code]:!bg-transparent [&_pre]:!whitespace-pre [&_code]:!whitespace-pre"
             />
           ) : (
             <pre className="text-[#e6edf3]">

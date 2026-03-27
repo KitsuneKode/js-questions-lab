@@ -10,6 +10,7 @@ interface MonacoEditorProps {
   onRun?: () => void;
   language?: 'javascript' | 'typescript';
   readOnly?: boolean;
+  path?: string;
 }
 
 const EDITOR_OPTIONS = {
@@ -41,6 +42,7 @@ export function MonacoCodeEditor({
   onRun,
   language = 'javascript',
   readOnly = false,
+  path,
 }: MonacoEditorProps) {
   const editorRef = useRef<any>(null);
 
@@ -71,6 +73,7 @@ export function MonacoCodeEditor({
 
   return (
     <Editor
+      path={path}
       height="100%"
       language={language}
       theme="vs-dark"

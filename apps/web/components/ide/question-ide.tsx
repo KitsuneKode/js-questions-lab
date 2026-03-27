@@ -25,7 +25,7 @@ export function QuestionIDE({ question }: QuestionIDEProps) {
         className="flex flex-col overflow-hidden"
       >
         <div className="flex-1 overflow-auto p-6">
-          <div className="prose prose-invert max-w-none">
+          <div className="markdown">
             <h2 className="text-xl font-semibold">{question.title}</h2>
             <div className="mt-2 text-muted-foreground">
               {question.promptMarkdown}

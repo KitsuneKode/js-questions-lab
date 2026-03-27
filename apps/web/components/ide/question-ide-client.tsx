@@ -59,6 +59,8 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   
+  const cleanPromptMarkdown = question.promptMarkdown.replace(/```[a-z]*\n[\s\S]*?\n```/g, '').trim();
+
   const [code, setCode] = useState(question.codeBlocks[0]?.code || EDITOR_DEFAULT_CODE);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -205,12 +207,14 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
               </TabsList>
 
               <TabsContent value="practice" className="mt-0 space-y-4">
-                <div className="prose prose-invert max-w-none text-sm leading-relaxed text-muted-foreground/90">
-                  <Streamdown>{question.promptMarkdown}</Streamdown>
-                </div>
+                {cleanPromptMarkdown && (
+                  <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
+                    <Streamdown>{cleanPromptMarkdown}</Streamdown>
+                  </div>
+                )}
 
                 {question.codeBlocks.length > 0 && (
-                  <div className="flex flex-col h-56 rounded-xl border border-border/30 overflow-hidden">
+                  <div className="flex flex-col h-64 rounded-xl border border-border/30 overflow-hidden bg-[#1e1e1e]">
                     <div className="flex items-center justify-between px-3 py-1.5 bg-muted/20 border-b border-border/30">
                       <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Question Code</span>
                       <div className="flex items-center gap-2">
@@ -232,12 +236,13 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                           className="h-6 text-[10px] gap-1"
                         >
                           <Play className="h-3 w-3" />
-                          {isRunning ? 'Run' : 'Run'}
+                          {isRunning ? 'Running...' : 'Run'}
                         </Button>
                       </div>
                     </div>
                     <div className="flex-1 overflow-hidden">
                       <MonacoCodeEditor 
+                        path={`question-${question.id}.js`}
                         value={question.codeBlocks[0]?.code || ''} 
                         onChange={() => {}} 
                         readOnly 
@@ -245,11 +250,6 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                     </div>
                   </div>
                 )}
-
-                {/* Terminal Output - Always Visible */}
-                <div className="h-40">
-                  <TerminalOutput logs={logs} isRunning={isRunning} />
-                </div>
 
                 <AnimatePresence>
                   {isAnswered && (
@@ -265,7 +265,7 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                         <CheckCircle2 className="h-5 w-5 text-primary" />
                         Explanation
                       </h3>
-                      <div className="prose prose-invert max-w-none text-sm leading-relaxed text-muted-foreground/80">
+                      <div className="markdown text-sm leading-relaxed text-muted-foreground/80">
                         <Streamdown>{question.explanationMarkdown}</Streamdown>
                       </div>
                     </motion.div>
@@ -289,7 +289,7 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                     </div>
                   </div>
                   <div className="flex-1 rounded-lg border border-border/30 overflow-hidden">
-                    <MonacoCodeEditor value={code} onChange={setCode} onRun={runCode} />
+                    <MonacoCodeEditor path={`scratchpad-${question.id}.js`} value={code} onChange={setCode} onRun={runCode} />
                   </div>
                   <div className="h-36 mt-3">
                     <TerminalOutput logs={logs} isRunning={isRunning} />

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Code2, Library, LayoutDashboard, Heart, Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -27,30 +28,36 @@ function NavLink({
   label,
   icon: Icon,
   active,
-  className,
 }: {
   href: string;
   label: string;
   icon: typeof Library;
   active: boolean;
-  className?: string;
 }) {
   return (
     <Link
       href={href}
       className={cn(
-        'group relative inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+        'group relative flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-medium transition-colors',
         active
-          ? 'text-foreground'
-          : 'text-muted-foreground hover:text-foreground',
-        className,
+          ? 'text-primary-foreground'
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
-      <Icon className="h-4 w-4" />
-      <span>{label}</span>
-      {active && (
-        <span className="absolute inset-x-1 -bottom-[13px] h-[2px] rounded-full bg-primary" />
+      {active ? (
+        <motion.div
+          layoutId="navbar-active"
+          className="absolute inset-0 rounded-full bg-primary shadow-[0_0_15px_rgba(204,255,0,0.4)]"
+          initial={false}
+          transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
+        />
+      ) : (
+        <div className="absolute inset-0 rounded-full bg-transparent transition-colors group-hover:bg-white/5" />
       )}
+      <span className="relative z-10 flex items-center gap-2">
+        <Icon className="h-4 w-4" />
+        {label}
+      </span>
     </Link>
   );
 }
@@ -59,15 +66,16 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <div className="sticky top-0 z-50 pt-4 pb-2 px-4 sm:px-6">
+      <header className="mx-auto flex h-14 max-w-5xl items-center justify-between rounded-full border border-border/80 bg-surface-elevated/70 px-2 pr-4 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+        
         {/* Logo */}
-        <Link href="/" className="group inline-flex items-center gap-2.5">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20 transition-all group-hover:bg-primary/15 group-hover:ring-primary/30">
+        <Link href="/" className="group relative ml-2 flex items-center gap-3 outline-none rounded-full focus-visible:ring-2 focus-visible:ring-primary">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-transform duration-300 group-hover:scale-110">
             <Code2 className="h-4 w-4" aria-hidden="true" />
-          </span>
-          <span className="font-display text-base font-medium tracking-tight text-foreground sm:text-lg">
-            JS Interview Atlas
+          </div>
+          <span className="font-display text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary sm:inline-block hidden">
+            Atlas
           </span>
         </Link>
 
@@ -85,39 +93,39 @@ export function SiteHeader() {
         </nav>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <AuthControls />
 
           {/* Mobile menu */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="md:hidden rounded-full h-9 w-9 bg-surface-elevated hover:bg-surface-elevated/80 border border-border/50">
+                <Menu className="h-4 w-4" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <SheetHeader className="text-left">
-                <SheetTitle>Navigation</SheetTitle>
+            <SheetContent className="border-border/50 bg-background/95 backdrop-blur-xl">
+              <SheetHeader className="text-left py-4">
+                <SheetTitle className="font-display">Navigation</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-2 p-4">
+              <nav className="flex flex-col gap-2 p-2">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
                   const active = pathname === link.href || pathname.startsWith(link.href + '/');
                   return (
                     <SheetClose key={link.href} asChild>
                       <Link
-                        href={link.href}
-                        className={cn(
-                          'flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-colors',
-                          active
-                            ? 'bg-primary/10 text-primary'
-                            : 'text-muted-foreground hover:bg-surface-elevated hover:text-foreground',
-                        )}
-                      >
-                        <Icon className="h-5 w-5" />
-                        {link.label}
-                      </Link>
+                         href={link.href}
+                         className={cn(
+                           'flex items-center gap-3 rounded-lg px-4 py-3 text-[15px] font-medium transition-all active:scale-95',
+                           active
+                             ? 'bg-primary/10 text-primary border border-primary/20'
+                             : 'text-muted-foreground hover:bg-white/5 hover:text-foreground border border-transparent',
+                         )}
+                       >
+                         <Icon className="h-5 w-5" />
+                         {link.label}
+                       </Link>
                     </SheetClose>
                   );
                 })}
@@ -125,7 +133,7 @@ export function SiteHeader() {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }
