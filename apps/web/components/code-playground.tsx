@@ -1,13 +1,16 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Play, RotateCcw, Terminal, AlertTriangle } from 'lucide-react';
+import { Play, RotateCcw, AlertTriangle } from 'lucide-react';
 
 import type { QuestionRecord } from '@/lib/content/types';
 import type { TimelineEvent } from '@/lib/run/types';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
+import type { TerminalLogEntry } from '@/lib/run/terminal';
+import { toTerminalLogEntries } from '@/lib/run/terminal';
 import { Button } from '@/components/ui/button';
 import { SimpleCodeEditor } from '@/components/editor/simple-code-editor';
+import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { cn } from '@/lib/utils';
 
@@ -25,8 +28,7 @@ export function CodePlayground({ question, onTimelineUpdate }: CodePlaygroundPro
   const [selectedId, setSelectedId] = useState<string | null>(runnableBlocks[0]?.id ?? null);
   const currentBlock = runnableBlocks.find((block) => block.id === selectedId) ?? runnableBlocks[0] ?? null;
   const [code, setCode] = useState(currentBlock?.code ?? '');
-  const [logs, setLogs] = useState<string[]>([]);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [running, setRunning] = useState(false);
 
@@ -34,27 +36,42 @@ export function CodePlayground({ question, onTimelineUpdate }: CodePlaygroundPro
     if (!currentBlock) return;
     setCode(currentBlock.code);
     setLogs([]);
-    setErrors([]);
     setTimeline([]);
   }
 
   async function runTimeline() {
     if (!currentBlock) {
-      setErrors(['No runnable JavaScript snippet is available for this question.']);
+      setTimeline([]);
+      setLogs([
+        {
+          type: 'error',
+          content: 'No runnable JavaScript snippet is available for this question.',
+          timestamp: Date.now(),
+        },
+      ]);
       return;
     }
 
     setRunning(true);
     setLogs([]);
-    setErrors([]);
     setTimeline([]);
 
-    const result = await runJavaScriptInSandbox(code);
-    setLogs(result.logs);
-    setErrors(result.errors);
-    setTimeline(result.timeline);
-    onTimelineUpdate?.(result.timeline);
-    setRunning(false);
+    try {
+      const result = await runJavaScriptInSandbox(code);
+      setLogs(toTerminalLogEntries(result));
+      setTimeline(result.timeline);
+      onTimelineUpdate?.(result.timeline);
+    } catch (error) {
+      setLogs([
+        {
+          type: 'error',
+          content: String(error),
+          timestamp: Date.now(),
+        },
+      ]);
+    } finally {
+      setRunning(false);
+    }
   }
 
   if (!currentBlock) {
@@ -85,7 +102,6 @@ export function CodePlayground({ question, onTimelineUpdate }: CodePlaygroundPro
                   setSelectedId(block.id);
                   setCode(block.code);
                   setLogs([]);
-                  setErrors([]);
                   setTimeline([]);
                 }}
                 className={cn(
@@ -131,25 +147,8 @@ export function CodePlayground({ question, onTimelineUpdate }: CodePlaygroundPro
 
       {/* Console output */}
       <div className="space-y-3">
-        <div className="rounded-lg border border-border/30 bg-black/30 p-3">
-          <div className="mb-2 flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">
-            <Terminal className="h-3 w-3" />
-            Console
-          </div>
-          <pre className="max-h-48 overflow-auto font-mono text-xs leading-relaxed">
-            {logs.length === 0 && errors.length === 0 ? (
-              <span className="text-muted-foreground/40">Run the code to see output...</span>
-            ) : (
-              <>
-                {logs.map((log, i) => (
-                  <div key={`log-${i}-${log.slice(0, 20)}`} className="text-emerald-400/90">{log}</div>
-                ))}
-                {errors.map((err, i) => (
-                  <div key={`err-${i}-${err.slice(0, 20)}`} className="text-rose-400/90">[error] {err}</div>
-                ))}
-              </>
-            )}
-          </pre>
+        <div className="h-48 overflow-hidden rounded-lg border border-border/30 bg-black/30">
+          <TerminalOutput logs={logs} isRunning={running} />
         </div>
 
         {/* Timeline */}

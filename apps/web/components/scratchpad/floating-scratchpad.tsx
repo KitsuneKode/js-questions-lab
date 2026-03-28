@@ -8,7 +8,7 @@ import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
-import { toTerminalLogEntries } from '@/lib/run/terminal';
+import { getPrimaryErrorMessage, toTerminalLogEntries } from '@/lib/run/terminal';
 import { useScratchpad } from './scratchpad-context';
 
 export function FloatingScratchpad() {
@@ -29,7 +29,7 @@ export function FloatingScratchpad() {
       setLogs(toTerminalLogEntries(result));
 
       if (result.errors.length > 0 && result.logs.length === 0) {
-        setRunnerError(result.errors[0] ?? null);
+        setRunnerError(getPrimaryErrorMessage(result.errors[0]));
       } else {
         setRunnerError(null);
       }

@@ -27,7 +27,7 @@ import type { QuestionRecord } from '@/lib/content/types';
 import type { TimelineEvent } from '@/lib/run/types';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
-import { toTerminalLogEntries } from '@/lib/run/terminal';
+import { getPrimaryErrorMessage, toTerminalLogEntries } from '@/lib/run/terminal';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from '@/components/ui/resizable-panel';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
@@ -90,7 +90,7 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
       setTimeline(result.timeline);
 
       if (result.errors.length > 0 && result.logs.length === 0) {
-        setRunnerError(result.errors[0] ?? null);
+        setRunnerError(getPrimaryErrorMessage(result.errors[0]));
       } else {
         setRunnerError(null);
       }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Copy, Terminal, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
@@ -32,6 +32,8 @@ export function TerminalOutput({ logs, isRunning = false, emptyMessage = 'Run co
     switch (type) {
       case 'error':
         return 'text-[#ef4444]';
+      case 'trace':
+        return 'text-muted-foreground/62';
       case 'warn':
         return 'text-[#f59e0b]';
       case 'info':
@@ -45,6 +47,8 @@ export function TerminalOutput({ logs, isRunning = false, emptyMessage = 'Run co
     switch (type) {
       case 'error':
         return '✕';
+      case 'trace':
+        return '›';
       case 'warn':
         return '⚠';
       case 'info':
@@ -52,6 +56,18 @@ export function TerminalOutput({ logs, isRunning = false, emptyMessage = 'Run co
       default:
         return '$';
     }
+  };
+
+  const getLineClassName = (type: TerminalLogEntry['type']) => {
+    if (type === 'trace') {
+      return 'pl-4 text-[11px]';
+    }
+
+    if (type === 'error') {
+      return 'font-medium';
+    }
+
+    return '';
   };
 
   return (
@@ -115,7 +131,7 @@ export function TerminalOutput({ logs, isRunning = false, emptyMessage = 'Run co
                 key={`${log.timestamp}-${i}`}
                 className={`flex items-start gap-2 whitespace-pre-wrap ${getTypeColor(
                   log.type
-                )}`}
+                )} ${getLineClassName(log.type)}`}
               >
                 <span className="select-none opacity-50">
                   {getTypePrefix(log.type)}

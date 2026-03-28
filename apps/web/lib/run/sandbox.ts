@@ -1,6 +1,195 @@
-import type { SandboxRunResult, TimelineEvent } from '@/lib/run/types';
+import type { SandboxError, SandboxRunResult, SandboxStackFrame, TimelineEvent } from '@/lib/run/types';
+import { z } from 'zod';
 
 const RUNNER_TIMEOUT_MS = 5000;
+const USER_SOURCE_NAME = 'snippet.js';
+const USER_WRAPPER_LINE_OFFSET = 1;
+
+const workerTransportTimelineEventSchema = z.object({
+  id: z.number().int(),
+  at: z.number(),
+  kind: z.enum(['sync', 'macro', 'micro', 'output']),
+  phase: z.enum(['enqueue', 'start', 'end', 'instant']),
+  label: z.string(),
+});
+
+const workerTransportErrorSchema = z.object({
+  kind: z.enum(['runtime', 'syntax', 'timeout']).optional(),
+  name: z.string().optional(),
+  message: z.string().optional(),
+  rawStack: z.string().nullable().optional(),
+});
+
+const workerTransportMessageSchema = z.discriminatedUnion('type', [
+  z.object({
+    source: z.literal('jsq-worker'),
+    runId: z.string(),
+    type: z.literal('log'),
+    level: z.enum(['log', 'warn', 'error', 'info']),
+    message: z.string(),
+  }),
+  z.object({
+    source: z.literal('jsq-worker'),
+    runId: z.string(),
+    type: z.literal('error'),
+    error: workerTransportErrorSchema,
+  }),
+  z.object({
+    source: z.literal('jsq-worker'),
+    runId: z.string(),
+    type: z.literal('timeline'),
+    event: workerTransportTimelineEventSchema,
+  }),
+  z.object({
+    source: z.literal('jsq-worker'),
+    runId: z.string(),
+    type: z.literal('done'),
+  }),
+]);
+
+type WorkerTransportError = z.infer<typeof workerTransportErrorSchema>;
+type WorkerTransportMessage = z.infer<typeof workerTransportMessageSchema>;
+
+function formatErrorSummary(name: string, message: string) {
+  return message ? `${name}: ${message}` : name;
+}
+
+function normalizeUserLine(line: number | null) {
+  if (line === null) {
+    return null;
+  }
+
+  return Math.max(1, line - USER_WRAPPER_LINE_OFFSET);
+}
+
+function normalizeFunctionName(functionName: string | null | undefined) {
+  const resolvedName = functionName?.trim();
+
+  if (!resolvedName) {
+    return null;
+  }
+
+  if (/^(anonymous|<anonymous>|eval|Function)$/i.test(resolvedName)) {
+    return null;
+  }
+
+  if (resolvedName.includes('blob:') || resolvedName.includes('/<')) {
+    return null;
+  }
+
+  return resolvedName;
+}
+
+function parseStackFrame(line: string): SandboxStackFrame | null {
+  const trimmed = line.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  const v8Match = trimmed.match(/^at\s+(?:(.+?)\s+\()?([^()]+):(\d+):(\d+)\)?$/);
+  if (v8Match) {
+    const [, functionName, file, rawLine, rawColumn] = v8Match;
+    const resolvedFile = file.includes(USER_SOURCE_NAME) ? USER_SOURCE_NAME : file.trim();
+    const lineNumber = normalizeUserLine(Number.parseInt(rawLine, 10));
+    const columnNumber = Number.parseInt(rawColumn, 10);
+
+    if (resolvedFile === USER_SOURCE_NAME || !resolvedFile.startsWith('blob:')) {
+      return {
+        functionName: normalizeFunctionName(functionName),
+        file: resolvedFile,
+        line: lineNumber,
+        column: columnNumber,
+      };
+    }
+  }
+
+  const firefoxEvalMatch = trimmed.match(/^(.*?)@.*Function:(\d+):(\d+)$/);
+  if (firefoxEvalMatch) {
+    const [, rawFunctionName, rawLine, rawColumn] = firefoxEvalMatch;
+    return {
+      functionName: normalizeFunctionName(rawFunctionName),
+      file: USER_SOURCE_NAME,
+      line: normalizeUserLine(Number.parseInt(rawLine, 10)),
+      column: Number.parseInt(rawColumn, 10),
+    };
+  }
+
+  const firefoxDirectMatch = trimmed.match(/^(.*?)@(.+?):(\d+):(\d+)$/);
+  if (firefoxDirectMatch) {
+    const [, rawFunctionName, file, rawLine, rawColumn] = firefoxDirectMatch;
+    const resolvedFile = file.includes(USER_SOURCE_NAME) ? USER_SOURCE_NAME : file.trim();
+
+    if (resolvedFile === USER_SOURCE_NAME || !resolvedFile.startsWith('blob:')) {
+      return {
+        functionName: normalizeFunctionName(rawFunctionName),
+        file: resolvedFile,
+        line: normalizeUserLine(Number.parseInt(rawLine, 10)),
+        column: Number.parseInt(rawColumn, 10),
+      };
+    }
+  }
+
+  return null;
+}
+
+function toSandboxError(error: WorkerTransportError | string): SandboxError {
+  if (typeof error === 'string') {
+    const name = 'Error';
+    const message = error;
+
+    return {
+      kind: 'runtime',
+      name,
+      message,
+      summary: formatErrorSummary(name, message),
+      rawStack: null,
+      frames: [],
+      userLine: null,
+      userColumn: null,
+    };
+  }
+
+  const name = error.name?.trim() || 'Error';
+  const message = error.message?.trim() || 'Unknown runtime error.';
+  const rawStack = error.rawStack?.trim() || null;
+  const frames = rawStack
+    ? rawStack
+        .split('\n')
+        .slice(1)
+        .map(parseStackFrame)
+        .filter((frame): frame is SandboxStackFrame => frame !== null)
+    : [];
+  const userLine = frames[0]?.line ?? null;
+  const userColumn = frames[0]?.column ?? null;
+
+  return {
+    kind: error.kind ?? (name === 'SyntaxError' ? 'syntax' : 'runtime'),
+    name,
+    message,
+    summary: formatErrorSummary(name, message),
+    rawStack,
+    frames,
+    userLine,
+    userColumn,
+  };
+}
+
+function createTimeoutError(): SandboxError {
+  const name = 'TimeoutError';
+  const message = 'Execution timed out after 5 seconds.';
+
+  return {
+    kind: 'timeout',
+    name,
+    message,
+    summary: formatErrorSummary(name, message),
+    rawStack: null,
+    frames: [],
+    userLine: null,
+    userColumn: null,
+  };
+}
 
 const WORKER_SOURCE = `
   const runnerScope = self;
@@ -37,11 +226,31 @@ const WORKER_SOURCE = `
 
     const toStringSafe = (value) => {
       if (typeof value === 'string') return value;
+      if (value instanceof Error) return value.stack || value.toString();
       try {
-        return JSON.stringify(value);
+        const serialized = JSON.stringify(value);
+        if (typeof serialized === 'string') {
+          return serialized;
+        }
       } catch {
-        return String(value);
       }
+
+      return String(value);
+    };
+
+    const serializeError = (error, fallbackKind = 'runtime') => {
+      const name = error && typeof error.name === 'string' && error.name ? error.name : 'Error';
+      const message =
+        error && typeof error.message === 'string' && error.message
+          ? error.message
+          : String(error);
+
+      return {
+        kind: name === 'SyntaxError' ? 'syntax' : fallbackKind,
+        name,
+        message,
+        rawStack: error && typeof error.stack === 'string' ? error.stack : null,
+      };
     };
 
     const post = (payload) => {
@@ -184,14 +393,14 @@ const WORKER_SOURCE = `
 
     try {
       pushTimeline('sync', 'start', 'script');
-      const fn = new Function('"use strict"; return (async () => {\\n' + code + '\\n})();');
+      const fn = new Function('"use strict"; return (async () => {\\n' + code + '\\n})();\\n//# sourceURL=${USER_SOURCE_NAME}');
       await fn();
       await flushAsyncWork();
       pushTimeline('sync', 'end', 'script');
     } catch (error) {
       post({
         type: 'error',
-        message: error && error.stack ? error.stack : String(error),
+        error: serializeError(error),
       });
     } finally {
       scriptSettled = true;
@@ -234,7 +443,7 @@ export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunRe
   const worker = createWorker();
   const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const logs: string[] = [];
-  const errors: string[] = [];
+  const errors: SandboxError[] = [];
   const timeline: TimelineEvent[] = [];
 
   return new Promise((resolve) => {
@@ -243,29 +452,33 @@ export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunRe
     };
 
     const timeout = window.setTimeout(() => {
-      errors.push('Execution timed out after 5 seconds.');
+      errors.push(createTimeoutError());
       cleanup();
       resolve({ logs, errors, timeline });
     }, RUNNER_TIMEOUT_MS);
 
     worker.addEventListener('message', (event: MessageEvent) => {
-      const data = event.data as
-        | { source: string; runId: string; type: string; message?: string; level?: string; event?: TimelineEvent }
-        | undefined;
+      const parsedMessage = workerTransportMessageSchema.safeParse(event.data);
 
-      if (!data || data.source !== 'jsq-worker' || data.runId !== runId) {
+      if (!parsedMessage.success) {
         return;
       }
 
-      if (data.type === 'log' && data.message) {
+      const data: WorkerTransportMessage = parsedMessage.data;
+
+      if (data.runId !== runId) {
+        return;
+      }
+
+      if (data.type === 'log') {
         logs.push(`[${data.level}] ${data.message}`);
       }
 
-      if (data.type === 'error' && data.message) {
-        errors.push(data.message);
+      if (data.type === 'error') {
+        errors.push(toSandboxError(data.error));
       }
 
-      if (data.type === 'timeline' && data.event) {
+      if (data.type === 'timeline') {
         timeline.push(data.event);
       }
 
