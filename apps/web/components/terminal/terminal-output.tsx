@@ -3,19 +3,15 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Copy, Terminal, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface LogEntry {
-  type: 'log' | 'warn' | 'error' | 'info';
-  content: string;
-  timestamp: number;
-}
+import type { TerminalLogEntry } from '@/lib/run/terminal';
 
 interface TerminalOutputProps {
-  logs: LogEntry[];
+  logs: TerminalLogEntry[];
   isRunning?: boolean;
+  emptyMessage?: string;
 }
 
-export function TerminalOutput({ logs, isRunning = false }: TerminalOutputProps) {
+export function TerminalOutput({ logs, isRunning = false, emptyMessage = 'Run code to see output...' }: TerminalOutputProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -32,7 +28,7 @@ export function TerminalOutput({ logs, isRunning = false }: TerminalOutputProps)
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const getTypeColor = (type: LogEntry['type']) => {
+  const getTypeColor = (type: TerminalLogEntry['type']) => {
     switch (type) {
       case 'error':
         return 'text-[#ef4444]';
@@ -45,7 +41,7 @@ export function TerminalOutput({ logs, isRunning = false }: TerminalOutputProps)
     }
   };
 
-  const getTypePrefix = (type: LogEntry['type']) => {
+  const getTypePrefix = (type: TerminalLogEntry['type']) => {
     switch (type) {
       case 'error':
         return '✕';
@@ -79,6 +75,7 @@ export function TerminalOutput({ logs, isRunning = false }: TerminalOutputProps)
             variant="ghost"
             size="sm"
             onClick={handleCopy}
+            disabled={logs.length === 0}
             className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
           >
             {copied ? (
@@ -106,7 +103,7 @@ export function TerminalOutput({ logs, isRunning = false }: TerminalOutputProps)
               ) : (
                 <>
                   <span className="animate-pulse">{'>'}</span>
-                  <span>Run code to see output...</span>
+                  <span>{emptyMessage}</span>
                 </>
               )}
             </div>

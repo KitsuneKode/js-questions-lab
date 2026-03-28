@@ -156,7 +156,7 @@ export function CodePlayground({ question, onTimelineUpdate }: CodePlaygroundPro
         {timeline.length > 0 && (
           <div className="rounded-lg border border-border/30 bg-black/30 p-3">
             <div className="mb-2 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">
-              Event Loop Timeline
+              Event Loop Replay
             </div>
             <TimelineChart events={timeline} />
           </div>

@@ -7,18 +7,13 @@ import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import type { QuestionRecord } from '@/lib/content/types';
-import type { TimelineEvent } from '@/lib/run/types';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
+import type { TerminalLogEntry } from '@/lib/run/terminal';
+import { toTerminalLogEntries } from '@/lib/run/terminal';
 
 interface ScratchpadProps {
   question?: QuestionRecord;
   initialCode?: string;
-}
-
-interface LogEntry {
-  type: 'log' | 'warn' | 'error' | 'info';
-  content: string;
-  timestamp: number;
 }
 
 const DEFAULT_CODE = `// Welcome to the Scratchpad! 🎉
@@ -48,7 +43,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export function Scratchpad({ question, initialCode }: ScratchpadProps) {
   const [code, setCode] = useState(initialCode || DEFAULT_CODE);
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
   const runCode = useCallback(async () => {
@@ -59,33 +54,7 @@ export function Scratchpad({ question, initialCode }: ScratchpadProps) {
 
     try {
       const result = await runJavaScriptInSandbox(code);
-      
-      const newLogs: LogEntry[] = [];
-      const now = Date.now();
-      
-      result.logs.forEach((log, i) => {
-        let type: LogEntry['type'] = 'log';
-        if (log.startsWith('[warn]')) {
-          type = 'warn';
-        } else if (log.startsWith('[info]')) {
-          type = 'info';
-        }
-        newLogs.push({
-          type,
-          content: log.replace(/^\[(log|warn|error|info)\]\s*/, ''),
-          timestamp: now + i,
-        });
-      });
-      
-      result.errors.forEach((err, i) => {
-        newLogs.push({
-          type: 'error',
-          content: err,
-          timestamp: now + result.logs.length + i,
-        });
-      });
-      
-      setLogs(newLogs);
+      setLogs(toTerminalLogEntries(result));
     } catch (error) {
       setLogs([
         {

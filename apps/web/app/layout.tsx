@@ -9,6 +9,8 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { ProgressProvider } from '@/lib/progress/progress-context';
 import { NotificationManager } from '@/components/notification-manager';
+import { ScratchpadProvider } from '@/components/scratchpad/scratchpad-context';
+import { FloatingScratchpadGate } from '@/components/scratchpad/floating-scratchpad-gate';
 
 const geistSans = Geist({
   variable: '--font-body',
@@ -37,22 +39,25 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <html lang="en" className={`${geistDisplay.variable} ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
         <body className="grain-overlay antialiased">
           <ProgressProvider>
-            <SiteHeader />
-            {children}
-            <SiteFooter />
-            <NotificationManager />
-            <Toaster
-              theme="dark"
-              toastOptions={{
-                style: {
-                  background: 'hsl(0, 0%, 5%)',
-                  border: '1px solid hsl(0, 0%, 15%)',
-                  color: 'hsl(210, 20%, 98%)',
-                  fontFamily: 'var(--font-body), system-ui, sans-serif',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                },
-              }}
-            />
+            <ScratchpadProvider>
+              <SiteHeader />
+              {children}
+              <SiteFooter />
+              <NotificationManager />
+              <FloatingScratchpadGate />
+              <Toaster
+                theme="dark"
+                toastOptions={{
+                  style: {
+                    background: 'hsl(0, 0%, 5%)',
+                    border: '1px solid hsl(0, 0%, 15%)',
+                    color: 'hsl(210, 20%, 98%)',
+                    fontFamily: 'var(--font-body), system-ui, sans-serif',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                  },
+                }}
+              />
+            </ScratchpadProvider>
           </ProgressProvider>
         </body>
       </html>

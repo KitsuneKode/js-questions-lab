@@ -5,7 +5,8 @@ const RUNNER_TIMEOUT_MS = 5000;
 const WORKER_SOURCE = `
   const runnerScope = self;
 
-  // Mock basic browser globals to prevent ReferenceErrors in snippets
+  // Provide lightweight browser-ish globals so interview snippets can run
+  // without crashing on simple window/document references.
   const window = new Proxy(runnerScope, {
     get: (target, prop) => {
       if (prop === 'name') return '';
@@ -29,6 +30,10 @@ const WORKER_SOURCE = `
 
     const { runId, code } = event.data;
     let eventId = 0;
+    let pendingAsyncTasks = 0;
+    let completionPosted = false;
+    let scriptSettled = false;
+    let idleTimer = null;
 
     const toStringSafe = (value) => {
       if (typeof value === 'string') return value;
@@ -41,6 +46,39 @@ const WORKER_SOURCE = `
 
     const post = (payload) => {
       runnerScope.postMessage({ source: 'jsq-worker', runId, ...payload });
+    };
+
+    const clearIdleTimer = () => {
+      if (idleTimer !== null) {
+        originalClearTimeout(idleTimer);
+        idleTimer = null;
+      }
+    };
+
+    const markAsyncStart = () => {
+      pendingAsyncTasks += 1;
+      clearIdleTimer();
+    };
+
+    const maybePostDone = () => {
+      if (!scriptSettled || completionPosted || pendingAsyncTasks > 0) {
+        return;
+      }
+
+      clearIdleTimer();
+      idleTimer = originalSetTimeout(() => {
+        if (completionPosted || pendingAsyncTasks > 0) {
+          return;
+        }
+
+        completionPosted = true;
+        post({ type: 'done' });
+      }, 12);
+    };
+
+    const markAsyncEnd = () => {
+      pendingAsyncTasks = Math.max(0, pendingAsyncTasks - 1);
+      maybePostDone();
     };
 
     const pushTimeline = (kind, phase, label) => {
@@ -62,10 +100,18 @@ const WORKER_SOURCE = `
       error: console.error,
     };
     const originalSetTimeout = runnerScope.setTimeout.bind(runnerScope);
+    const originalClearTimeout = runnerScope.clearTimeout.bind(runnerScope);
     const originalQueueMicrotask = runnerScope.queueMicrotask
       ? runnerScope.queueMicrotask.bind(runnerScope)
       : (callback) => Promise.resolve().then(callback);
     const originalThen = Promise.prototype.then;
+
+    const flushAsyncWork = async () => {
+      for (let i = 0; i < 8; i += 1) {
+        await new Promise((resolve) => originalQueueMicrotask(resolve));
+        await new Promise((resolve) => originalSetTimeout(resolve, 0));
+      }
+    };
 
     console.log = (...args) => {
       pushTimeline('output', 'instant', 'console.log');
@@ -84,6 +130,7 @@ const WORKER_SOURCE = `
 
     runnerScope.setTimeout = (fn, delay = 0, ...args) => {
       pushTimeline('macro', 'enqueue', 'setTimeout');
+      markAsyncStart();
       return originalSetTimeout(() => {
         pushTimeline('macro', 'start', 'setTimeout callback');
         try {
@@ -92,12 +139,14 @@ const WORKER_SOURCE = `
           }
         } finally {
           pushTimeline('macro', 'end', 'setTimeout callback');
+          markAsyncEnd();
         }
       }, Number(delay));
     };
 
     runnerScope.queueMicrotask = (fn) => {
       pushTimeline('micro', 'enqueue', 'queueMicrotask');
+      markAsyncStart();
       return originalQueueMicrotask(() => {
         pushTimeline('micro', 'start', 'queueMicrotask callback');
         try {
@@ -106,6 +155,7 @@ const WORKER_SOURCE = `
           }
         } finally {
           pushTimeline('micro', 'end', 'queueMicrotask callback');
+          markAsyncEnd();
         }
       });
     };
@@ -117,12 +167,14 @@ const WORKER_SOURCE = `
         }
 
         pushTimeline('micro', 'enqueue', label);
+        markAsyncStart();
         return (...args) => {
           pushTimeline('micro', 'start', label);
           try {
             return callback(...args);
           } finally {
             pushTimeline('micro', 'end', label);
+            markAsyncEnd();
           }
         };
       };
@@ -132,11 +184,9 @@ const WORKER_SOURCE = `
 
     try {
       pushTimeline('sync', 'start', 'script');
-      const fn = new Function('"use strict";\\n' + code);
-      const result = fn();
-      if (result && typeof result.then === 'function') {
-        await result;
-      }
+      const fn = new Function('"use strict"; return (async () => {\\n' + code + '\\n})();');
+      await fn();
+      await flushAsyncWork();
       pushTimeline('sync', 'end', 'script');
     } catch (error) {
       post({
@@ -144,23 +194,32 @@ const WORKER_SOURCE = `
         message: error && error.stack ? error.stack : String(error),
       });
     } finally {
+      scriptSettled = true;
       console.log = originalConsole.log;
       console.warn = originalConsole.warn;
       console.error = originalConsole.error;
       runnerScope.setTimeout = originalSetTimeout;
+      runnerScope.clearTimeout = originalClearTimeout;
       runnerScope.queueMicrotask = originalQueueMicrotask;
       Promise.prototype.then = originalThen;
-      originalSetTimeout(() => {
-        post({ type: 'done' });
-      }, 40);
+      maybePostDone();
     }
   });
 `;
 
-function createWorker(): { worker: Worker; url: string } {
-  const blob = new Blob([WORKER_SOURCE], { type: 'text/javascript' });
-  const url = URL.createObjectURL(blob);
-  return { worker: new Worker(url, { name: 'jsq-runner' }), url };
+let workerUrl: string | null = null;
+
+function getWorkerUrl() {
+  if (!workerUrl) {
+    const blob = new Blob([WORKER_SOURCE], { type: 'text/javascript' });
+    workerUrl = URL.createObjectURL(blob);
+  }
+
+  return workerUrl;
+}
+
+function createWorker(): Worker {
+  return new Worker(getWorkerUrl(), { name: 'jsq-runner' });
 }
 
 export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunResult> {
@@ -172,7 +231,7 @@ export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunRe
     .replace(/^\s*export\s+default\s+/gm, '')
     .replace(/import\s*\(['"]([^'"]+)['"]\)/g, 'require($1)');
 
-  const { worker, url } = createWorker();
+  const worker = createWorker();
   const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const logs: string[] = [];
   const errors: string[] = [];
@@ -181,7 +240,6 @@ export async function runJavaScriptInSandbox(code: string): Promise<SandboxRunRe
   return new Promise((resolve) => {
     const cleanup = () => {
       worker.terminate();
-      URL.revokeObjectURL(url);
     };
 
     const timeout = window.setTimeout(() => {

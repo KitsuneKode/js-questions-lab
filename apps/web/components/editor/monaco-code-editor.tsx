@@ -29,6 +29,11 @@ const EDITOR_OPTIONS = {
   cursorBlinking: 'smooth' as const,
   cursorSmoothCaretAnimation: 'on' as const,
   smoothScrolling: true,
+  scrollbar: {
+    verticalScrollbarSize: 10,
+    horizontalScrollbarSize: 10,
+    alwaysConsumeMouseWheel: false,
+  },
   bracketPairColorization: { enabled: true },
   guides: {
     bracketPairs: true,

@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ChevronLeft, 
   ChevronRight, 
   Play, 
-  RotateCcw, 
   CheckCircle2, 
   CircleAlert,
   Terminal,
   Sparkles,
   Bookmark,
-  Code2,
-  Zap
+  Zap,
+  ChevronDown,
+  Activity
 } from 'lucide-react';
 
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
@@ -22,24 +22,23 @@ import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Streamdown } from 'streamdown';
 import type { QuestionRecord } from '@/lib/content/types';
 import type { TimelineEvent } from '@/lib/run/types';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
+import type { TerminalLogEntry } from '@/lib/run/terminal';
+import { toTerminalLogEntries } from '@/lib/run/terminal';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from '@/components/ui/resizable-panel';
+import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { TimelineChart } from '@/components/visualization/timeline-chart';
 
 interface QuestionIDEClientProps {
   question: QuestionRecord;
   prevId: number | null;
   nextId: number | null;
-}
-
-interface LogEntry {
-  type: 'log' | 'warn' | 'error' | 'info';
-  content: string;
-  timestamp: number;
 }
 
 const EDITOR_DEFAULT_CODE = `// Write your code here
@@ -60,11 +59,13 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   
   const cleanPromptMarkdown = question.promptMarkdown.replace(/```[a-z]*\n[\s\S]*?\n```/g, '').trim();
+  const questionCode = question.codeBlocks[0]?.code || EDITOR_DEFAULT_CODE;
 
-  const [code, setCode] = useState(question.codeBlocks[0]?.code || EDITOR_DEFAULT_CODE);
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const { openScratchpad } = useScratchpad();
+  const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState<'practice' | 'scratchpad'>('practice');
+  const [runnerError, setRunnerError] = useState<string | null>(null);
 
   const { ready, item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
 
@@ -72,41 +73,35 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
   const isCorrect = selected !== null ? selected === question.correctOption : hasSubmittedRecall;
 
   const runCode = useCallback(async () => {
-    if (!code.trim()) return;
+    if (!questionCode.trim()) return;
+
+    if (!isAnswered) {
+      return;
+    }
+
     setIsRunning(true);
     setLogs([]);
+    setTimeline([]);
+    setRunnerError(null);
 
     try {
-      const result = await runJavaScriptInSandbox(code);
-      const newLogs: LogEntry[] = [];
-      const now = Date.now();
-      
-      result.logs.forEach((log, i) => {
-        let type: LogEntry['type'] = 'log';
-        if (log.startsWith('[warn]')) type = 'warn';
-        else if (log.startsWith('[info]')) type = 'info';
-        newLogs.push({
-          type,
-          content: log.replace(/^\[(log|warn|error|info)\]\s*/, ''),
-          timestamp: now + i,
-        });
-      });
-      
-      result.errors.forEach((err, i) => {
-        newLogs.push({
-          type: 'error',
-          content: err,
-          timestamp: now + result.logs.length + i,
-        });
-      });
-      
-      setLogs(newLogs);
+      const result = await runJavaScriptInSandbox(questionCode);
+      setLogs(toTerminalLogEntries(result));
+      setTimeline(result.timeline);
+
+      if (result.errors.length > 0 && result.logs.length === 0) {
+        setRunnerError(result.errors[0] ?? null);
+      } else {
+        setRunnerError(null);
+      }
     } catch (error) {
-      setLogs([{ type: 'error', content: String(error), timestamp: Date.now() }]);
+      const message = String(error);
+      setRunnerError(message);
+      setLogs([{ type: 'error', content: message, timestamp: Date.now() }]);
     } finally {
       setIsRunning(false);
     }
-  }, [code]);
+  }, [isAnswered, questionCode]);
 
   const handleRecallSubmit = useCallback(() => {
     if (!recallAnswer.trim()) return;
@@ -129,11 +124,6 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
     setSelected(optionKey);
     saveAttempt(optionKey, key === question.correctOption ? 'correct' : 'incorrect');
   }, [isAnswered, question.correctOption, saveAttempt]);
-
-  const resetCode = useCallback(() => {
-    setCode(question.codeBlocks[0]?.code || EDITOR_DEFAULT_CODE);
-    setLogs([]);
-  }, [question.codeBlocks]);
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col">
@@ -193,110 +183,107 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
       <ResizablePanelGroup direction="horizontal" className="flex-1">
         {/* Left: Question & Context */}
         <ResizablePanel defaultSize={40} minSize={25} className="flex flex-col">
-          <div className="flex-1 overflow-y-auto p-6">
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'practice' | 'scratchpad')}>
-              <TabsList className="mb-4 bg-transparent">
-                <TabsTrigger value="practice" className="gap-1.5 text-xs">
-                  <Code2 className="h-3 w-3" />
-                  Question
-                </TabsTrigger>
-                <TabsTrigger value="scratchpad" className="gap-1.5 text-xs">
-                  <Terminal className="h-3 w-3" />
-                  Scratchpad
-                </TabsTrigger>
-              </TabsList>
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {cleanPromptMarkdown && (
+               <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
+                 <Streamdown>{cleanPromptMarkdown}</Streamdown>
+               </div>
+            )}
 
-              <TabsContent value="practice" className="mt-0 space-y-4">
-                {cleanPromptMarkdown && (
-                  <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
-                    <Streamdown>{cleanPromptMarkdown}</Streamdown>
-                  </div>
-                )}
-
-                {question.codeBlocks.length > 0 && (
-                  <div className="flex flex-col h-64 rounded-xl border border-border/30 overflow-hidden bg-[#1e1e1e]">
-                    <div className="flex items-center justify-between px-3 py-1.5 bg-muted/20 border-b border-border/30">
-                      <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Question Code</span>
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => {
-                            setCode(question.codeBlocks[0]?.code || '');
-                            setActiveTab('scratchpad');
-                          }}
-                          className="h-6 text-[10px]"
-                        >
-                          Copy to Scratchpad
+            {question.codeBlocks.length > 0 && (
+              <div className="flex h-[18rem] flex-col overflow-hidden rounded-xl border border-border/30 bg-[#1e1e1e] md:h-[22rem]">
+                <div className="flex items-center justify-between px-3 py-1.5 bg-muted/20 border-b border-border/30">
+                  <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Question Code</span>
+                  <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 px-2">
+                           Scratchpad <ChevronDown className="h-3 w-3" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={runCode}
-                          disabled={isRunning}
-                          className="h-6 text-[10px] gap-1"
-                        >
-                          <Play className="h-3 w-3" />
-                          {isRunning ? 'Running...' : 'Run'}
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex-1 overflow-hidden">
-                      <MonacoCodeEditor 
-                        path={`question-${question.id}.js`}
-                        value={question.codeBlocks[0]?.code || ''} 
-                        onChange={() => {}} 
-                        readOnly 
-                      />
-                    </div>
-                  </div>
-                )}
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => openScratchpad(questionCode, 'replace')}>
+                          <Terminal className="h-4 w-4 mr-2" />
+                          Open Scratchpad
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => openScratchpad(questionCode, 'append')}>
+                          <Terminal className="h-4 w-4 mr-2" />
+                          Append to Scratchpad
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
 
-                <AnimatePresence>
-                  {isAnswered && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-b from-card/60 to-background/80 p-6"
+                    <Button
+                      size="sm"
+                      onClick={runCode}
+                      disabled={!isAnswered || isRunning}
+                      className="h-6 text-[10px] gap-1"
                     >
-                      <div className="absolute top-0 right-0 p-4 opacity-5">
-                        <Sparkles className="h-20 w-20" />
-                      </div>
-                      <h3 className="mb-4 font-display text-lg font-medium tracking-tight text-foreground flex items-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-primary" />
-                        Explanation
-                      </h3>
-                      <div className="markdown text-sm leading-relaxed text-muted-foreground/80">
-                        <Streamdown>{question.explanationMarkdown}</Streamdown>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </TabsContent>
-
-              <TabsContent value="scratchpad" className="mt-0">
-                <div className="flex flex-col h-[calc(100vh-20rem)]">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-medium text-muted-foreground">Free Code Editor</span>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" onClick={resetCode} className="h-7 text-xs">
-                        <RotateCcw className="h-3 w-3 mr-1" />
-                        Reset
-                      </Button>
-                      <Button size="sm" onClick={runCode} disabled={isRunning} className="h-7 text-xs gap-1.5">
-                        <Play className="h-3 w-3" />
-                        {isRunning ? 'Running...' : 'Run'}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex-1 rounded-lg border border-border/30 overflow-hidden">
-                    <MonacoCodeEditor path={`scratchpad-${question.id}.js`} value={code} onChange={setCode} onRun={runCode} />
-                  </div>
-                  <div className="h-36 mt-3">
-                    <TerminalOutput logs={logs} isRunning={isRunning} />
+                      <Play className="h-3 w-3" />
+                      {isRunning ? 'Running...' : 'Run Code'}
+                    </Button>
                   </div>
                 </div>
-              </TabsContent>
-            </Tabs>
+                <div className="min-h-0 flex-1 overflow-hidden">
+                    <MonacoCodeEditor 
+                    path={`question-${question.id}.js`}
+                    value={questionCode} 
+                    onChange={() => {}} 
+                    readOnly 
+                  />
+                </div>
+              </div>
+            )}
+
+            {question.codeBlocks.length > 0 && (
+              <p className="mt-2 text-[11px] text-muted-foreground/65">
+                {!isAnswered
+                  ? 'Submit an answer first to unlock the isolated worker runtime and event-loop tools.'
+                  : runnerError
+                    ? `Last run failed: ${runnerError}`
+                    : 'Run the snippet here or send it to Scratchpad to experiment without losing the original.'}
+              </p>
+            )}
+
+            {question.codeBlocks.length > 0 && (
+              <div className="mt-4 flex flex-col h-48 rounded-lg overflow-hidden border border-border/30 bg-black/40">
+                <TerminalOutput
+                  logs={logs}
+                  isRunning={isRunning}
+                  emptyMessage={
+                    !isAnswered
+                      ? 'Answer first to unlock the isolated worker runtime.'
+                      : runnerError
+                        ? runnerError
+                        : 'Run code to inspect the output.'
+                  }
+                />
+              </div>
+            )}
+
+            {question.codeBlocks.length > 0 && (
+              <Dialog>
+                 <DialogTrigger asChild>
+                   <Button
+                     variant="secondary"
+                     disabled={timeline.length === 0}
+                     className="w-full mt-2 gap-2 text-xs border border-border/40 disabled:cursor-not-allowed disabled:opacity-50"
+                   >
+                     <Activity className="h-3 w-3" />
+                     Event Loop Replay
+                   </Button>
+                 </DialogTrigger>
+                 <DialogContent className="max-h-[88vh] w-[min(96vw,76rem)] max-w-5xl overflow-y-auto border-white/10 bg-[#040405] p-4 md:p-6">
+                    <DialogHeader>
+                       <DialogTitle>Event Loop Replay</DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4 pb-2">
+                       <TimelineChart events={timeline} />
+                    </div>
+                 </DialogContent>
+              </Dialog>
+            )}
           </div>
         </ResizablePanel>
 
@@ -387,7 +374,7 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 space-y-3 overflow-hidden"
+                    className="mt-6 space-y-6 overflow-hidden"
                   >
                     <div className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${
                       isCorrect
@@ -402,6 +389,19 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
                       <span>
                         {isCorrect ? 'Correct!' : `Answer: ${question.correctOption}`}
                       </span>
+                    </div>
+
+                    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-b from-card/60 to-background/80 p-6">
+                      <div className="absolute top-0 right-0 p-4 opacity-5">
+                        <Sparkles className="h-20 w-20" />
+                      </div>
+                      <h3 className="mb-4 font-display text-lg font-medium tracking-tight text-foreground flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                        Explanation
+                      </h3>
+                      <div className="markdown text-sm leading-relaxed text-muted-foreground/80">
+                        <Streamdown>{question.explanationMarkdown}</Streamdown>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2">

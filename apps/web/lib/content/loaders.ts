@@ -4,29 +4,14 @@ import path from 'node:path';
 
 import type { QuestionRecord, QuestionsManifest } from '@/lib/content/types';
 
-function findProjectRoot(startPath: string): string {
-  let current = startPath;
-  for (let i = 0; i < 10; i++) {
-    const contentPath = path.join(current, 'content', 'generated');
-    if (fs.existsSync(contentPath)) {
-      return current;
-    }
-    const parent = path.dirname(current);
-    if (parent === current) break;
-    current = parent;
-  }
-  return startPath;
-}
+const DATA_DIRECTORIES = [
+  path.resolve(/* turbopackIgnore: true */ process.cwd(), 'content', 'generated'),
+  path.resolve(/* turbopackIgnore: true */ process.cwd(), '..', '..', 'content', 'generated'),
+];
 
 function resolveDataFile(relativePath: string): string {
-  const projectRoot = findProjectRoot(process.cwd());
-  
-  const candidates = [
-    path.resolve(projectRoot, relativePath),
-    path.resolve(projectRoot, 'apps/web', relativePath),
-  ];
-
-  for (const candidate of candidates) {
+  for (const directory of DATA_DIRECTORIES) {
+    const candidate = path.resolve(directory, path.basename(relativePath));
     if (fs.existsSync(candidate)) {
       return candidate;
     }
