@@ -50,6 +50,12 @@ Deliverables:
 - decision on whether StackBlitz remains or is removed (removed to reduce bundle size)
 - cleaner runtime interfaces and tests
 
+Operational notes:
+
+- Keep the default runtime browser-native and worker-first.
+- Do not pursue full Node.js compatibility in the browser as a product requirement.
+- If stronger isolation is needed in the future, treat it as a separate server-side or host-managed runtime track instead of complicating the default practice loop.
+
 ## Milestone 6: Content And Product Depth (Completed)
 
 Objective:

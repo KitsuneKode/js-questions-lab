@@ -17,6 +17,7 @@
 - The content pipeline is usable and produces generated JSON artifacts, rendering Markdown safely on the client via `streamdown`.
 - The question list and question detail flows are in place.
 - A worker-first JavaScript runtime handles snippet execution natively (including browser globals).
+- The scratchpad now lives as a lazy-mounted bottom sheet instead of a blocking always-mounted tool surface.
 - Local-first progress tracking is wired through the app.
 - The dashboard has recommendation and review-oriented primitives instead of a purely decorative shell.
 - The stack is migrated to Next 16 (Turbopack) and Tailwind CSS v4.
@@ -45,6 +46,8 @@
 - Complete migration to Next 16 and Tailwind 4.
 - Split-pane "workstation" layout implemented on the question detail page.
 - Worker-first JavaScript runner in `apps/web/lib/run/sandbox.ts` mock browser globals.
+- Added diagnostics-style event loop visualizer with physical spring animations and a vertical call stack.
+- Browser execution should remain browser-native. `secure-exec` and Node-stdlib emulation are not the default product path for the client runner.
 - StackBlitz has been removed to enforce the native execution model.
 - Progress state centralized in `apps/web/lib/progress/progress-context.tsx`
 - Dashboard upgraded into a practice hub with:
@@ -91,11 +94,14 @@ The strongest path through the product is:
 ### Stack / Platform
 
 - The platform is stable on Next 16 and Tailwind 4.
-- Linting uses flat config. 
+- Linting uses flat config.
 
 ### Runtime / Playground
 
 - Worker runner is the primary environment.
+- The product does not want a fake in-browser Node.js environment. Aim for lightweight worker execution with small browser-friendly shims only.
+- If async snippets appear to "run but do nothing", investigate worker completion/drain logic first. Promise-heavy snippets that spawn background async work without top-level `await` are the current sharp edge.
+- The scratchpad should stay a quick bottom sheet for experimentation, not a second full IDE competing with the question screen.
 - StackBlitz has been removed.
 - Future work may involve building AST representations or more complex data visualizers.
 
@@ -141,6 +147,7 @@ If making one of these calls, document the reasoning in the PR or handoff notes.
 - Do not treat the upstream README as editable product content; the generated JSON is the app contract.
 - Do not weaken the parser without adding validation.
 - Do not replace worker execution with main-thread eval.
+- Do not spend product time trying to force a full Node runtime into the browser client. If stronger isolation is needed, separate it from the default practice loop.
 
 ## Validation Checklist
 
@@ -170,7 +177,10 @@ If changing content pipeline:
 - `AGENTS.md`
 - `CLAUDE.md`
 - `apps/web/app/questions/[id]/page.tsx`
+- `apps/web/components/ide/question-ide-client.tsx`
+- `apps/web/components/scratchpad/floating-scratchpad.tsx`
 - `apps/web/components/question-client-shell.tsx`
 - `apps/web/components/code-playground.tsx`
 - `apps/web/lib/run/sandbox.ts`
+- `apps/web/lib/run/terminal.ts`
 - `apps/web/lib/progress/progress-context.tsx`

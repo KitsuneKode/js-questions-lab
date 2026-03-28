@@ -7,6 +7,7 @@ This repository is no longer just the upstream JavaScript questions source. It n
 **The canonical source is `content/source/README.upstream.md`** — synced directly from [Lydia Hallie's javascript-questions](https://github.com/lydiahallie/javascript-questions) repository. This file is the source of truth.
 
 The content pipeline generates:
+
 - `content/generated/questions.v1.json` — parsed question data
 - `content/generated/manifest.v1.json` — metadata/index
 
@@ -24,6 +25,7 @@ All generated content derives from `README.upstream.md`. Do not edit generated f
   - run code
   - inspect event-loop visualization
 - Runtime execution is entirely worker-based for all JavaScript snippets, mocking browser globals natively. StackBlitz has been fully removed.
+- The scratchpad is a lazy-mounted bottom sheet for fast experiments. It should stay lightweight, feel secondary to the main question surface, and preserve the original snippet as the reset baseline when opened from a question.
 - Local progress is the primary persistence layer. Clerk + Supabase are optional sync layers when configured.
 
 ## Validated Commands
@@ -52,6 +54,9 @@ These commands were recently verified:
 - Questions list: `apps/web/app/questions/page.tsx`
 - Question detail: `apps/web/app/questions/[id]/page.tsx`
 - Runtime runner: `apps/web/lib/run/sandbox.ts`
+- Scratchpad sheet: `apps/web/components/scratchpad/floating-scratchpad.tsx`
+- Scratchpad state: `apps/web/components/scratchpad/scratchpad-context.tsx`
+- Terminal formatting helper: `apps/web/lib/run/terminal.ts`
 - Playground UI: `apps/web/components/code-playground.tsx`
 - Progress store: `apps/web/lib/progress/progress-context.tsx`
 - Dashboard hub: `apps/web/components/dashboard/dashboard-shell.tsx`
@@ -93,6 +98,7 @@ Prefer:
 - Keep the product inside the repo under `apps/web`.
 - Keep content generation at repo root for easy syncing and reuse.
 - Worker-based execution is the exclusive runtime model for snippets.
+- Do not treat `secure-exec` or Node polyfill stacks as the default browser runtime path. If a harder isolation model is needed later, build it as a separate server-side or host-managed execution path.
 - StackBlitz has been removed to reduce bundle size and enforce practice focus.
 - Guest mode remains fully usable without auth.
 - Auth is treated as sync/identity, not as a requirement for basic learning.
@@ -103,6 +109,7 @@ Prefer:
 - Root scripts are wired and working.
 - Dashboard analytics and progress model exist and are usable.
 - Question detail page operates as a focused split-pane workstation.
+- Event loop visualization has a polished industrial/diagnostics aesthetic with a vertical call stack.
 - App runs on Next 16 (Turbopack) and Tailwind v4, styled consistently without heavy generic dashboard bloat.
 
 ## Known Gaps / Next Priorities
@@ -110,6 +117,7 @@ Prefer:
 - Adding richer context or external links into explanations where necessary, though this requires upstream PRs or a local overlay layer.
 - Expanding offline capabilities or PWA features.
 - Continuing to refine the code runner's AST parsing if even deeper concept visualizations are needed.
+- Tightening worker completion behavior for promise-heavy snippets that launch async work without top-level `await`. If touching the runner, prefer idle/drain detection over patching broad Promise internals.
 
 ## Product Direction
 
@@ -132,6 +140,7 @@ Avoid:
 ## Before You Make Major Changes
 
 - Preserve the worker-first runtime unless there is a very strong reason to change it.
+- Do not try to recreate a full Node.js runtime in the browser client. The product goal is fast, predictable interview-snippet execution, not Node parity.
 - Keep root-level scripts working.
 - Treat content pipeline integrity as non-negotiable.
 - If migrating to Next 16 / Tailwind 4, do it as a coherent pass, not piecemeal.
