@@ -1,94 +1,147 @@
 # JS Mastery Atlas
 
-JS Mastery Atlas is an interactive JavaScript interview practice app built from Lydia Hallie's
-`javascript-questions` dataset. It turns the original question bank into a focused practice product
-with runnable code, explanation-first learning, event-loop visualization, and progress tracking.
+> Practice JavaScript interview questions like a product, not a static README.
 
-## What It Offers
+JS Mastery Atlas turns Lydia Hallie's `javascript-questions` dataset into an interactive study
+experience with runnable code, explanation-first learning, event-loop visualization, and progress
+tracking.
 
-- Fast question browsing and focused detail pages
-- Quiz and practice flows built around explanation, retry, and review
-- Client-side worker sandbox for runnable JavaScript snippets
-- Event-loop visualization for async questions
-- Local-first progress tracking, with optional auth and sync layers
+> [!NOTE]
+> This repository is both a product app and a content pipeline.
+> The app lives in `apps/web`, while the canonical source content lives in
+> `content/source/README.upstream.md`.
 
-## Repo Shape
+## ✨ At A Glance
 
-- `apps/web`: Next.js 16 app for the product experience
-- `content/source`: canonical upstream source snapshot from Lydia Hallie's repo
-- `content/generated`: parsed JSON consumed by the app
-- `scripts`: sync and parsing scripts for the content pipeline
-- `docs`: handoff notes, roadmap documents, and implementation references
+| Topic | Details |
+| --- | --- |
+| 🎯 Goal | Make JavaScript interview practice feel focused, interactive, and repeatable |
+| 🧠 Core loop | Browse -> answer -> reveal -> run -> inspect -> review |
+| ⚙️ Runtime | Worker-based client-side sandbox for runnable snippets |
+| 🧾 Source | Lydia Hallie's `javascript-questions` synced into `content/source/README.upstream.md` |
+| 💾 Progress | Local-first by default, with optional auth and sync layers |
 
-## Getting Started
+## Why This Exists
 
-### Prerequisites
+The original Lydia Hallie repo is an incredible knowledge source, but reading a long markdown file
+is a very different experience from practicing for interviews. This project is about turning that
+source material into something you can actively use:
+
+- 🔍 find questions quickly
+- 📝 commit to an answer before seeing the explanation
+- ▶️ run the snippet in a browser-friendly sandbox
+- 🧭 inspect async behavior with visual feedback
+- 🔁 come back later through progress and review loops
+
+## 🧩 What You Can Do
+
+- Browse a focused question library instead of scrolling through one giant document
+- Read explanations in a cleaner product surface
+- Run JavaScript snippets in a client-side worker sandbox
+- Use the event-loop visualizer for runtime-heavy questions
+- Track progress locally and keep guest mode fully usable
+
+## 🛠️ Stack
+
+- Next.js 16 App Router
+- React 19
+- Tailwind CSS v4
+- Bun workspaces and root scripts
+- `streamdown` for safe client-side markdown rendering
+- Clerk and Supabase as optional identity and sync layers
+
+## 📁 Repo Map
+
+```text
+apps/web            Next.js app for the product experience
+content/source      Synced upstream source snapshot
+content/generated   Parsed JSON consumed by the app
+scripts             Sync and parsing scripts
+docs                Handoff notes, roadmaps, and supporting references
+```
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
 
 - Bun `1.3.9`
 - Node.js `18+`
 
-### Local Setup
+### 2. Install Dependencies
 
 ```bash
 bun install
 ```
 
+### 3. Optional Environment Setup
+
 Guest mode is the default experience. If you want to test auth or sync features, copy
-`.env.example` to `.env.local` and fill in the Clerk and Supabase values.
+`.env.example` to `.env.local` and provide the Clerk and Supabase values.
 
-### Run The App
+### 4. Run The App
 
 ```bash
 bun run dev
 ```
 
-Open `http://localhost:3000`.
+Then open `http://localhost:3000`.
 
-## Core Commands
+## 🧪 Core Commands
 
-```bash
-bun run dev
-bun run build
-bun run start
-bun run lint
-bun run typecheck
-bun run parse:questions
-bun run sync:upstream
-bun run content:refresh
-```
+| Command | What it does |
+| --- | --- |
+| `bun run dev` | Start the app in development mode |
+| `bun run build` | Create a production build |
+| `bun run start` | Run the production build |
+| `bun run lint` | Run the repo lint checks |
+| `bun run typecheck` | Run TypeScript checks |
+| `bun run parse:questions` | Parse the synced upstream source into generated JSON |
+| `bun run sync:upstream` | Refresh the upstream Lydia source snapshot |
+| `bun run content:refresh` | Sync upstream content and regenerate JSON in one step |
 
-## Documentation Map
+## 📚 Documentation Map
 
-- `CONTRIBUTING.md`: contributor workflow, validation, and PR expectations
-- `docs/content-pipeline.md`: source-of-truth, sync, parsing, and generated artifact rules
-- `docs/agent-handoff.md`: current repo state and guardrails for future engineering work
-- `docs/rebuild-roadmap.md`: completed V1 rebuild milestones and operating constraints
-- `docs/v2-roadmap-mastery.md`: next major product direction
+| Doc | Why you would read it |
+| --- | --- |
+| `CONTRIBUTING.md` | Setup, workflow, validation, and PR expectations |
+| `docs/content-pipeline.md` | Source-of-truth, sync flow, parser flow, and generated artifact rules |
+| `docs/agent-handoff.md` | Current repo state, guardrails, and engineering context |
+| `docs/rebuild-roadmap.md` | Completed V1 rebuild milestones and operating constraints |
+| `docs/v2-roadmap-mastery.md` | The next major product direction |
 
-## Current Focus
+## 🎯 Current Focus
 
-- Active recall practice modes that move beyond passive multiple choice
-- Stronger review loops and spaced repetition for retention
+- Active recall modes that move beyond passive multiple choice
+- Stronger review loops and spaced repetition
 - Curated paths and better recommendation flows
 - Deeper visual explanations for runtime-heavy concepts
 
-## Future Improvements
+## 🌱 Future Improvements
 
 - Richer explanation context and related-reference linking
 - Offline or PWA-friendly workflows
 - Multi-source content ingestion beyond the Lydia dataset
 
-## Source Content And Attribution
+## 🙏 Source Content And Attribution
 
-The canonical source snapshot lives in `content/source/README.upstream.md`, synced from
+This project is built on top of
 [Lydia Hallie's `javascript-questions`](https://github.com/lydiahallie/javascript-questions).
-Generated app data lives in `content/generated/` and is derived from that upstream snapshot.
 
-Do not edit generated files directly. If the source material itself needs correction, prefer the
-upstream repository or a documented local overlay approach rather than hand-editing the synced
-snapshot.
+The canonical source snapshot in this repo lives at `content/source/README.upstream.md`, and the
+app reads generated data from `content/generated/`.
 
-## Contributing
+> [!IMPORTANT]
+> Do not edit generated files directly.
+> If the source material itself needs correction, prefer the upstream repository or a documented
+> local overlay strategy instead of hand-editing the synced snapshot.
 
-Contributions are welcome across the app, documentation, tooling, and product polish. Start with
-`CONTRIBUTING.md` for setup, workflow, validation, and PR expectations.
+## 🤝 Contributing
+
+Contributions are welcome across the app, docs, tooling, and product polish.
+
+Start with `CONTRIBUTING.md` for:
+
+- local setup
+- validation commands
+- content-pipeline rules
+- PR expectations
