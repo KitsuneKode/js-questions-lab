@@ -1,6 +1,9 @@
 'use client';
 
-import { ArrowRight, PieChart } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconChartPie as PieChart,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import {
   PolarAngleAxis,

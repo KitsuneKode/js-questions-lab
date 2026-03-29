@@ -1,6 +1,10 @@
 'use client';
 
-import { ArrowRight, Bookmark, Terminal } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconBookmark as Bookmark,
+  IconTerminal2 as Terminal,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import type { QuestionRecord } from '@/lib/content/types';

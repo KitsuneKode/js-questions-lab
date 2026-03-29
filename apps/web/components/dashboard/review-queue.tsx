@@ -1,6 +1,9 @@
 'use client';
 
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconRotateClockwise2 as RotateCcw,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import type { QuestionRecord } from '@/lib/content/types';
 

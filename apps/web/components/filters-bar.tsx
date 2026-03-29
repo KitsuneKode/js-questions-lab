@@ -1,6 +1,10 @@
 'use client';
 
-import { Flame, Search, X } from 'lucide-react';
+import {
+  IconFlame as Flame,
+  IconSearch as Search,
+  IconX as X,
+} from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';

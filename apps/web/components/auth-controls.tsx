@@ -1,7 +1,7 @@
 'use client';
 
 import { Show, UserButton } from '@clerk/nextjs';
-import { LogIn } from 'lucide-react';
+import { IconLogin2 as LogIn } from '@tabler/icons-react';
 import Link from 'next/link';
 import { clerkEnabled } from '@/lib/auth-utils';
 

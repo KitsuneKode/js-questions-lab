@@ -1,6 +1,10 @@
 'use client';
 
-import { Activity, Compass, Target } from 'lucide-react';
+import {
+  IconActivity as Activity,
+  IconCompass as Compass,
+  IconTarget as Target,
+} from '@tabler/icons-react';
 import type { OverallStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';
 

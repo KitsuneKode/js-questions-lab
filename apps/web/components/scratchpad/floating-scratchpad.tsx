@@ -1,6 +1,11 @@
 'use client';
 
-import { Activity, Play, RotateCcw, Sparkles } from 'lucide-react';
+import {
+  IconActivity as Activity,
+  IconPlayerPlay as Play,
+  IconRotateClockwise2 as RotateCcw,
+  IconSparkles as Sparkles,
+} from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';

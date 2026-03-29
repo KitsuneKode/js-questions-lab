@@ -1,6 +1,10 @@
 'use client';
 
-import { Copy, Loader2, Terminal } from 'lucide-react';
+import {
+  IconCopy as Copy,
+  IconLoader2 as Loader2,
+  IconTerminal2 as Terminal,
+} from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import type { TerminalLogEntry } from '@/lib/run/terminal';

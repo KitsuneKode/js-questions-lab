@@ -1,8 +1,8 @@
 'use client';
 
 import type { OnMount } from '@monaco-editor/react';
+import { IconLoader2 as Loader2 } from '@tabler/icons-react';
 import { Editor } from '@monaco-editor/react';
-import { Loader2 } from 'lucide-react';
 import { useCallback, useRef } from 'react';
 
 interface MonacoEditorProps {

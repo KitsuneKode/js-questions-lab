@@ -1,6 +1,12 @@
 'use client';
 
-import { AlertTriangle, MousePointerClick, RotateCcw, Target, Waypoints } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle,
+  IconHandClick as MousePointerClick,
+  IconRotateClockwise2 as RotateCcw,
+  IconRoute2 as Waypoints,
+  IconTarget as Target,
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { TerminalOutput } from '@/components/terminal/terminal-output';

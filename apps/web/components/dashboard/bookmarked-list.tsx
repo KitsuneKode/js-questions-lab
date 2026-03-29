@@ -1,6 +1,11 @@
 'use client';
 
-import { ArrowRight, Bookmark, CheckCircle2, XCircle } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconBookmark as Bookmark,
+  IconCircleCheck as CheckCircle2,
+  IconCircleX as XCircle,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { QuestionRecord } from '@/lib/content/types';

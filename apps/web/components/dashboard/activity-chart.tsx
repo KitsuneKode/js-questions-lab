@@ -1,6 +1,6 @@
 'use client';
 
-import { Activity } from 'lucide-react';
+import { IconActivity as Activity } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import type { DailyActivity } from '@/lib/progress/analytics';
 

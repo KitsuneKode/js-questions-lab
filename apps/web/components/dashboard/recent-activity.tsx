@@ -1,6 +1,11 @@
 'use client';
 
-import { ArrowRight, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconCircleCheck as CheckCircle2,
+  IconClock as Clock,
+  IconCircleX as XCircle,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';

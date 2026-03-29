@@ -1,17 +1,17 @@
 'use client';
 
 import {
-  Activity,
-  ChevronLeft,
-  ChevronRight,
-  Clock3,
-  Layers3,
-  Pause,
-  Play,
-  RotateCcw,
-  Sparkles,
-  Terminal,
-} from 'lucide-react';
+  IconActivity as Activity,
+  IconChevronLeft as ChevronLeft,
+  IconChevronRight as ChevronRight,
+  IconClock as Clock3,
+  IconPlayerPause as Pause,
+  IconPlayerPlay as Play,
+  IconRotateClockwise2 as RotateCcw,
+  IconSparkles as Sparkles,
+  IconStack3 as Layers3,
+  IconTerminal2 as Terminal,
+} from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 

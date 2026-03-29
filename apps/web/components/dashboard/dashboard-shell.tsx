@@ -1,6 +1,10 @@
 'use client';
 
-import { ArrowRight, Library, Sparkles } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+  IconLibrary as Library,
+  IconSparkles as Sparkles,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ActivityChart } from '@/components/dashboard/activity-chart';

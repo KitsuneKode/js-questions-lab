@@ -1,6 +1,6 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { IconSearch as Search } from '@tabler/icons-react';
 import { useState } from 'react';
 import { QuestionCard } from '@/components/question-card';
 import type { QuestionRecord } from '@/lib/content/types';

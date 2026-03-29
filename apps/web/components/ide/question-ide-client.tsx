@@ -1,18 +1,18 @@
 'use client';
 
 import {
-  Activity,
-  Bookmark,
-  CheckCircle2,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  CircleAlert,
-  Play,
-  Sparkles,
-  Terminal,
-  Zap,
-} from 'lucide-react';
+  IconActivity as Activity,
+  IconAlertCircle as CircleAlert,
+  IconBolt as Zap,
+  IconBookmark as Bookmark,
+  IconChevronDown as ChevronDown,
+  IconChevronLeft as ChevronLeft,
+  IconChevronRight as ChevronRight,
+  IconCircleCheck as CheckCircle2,
+  IconPlayerPlay as Play,
+  IconSparkles as Sparkles,
+  IconTerminal2 as Terminal,
+} from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
