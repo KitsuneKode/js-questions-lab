@@ -2,7 +2,6 @@ import {
   IconArrowUpRight,
   IconBrandGithub,
   IconBrandX,
-  IconFileCode,
   IconHammer,
   IconHeartHandshake,
   IconLayersIntersect,
@@ -10,16 +9,23 @@ import {
 } from '@tabler/icons-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 import { Container } from '@/components/container';
-import { getManifest } from '@/lib/content/loaders';
-import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import { getLocaleIndex, getManifest } from '@/lib/content/loaders';
+import { LOCALE_LABELS, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { withLocale } from '@/lib/locale-paths';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata: Metadata = {
-  title: `Credits - ${siteConfig.name}`,
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: LocaleCode }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'credits' });
+  return { title: `${t('label')} — ${siteConfig.name}` };
+}
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
@@ -29,54 +35,62 @@ interface CreditsPageProps {
   params: Promise<{ locale: LocaleCode }>;
 }
 
-const additions = [
-  'a focused question library instead of a long README scroll',
-  'worker-based runnable snippets that stay inside the app',
-  'event-loop visualization for runtime-heavy questions',
-  'progress, review cues, bookmarks, and a cleaner practice loop',
-];
+const LOCALE_FLAGS: Record<LocaleCode, string> = {
+  en: '🇺🇸',
+  es: '🇪🇸',
+  fr: '🇫🇷',
+  de: '🇩🇪',
+  ja: '🇯🇵',
+  'pt-BR': '🇧🇷',
+};
 
 export default async function CreditsPage({ params }: CreditsPageProps) {
   const { locale } = await params;
   const manifest = getManifest(locale);
+  const localeIndex = getLocaleIndex();
+  const t = await getTranslations({ locale, namespace: 'credits' });
+
+  const additions = [t('addition1'), t('addition2'), t('addition3'), t('addition4')] as const;
+  const localeAvailability = new Map(
+    (localeIndex?.available ?? []).map((entry) => [entry.code, entry]),
+  );
+  const appLocales = SUPPORTED_LOCALES.map((code) => ({
+    code,
+    flag: LOCALE_FLAGS[code],
+    label: localeAvailability.get(code)?.label ?? LOCALE_LABELS[code],
+    questionCount: localeAvailability.get(code)?.questionCount,
+  }));
 
   return (
-    <main className="pt-24 pb-16 md:pt-32">
+    <main className="bg-void min-h-screen pt-24 pb-20 md:pt-32">
       <Container>
-        <section className="relative overflow-hidden rounded-[36px] border border-border-subtle bg-surface/80 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] md:px-10 md:py-12">
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.12)_0%,transparent_35%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.08)_0%,transparent_45%)]" />
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
-            Credits & Attribution
+        {/* ── Hero card ─────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden rounded-[32px] border border-border-subtle bg-surface/80 px-6 py-10 shadow-[0_32px_80px_rgba(0,0,0,0.28)] md:px-12 md:py-14">
+          {/* ambient glow */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.1)_0%,transparent_40%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.06)_0%,transparent_45%)]" />
+          {/* subtle grid texture */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[40px_40px]" />
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary">
+            {t('label')}
           </p>
-          <h1 className="mt-5 max-w-4xl font-display text-4xl tracking-[-0.04em] text-foreground md:text-6xl">
-            Built by {siteConfig.creator.displayHandle}, powered by Lydia Hallie&apos;s questions.
+          <h1 className="mt-5 max-w-4xl font-display text-4xl tracking-[-0.03em] text-foreground md:text-6xl">
+            {t('heroTitle', { creator: siteConfig.creator.displayHandle })}
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-7 text-secondary md:text-lg">
-            {siteConfig.name} is a creator-built practice product. The original questions and
-            explanations come from Lydia Hallie&apos;s{' '}
-            <Link
-              href={siteConfig.source.repoUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-primary"
-            >
-              {siteConfig.source.name}
-            </Link>
-            . My contribution is the product layer around that source: the interface, runner,
-            visualization, scratchpad, and progress loop that make the material feel more usable in
-            real practice sessions.
+            {t('heroBody', {
+              name: siteConfig.name,
+              source: siteConfig.source.name,
+            })}
           </p>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground">
-            This page extends the original credits, it does not replace them. The upstream source
-            references, attribution, and supported language listing stay preserved below.
-          </p>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground">{t('heroNote')}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={siteConfig.creator.xUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/15"
+              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/20"
             >
               <IconBrandX className="h-4 w-4" />
               {siteConfig.creator.displayHandle}
@@ -85,60 +99,59 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               href={siteConfig.creator.githubUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/75 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-elevated/60 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
             >
               <IconBrandGithub className="h-4 w-4" />
-              GitHub profile
+              {t('githubProfile')}
             </Link>
             <Link
               href={siteConfig.repoUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/75 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-elevated/60 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
             >
-              Project repository
+              {t('projectRepo')}
               <IconArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </section>
 
-        <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <article className="rounded-[28px] border border-border-subtle bg-surface/75 p-7 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
-            <div className="flex items-center gap-3 text-primary">
-              <IconHammer className="h-5 w-5" />
+        {/* ── Why / What I Added ──────────────────────────────────────────── */}
+        <section className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconHammer className="h-4 w-4" />
+              </div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-                Why I Built It
+                {t('whyLabel')}
               </p>
             </div>
-            <h2 className="mt-5 font-display text-3xl tracking-[-0.03em] text-foreground">
-              A strong source deserved a stronger practice surface.
+            <h2 className="mt-6 font-display text-2xl tracking-[-0.02em] text-foreground lg:text-3xl">
+              {t('whyTitle')}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              Lydia&apos;s repository is one of the best JavaScript references on the internet, but
-              interview prep usually needs a faster loop than reading a long markdown file. I built
-              this so you can answer first, reveal second, run code immediately, and come back with
-              progress that still means something.
-            </p>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              This project is also personal proof-of-work. I wanted the site itself to show care:
-              design restraint, faster interactions, better mobile ergonomics, and a clearer sense
-              that someone is actively making the experience better.
-            </p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('whyBody1')}</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('whyBody2')}</p>
           </article>
 
-          <article className="rounded-[28px] border border-border-subtle bg-surface/75 p-7 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
-            <div className="flex items-center gap-3 text-primary">
-              <IconLayersIntersect className="h-5 w-5" />
+          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconLayersIntersect className="h-4 w-4" />
+              </div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-                What I Added
+                {t('addedLabel')}
               </p>
             </div>
-            <ul className="mt-5 space-y-3 text-sm leading-7 text-muted-foreground">
+            <ul className="mt-6 flex flex-1 flex-col justify-center gap-3">
               {additions.map((item) => (
                 <li
-                  key={item}
-                  className="rounded-2xl border border-border/60 bg-background/60 px-4 py-3"
+                  key={item.slice(0, 30)}
+                  className="flex items-start gap-3 rounded-2xl border border-border/50 bg-elevated/50 px-4 py-3 text-sm leading-relaxed text-muted-foreground"
                 >
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[10px] font-bold text-primary">
+                    +
+                  </span>
                   {item}
                 </li>
               ))}
@@ -146,16 +159,19 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
           </article>
         </section>
 
+        {/* ── Source Integrity / Original Credits ─────────────────────────── */}
         <section className="mt-6 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-          <article className="rounded-[28px] border border-border-subtle bg-surface/75 p-7 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
-            <div className="flex items-center gap-3 text-primary">
-              <IconHeartHandshake className="h-5 w-5" />
+          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconHeartHandshake className="h-4 w-4" />
+              </div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-                Original Credits
+                {t('originalLabel')}
               </p>
             </div>
-            <p className="mt-5 text-sm leading-7 text-muted-foreground">
-              Thank you to{' '}
+            <p className="mt-6 text-sm leading-7 text-muted-foreground">
+              {t('originalThanks')}{' '}
               <Link
                 href={siteConfig.source.creatorUrl}
                 target="_blank"
@@ -164,120 +180,168 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               >
                 {siteConfig.source.creatorName}
               </Link>{' '}
-              for creating and maintaining the source material this experience is built on. The
-              question content, explanations, and the original educational foundation belong to that
-              work and its contributors.
+              {t('originalFor')}
             </p>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              The original repo links and the supported language files stay visible here so the
-              source material remains easy to trace back to.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">{t('originalBody1')}</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('originalBody2')}</p>
+            <div className="mt-auto pt-6 flex flex-wrap gap-3">
               <Link
                 href={siteConfig.source.repoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/75 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-elevated/60 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
               >
-                Original repository
+                {t('originalRepo')}
                 <IconArrowUpRight className="h-4 w-4" />
               </Link>
               <Link
                 href={siteConfig.source.websiteUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/75 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-elevated/60 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:text-primary"
               >
-                Lydia Hallie
+                {t('originalCreator')}
               </Link>
             </div>
           </article>
 
-          <article className="rounded-[28px] border border-border-subtle bg-surface/75 p-7 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
-            <div className="flex items-center gap-3 text-primary">
-              <IconQuote className="h-5 w-5" />
+          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconQuote className="h-4 w-4" />
+              </div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-                Source Integrity
+                {t('integrityLabel')}
               </p>
             </div>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-[22px] border border-border/60 bg-background/60 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Source file
-                </p>
-                <p className="mt-3 font-mono text-sm text-foreground">
-                  {manifest.source.upstreamPath ?? manifest.source.file}
-                </p>
-              </div>
-              <div className="rounded-[22px] border border-border/60 bg-background/60 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Generated
-                </p>
-                <p className="mt-3 font-mono text-sm text-foreground">
-                  {new Date(manifest.generatedAt).toLocaleString()}
-                </p>
-              </div>
-              <div className="rounded-[22px] border border-border/60 bg-background/60 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Current locale
-                </p>
-                <p className="mt-3 font-mono text-sm text-foreground">{manifest.locale.label}</p>
-              </div>
-              <div className="rounded-[22px] border border-border/60 bg-background/60 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Questions
-                </p>
-                <p className="mt-3 font-mono text-sm text-foreground">
-                  {manifest.totals.questions}
-                </p>
-              </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {[
+                {
+                  label: t('integritySourceFile'),
+                  value: manifest.source.upstreamPath ?? manifest.source.localPath ?? 'n/a',
+                  mono: true,
+                },
+                {
+                  label: t('integrityGenerated'),
+                  value: new Date(manifest.generatedAt).toLocaleDateString(locale, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  }),
+                  mono: false,
+                },
+                {
+                  label: t('integrityLocale'),
+                  value: manifest.locale.label,
+                  mono: true,
+                },
+                {
+                  label: t('integrityQuestions'),
+                  value: String(manifest.totals.questions),
+                  mono: true,
+                },
+              ].map(({ label, value, mono }) => (
+                <div
+                  key={label}
+                  className="rounded-[18px] border border-border/50 bg-elevated/40 p-4"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {label}
+                  </p>
+                  <p
+                    className={`mt-2 text-sm text-foreground ${mono ? 'font-mono break-all' : ''}`}
+                  >
+                    {value}
+                  </p>
+                </div>
+              ))}
             </div>
           </article>
         </section>
 
-        <section className="mt-6 rounded-[28px] border border-border-subtle bg-surface/75 p-7 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-                Supported Languages
-              </p>
-              <h2 className="mt-4 font-display text-3xl tracking-[-0.03em] text-foreground">
-                Preserved from the upstream source.
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-                These translation links come directly from Lydia Hallie&apos;s source material and
-                stay part of the credits page so the original language coverage remains visible.
-              </p>
-            </div>
-            <Link
-              href={withLocale(locale, '/questions')}
-              className="inline-flex items-center gap-2 text-sm text-primary transition-colors hover:text-primary/80"
-            >
-              Start practicing
-              <IconArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <ul className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-3">
-            {manifest.translations.map((translation) => (
-              <li
-                key={translation.href}
-                className="rounded-[20px] border border-border/60 bg-background/60 px-4 py-3"
+        {/* ── Supported Languages from upstream ───────────────────────────── */}
+        {manifest.translations.length > 0 && (
+          <section className="mt-6 rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+                  {t('languagesLabel')}
+                </p>
+                <h2 className="mt-4 font-display text-2xl tracking-[-0.02em] text-foreground lg:text-3xl">
+                  {t('languagesTitle')}
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
+                  {t('languagesBody')}
+                </p>
+              </div>
+              <Link
+                href={withLocale(locale, '/questions')}
+                className="inline-flex items-center gap-2 text-sm text-primary transition-colors hover:text-primary/80"
               >
-                <Link
-                  href={`https://github.com/lydiahallie/javascript-questions/blob/master/${translation.href.replace('./', '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary"
+                {t('startPracticing')}
+                <IconArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <ul className="mt-8 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-3">
+              {appLocales.map((entry) => {
+                const isCurrent = entry.code === locale;
+
+                return (
+                  <li key={entry.code}>
+                    <Link
+                      href={withLocale(entry.code, '/credits')}
+                      className={`group flex h-full items-center justify-between gap-4 rounded-[18px] border px-4 py-3 transition-colors ${
+                        isCurrent
+                          ? 'border-primary/35 bg-primary/8'
+                          : 'border-border/50 bg-elevated/40 hover:border-primary/30 hover:bg-elevated'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg leading-none">{entry.flag}</span>
+                        <div>
+                          <p className="font-medium text-foreground">{entry.label}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {entry.code}
+                            {entry.questionCount
+                              ? ` • ${entry.questionCount} ${t('integrityQuestions').toLowerCase()}`
+                              : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <IconArrowUpRight
+                        className={`h-4 w-4 shrink-0 transition-colors ${
+                          isCurrent
+                            ? 'text-primary'
+                            : 'text-muted-foreground group-hover:text-primary'
+                        }`}
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <ul className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-3">
+              {manifest.translations.map((translation) => (
+                <li
+                  key={translation.href}
+                  className="rounded-[18px] border border-border/50 bg-elevated/40 px-4 py-3 transition-colors hover:border-primary/30 hover:bg-elevated"
                 >
-                  <IconFileCode className="h-4 w-4 text-muted-foreground" />
-                  {translation.label}
-                  <IconArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+                  <Link
+                    href={`https://github.com/lydiahallie/javascript-questions/blob/master/${translation.href.replace('./', '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between gap-3 text-foreground transition-colors hover:text-primary"
+                  >
+                    <span className="min-w-0 font-medium">{translation.label}</span>
+                    <IconArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </Container>
     </main>
   );

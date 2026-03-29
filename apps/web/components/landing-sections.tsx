@@ -2,6 +2,7 @@
 
 import { IconCircleCheck, IconCode, IconEye, IconSearch } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 
 import { CardTilt } from '@/components/ui/card-tilt';
@@ -9,41 +10,36 @@ import { cn } from '@/lib/utils';
 
 interface LandingSectionsProps {
   tagCounts: { tag: string; count: number }[];
+  locale?: string;
 }
 
 const heatBarIds = ['heat-a', 'heat-b', 'heat-c', 'heat-d', 'heat-e'] as const;
 
-const workflowSteps = [
-  {
-    id: 1,
-    icon: IconSearch,
-    title: 'Find a question',
-    description:
-      'Filter by topic, dial in the difficulty, or command palette directly to concepts.',
-  },
-  {
-    id: 2,
-    icon: IconCircleCheck,
-    title: 'Commit to an answer',
-    description:
-      'No peeking. Force yourself to commit to an outcome before the explanation reveals.',
-  },
-  {
-    id: 3,
-    icon: IconCode,
-    title: 'Run the code',
-    description: 'Pop open the scratchpad. Execute snippets. See the raw output immediately.',
-  },
-  {
-    id: 4,
-    icon: IconEye,
-    title: 'Understand why',
-    description:
-      'Deep dive into the explanation. Deconstruct the event loop and execution context.',
-  },
+type WorkflowStep = {
+  id: number;
+  icon: React.ComponentType<{ className?: string }>;
+  titleKey: string;
+  descKey: string;
+};
+
+const workflowSteps: WorkflowStep[] = [
+  { id: 1, icon: IconSearch, titleKey: 'workflow.step1Title', descKey: 'workflow.step1Desc' },
+  { id: 2, icon: IconCircleCheck, titleKey: 'workflow.step2Title', descKey: 'workflow.step2Desc' },
+  { id: 3, icon: IconCode, titleKey: 'workflow.step3Title', descKey: 'workflow.step3Desc' },
+  { id: 4, icon: IconEye, titleKey: 'workflow.step4Title', descKey: 'workflow.step4Desc' },
 ];
 
-function StickyCard({ step, index }: { step: (typeof workflowSteps)[number]; index: number }) {
+function StickyCard({
+  step,
+  index,
+  title,
+  description,
+}: {
+  step: WorkflowStep;
+  index: number;
+  title: string;
+  description: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -73,7 +69,7 @@ function StickyCard({ step, index }: { step: (typeof workflowSteps)[number]; ind
         className="flex h-full flex-col overflow-hidden rounded-[24px] border border-border-subtle bg-surface shadow-2xl transition-shadow duration-500 hover:shadow-[0_20px_60px_rgba(245,158,11,0.08)] md:flex-row"
       >
         <div
-          className="flex flex-1 flex-col justify-center bg-gradient-to-br from-surface to-elevated p-8 md:p-12"
+          className="flex flex-1 flex-col justify-center bg-linear-to-br from-surface to-elevated p-8 md:p-12"
           style={{ transform: 'translateZ(30px)' }}
         >
           <motion.div
@@ -85,8 +81,8 @@ function StickyCard({ step, index }: { step: (typeof workflowSteps)[number]; ind
           >
             <step.icon className="h-7 w-7" />
           </motion.div>
-          <h3 className="mb-4 font-display text-4xl text-foreground">{step.title}</h3>
-          <p className="text-lg leading-relaxed text-secondary">{step.description}</p>
+          <h3 className="mb-4 font-display text-4xl text-foreground">{title}</h3>
+          <p className="text-lg leading-relaxed text-secondary">{description}</p>
           <div className="mt-auto pt-8">
             <span className="font-mono text-5xl font-bold text-border opacity-40">0{step.id}</span>
           </div>
@@ -113,12 +109,17 @@ function StickyCard({ step, index }: { step: (typeof workflowSteps)[number]; ind
 }
 
 export function LandingSections({ tagCounts }: LandingSectionsProps) {
+  const t = useTranslations('landing');
+
   return (
     <div className="w-full">
       <section className="relative py-32">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.05)_0%,transparent_50%)]" />
 
         <div className="mx-auto mb-24 max-w-4xl px-4 text-center">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+            {t('workflow.sectionLabel')}
+          </p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +127,7 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
             className="mb-6 font-display text-4xl tracking-tight text-foreground md:text-6xl"
           >
-            The Dark Forge Method
+            {t('workflow.sectionTitle')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -135,14 +136,19 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
             className="mx-auto max-w-2xl text-lg text-secondary"
           >
-            A precision-engineered practice loop designed to commit advanced JavaScript concepts to
-            your long-term memory.
+            {t('workflow.sectionSubline')}
           </motion.p>
         </div>
 
         <div className="px-4 pb-32">
           {workflowSteps.map((step, i) => (
-            <StickyCard key={step.id} step={step} index={i} />
+            <StickyCard
+              key={step.id}
+              step={step}
+              index={i}
+              title={t(step.titleKey as Parameters<typeof t>[0])}
+              description={t(step.descKey as Parameters<typeof t>[0])}
+            />
           ))}
         </div>
       </section>
@@ -151,6 +157,9 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.03)_0%,transparent_50%)]" />
 
         <div className="mb-20 text-center">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+            {t('topics.sectionLabel')}
+          </p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -158,7 +167,7 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
             className="mb-4 font-display text-4xl tracking-tight text-foreground md:text-5xl"
           >
-            Master Every Concept
+            {t('topics.sectionTitle')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -167,7 +176,7 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
             className="text-lg text-secondary"
           >
-            Comprehensive coverage across {tagCounts.length} core topics
+            {t('topics.sectionSubline', { count: tagCounts.length })}
           </motion.p>
         </div>
 
@@ -188,14 +197,14 @@ export function LandingSections({ tagCounts }: LandingSectionsProps) {
                   isFeatured ? 'md:col-span-2 lg:col-span-2' : '',
                 )}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="relative z-10 flex h-full flex-col justify-between">
                   <div>
                     <h3 className="font-display text-3xl capitalize text-foreground transition-colors group-hover:text-primary">
                       {tagObj.tag}
                     </h3>
                     <p className="mt-2 font-mono text-sm text-secondary transition-colors group-hover:text-foreground">
-                      {tagObj.count} challenges
+                      {t('topics.challenges', { count: tagObj.count })}
                     </p>
                   </div>
 

@@ -4,7 +4,7 @@
     "slug": "question-1",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction sayHi() {\n  console.log(name);\n  console.log(age);\n  var name = \"Lydia\";\n  let age = 21;\n}\n\nsayHi();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nDans la fonction, nous déclarons en premier la variable `name` grâce au mot clé `var`. Cela signifie que la variable est \"levée\" _(hoisted)_ (l'espace mémoire est définie à la phase de création) avec pour valeur par défaut `undefined`, jusqu'à ce que le script atteigne la ligne de définition de la variable. Nous n'avons pas encore défini la variable lorsque nous essayons d'afficher la variable `name`, donc elle a toujours la valeur `undefined`.\n\nLes variables avec le mot clé `let` (et `const`) sont \"levées\" _(hoisted)_, mais contrairement à `var`, elle n'est pas <i>initialisée</i>. Elles ne sont pas accessible avant la ligne qui les déclare (initialise). C'est appelé la \"zone morte temporaire\". Lorsque nous essayons d'accéder aux variables avant leur déclaration, JavaScript renvoie une `ReferenceError`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction sayHi() {\n  console.log(name);\n  console.log(age);\n  var name = \"Lydia\";\n  let age = 21;\n}\n\nsayHi();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -32,11 +32,13 @@
         "text": "`undefined` et `ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "D",
+    "explanationMarkdown": "Dans la fonction, nous déclarons en premier la variable `name` grâce au mot clé `var`. Cela signifie que la variable est \"levée\" _(hoisted)_ (l'espace mémoire est définie à la phase de création) avec pour valeur par défaut `undefined`, jusqu'à ce que le script atteigne la ligne de définition de la variable. Nous n'avons pas encore défini la variable lorsque nous essayons d'afficher la variable `name`, donc elle a toujours la valeur `undefined`.\n\nLes variables avec le mot clé `let` (et `const`) sont \"levées\" _(hoisted)_, mais contrairement à `var`, elle n'est pas <i>initialisée</i>. Elles ne sont pas accessible avant la ligne qui les déclare (initialise). C'est appelé la \"zone morte temporaire\". Lorsque nous essayons d'accéder aux variables avant leur déclaration, JavaScript renvoie une `ReferenceError`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "scope",
+      "objects",
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -52,7 +54,7 @@
     "slug": "question-2",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 1);\n}\n\nfor (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 1);\n}\n```\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nÀ cause du système de queue dans JavaScript, la fonction de rappel _(callback)_ du `setTimeout` est appelée _après_ que la boucle soit exécutée. Comme la variable `i` dans la première boucle est déclarée avec le mot-clé `var`, c'est une variable globale. Pendant la boucle, nous incrémentons la valeur de `i` de `1` à chaque fois, en utilisant l'opérateur arithmétique `++`. Lorsque la fonction de rappel _(callback)_ du `setTimeout` est invoquée, `i` est égal à `3` dans le premier exemple.\n\nDans la seconde boucle, la variable `i` est déclarée avec le mot clé `let` : les variables déclarées avec `let` (et `const`) ont une portée de bloc (tout ce qui est entre `{ }` est considéré comme un bloc). Pendant chaque itération, `i` aura une nouvelle valeur, et chaque valeur sera définie dans la boucle.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 1);\n}\n\nfor (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 1);\n}\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -76,11 +78,11 @@
         "text": "`3 3 3` et `0 1 2`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "À cause du système de queue dans JavaScript, la fonction de rappel _(callback)_ du `setTimeout` est appelée _après_ que la boucle soit exécutée. Comme la variable `i` dans la première boucle est déclarée avec le mot-clé `var`, c'est une variable globale. Pendant la boucle, nous incrémentons la valeur de `i` de `1` à chaque fois, en utilisant l'opérateur arithmétique `++`. Lorsque la fonction de rappel _(callback)_ du `setTimeout` est invoquée, `i` est égal à `3` dans le premier exemple.\n\nDans la seconde boucle, la variable `i` est déclarée avec le mot clé `let` : les variables déclarées avec `let` (et `const`) ont une portée de bloc (tout ce qui est entre `{ }` est considéré comme un bloc). Pendant chaque itération, `i` aura une nouvelle valeur, et chaque valeur sera définie dans la boucle.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "async"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -96,7 +98,7 @@
     "slug": "question-3",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst shape = {\n  radius: 10,\n  diameter() {\n    return this.radius * 2;\n  },\n  perimeter: () => 2 * Math.PI * this.radius\n};\n\nshape.diameter();\nshape.perimeter();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nNotez que la valeur de `diameter` est une fonction régulière, alors que celle de `perimeter` est une fonction fléchée.\n\nAvec les fonctions fléchée, le mot clé `this` réfère à son périmètre actuel, contrairement aux fonctions régulières ! Cela signifie que lorsque nous appelons `perimeter`, elle ne réfère pas à l'objet `shape`, mais à son périmètre actuel (`window` par exemple).\n\nIl n'y a pas de valeur `radius` dans cet objet, on retournera `undefined`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst shape = {\n  radius: 10,\n  diameter() {\n    return this.radius * 2;\n  },\n  perimeter: () => 2 * Math.PI * this.radius\n};\n\nshape.diameter();\nshape.perimeter();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -124,11 +126,12 @@
         "text": "`NaN` et `63`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Notez que la valeur de `diameter` est une fonction régulière, alors que celle de `perimeter` est une fonction fléchée.\n\nAvec les fonctions fléchée, le mot clé `this` réfère à son périmètre actuel, contrairement aux fonctions régulières ! Cela signifie que lorsque nous appelons `perimeter`, elle ne réfère pas à l'objet `shape`, mais à son périmètre actuel (`window` par exemple).\n\nIl n'y a pas de valeur `radius` dans cet objet, on retournera `undefined`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types",
+      "dom-events"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -144,7 +147,7 @@
     "slug": "question-4",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n+true;\n!\"Lydia\";\n```\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nL'opérateur arithmétique `+` essait de convertir un opérande en une valeur numérique. `true` devient `1`, et `false` devient `0`.\n\nLa chaîne de caractère `'Lydia'` est une valeur considérée comme vraie _(truthy)_. Ce que nous sommes actuellement en train de demander, c'est \"est-ce que cette valeur considérée comme vraie est fausse ?\". Ce qui retournera `false`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n+true;\n!\"Lydia\";\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -168,11 +171,11 @@
         "text": "`false` et `false`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "L'opérateur arithmétique `+` essait de convertir un opérande en une valeur numérique. `true` devient `1`, et `false` devient `0`.\n\nLa chaîne de caractère `'Lydia'` est une valeur considérée comme vraie _(truthy)_. Ce que nous sommes actuellement en train de demander, c'est \"est-ce que cette valeur considérée comme vraie est fausse ?\". Ce qui retournera `false`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -188,7 +191,7 @@
     "slug": "question-5",
     "locale": "fr",
     "title": "Laquelle est vraie ?",
-    "promptMarkdown": "```javascript\nconst bird = {\n  size: \"small\"\n};\n\nconst mouse = {\n  name: \"Mickey\",\n  small: true\n};\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nEn JavaScript, toutes les clés d'objet sont des chaînes de caractères (sauf si c'est un Symbol). Bien que nous ne puissions pas les _typer_ comme des chaînes de caractères, elles sont converties en chaînes de caractères sous le capot.\n\nJavaScript interprète (ou décompresse) les instructions. Lorsque nous utilisons la notation par crochet, il voit le premier crochet `[` et continue jusqu'à ce qu'il trouve le crochet fermant `]`. Seulement après, il évalue l'instruction.\n\n`mouse[bird.size]` : Premièrement, il évalue `bird.size`, qui est `\"small\"`. `mouse[\"small\"]` retourne `true`.\n\nCependant, avec la notation par points, cela n'arrive pas. `mouse` n'a pas de clé appelée `bird`, ce qui signifie que `mouse.bird` est `undefined`. Puis, on demande `size` en utilisant la notation par point : `mouse.bird.size`. Comme `mouse.bird` est `undefined`, on demande `undefined.size`. Cela n'est pas valide, et nous aurons une erreur similaire à `Impossible de lire la propriété \"size\" de undefined`.\n\n</p>\n</details>\n\n---\n\n---",
+    "promptMarkdown": "```javascript\nconst bird = {\n  size: \"small\"\n};\n\nconst mouse = {\n  name: \"Mickey\",\n  small: true\n};\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -216,11 +219,11 @@
         "text": "Toutes sont valides"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "En JavaScript, toutes les clés d'objet sont des chaînes de caractères (sauf si c'est un Symbol). Bien que nous ne puissions pas les _typer_ comme des chaînes de caractères, elles sont converties en chaînes de caractères sous le capot.\n\nJavaScript interprète (ou décompresse) les instructions. Lorsque nous utilisons la notation par crochet, il voit le premier crochet `[` et continue jusqu'à ce qu'il trouve le crochet fermant `]`. Seulement après, il évalue l'instruction.\n\n`mouse[bird.size]` : Premièrement, il évalue `bird.size`, qui est `\"small\"`. `mouse[\"small\"]` retourne `true`.\n\nCependant, avec la notation par points, cela n'arrive pas. `mouse` n'a pas de clé appelée `bird`, ce qui signifie que `mouse.bird` est `undefined`. Puis, on demande `size` en utilisant la notation par point : `mouse.bird.size`. Comme `mouse.bird` est `undefined`, on demande `undefined.size`. Cela n'est pas valide, et nous aurons une erreur similaire à `Impossible de lire la propriété \"size\" de undefined`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -236,7 +239,7 @@
     "slug": "question-6",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet c = { greeting: \"Hey!\" };\nlet d;\n\nd = c;\nc.greeting = \"Hello\";\nconsole.log(d.greeting);\n```\n\n\n\n\n\n- E: `TypeError`\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nEn JavaScript, tous les objets interagissent par _référence_ lorsqu'on les définit égaux les uns aux autres.\n\nPremièrement, la variable `c` contaient une valeur d'objet. Plus tard, nous assignons `d` avec la même référence que `c` à l'objet.\n\n<img src=\"https://i.imgur.com/ko5k0fs.png\" width=\"200\">\n\nQuand on modifie un objet, on les modifie donc tous.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet c = { greeting: \"Hey!\" };\nlet d;\n\nd = c;\nc.greeting = \"Hello\";\nconsole.log(d.greeting);\n```\n\n\n\n\n\n- E: `TypeError`",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -264,11 +267,13 @@
         "text": "`ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
-    "images": [],
+    "correctOption": "A",
+    "explanationMarkdown": "En JavaScript, tous les objets interagissent par _référence_ lorsqu'on les définit égaux les uns aux autres.\n\nPremièrement, la variable `c` contaient une valeur d'objet. Plus tard, nous assignons `d` avec la même référence que `c` à l'objet.\n\n<img src=\"https://i.imgur.com/ko5k0fs.png\" width=\"200\">\n\nQuand on modifie un objet, on les modifie donc tous.",
+    "images": [
+      "https://i.imgur.com/ko5k0fs.png"
+    ],
     "tags": [
-      "fundamentals"
+      "objects"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -284,7 +289,7 @@
     "slug": "question-7",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet a = 3;\nlet b = new Number(3);\nlet c = 3;\n\nconsole.log(a == b);\nconsole.log(a === b);\nconsole.log(b === c);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\n`new Number()` est une fonction globale. Bien qu'il ressemble à un nombre, ce n'en est pas vraiment un : il a une poignée de fonctionnalités supplémentaire et est un objet.\n\nQuand nous utilisons l'opérateur `==`, il vérifie seulement qu'il s'agisse de la même _valeur_. Les deux ont pour valeur `3`, donc il retourne `true`.\n\nCependant, quand on utilise l'opérateur `===`, les 2 valeurs _et_ types doivent être les mêmes. `new Number()` n'est pas un nombre, c'est un **objet**, il retourne `false`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet a = 3;\nlet b = new Number(3);\nlet c = 3;\n\nconsole.log(a == b);\nconsole.log(a === b);\nconsole.log(b === c);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -312,8 +317,8 @@
         "text": "`false` `true` `true`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "`new Number()` est une fonction globale. Bien qu'il ressemble à un nombre, ce n'en est pas vraiment un : il a une poignée de fonctionnalités supplémentaire et est un objet.\n\nQuand nous utilisons l'opérateur `==`, il vérifie seulement qu'il s'agisse de la même _valeur_. Les deux ont pour valeur `3`, donc il retourne `true`.\n\nCependant, quand on utilise l'opérateur `===`, les 2 valeurs _et_ types doivent être les mêmes. `new Number()` n'est pas un nombre, c'est un **objet**, il retourne `false`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -332,7 +337,7 @@
     "slug": "question-8",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nclass Chameleon {\n  static colorChange(newColor) {\n    this.newColor = newColor;\n    return this.newColor;\n  }\n\n  constructor({ newColor = \"green\" } = {}) {\n    this.newColor = newColor;\n  }\n}\n\nconst freddie = new Chameleon({ newColor: \"purple\" });\nfreddie.colorChange(\"orange\");\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nLa fonction `colorChange` est statique. Les méthodes statiques sont désignées pour vivre seulement dans le constructeur qui les a créé et ne peuvent pas être transférer aux enfants. Comme `freddie` est un enfant, la fonction n'est pas transférée et n'est pas disponible dans l'instance de `freddie` : une erreur `TypeError` est renvoyée.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nclass Chameleon {\n  static colorChange(newColor) {\n    this.newColor = newColor;\n    return this.newColor;\n  }\n\n  constructor({ newColor = \"green\" } = {}) {\n    this.newColor = newColor;\n  }\n}\n\nconst freddie = new Chameleon({ newColor: \"purple\" });\nfreddie.colorChange(\"orange\");\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -360,8 +365,8 @@
         "text": "`TypeError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "D",
+    "explanationMarkdown": "La fonction `colorChange` est statique. Les méthodes statiques sont désignées pour vivre seulement dans le constructeur qui les a créé et ne peuvent pas être transférer aux enfants. Comme `freddie` est un enfant, la fonction n'est pas transférée et n'est pas disponible dans l'instance de `freddie` : une erreur `TypeError` est renvoyée.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -380,7 +385,7 @@
     "slug": "question-9",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet greeting;\ngreetign = {}; // Typo!\nconsole.log(greetign);\n```\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nIl affiche l'objet, car on a juste créé un objet vide dans l'objet global ! Quand on écrit mal `greeting` en `greetign`, JavaScript l'interprète comme il le voit `global.greetign = {}` (ou `window.greetign = {}` dans le navigateur).\n\nPour éviter cela, on peut utiliser `\"use strict\"`. Cela nous assure de devoir déclarer la variable avant de lui assigner une valeur.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet greeting;\ngreetign = {}; // Typo!\nconsole.log(greetign);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -404,11 +409,12 @@
         "text": "`undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Il affiche l'objet, car on a juste créé un objet vide dans l'objet global ! Quand on écrit mal `greeting` en `greetign`, JavaScript l'interprète comme il le voit `global.greetign = {}` (ou `window.greetign = {}` dans le navigateur).\n\nPour éviter cela, on peut utiliser `\"use strict\"`. Cela nous assure de devoir déclarer la variable avant de lui assigner une valeur.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects",
+      "dom-events"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -424,7 +430,7 @@
     "slug": "question-10",
     "locale": "fr",
     "title": "Que se passe-t-il lorsque nous faisons ça ?",
-    "promptMarkdown": "```javascript\nfunction bark() {\n  console.log(\"Woof!\");\n}\n\nbark.animal = \"dog\";\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nC'est possible en JavaScript, car les fonctions sont des objets ! (Tout ce qui n'est pas de type primitif est un objet)\n\nUne fonction est un type spécial d'objet. Le code que vous écrivez vous-même n'est pas la fonction. La fonction est un objet avec des propriétés. Cette propriété est invocable.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction bark() {\n  console.log(\"Woof!\");\n}\n\nbark.animal = \"dog\";\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -452,8 +458,8 @@
         "text": "`ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "C'est possible en JavaScript, car les fonctions sont des objets ! (Tout ce qui n'est pas de type primitif est un objet)\n\nUne fonction est un type spécial d'objet. Le code que vous écrivez vous-même n'est pas la fonction. La fonction est un objet avec des propriétés. Cette propriété est invocable.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -472,22 +478,23 @@
     "slug": "question-11",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction Person(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nconst member = new Person(\"Lydia\", \"Hallie\");\nPerson.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n\nconsole.log(member.getFullName());\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nVous ne pouvez pas ajouter de propriétés à un constructeur comme pour des objets normaux. Si vous voulez ajouter une fonctionnalité pour tous les objets en une fois, vous devez utiliser le prototype. Donc dans ce cas,\n\n```js\nPerson.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n```\n\nrendra fonctionnel `member.getFullName`. Pourquoi est-ce bénéfique ? Disons que nous ajoutons cette méthode au constructeur directement. Peut-être que toutes les instances de `Person` n'ont pas besoin de cette méthode. Cela fera perdre de l'espace mémoire, car elles auront tous cette propriété, ce qui prendra de l'espace mémoire pour chaque instance. Alors que, si nous ajoutons la méthode au prototype uniquement, nous n'utilisons qu'un seul slot mémoire, et ils y auront tous accès !\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction Person(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nconst member = new Person(\"Lydia\", \"Hallie\");\nPerson.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n\nconsole.log(member.getFullName());\n```",
     "codeBlocks": [
       {
         "id": "code-1",
         "order": 0,
         "language": "javascript",
         "code": "function Person(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nconst member = new Person(\"Lydia\", \"Hallie\");\nPerson.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n\nconsole.log(member.getFullName());"
-      },
+      }
+    ],
+    "explanationCodeBlocks": [
       {
-        "id": "code-2",
-        "order": 1,
+        "id": "code-1",
+        "order": 0,
         "language": "js",
         "code": "Person.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};"
       }
     ],
-    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -506,11 +513,11 @@
         "text": "`undefined` `undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Vous ne pouvez pas ajouter de propriétés à un constructeur comme pour des objets normaux. Si vous voulez ajouter une fonctionnalité pour tous les objets en une fois, vous devez utiliser le prototype. Donc dans ce cas,\n\n```js\nPerson.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n```\n\nrendra fonctionnel `member.getFullName`. Pourquoi est-ce bénéfique ? Disons que nous ajoutons cette méthode au constructeur directement. Peut-être que toutes les instances de `Person` n'ont pas besoin de cette méthode. Cela fera perdre de l'espace mémoire, car elles auront tous cette propriété, ce qui prendra de l'espace mémoire pour chaque instance. Alors que, si nous ajoutons la méthode au prototype uniquement, nous n'utilisons qu'un seul slot mémoire, et ils y auront tous accès !",
     "images": [],
     "tags": [
-      "fundamentals"
+      "prototypes"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -526,7 +533,7 @@
     "slug": "question-12",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction Person(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nconst lydia = new Person(\"Lydia\", \"Hallie\");\nconst sarah = Person(\"Sarah\", \"Smith\");\n\nconsole.log(lydia);\nconsole.log(sarah);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nPour `sarah`, nous n'avons pas utilisé le mot clé `new`. Quand nous utilisons `new`, il fait référence à un nouvel objet vide que nous créons. Cependant, nous n'ajoutons pas `new`. Il réfère à **l'objet global** !\n\nNous disons que `this.firstName` est égal à `\"Sarah\"` et que `this.lastName` est égal à `Smith`. Ce que nous faisons c'est définir `global.firstName = 'Sarah'` et `global.lastName = 'Smith'`. La variable `sarah` elle-même reste à `undefined`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction Person(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nconst lydia = new Person(\"Lydia\", \"Hallie\");\nconst sarah = Person(\"Sarah\", \"Smith\");\n\nconsole.log(lydia);\nconsole.log(sarah);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -554,11 +561,11 @@
         "text": "`Person {firstName: \"Lydia\", lastName: \"Hallie\"}` et `ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Pour `sarah`, nous n'avons pas utilisé le mot clé `new`. Quand nous utilisons `new`, il fait référence à un nouvel objet vide que nous créons. Cependant, nous n'ajoutons pas `new`. Il réfère à **l'objet global** !\n\nNous disons que `this.firstName` est égal à `\"Sarah\"` et que `this.lastName` est égal à `Smith`. Ce que nous faisons c'est définir `global.firstName = 'Sarah'` et `global.lastName = 'Smith'`. La variable `sarah` elle-même reste à `undefined`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -574,7 +581,7 @@
     "slug": "question-13",
     "locale": "fr",
     "title": "Quelle sont les trois phases de propagation des événements ?",
-    "promptMarkdown": "<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nDurant la phase de **capture** _(capturing)_, l'événement passe par les éléments parents jusqu'à l'élément ciblé. Il atteint ensuite l'élément **ciblé** _(target)_, et commence à **bouillonner** _(bubbling)_.\n\n<img src=\"https://i.imgur.com/N18oRgd.png\" width=\"200\">\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "",
     "codeBlocks": [],
     "explanationCodeBlocks": [],
     "options": [
@@ -595,11 +602,13 @@
         "text": "Capturing > Target > Bubbling"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
-    "images": [],
+    "correctOption": "D",
+    "explanationMarkdown": "Durant la phase de **capture** _(capturing)_, l'événement passe par les éléments parents jusqu'à l'élément ciblé. Il atteint ensuite l'élément **ciblé** _(target)_, et commence à **bouillonner** _(bubbling)_.\n\n<img src=\"https://i.imgur.com/N18oRgd.png\" width=\"200\">",
+    "images": [
+      "https://i.imgur.com/N18oRgd.png"
+    ],
     "tags": [
-      "fundamentals"
+      "dom-events"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -615,7 +624,7 @@
     "slug": "question-14",
     "locale": "fr",
     "title": "Tous les objets ont des prototypes.",
-    "promptMarkdown": "<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nTous les objets ont des prototypes, excepté pour les **objets standards**. Les objets standards ont accès à certaines méthodes et propriétés, comme `.toString`. C'est pour cette raison que vous pouvez utiliser les méthodes natives de JavaScript ! Toutes ces méthodes sont disponibles dans le prototype. Bien que JavaScript ne trouve pas la fonction dans l'objet, il parcourt le prototype et la méthode afin de la rendre accessible.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "",
     "codeBlocks": [],
     "explanationCodeBlocks": [],
     "options": [
@@ -628,8 +637,8 @@
         "text": "faux"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Tous les objets ont des prototypes, excepté pour les **objets standards**. Les objets standards ont accès à certaines méthodes et propriétés, comme `.toString`. C'est pour cette raison que vous pouvez utiliser les méthodes natives de JavaScript ! Toutes ces méthodes sont disponibles dans le prototype. Bien que JavaScript ne trouve pas la fonction dans l'objet, il parcourt le prototype et la méthode afin de la rendre accessible.",
     "images": [],
     "tags": [
       "prototypes"
@@ -648,7 +657,7 @@
     "slug": "question-15",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction sum(a, b) {\n  return a + b;\n}\n\nsum(1, \"2\");\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nJavaScript est un **langage à types dynamiques** : nous n'avons pas besoin de spécifier le types des variables. Les valeurs peuvent être automatiquement converties vers les autres types sans que vous le sachiez, c'est ce que l'on appelle _la conversion de types implicites_ _(implicit type coercion)_.\n\nDans cette exemple, JavaScript convertit le nombre `1` en une chaîne de caractère, afin que la fonction ait du sens et puisse renvoyer une valeur. Durant l'addition d'un type numérique (`1`) et d'un type chaîne de caractère (`'2'`), le nombre est traité comme une chaîne de caractère. Nous pouvons concaténer les chaînes de caractères comme `\"Hello\" + \"World\"`, c'est donc ce qui arrive ici avec `\"1\" + \"2\"` qui retourne `\"12\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction sum(a, b) {\n  return a + b;\n}\n\nsum(1, \"2\");\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -676,11 +685,12 @@
         "text": "`3`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "JavaScript est un **langage à types dynamiques** : nous n'avons pas besoin de spécifier le types des variables. Les valeurs peuvent être automatiquement converties vers les autres types sans que vous le sachiez, c'est ce que l'on appelle _la conversion de types implicites_ _(implicit type coercion)_.\n\nDans cette exemple, JavaScript convertit le nombre `1` en une chaîne de caractère, afin que la fonction ait du sens et puisse renvoyer une valeur. Durant l'addition d'un type numérique (`1`) et d'un type chaîne de caractère (`'2'`), le nombre est traité comme une chaîne de caractère. Nous pouvons concaténer les chaînes de caractères comme `\"Hello\" + \"World\"`, c'est donc ce qui arrive ici avec `\"1\" + \"2\"` qui retourne `\"12\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "arrays",
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -696,7 +706,7 @@
     "slug": "question-16",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet number = 0;\nconsole.log(number++);\nconsole.log(++number);\nconsole.log(number);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nL'opérateur arithmétique **postfix** `++` :\n\n1. Retourne la valeur (ici il retourne `0`)\n2. Incrémente la valeur (le nombre est maintenant égal à `1`)\n\nL'opérateur arithmétique **préfix** `++` :\n\n1. Incrémente la valeur (le nombre est maintenant égal à `2`)\n2. Retourne la valeur (ici il retourne `2`)\n\nCela retourne donc `0 2 2`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet number = 0;\nconsole.log(number++);\nconsole.log(++number);\nconsole.log(number);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -724,11 +734,11 @@
         "text": "`0` `1` `2`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "L'opérateur arithmétique **postfix** `++` :\n\n1. Retourne la valeur (ici il retourne `0`)\n2. Incrémente la valeur (le nombre est maintenant égal à `1`)\n\nL'opérateur arithmétique **préfix** `++` :\n\n1. Incrémente la valeur (le nombre est maintenant égal à `2`)\n2. Retourne la valeur (ici il retourne `2`)\n\nCela retourne donc `0 2 2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -744,7 +754,7 @@
     "slug": "question-17",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction getPersonInfo(one, two, three) {\n  console.log(one);\n  console.log(two);\n  console.log(three);\n}\n\nconst person = \"Lydia\";\nconst age = 21;\n\ngetPersonInfo`${person} is ${age} years old`;\n```\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nSi vous utilisez les littéraux de gabarits, la valeur du premier argument sera toujours un tableau de valeurs des chaînes de caractère. Le reste des arguments seront les valeurs des expressions utilisées !\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction getPersonInfo(one, two, three) {\n  console.log(one);\n  console.log(two);\n  console.log(three);\n}\n\nconst person = \"Lydia\";\nconst age = 21;\n\ngetPersonInfo`${person} is ${age} years old`;\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -768,8 +778,8 @@
         "text": "`\"Lydia\"` `[\"\", \" is \", \" years old\"]` `21`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Si vous utilisez les littéraux de gabarits, la valeur du premier argument sera toujours un tableau de valeurs des chaînes de caractère. Le reste des arguments seront les valeurs des expressions utilisées !",
     "images": [],
     "tags": [
       "fundamentals"
@@ -788,7 +798,7 @@
     "slug": "question-18",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction checkAge(data) {\n  if (data === { age: 18 }) {\n    console.log(\"Vous êtes un adulte !\");\n  } else if (data == { age: 18 }) {\n    console.log(\"Vous êtes toujours un adulte.\");\n  } else {\n    console.log(`Hmm.. Vous n'avez pas l'âge, je suppose.`);\n  }\n}\n\ncheckAge({ age: 18 });\n```\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nLorsque l'on teste une égalité, les primitifs sont comparés par leur valeur, alors que les objets sont comparés par leur _référence_. JavaScript vérifie si les objets ont une référence à la même zone de la mémoire.=\n\nLes 2 objets que nous comparons n'ont pas ça : l'objet passé en paramètre fait référence à une zone mémoire différente que l'objet que nous utilisons pour faire la comparaison.\n\nC'est pourquoi les 2 conditions `{ age: 18 } === { age: 18 }` et `{ age: 18 } == { age: 18 }` retournent `false`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction checkAge(data) {\n  if (data === { age: 18 }) {\n    console.log(\"Vous êtes un adulte !\");\n  } else if (data == { age: 18 }) {\n    console.log(\"Vous êtes toujours un adulte.\");\n  } else {\n    console.log(`Hmm.. Vous n'avez pas l'âge, je suppose.`);\n  }\n}\n\ncheckAge({ age: 18 });\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -812,8 +822,8 @@
         "text": "`Hmm.. Vous n'avez pas l'âge, je suppose.`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Lorsque l'on teste une égalité, les primitifs sont comparés par leur valeur, alors que les objets sont comparés par leur _référence_. JavaScript vérifie si les objets ont une référence à la même zone de la mémoire.=\n\nLes 2 objets que nous comparons n'ont pas ça : l'objet passé en paramètre fait référence à une zone mémoire différente que l'objet que nous utilisons pour faire la comparaison.\n\nC'est pourquoi les 2 conditions `{ age: 18 } === { age: 18 }` et `{ age: 18 } == { age: 18 }` retournent `false`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -832,7 +842,7 @@
     "slug": "question-19",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction getAge(...args) {\n  console.log(typeof args);\n}\n\ngetAge(21);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nLa syntaxe des paramètres du reste _(rest parameters)_ (`...args`) retourne un tableau avec les arguments. Un tableau est un objet, donc `typeof args` retournera `\"object\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction getAge(...args) {\n  console.log(typeof args);\n}\n\ngetAge(21);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -860,11 +870,12 @@
         "text": "`\"NaN\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "La syntaxe des paramètres du reste _(rest parameters)_ (`...args`) retourne un tableau avec les arguments. Un tableau est un objet, donc `typeof args` retournera `\"object\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects",
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -880,7 +891,7 @@
     "slug": "question-20",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction getAge() {\n  \"use strict\";\n  age = 21;\n  console.log(age);\n}\n\ngetAge();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nAvec `\"use strict\"`, vous pouvez êtes sûr de ne pas déclarer accidentellement des variables gloables. Nous ne déclarerons jamais la variable `age`, et temps que nous utiliserons `\"use strict\"`, cela créera une erreur de référence. Si nous n'utilisons pas `\"use strict\"`, cela fonctionnera et la variable `age` sera attribué à l'objet global.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction getAge() {\n  \"use strict\";\n  age = 21;\n  console.log(age);\n}\n\ngetAge();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -908,8 +919,8 @@
         "text": "`TypeError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Avec `\"use strict\"`, vous pouvez êtes sûr de ne pas déclarer accidentellement des variables gloables. Nous ne déclarerons jamais la variable `age`, et temps que nous utiliserons `\"use strict\"`, cela créera une erreur de référence. Si nous n'utilisons pas `\"use strict\"`, cela fonctionnera et la variable `age` sera attribué à l'objet global.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -928,7 +939,7 @@
     "slug": "question-21",
     "locale": "fr",
     "title": "Quelle est la valeur de `sum` ?",
-    "promptMarkdown": "```javascript\nconst sum = eval(\"10*10+5\");\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\n`eval` évalue les codes que nous passons en paramètre de type chaîne de caractères. Si c'est une expression, comme dans notre cas, il évaluera l'expression. L'expression est `10 * 10 + 5`, ce qui retourne le nombre `105`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst sum = eval(\"10*10+5\");\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -956,8 +967,8 @@
         "text": "`\"10*10+5\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "`eval` évalue les codes que nous passons en paramètre de type chaîne de caractères. Si c'est une expression, comme dans notre cas, il évaluera l'expression. L'expression est `10 * 10 + 5`, ce qui retourne le nombre `105`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -976,7 +987,7 @@
     "slug": "question-22",
     "locale": "fr",
     "title": "Pendant combien de temps `cool_secret` sera-t-il accessible ?",
-    "promptMarkdown": "```javascript\nsessionStorage.setItem(\"cool_secret\", 123);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nLa donnée stockée dans le `sessionStorage` est supprimée après la fermeture de l'onglet.\n\nSi vous utilisez le `localStorage`, la donnée sera là pour toujours, jusqu'à ce que, par exemple, `localStorage.clear()` soit invoquée.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nsessionStorage.setItem(\"cool_secret\", 123);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1004,8 +1015,8 @@
         "text": "Jusqu'à ce que l'utilisateur éteindra son ordinateur."
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "La donnée stockée dans le `sessionStorage` est supprimée après la fermeture de l'onglet.\n\nSi vous utilisez le `localStorage`, la donnée sera là pour toujours, jusqu'à ce que, par exemple, `localStorage.clear()` soit invoquée.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1024,7 +1035,7 @@
     "slug": "question-23",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nvar num = 8;\nvar num = 10;\n\nconsole.log(num);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nAvec le mot clé `var`, vous pouvez déclarer plusieurs variables avec le même nom. La variable aura pour valeur la dernière assignée.\n\nVous ne pouvez pas faire cela avec `let` ou `const` puisqu'ils ont une portée de bloc.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nvar num = 8;\nvar num = 10;\n\nconsole.log(num);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1052,11 +1063,11 @@
         "text": "`ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Avec le mot clé `var`, vous pouvez déclarer plusieurs variables avec le même nom. La variable aura pour valeur la dernière assignée.\n\nVous ne pouvez pas faire cela avec `let` ou `const` puisqu'ils ont une portée de bloc.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1072,7 +1083,7 @@
     "slug": "question-24",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst obj = { 1: \"a\", 2: \"b\", 3: \"c\" };\nconst set = new Set([1, 2, 3, 4, 5]);\n\nobj.hasOwnProperty(\"1\");\nobj.hasOwnProperty(1);\nset.has(\"1\");\nset.has(1);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nToutes les clés d'objet (à l'exception des symboles) sont des chaînes de caractères sous le capot, même si vous ne les tapez pas vous-même en tant que chaîne. C'est pourquoi `obj.hasOwnProperty(\"1\")` renvoie également la valeur `true`.\n\nÇa ne marche pas comme ça pour un set. Il n'y a pas de `'1'` dans notre ensemble : `set.has('1')` renvoie `false`. Il a le type numérique `1`, `set.has(1)` renvoie `true`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst obj = { 1: \"a\", 2: \"b\", 3: \"c\" };\nconst set = new Set([1, 2, 3, 4, 5]);\n\nobj.hasOwnProperty(\"1\");\nobj.hasOwnProperty(1);\nset.has(\"1\");\nset.has(1);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1100,8 +1111,8 @@
         "text": "`true` `true` `true` `true`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Toutes les clés d'objet (à l'exception des symboles) sont des chaînes de caractères sous le capot, même si vous ne les tapez pas vous-même en tant que chaîne. C'est pourquoi `obj.hasOwnProperty(\"1\")` renvoie également la valeur `true`.\n\nÇa ne marche pas comme ça pour un set. Il n'y a pas de `'1'` dans notre ensemble : `set.has('1')` renvoie `false`. Il a le type numérique `1`, `set.has(1)` renvoie `true`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1120,7 +1131,7 @@
     "slug": "question-25",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst obj = { a: \"un\", b: \"deux\", a: \"trois\" };\nconsole.log(obj);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nSi vous avez deux clés portant le même nom, la clé sera remplacée. Elle sera toujours dans sa première position, mais avec la dernière valeur spécifiée.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst obj = { a: \"un\", b: \"deux\", a: \"trois\" };\nconsole.log(obj);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1148,8 +1159,8 @@
         "text": "`SyntaxError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Si vous avez deux clés portant le même nom, la clé sera remplacée. Elle sera toujours dans sa première position, mais avec la dernière valeur spécifiée.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1168,7 +1179,7 @@
     "slug": "question-26",
     "locale": "fr",
     "title": "Le contexte global d'exécution de JavaScript crée 2 choses pour vous : l'objet global et le mot-clé `this`.",
-    "promptMarkdown": "<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nLe contexte d'exécution de base est le contexte d'exécution global : c'est ce qui est accessible partout dans votre code.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "",
     "codeBlocks": [],
     "explanationCodeBlocks": [],
     "options": [
@@ -1185,8 +1196,8 @@
         "text": "Ça dépend"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Le contexte d'exécution de base est le contexte d'exécution global : c'est ce qui est accessible partout dans votre code.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1205,7 +1216,7 @@
     "slug": "question-27",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfor (let i = 1; i < 5; i++) {\n  if (i === 3) continue;\n  console.log(i);\n}\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nL'instruction `continue` ignore une itération si une condition donnée renvoie `true`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfor (let i = 1; i < 5; i++) {\n  if (i === 3) continue;\n  console.log(i);\n}\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1233,8 +1244,8 @@
         "text": "`1` `3` `4`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "L'instruction `continue` ignore une itération si une condition donnée renvoie `true`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1253,7 +1264,7 @@
     "slug": "question-28",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nString.prototype.giveLydiaPizza = () => {\n  return \"Just give Lydia pizza already!\";\n};\n\nconst name = \"Lydia\";\n\nconsole.log(name.giveLydiaPizza())\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\n`String` est un constructeur intégré, auquel nous pouvons ajouter des propriétés. Je viens d'ajouter une méthode à son prototype. Les chaînes de caractère primitives sont automatiquement converties en un objet chaîne, généré par la fonction prototype de chaîne. Ainsi, toutes les chaînes (objets de chaîne) ont accès à cette méthode !\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nString.prototype.giveLydiaPizza = () => {\n  return \"Just give Lydia pizza already!\";\n};\n\nconst name = \"Lydia\";\n\nconsole.log(name.giveLydiaPizza())\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1281,11 +1292,11 @@
         "text": "`undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "`String` est un constructeur intégré, auquel nous pouvons ajouter des propriétés. Je viens d'ajouter une méthode à son prototype. Les chaînes de caractère primitives sont automatiquement converties en un objet chaîne, généré par la fonction prototype de chaîne. Ainsi, toutes les chaînes (objets de chaîne) ont accès à cette méthode !",
     "images": [],
     "tags": [
-      "fundamentals"
+      "prototypes"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1301,7 +1312,7 @@
     "slug": "question-29",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst a = {};\nconst b = { key: \"b\" };\nconst c = { key: \"c\" };\n\na[b] = 123;\na[c] = 456;\n\nconsole.log(a[b]);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nLes clés d'objet sont automatiquement converties en chaînes de caractères. Nous essayons de définir un objet en tant que clé de l'objet `a`, avec la valeur `123`.\n\nCependant, lorsque nous transformons un objet en chaîne de caractère, il devient `\"[Objet objet]\"`. Donc, ce que nous disons ici, c'est que un `a[\"Objet objet\"] = 123`. Ensuite, nous pouvons essayer de refaire la même chose. `c` est un autre objet que nous sommes implicitement en train de transformer en chaîne de caractère. Donc, `a[\"Objet objet\"] = 456`.\n\nEnsuite, nous affichons `a[b]`, qui est en fait `a[\"Objet objet\"]`. Que nous venons de définir à `456`, nous renvoyons donc `456`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst a = {};\nconst b = { key: \"b\" };\nconst c = { key: \"c\" };\n\na[b] = 123;\na[c] = 456;\n\nconsole.log(a[b]);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1329,8 +1340,8 @@
         "text": "`ReferenceError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Les clés d'objet sont automatiquement converties en chaînes de caractères. Nous essayons de définir un objet en tant que clé de l'objet `a`, avec la valeur `123`.\n\nCependant, lorsque nous transformons un objet en chaîne de caractère, il devient `\"[Objet objet]\"`. Donc, ce que nous disons ici, c'est que un `a[\"Objet objet\"] = 123`. Ensuite, nous pouvons essayer de refaire la même chose. `c` est un autre objet que nous sommes implicitement en train de transformer en chaîne de caractère. Donc, `a[\"Objet objet\"] = 456`.\n\nEnsuite, nous affichons `a[b]`, qui est en fait `a[\"Objet objet\"]`. Que nous venons de définir à `456`, nous renvoyons donc `456`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1349,7 +1360,7 @@
     "slug": "question-30",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst foo = () => console.log(\"Premier\");\nconst bar = () => setTimeout(() => console.log(\"Second\"));\nconst baz = () => console.log(\"Troisième\");\n\nbar();\nfoo();\nbaz();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nNous avons une fonction `setTimeout` et nous l'avons d'abord appelée. Pourtant, il a été affiché en dernier.\n\nEn effet, dans les navigateurs, nous n’avons pas seulement le moteur d’exécution, nous avons aussi quelque chose appelé `WebAPI`. `WebAPI` nous donne la fonction` setTimeout` pour commencer, et par exemple le DOM.\n\nUne fois que la fonction de rappel _(callback)_ est poussée via la WebAPI, la fonction `setTimeout` elle-même (mais pas la fonction de rappel !) est extraite de la pile.\n\n<img src=\"https://i.imgur.com/X5wsHOg.png\" width=\"200\">\n\nMaintenant, `foo` est invoqué et `\"Premier\"` est affiché.\n\n<img src=\"https://i.imgur.com/Pvc0dGq.png\" width=\"200\">\n\n`foo` est extrait de la pile et `baz` est invoqué. `\"Troisième\"` est affiché.\n\n<img src=\"https://i.imgur.com/WhA2bCP.png\" width=\"200\">\n\nWebAPI ne peut simplement pas ajouter des éléments à la pile dès qu’elle est prête. Au lieu de cela, elle pousse la fonction de rappel vers quelque chose appelé la _file d'attente_.\n\n<img src=\"https://i.imgur.com/NSnDZmU.png\" width=\"200\">\n\nC'est ici qu'une boucle d'événement commence à fonctionner. La **boucle d'événement** examine la pile et la file d'attente des tâches. Si la pile est vide, il prend la première chose dans la file d'attente et la pousse sur la pile.\n\n<img src=\"https://i.imgur.com/uyiScAI.png\" width=\"200\">\n\n`bar` est invoqué, `\"Second\"` est affiché et il est sorti de la pile.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst foo = () => console.log(\"Premier\");\nconst bar = () => setTimeout(() => console.log(\"Second\"));\nconst baz = () => console.log(\"Troisième\");\n\nbar();\nfoo();\nbaz();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1377,11 +1388,19 @@
         "text": "`Second` `Troisième` `Premier`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
-    "images": [],
+    "correctOption": "B",
+    "explanationMarkdown": "Nous avons une fonction `setTimeout` et nous l'avons d'abord appelée. Pourtant, il a été affiché en dernier.\n\nEn effet, dans les navigateurs, nous n’avons pas seulement le moteur d’exécution, nous avons aussi quelque chose appelé `WebAPI`. `WebAPI` nous donne la fonction` setTimeout` pour commencer, et par exemple le DOM.\n\nUne fois que la fonction de rappel _(callback)_ est poussée via la WebAPI, la fonction `setTimeout` elle-même (mais pas la fonction de rappel !) est extraite de la pile.\n\n<img src=\"https://i.imgur.com/X5wsHOg.png\" width=\"200\">\n\nMaintenant, `foo` est invoqué et `\"Premier\"` est affiché.\n\n<img src=\"https://i.imgur.com/Pvc0dGq.png\" width=\"200\">\n\n`foo` est extrait de la pile et `baz` est invoqué. `\"Troisième\"` est affiché.\n\n<img src=\"https://i.imgur.com/WhA2bCP.png\" width=\"200\">\n\nWebAPI ne peut simplement pas ajouter des éléments à la pile dès qu’elle est prête. Au lieu de cela, elle pousse la fonction de rappel vers quelque chose appelé la _file d'attente_.\n\n<img src=\"https://i.imgur.com/NSnDZmU.png\" width=\"200\">\n\nC'est ici qu'une boucle d'événement commence à fonctionner. La **boucle d'événement** examine la pile et la file d'attente des tâches. Si la pile est vide, il prend la première chose dans la file d'attente et la pousse sur la pile.\n\n<img src=\"https://i.imgur.com/uyiScAI.png\" width=\"200\">\n\n`bar` est invoqué, `\"Second\"` est affiché et il est sorti de la pile.",
+    "images": [
+      "https://i.imgur.com/X5wsHOg.png",
+      "https://i.imgur.com/Pvc0dGq.png",
+      "https://i.imgur.com/WhA2bCP.png",
+      "https://i.imgur.com/NSnDZmU.png",
+      "https://i.imgur.com/uyiScAI.png"
+    ],
     "tags": [
-      "fundamentals"
+      "async",
+      "types",
+      "dom-events"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1397,7 +1416,7 @@
     "slug": "question-31",
     "locale": "fr",
     "title": "Quel est l'élément ciblé _(event.target)_ au clic sur le bouton _(button)_ ?",
-    "promptMarkdown": "```html\n<div onclick=\"console.log('first div')\">\n  <div onclick=\"console.log('second div')\">\n    <button onclick=\"console.log('button')\">\n      Click!\n    </button>\n  </div>\n</div>\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nL'élément imbriqué le plus profond qui a provoqué l'événement est la cible de l'événement. Vous pouvez arrêter le bouillonnement _(bubbling)_ en utilisant `event.stopPropagation`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```html\n<div onclick=\"console.log('first div')\">\n  <div onclick=\"console.log('second div')\">\n    <button onclick=\"console.log('button')\">\n      Click!\n    </button>\n  </div>\n</div>\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1425,8 +1444,8 @@
         "text": "Un tableau de tous les éléments imbriqués."
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "L'élément imbriqué le plus profond qui a provoqué l'événement est la cible de l'événement. Vous pouvez arrêter le bouillonnement _(bubbling)_ en utilisant `event.stopPropagation`.",
     "images": [],
     "tags": [
       "dom-events"
@@ -1445,7 +1464,7 @@
     "slug": "question-32",
     "locale": "fr",
     "title": "Quand vous cliquez sur le paragraphe, quelle est la sortie ?",
-    "promptMarkdown": "```html\n<div onclick=\"console.log('div')\">\n  <p onclick=\"console.log('p')\">\n    Click here!\n  </p>\n</div>\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nSi nous cliquons sur `p`, nous verrons deux lignes : `p` et `div`. Lors de la propagation d'un événement, il y a 3 phases: capture, cible et bouillonnement _(bubbling)_. Par défaut, les gestionnaires d'événements sont exécutés dans la phase de bouillonnement (sauf si vous définissez `useCapture` sur` true`). Il va de l'élément imbriqué le plus profond vers l'extérieur.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```html\n<div onclick=\"console.log('div')\">\n  <p onclick=\"console.log('p')\">\n    Click here!\n  </p>\n</div>\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1473,11 +1492,11 @@
         "text": "`div`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Si nous cliquons sur `p`, nous verrons deux lignes : `p` et `div`. Lors de la propagation d'un événement, il y a 3 phases: capture, cible et bouillonnement _(bubbling)_. Par défaut, les gestionnaires d'événements sont exécutés dans la phase de bouillonnement (sauf si vous définissez `useCapture` sur` true`). Il va de l'élément imbriqué le plus profond vers l'extérieur.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "dom-events"
     ],
     "difficulty": "intermediate",
     "runnable": false,
@@ -1493,7 +1512,7 @@
     "slug": "question-33",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst person = { name: \"Lydia\" };\n\nfunction sayHi(age) {\n  console.log(`${this.name} is ${age}`);\n}\n\nsayHi.call(person, 21);\nsayHi.bind(person, 21);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nAvec les deux, nous pouvons transmettre l'objet auquel nous voulons que le mot clé `this` fasse référence. Cependant, `.call` est aussi _exécuté immédiatement_ !\n\n`.bind.` renvoie une copie de la fonction, mais avec un contexte lié ! Elle n'est pas exécutée immédiatement.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst person = { name: \"Lydia\" };\n\nfunction sayHi(age) {\n  console.log(`${this.name} is ${age}`);\n}\n\nsayHi.call(person, 21);\nsayHi.bind(person, 21);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1521,8 +1540,8 @@
         "text": "`Lydia is 21` `function`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "D",
+    "explanationMarkdown": "Avec les deux, nous pouvons transmettre l'objet auquel nous voulons que le mot clé `this` fasse référence. Cependant, `.call` est aussi _exécuté immédiatement_ !\n\n`.bind.` renvoie une copie de la fonction, mais avec un contexte lié ! Elle n'est pas exécutée immédiatement.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -1541,7 +1560,7 @@
     "slug": "question-34",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction sayHi() {\n  return (() => 0)();\n}\n\ntypeof sayHi();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nLa fonction `sayHi` renvoie la valeur renvoyée par la fonction immédiatement appelée (IIFE). Cette fonction a renvoyé `0`, qui est du type `\"nombre\"`.\n\nPour info : il n'y a que 7 types natifs : `null`, `undefined`, `boolean`, `number`, `string`, `object`, `symbol` et `bigint`. `\"function\"` n'est pas un type, puisque les fonctions sont des objets, il est de type `\"object\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction sayHi() {\n  return (() => 0)();\n}\n\ntypeof sayHi();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1569,11 +1588,12 @@
         "text": "`\"undefined\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "La fonction `sayHi` renvoie la valeur renvoyée par la fonction immédiatement appelée (IIFE). Cette fonction a renvoyé `0`, qui est du type `\"nombre\"`.\n\nPour info : il n'y a que 7 types natifs : `null`, `undefined`, `boolean`, `number`, `string`, `object`, `symbol` et `bigint`. `\"function\"` n'est pas un type, puisque les fonctions sont des objets, il est de type `\"object\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects",
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1589,7 +1609,7 @@
     "slug": "question-35",
     "locale": "fr",
     "title": "Lesquelles de ces valeurs sont fausses ?",
-    "promptMarkdown": "```javascript\n0;\nnew Number(0);\n(\"\");\n(\" \");\nnew Boolean(false);\nundefined;\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nIl n'y a que six valeurs de fausses :\n\n- `undefined`\n- `null`\n- `NaN`\n- `0`\n- `''` (chaîne de caractère vide)\n- `false`\n\nLes constructeurs de fonctions, comme `new Number` et `new Boolean` sont la vraies.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n0;\nnew Number(0);\n(\"\");\n(\" \");\nnew Boolean(false);\nundefined;\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1617,11 +1637,11 @@
         "text": "Toutes sont fausses"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Il n'y a que six valeurs de fausses :\n\n- `undefined`\n- `null`\n- `NaN`\n- `0`\n- `''` (chaîne de caractère vide)\n- `false`\n\nLes constructeurs de fonctions, comme `new Number` et `new Boolean` sont la vraies.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1637,7 +1657,7 @@
     "slug": "question-36",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconsole.log(typeof typeof 1);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\n`typeof 1` retourne `\"number\"`.\n`typeof \"number\"` retourne `\"string\"`\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconsole.log(typeof typeof 1);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1665,11 +1685,11 @@
         "text": "`\"undefined\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "`typeof 1` retourne `\"number\"`.\n`typeof \"number\"` retourne `\"string\"`",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1685,7 +1705,7 @@
     "slug": "question-37",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst numbers = [1, 2, 3];\nnumbers[10] = 11;\nconsole.log(numbers);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nLorsque vous définissez une valeur sur un élément d'un tableau qui dépasse la longueur du tableau, JavaScript crée un quelque chose appelé \"emplacements vides\". Ceux-ci ont en fait la valeur `undefined`, mais vous verrez quelque chose comme :\n\n`[1, 2, 3, 7 x empty, 11]`\n\nen fonction de l'endroit où vous l'exécutez (différent pour chaque navigateur, nœud, etc.).\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst numbers = [1, 2, 3];\nnumbers[10] = 11;\nconsole.log(numbers);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1713,11 +1733,11 @@
         "text": "`SyntaxError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Lorsque vous définissez une valeur sur un élément d'un tableau qui dépasse la longueur du tableau, JavaScript crée un quelque chose appelé \"emplacements vides\". Ceux-ci ont en fait la valeur `undefined`, mais vous verrez quelque chose comme :\n\n`[1, 2, 3, 7 x empty, 11]`\n\nen fonction de l'endroit où vous l'exécutez (différent pour chaque navigateur, nœud, etc.).",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1733,7 +1753,7 @@
     "slug": "question-38",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n(() => {\n  let x, y;\n  try {\n    throw new Error();\n  } catch (x) {\n    (x = 1), (y = 2);\n    console.log(x);\n  }\n  console.log(x);\n  console.log(y);\n})();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nLe bloc `catch` reçoit l'argument `x`. Ce n'est pas le même `x` que la variable que nous passons en arguments. Cette variable `x` a une portée de bloc.\n\nPlus tard, nous définissons cette variable de bloc égale à `1` et définissons la valeur de la variable `y`. Maintenant, nous affichons la variable `x` de portée de bloc, dont la valeur est égale à `1`.\n\nEn dehors du bloc `catch`, `x` est toujours `undefined` et `y` est égal à `2`. Lorsque nous voulons `console.log(x)` en dehors du bloc `catch`, il renvoie `undefined`, et `y` renvoie `2`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n(() => {\n  let x, y;\n  try {\n    throw new Error();\n  } catch (x) {\n    (x = 1), (y = 2);\n    console.log(x);\n  }\n  console.log(x);\n  console.log(y);\n})();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1761,11 +1781,11 @@
         "text": "`1` `undefined` `undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Le bloc `catch` reçoit l'argument `x`. Ce n'est pas le même `x` que la variable que nous passons en arguments. Cette variable `x` a une portée de bloc.\n\nPlus tard, nous définissons cette variable de bloc égale à `1` et définissons la valeur de la variable `y`. Maintenant, nous affichons la variable `x` de portée de bloc, dont la valeur est égale à `1`.\n\nEn dehors du bloc `catch`, `x` est toujours `undefined` et `y` est égal à `2`. Lorsque nous voulons `console.log(x)` en dehors du bloc `catch`, il renvoie `undefined`, et `y` renvoie `2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1781,7 +1801,7 @@
     "slug": "question-39",
     "locale": "fr",
     "title": "Tout en JavaScript est...",
-    "promptMarkdown": "<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nJavaScript n'a que des types et des objets primitifs.\n\nLes types primitifs sont `boolean`, `null`, `undefined`, `bigint`, `number`, `string` et `symbol`.\n\nCe qui différencie une primitive d'un objet, c'est que les primitives n'ont aucune propriété ou méthode. Cependant, vous remarquerez que  `'foo'.toUpperCase()` est évalué à `'FOO'` et n'entraîne pas de `TypeError`. En effet, lorsque vous essayez d'accéder à une propriété ou à une méthode sur une primitive telle qu'une chaîne, JavaScript encapsule implicitement l'objet à l'aide de l'une des classes d'encapsulation, à savoir `String`, puis supprime immédiatement l'encapsulation après l'évaluation de l'expression. Toutes les primitives à l'exception de `null` et` undefined` présentent ce comportement.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "",
     "codeBlocks": [],
     "explanationCodeBlocks": [],
     "options": [
@@ -1802,11 +1822,12 @@
         "text": "nombre ou objet"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "JavaScript n'a que des types et des objets primitifs.\n\nLes types primitifs sont `boolean`, `null`, `undefined`, `bigint`, `number`, `string` et `symbol`.\n\nCe qui différencie une primitive d'un objet, c'est que les primitives n'ont aucune propriété ou méthode. Cependant, vous remarquerez que  `'foo'.toUpperCase()` est évalué à `'FOO'` et n'entraîne pas de `TypeError`. En effet, lorsque vous essayez d'accéder à une propriété ou à une méthode sur une primitive telle qu'une chaîne, JavaScript encapsule implicitement l'objet à l'aide de l'une des classes d'encapsulation, à savoir `String`, puis supprime immédiatement l'encapsulation après l'évaluation de l'expression. Toutes les primitives à l'exception de `null` et` undefined` présentent ce comportement.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "prototypes",
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": false,
@@ -1822,7 +1843,7 @@
     "slug": "question-40",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n[[0, 1], [2, 3]].reduce(\n  (acc, cur) => {\n    return acc.concat(cur);\n  },\n  [1, 2]\n);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\n`[1, 2]` est notre valeur initiale. C'est la valeur avec laquelle nous commençons et la valeur du tout premier `acc`. Au premier tour, `acc` est `[1,2]` et `cur` est `[0, 1]`. Nous les concaténons, ce qui donne `[1, 2, 0, 1]`.\n\nEnsuite, `acc` est `[1, 2, 0, 1]` et `cur` est `[2, 3]`. Nous les concaténons et obtenons `[1, 2, 0, 1, 2, 3]`\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n[[0, 1], [2, 3]].reduce(\n  (acc, cur) => {\n    return acc.concat(cur);\n  },\n  [1, 2]\n);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1850,11 +1871,11 @@
         "text": "`[1, 2, 6]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "`[1, 2]` est notre valeur initiale. C'est la valeur avec laquelle nous commençons et la valeur du tout premier `acc`. Au premier tour, `acc` est `[1,2]` et `cur` est `[0, 1]`. Nous les concaténons, ce qui donne `[1, 2, 0, 1]`.\n\nEnsuite, `acc` est `[1, 2, 0, 1]` et `cur` est `[2, 3]`. Nous les concaténons et obtenons `[1, 2, 0, 1, 2, 3]`",
     "images": [],
     "tags": [
-      "fundamentals"
+      "arrays"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1870,7 +1891,7 @@
     "slug": "question-41",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n!!null;\n!!\"\";\n!!1;\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\n`null` est faux. `!null` retourne `true`. `!true` retourne `false`.\n\n`\"\"` est faux. `!\"\"` retourne `true`. `!true` retourne `false`.\n\n`1` est vrai. `!1` retourne `false`. `!false` retourne `true`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n!!null;\n!!\"\";\n!!1;\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1898,11 +1919,11 @@
         "text": "`true` `true` `false`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "`null` est faux. `!null` retourne `true`. `!true` retourne `false`.\n\n`\"\"` est faux. `!\"\"` retourne `true`. `!true` retourne `false`.\n\n`1` est vrai. `!1` retourne `false`. `!false` retourne `true`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1918,7 +1939,7 @@
     "slug": "question-42",
     "locale": "fr",
     "title": "Que retourne la méthode `setInterval` ?",
-    "promptMarkdown": "```javascript\nsetInterval(() => console.log(\"Hi\"), 1000);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nIl retourne un identifiant unique. Cet identifiant peut être utilisé pour effacer cet interval avec la fonction `clearInterval()`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nsetInterval(() => console.log(\"Hi\"), 1000);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1946,8 +1967,8 @@
         "text": "`undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Il retourne un identifiant unique. Cet identifiant peut être utilisé pour effacer cet interval avec la fonction `clearInterval()`.",
     "images": [],
     "tags": [
       "async"
@@ -1966,7 +1987,7 @@
     "slug": "question-43",
     "locale": "fr",
     "title": "Que retourne ceci ?",
-    "promptMarkdown": "```javascript\n[...\"Lydia\"];\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nUne chaîne de caractère est itérable. L'opérateur de déconstruction transforme chaque caractère d'un itérable en un élément.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n[...\"Lydia\"];\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -1994,8 +2015,8 @@
         "text": "`[[\"L\", \"y\", \"d\", \"i\", \"a\"]]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Une chaîne de caractère est itérable. L'opérateur de déconstruction transforme chaque caractère d'un itérable en un élément.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2014,7 +2035,7 @@
     "slug": "question-44",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction* generator(i) {\n  yield i;\n  yield i * 2;\n}\n\nconst gen = generator(10);\n\nconsole.log(gen.next().value);\nconsole.log(gen.next().value);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nLes fonctions régulières ne peuvent pas être arrêtées à mi-parcours après l'invocation. Cependant, une fonction de générateur peut être \"arrêtée\" à mi-chemin et continuer plus tard à partir de son point d'arrêt. Chaque fois qu'une fonction génératrice rencontre un mot-clé `yield`, elle renvoie la valeur spécifiée après celui-ci. Notez que la fonction du générateur dans ce cas ne _return_ pas la valeur, il _yields_ la valeur.\n\nPremièrement, nous initialisons la fonction du générateur avec `i` égal à` 10`. Nous appelons la fonction génératrice en utilisant la méthode `next()`. La première fois que nous appelons la fonction de générateur, `i` est égal à `10`. Il rencontre le premier mot-clé `yield` : il donne la valeur de `i`. Le générateur est maintenant \"en pause\" et `10` est affiché.\n\nEnsuite, nous appelons à nouveau la fonction avec la méthode `next()`. Il commence à continuer là où il s’était arrêté précédemment, toujours avec `i` égal à `10`. Maintenant, il rencontre le prochain mot-clé `yield` et donne `i * 2`. `i` est égal à `10`, donc il renvoie `10 * 2`, ce qui correspond à `20`. Cela donne `10, 20`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction* generator(i) {\n  yield i;\n  yield i * 2;\n}\n\nconst gen = generator(10);\n\nconsole.log(gen.next().value);\nconsole.log(gen.next().value);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2042,11 +2063,11 @@
         "text": "`0, 10 and 10, 20`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Les fonctions régulières ne peuvent pas être arrêtées à mi-parcours après l'invocation. Cependant, une fonction de générateur peut être \"arrêtée\" à mi-chemin et continuer plus tard à partir de son point d'arrêt. Chaque fois qu'une fonction génératrice rencontre un mot-clé `yield`, elle renvoie la valeur spécifiée après celui-ci. Notez que la fonction du générateur dans ce cas ne _return_ pas la valeur, il _yields_ la valeur.\n\nPremièrement, nous initialisons la fonction du générateur avec `i` égal à` 10`. Nous appelons la fonction génératrice en utilisant la méthode `next()`. La première fois que nous appelons la fonction de générateur, `i` est égal à `10`. Il rencontre le premier mot-clé `yield` : il donne la valeur de `i`. Le générateur est maintenant \"en pause\" et `10` est affiché.\n\nEnsuite, nous appelons à nouveau la fonction avec la méthode `next()`. Il commence à continuer là où il s’était arrêté précédemment, toujours avec `i` égal à `10`. Maintenant, il rencontre le prochain mot-clé `yield` et donne `i * 2`. `i` est égal à `10`, donc il renvoie `10 * 2`, ce qui correspond à `20`. Cela donne `10, 20`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2062,7 +2083,7 @@
     "slug": "question-45",
     "locale": "fr",
     "title": "Qu'est-ce que cela retourne ?",
-    "promptMarkdown": "```javascript\nconst firstPromise = new Promise((res, rej) => {\n  setTimeout(res, 500, \"one\");\n});\n\nconst secondPromise = new Promise((res, rej) => {\n  setTimeout(res, 100, \"two\");\n});\n\nPromise.race([firstPromise, secondPromise]).then(res => console.log(res));\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nLorsque nous passons plusieurs promesses à la méthode `Promise.race`, elle résout/rejette la promesse _first_ qui résout/rejette. Nous passons, à la méthode `setTimeout`, un timer: 500 ms pour la première promesse (`firstPromise`), et 100 ms pour la deuxième promesse (`secondPromise`). Cela signifie que le `secondPromise` se résout en premier avec la valeur de `'two'`. `res` contient maintenant la valeur de `'deux'`, qui est affiché.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst firstPromise = new Promise((res, rej) => {\n  setTimeout(res, 500, \"one\");\n});\n\nconst secondPromise = new Promise((res, rej) => {\n  setTimeout(res, 100, \"two\");\n});\n\nPromise.race([firstPromise, secondPromise]).then(res => console.log(res));\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2090,11 +2111,12 @@
         "text": "`\"one\" \"two\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Lorsque nous passons plusieurs promesses à la méthode `Promise.race`, elle résout/rejette la promesse _first_ qui résout/rejette. Nous passons, à la méthode `setTimeout`, un timer: 500 ms pour la première promesse (`firstPromise`), et 100 ms pour la deuxième promesse (`secondPromise`). Cela signifie que le `secondPromise` se résout en premier avec la valeur de `'two'`. `res` contient maintenant la valeur de `'deux'`, qui est affiché.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "async",
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2110,7 +2132,7 @@
     "slug": "question-46",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet person = { name: \"Lydia\" };\nconst members = [person];\nperson = null;\n\nconsole.log(members);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nTout d'abord, nous déclarons une variable `person` avec la valeur d'un objet possédant une propriété `name`.\n\n<img src=\"https://i.imgur.com/TML1MbS.png\" width=\"200\">\n\nEnsuite, nous déclarons une variable appelée `membres`. Nous définissons le premier élément de ce tableau égal à la valeur de la variable `person`. Les objets interagissent par référence quand ils sont égaux. Lorsque vous affectez une référence d'une variable à une autre, vous créez une copie de cette référence. (notez qu'ils n'ont pas la même référence !)\n\n<img src=\"https://i.imgur.com/FSG5K3F.png\" width=\"300\">\n\nEnsuite, nous définissons la variable `person` égale à `null`.\n\n<img src=\"https://i.imgur.com/sYjcsMT.png\" width=\"300\">\n\nNous modifions seulement la valeur de la variable `person`, et non le premier élément du tableau, car cet élément a une référence (copiée) différente de l'objet. Le premier élément de `members` conserve sa référence à l'objet d'origine. Lorsque nous affichons le tableau `members`, le premier élément contient toujours la valeur de l'objet, qui est affiché.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet person = { name: \"Lydia\" };\nconst members = [person];\nperson = null;\n\nconsole.log(members);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2138,11 +2160,15 @@
         "text": "`[{ name: \"Lydia\" }]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
-    "images": [],
+    "correctOption": "D",
+    "explanationMarkdown": "Tout d'abord, nous déclarons une variable `person` avec la valeur d'un objet possédant une propriété `name`.\n\n<img src=\"https://i.imgur.com/TML1MbS.png\" width=\"200\">\n\nEnsuite, nous déclarons une variable appelée `membres`. Nous définissons le premier élément de ce tableau égal à la valeur de la variable `person`. Les objets interagissent par référence quand ils sont égaux. Lorsque vous affectez une référence d'une variable à une autre, vous créez une copie de cette référence. (notez qu'ils n'ont pas la même référence !)\n\n<img src=\"https://i.imgur.com/FSG5K3F.png\" width=\"300\">\n\nEnsuite, nous définissons la variable `person` égale à `null`.\n\n<img src=\"https://i.imgur.com/sYjcsMT.png\" width=\"300\">\n\nNous modifions seulement la valeur de la variable `person`, et non le premier élément du tableau, car cet élément a une référence (copiée) différente de l'objet. Le premier élément de `members` conserve sa référence à l'objet d'origine. Lorsque nous affichons le tableau `members`, le premier élément contient toujours la valeur de l'objet, qui est affiché.",
+    "images": [
+      "https://i.imgur.com/TML1MbS.png",
+      "https://i.imgur.com/FSG5K3F.png",
+      "https://i.imgur.com/sYjcsMT.png"
+    ],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2158,7 +2184,7 @@
     "slug": "question-47",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst person = {\n  name: \"Lydia\",\n  age: 21\n};\n\nfor (const item in person) {\n  console.log(item);\n}\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nAvec une boucle `for-in`, nous pouvons parcourir les clés d'objet, dans ce cas `name` et `age`. Sous le capot, les clés d'objet sont des chaînes (si elles ne sont pas un symbole). A chaque boucle, nous définissons la valeur de `item` égal à la clé courante sur laquelle elle est entrain d'itéré. Premièrement, `item` est égal à `name` et est affiché. Ensuite, `item` est égal à `age`, qui est affiché.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst person = {\n  name: \"Lydia\",\n  age: 21\n};\n\nfor (const item in person) {\n  console.log(item);\n}\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2186,8 +2212,8 @@
         "text": "`[\"name\", \"Lydia\"], [\"age\", 21]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Avec une boucle `for-in`, nous pouvons parcourir les clés d'objet, dans ce cas `name` et `age`. Sous le capot, les clés d'objet sont des chaînes (si elles ne sont pas un symbole). A chaque boucle, nous définissons la valeur de `item` égal à la clé courante sur laquelle elle est entrain d'itéré. Premièrement, `item` est égal à `name` et est affiché. Ensuite, `item` est égal à `age`, qui est affiché.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2206,7 +2232,7 @@
     "slug": "question-48",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconsole.log(3 + 4 + \"5\");\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nL'associativité des opérateurs correspond à l'ordre dans lequel le compilateur évalue les expressions, de gauche à droite ou de droite à gauche. Cela se produit uniquement si tous les opérateurs ont la même priorité. Nous n'avons qu'un type d'opérateur : `+`. De plus, l'associativité est de gauche à droite.\n\n`3 + 4` est évalué en premier. Cela donne le nombre `7`.\n\n`7 + '5'` donne `'75'` à cause de la conversion. JavaScript convertit le nombre `7` en une chaîne, voir question 15. Nous pouvons concaténer deux chaînes en utilisant l'opérateur `+`. `\"7\" + \"5\"` a pour résultat `\"75\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconsole.log(3 + 4 + \"5\");\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2234,11 +2260,11 @@
         "text": "`\"12\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "L'associativité des opérateurs correspond à l'ordre dans lequel le compilateur évalue les expressions, de gauche à droite ou de droite à gauche. Cela se produit uniquement si tous les opérateurs ont la même priorité. Nous n'avons qu'un type d'opérateur : `+`. De plus, l'associativité est de gauche à droite.\n\n`3 + 4` est évalué en premier. Cela donne le nombre `7`.\n\n`7 + '5'` donne `'75'` à cause de la conversion. JavaScript convertit le nombre `7` en une chaîne, voir question 15. Nous pouvons concaténer deux chaînes en utilisant l'opérateur `+`. `\"7\" + \"5\"` a pour résultat `\"75\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "arrays"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2254,7 +2280,7 @@
     "slug": "question-49",
     "locale": "fr",
     "title": "Quelle est la valeur de `num` ?",
-    "promptMarkdown": "```javascript\nconst num = parseInt(\"7*6\", 10);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nSeuls les premiers nombres de la chaîne sont renvoyés. Basé sur la base dix (le deuxième argument permettant de spécifier le type de nombre que nous voulons analyser: base 10, hexadécimal, octal, binaire, etc.), `parseInt` vérifie si les caractères de la chaîne sont valides. Une fois qu'il rencontre un caractère qui n'est pas un nombre valide dans la base, il arrête l'analyse et ignore les caractères suivants.\n\n`*` n'est pas un nombre valide. Il analyse seulement `7` dans la décimale `7`. `num` contient maintenant la valeur de` 7`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst num = parseInt(\"7*6\", 10);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2282,11 +2308,11 @@
         "text": "`NaN`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Seuls les premiers nombres de la chaîne sont renvoyés. Basé sur la base dix (le deuxième argument permettant de spécifier le type de nombre que nous voulons analyser: base 10, hexadécimal, octal, binaire, etc.), `parseInt` vérifie si les caractères de la chaîne sont valides. Une fois qu'il rencontre un caractère qui n'est pas un nombre valide dans la base, il arrête l'analyse et ignore les caractères suivants.\n\n`*` n'est pas un nombre valide. Il analyse seulement `7` dans la décimale `7`. `num` contient maintenant la valeur de` 7`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2302,7 +2328,7 @@
     "slug": "question-50",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n[1, 2, 3].map(num => {\n  if (typeof num === \"number\") return;\n  return num * 2;\n});\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nLors du l'utilisation de `map` sur le tableau, la valeur de `num` est égale à l’élément sur lequel elle est en train de boucler. Dans ce cas, les éléments sont des nombres. La condition de l'instruction si `typeof num === \"numéro\"` renvoie `true`. La fonction map crée un nouveau tableau et insère les valeurs renvoyées par la fonction.\n\nCependant, nous ne renvoyons pas de valeur. Lorsque nous ne renvoyons pas de valeur à partir de la fonction, la fonction renvoie `undefined`. Le bloc de fonction est appelé pour chaque élément du tableau. Ainsi, pour chaque élément, nous renvoyons `undefined`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n[1, 2, 3].map(num => {\n  if (typeof num === \"number\") return;\n  return num * 2;\n});\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2330,11 +2356,11 @@
         "text": "`[ 3 x empty ]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Lors du l'utilisation de `map` sur le tableau, la valeur de `num` est égale à l’élément sur lequel elle est en train de boucler. Dans ce cas, les éléments sont des nombres. La condition de l'instruction si `typeof num === \"numéro\"` renvoie `true`. La fonction map crée un nouveau tableau et insère les valeurs renvoyées par la fonction.\n\nCependant, nous ne renvoyons pas de valeur. Lorsque nous ne renvoyons pas de valeur à partir de la fonction, la fonction renvoie `undefined`. Le bloc de fonction est appelé pour chaque élément du tableau. Ainsi, pour chaque élément, nous renvoyons `undefined`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2350,7 +2376,7 @@
     "slug": "question-51",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction getInfo(member, year) {\n  member.name = \"Lydia\";\n  year = \"1998\";\n}\n\nconst person = { name: \"Sarah\" };\nconst birthYear = \"1997\";\n\ngetInfo(person, birthYear);\n\nconsole.log(person, birthYear);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nLes arguments sont passés par _valeur_, à moins que leur valeur ne soit un objet, ils sont passés par _référence_. `birthYear` est passée par valeur, car c'est une chaîne, pas un objet. Lorsque nous passons des arguments par valeur, une copie de cette valeur est créée (voir question 46).\n\nLa variable `birthYear` a une référence à la valeur `\"1997\"`. L'argument `year` fait également référence à la valeur `\"1997\"`, mais il ne s'agit pas de la même valeur que celle de `birthYear`. Lorsque nous mettons à jour la valeur de `year` en plaçant `year` égal à `\"1998\"`, nous ne mettons à jour que la valeur de `year`. `birthYear` est toujours égal à `\"1997\"`.\n\nLa valeur de `person` est un objet. L'argument `membre` a une référence (copiée) au même objet. Lorsque nous modifions une propriété de l'objet, `membre` a une référence à la valeur de` person` sera également modifiée, puisqu'elles ont toutes les deux une référence au même objet. La propriété `name` de `person` est maintenant égale à la valeur `\"Lydia\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction getInfo(member, year) {\n  member.name = \"Lydia\";\n  year = \"1998\";\n}\n\nconst person = { name: \"Sarah\" };\nconst birthYear = \"1997\";\n\ngetInfo(person, birthYear);\n\nconsole.log(person, birthYear);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2378,11 +2404,11 @@
         "text": "`{ name: \"Sarah\" }, \"1997\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Les arguments sont passés par _valeur_, à moins que leur valeur ne soit un objet, ils sont passés par _référence_. `birthYear` est passée par valeur, car c'est une chaîne, pas un objet. Lorsque nous passons des arguments par valeur, une copie de cette valeur est créée (voir question 46).\n\nLa variable `birthYear` a une référence à la valeur `\"1997\"`. L'argument `year` fait également référence à la valeur `\"1997\"`, mais il ne s'agit pas de la même valeur que celle de `birthYear`. Lorsque nous mettons à jour la valeur de `year` en plaçant `year` égal à `\"1998\"`, nous ne mettons à jour que la valeur de `year`. `birthYear` est toujours égal à `\"1997\"`.\n\nLa valeur de `person` est un objet. L'argument `membre` a une référence (copiée) au même objet. Lorsque nous modifions une propriété de l'objet, `membre` a une référence à la valeur de` person` sera également modifiée, puisqu'elles ont toutes les deux une référence au même objet. La propriété `name` de `person` est maintenant égale à la valeur `\"Lydia\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2398,7 +2424,7 @@
     "slug": "question-52",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction greeting() {\n  throw \"Hello world!\";\n}\n\nfunction sayHi() {\n  try {\n    const data = greeting();\n    console.log(\"It worked!\", data);\n  } catch (e) {\n    console.log(\"Oh no an error!\", e);\n  }\n}\n\nsayHi();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nAvec l'instruction `throw`, nous pouvons créer des erreurs personnalisées. Avec cette déclaration, vous pouvez lancer des exceptions. Une exception peut être une <b>chaîne</b>, un <b>numéro</b>, un <b>booléen</b> ou un <b>objet</b>. Dans ce cas, notre exception est la chaîne `'Hello world'`.\n\nAvec l'instruction `catch`, nous pouvons spécifier quoi faire si une exception est levée dans le bloc `try`. Une exception est levée : la chaîne `'Hello world'`. `e` est maintenant égal à cette chaîne, que nous affichons. Il en résulte `'Oh an error: Hello world'`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction greeting() {\n  throw \"Hello world!\";\n}\n\nfunction sayHi() {\n  try {\n    const data = greeting();\n    console.log(\"It worked!\", data);\n  } catch (e) {\n    console.log(\"Oh no an error!\", e);\n  }\n}\n\nsayHi();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2426,11 +2452,11 @@
         "text": "`\"Oh no an error: Hello world!`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "D",
+    "explanationMarkdown": "Avec l'instruction `throw`, nous pouvons créer des erreurs personnalisées. Avec cette déclaration, vous pouvez lancer des exceptions. Une exception peut être une <b>chaîne</b>, un <b>numéro</b>, un <b>booléen</b> ou un <b>objet</b>. Dans ce cas, notre exception est la chaîne `'Hello world'`.\n\nAvec l'instruction `catch`, nous pouvons spécifier quoi faire si une exception est levée dans le bloc `try`. Une exception est levée : la chaîne `'Hello world'`. `e` est maintenant égal à cette chaîne, que nous affichons. Il en résulte `'Oh an error: Hello world'`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2446,7 +2472,7 @@
     "slug": "question-53",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nfunction Car() {\n  this.make = \"Lamborghini\";\n  return { make: \"Maserati\" };\n}\n\nconst myCar = new Car();\nconsole.log(myCar.make);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nLorsque vous retournez une propriété, la valeur de la propriété est égale à la valeur _retournée_ et non à la valeur définie dans la fonction constructeur. Nous renvoyons la chaîne `\"Maserati\"`, donc `myCar.make` est égal à `\"Maserati\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nfunction Car() {\n  this.make = \"Lamborghini\";\n  return { make: \"Maserati\" };\n}\n\nconst myCar = new Car();\nconsole.log(myCar.make);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2474,8 +2500,8 @@
         "text": "`TypeError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Lorsque vous retournez une propriété, la valeur de la propriété est égale à la valeur _retournée_ et non à la valeur définie dans la fonction constructeur. Nous renvoyons la chaîne `\"Maserati\"`, donc `myCar.make` est égal à `\"Maserati\"`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2494,22 +2520,23 @@
     "slug": "question-54",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n(() => {\n  let x = (y = 10);\n})();\n\nconsole.log(typeof x);\nconsole.log(typeof y);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\n`let x = y = 10;` est en réalité un raccourci pour :\n\n```javascript\ny = 10;\nlet x = y;\n```\n\nLorsque nous définissons `y` égal à `10`, nous ajoutons en fait une propriété `y` à l'objet global (`window` dans le navigateur,` global` dans NodeJS). Dans un navigateur, `window.y` est égal à `10`.\n\nEnsuite, nous déclarons une variable `x` avec la valeur de `y`, qui est `10`. Les variables déclarées avec le mot-clé `let` ont une portée de bloc, elles ne sont définies que dans le bloc dans lequel elles sont déclarées; la fonction immédiatement invoquée (IIFE) dans ce cas. Lorsque nous utilisons l'opérateur `typeof`, l'opérande `x` n'est pas défini: nous essayons d'accéder à `x` en dehors du bloc dans lequel il est déclaré. Cela signifie que `x` n'est pas défini. Les valeurs auxquelles aucune valeur n'a été attribuée ni déclarée sont du type `\"undefined\"`. `console.log (typeof x)` renvoie `\"undefined\"`.\n\nCependant, nous avons créé une variable globale `y` lorsque `y` est égal à `10`. Cette valeur est accessible n'importe où dans notre code. `y` est défini et contient une valeur de type `\"number\"`. `console.log (typeof y)` renvoie `\"number\"`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n(() => {\n  let x = (y = 10);\n})();\n\nconsole.log(typeof x);\nconsole.log(typeof y);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
         "order": 0,
         "language": "javascript",
         "code": "(() => {\n  let x = (y = 10);\n})();\n\nconsole.log(typeof x);\nconsole.log(typeof y);"
-      },
+      }
+    ],
+    "explanationCodeBlocks": [
       {
-        "id": "code-2",
-        "order": 1,
+        "id": "code-1",
+        "order": 0,
         "language": "javascript",
         "code": "y = 10;\nlet x = y;"
       }
     ],
-    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -2528,11 +2555,14 @@
         "text": "`\"number\", \"undefined\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "`let x = y = 10;` est en réalité un raccourci pour :\n\n```javascript\ny = 10;\nlet x = y;\n```\n\nLorsque nous définissons `y` égal à `10`, nous ajoutons en fait une propriété `y` à l'objet global (`window` dans le navigateur,` global` dans NodeJS). Dans un navigateur, `window.y` est égal à `10`.\n\nEnsuite, nous déclarons une variable `x` avec la valeur de `y`, qui est `10`. Les variables déclarées avec le mot-clé `let` ont une portée de bloc, elles ne sont définies que dans le bloc dans lequel elles sont déclarées; la fonction immédiatement invoquée (IIFE) dans ce cas. Lorsque nous utilisons l'opérateur `typeof`, l'opérande `x` n'est pas défini: nous essayons d'accéder à `x` en dehors du bloc dans lequel il est déclaré. Cela signifie que `x` n'est pas défini. Les valeurs auxquelles aucune valeur n'a été attribuée ni déclarée sont du type `\"undefined\"`. `console.log (typeof x)` renvoie `\"undefined\"`.\n\nCependant, nous avons créé une variable globale `y` lorsque `y` est égal à `10`. Cette valeur est accessible n'importe où dans notre code. `y` est défini et contient une valeur de type `\"number\"`. `console.log (typeof y)` renvoie `\"number\"`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "scope",
+      "types",
+      "modules",
+      "dom-events"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2548,7 +2578,7 @@
     "slug": "question-55",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nclass Dog {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nDog.prototype.bark = function() {\n  console.log(`Woof I am ${this.name}`);\n};\n\nconst pet = new Dog(\"Mara\");\n\npet.bark();\n\ndelete Dog.prototype.bark;\n\npet.bark();\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nNous pouvons supprimer des propriétés d'objets en utilisant le mot-clé `delete`, également dans le prototype. En supprimant une propriété dans le prototype, elle n’est plus disponible dans la chaîne de prototypes. Dans ce cas, la fonction `bark` n'est plus disponible dans le prototype après `delete Dog.prototype.bark`, mais nous essayons toujours d'y accéder.\n\nLorsque nous essayons d'appeler quelque chose qui n'est pas une fonction, un `TypeError` est levé. Dans ce cas, `TypeError: pet.bark n'est pas une fonction`, puisque` pet.bark` est `undefined`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nclass Dog {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nDog.prototype.bark = function() {\n  console.log(`Woof I am ${this.name}`);\n};\n\nconst pet = new Dog(\"Mara\");\n\npet.bark();\n\ndelete Dog.prototype.bark;\n\npet.bark();\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2576,11 +2606,12 @@
         "text": "`TypeError`, `TypeError`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Nous pouvons supprimer des propriétés d'objets en utilisant le mot-clé `delete`, également dans le prototype. En supprimant une propriété dans le prototype, elle n’est plus disponible dans la chaîne de prototypes. Dans ce cas, la fonction `bark` n'est plus disponible dans le prototype après `delete Dog.prototype.bark`, mais nous essayons toujours d'y accéder.\n\nLorsque nous essayons d'appeler quelque chose qui n'est pas une fonction, un `TypeError` est levé. Dans ce cas, `TypeError: pet.bark n'est pas une fonction`, puisque` pet.bark` est `undefined`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "prototypes",
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2596,7 +2627,7 @@
     "slug": "question-56",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst set = new Set([1, 1, 2, 3, 4]);\n\nconsole.log(set);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : D\n\nL'objet `Set` est une collection de valeurs _uniques_ : une valeur ne peut apparaître qu'une seule fois dans un ensemble.\n\nNous avons passé l'itérable `[1, 1, 2, 3, 4]` avec une valeur dupliquée `1`. Puisque nous ne pouvons pas avoir deux valeurs identiques dans un ensemble, l'une d'entre elles est supprimée. Cela donne `{1, 2, 3, 4}`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst set = new Set([1, 1, 2, 3, 4]);\n\nconsole.log(set);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2624,8 +2655,8 @@
         "text": "`{1, 2, 3, 4}`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "D",
+    "explanationMarkdown": "L'objet `Set` est une collection de valeurs _uniques_ : une valeur ne peut apparaître qu'une seule fois dans un ensemble.\n\nNous avons passé l'itérable `[1, 1, 2, 3, 4]` avec une valeur dupliquée `1`. Puisque nous ne pouvons pas avoir deux valeurs identiques dans un ensemble, l'une d'entre elles est supprimée. Cela donne `{1, 2, 3, 4}`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2644,7 +2675,7 @@
     "slug": "question-57",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\n// counter.js\nlet counter = 10;\nexport default counter;\n```\n\n```javascript\n// index.js\nimport myCounter from \"./counter\";\n\nmyCounter += 1;\n\nconsole.log(myCounter);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nUn module importé est _en lecture seule_ : vous ne pouvez pas modifier le module importé. Seul le module qui les exporte peut en changer la valeur.\n\nLorsque nous essayons d'incrémenter la valeur de `myCounter`, une erreur est générée : `myCounter` est en lecture seule et ne peut pas être modifié.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\n// counter.js\nlet counter = 10;\nexport default counter;\n```\n\n```javascript\n// index.js\nimport myCounter from \"./counter\";\n\nmyCounter += 1;\n\nconsole.log(myCounter);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2678,11 +2709,11 @@
         "text": "`NaN`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Un module importé est _en lecture seule_ : vous ne pouvez pas modifier le module importé. Seul le module qui les exporte peut en changer la valeur.\n\nLorsque nous essayons d'incrémenter la valeur de `myCounter`, une erreur est générée : `myCounter` est en lecture seule et ne peut pas être modifié.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "modules"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2698,7 +2729,7 @@
     "slug": "question-58",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst name = \"Lydia\";\nage = 21;\n\nconsole.log(delete name);\nconsole.log(delete age);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nL'opérateur `delete` renvoie une valeur booléenne : `true` en cas de suppression réussie, sinon il renvoie `false`. Toutefois, les variables déclarées avec les mots clés `var`,` const` ou `let` ne peuvent pas être supprimées à l'aide de l'opérateur` delete`.\n\nLa variable `name` a été déclarée avec un mot-clé `const`. Par conséquent, sa suppression a échoué : `false` est renvoyé. Lorsque nous définissons `age` égal à `21`, nous avons en fait ajouté une propriété appelée `age` à l'objet global. De cette façon, vous pouvez supprimer des propriétés d’objets, ainsi que de l’objet global, pour que `delete age` renvoie` true`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst name = \"Lydia\";\nage = 21;\n\nconsole.log(delete name);\nconsole.log(delete age);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2726,8 +2757,8 @@
         "text": "`undefined`, `undefined`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "L'opérateur `delete` renvoie une valeur booléenne : `true` en cas de suppression réussie, sinon il renvoie `false`. Toutefois, les variables déclarées avec les mots clés `var`,` const` ou `let` ne peuvent pas être supprimées à l'aide de l'opérateur` delete`.\n\nLa variable `name` a été déclarée avec un mot-clé `const`. Par conséquent, sa suppression a échoué : `false` est renvoyé. Lorsque nous définissons `age` égal à `21`, nous avons en fait ajouté une propriété appelée `age` à l'objet global. De cette façon, vous pouvez supprimer des propriétés d’objets, ainsi que de l’objet global, pour que `delete age` renvoie` true`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2746,28 +2777,29 @@
     "slug": "question-59",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst numbers = [1, 2, 3, 4, 5];\nconst [y] = numbers;\n\nconsole.log(y);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : C\n\nNous pouvons décompresser les valeurs des tableaux ou les propriétés des objets en les détruisant. Par exemple :\n\n```javascript\n[a, b] = [1, 2];\n```\n\n<img src=\"https://i.imgur.com/ADFpVop.png\" width=\"200\">\n\nLa valeur de `a` est maintenant `1` et la valeur de `b` est maintenant `2`. Ce que nous avons réellement fait dans la question, c'est :\n\n```javascript\n[y] = [1, 2, 3, 4, 5];\n```\n\n<img src=\"https://i.imgur.com/NzGkMNk.png\" width=\"200\">\n\nCela signifie que la valeur de `y` est égale à la première valeur du tableau, qui correspond au nombre `1`. Lorsque nous affichons `y`,` 1` est renvoyé.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst numbers = [1, 2, 3, 4, 5];\nconst [y] = numbers;\n\nconsole.log(y);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
         "order": 0,
         "language": "javascript",
         "code": "const numbers = [1, 2, 3, 4, 5];\nconst [y] = numbers;\n\nconsole.log(y);"
+      }
+    ],
+    "explanationCodeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "[a, b] = [1, 2];"
       },
       {
         "id": "code-2",
         "order": 1,
         "language": "javascript",
-        "code": "[a, b] = [1, 2];"
-      },
-      {
-        "id": "code-3",
-        "order": 2,
-        "language": "javascript",
         "code": "[y] = [1, 2, 3, 4, 5];"
       }
     ],
-    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -2786,11 +2818,14 @@
         "text": "`[1]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
-    "images": [],
+    "correctOption": "C",
+    "explanationMarkdown": "Nous pouvons décompresser les valeurs des tableaux ou les propriétés des objets en les détruisant. Par exemple :\n\n```javascript\n[a, b] = [1, 2];\n```\n\n<img src=\"https://i.imgur.com/ADFpVop.png\" width=\"200\">\n\nLa valeur de `a` est maintenant `1` et la valeur de `b` est maintenant `2`. Ce que nous avons réellement fait dans la question, c'est :\n\n```javascript\n[y] = [1, 2, 3, 4, 5];\n```\n\n<img src=\"https://i.imgur.com/NzGkMNk.png\" width=\"200\">\n\nCela signifie que la valeur de `y` est égale à la première valeur du tableau, qui correspond au nombre `1`. Lorsque nous affichons `y`,` 1` est renvoyé.",
+    "images": [
+      "https://i.imgur.com/ADFpVop.png",
+      "https://i.imgur.com/NzGkMNk.png"
+    ],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2806,7 +2841,7 @@
     "slug": "question-60",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst user = { name: \"Lydia\", age: 21 };\nconst admin = { admin: true, ...user };\n\nconsole.log(admin);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nIl est possible de combiner des objets en utilisant l'opérateur de déconstruction `...`. Il vous permet de créer des copies des paires clé / valeur d'un objet et de les ajouter à un autre objet. Dans ce cas, nous créons des copies de l'objet `user` et nous les ajoutons à l'objet` admin`. L'objet `admin` contient maintenant les paires clé / valeur copiées, ce qui donne `{admin: true, nom: \"Lydia\", age: 21}`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst user = { name: \"Lydia\", age: 21 };\nconst admin = { admin: true, ...user };\n\nconsole.log(admin);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2834,11 +2869,11 @@
         "text": "`{ admin: true }`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Il est possible de combiner des objets en utilisant l'opérateur de déconstruction `...`. Il vous permet de créer des copies des paires clé / valeur d'un objet et de les ajouter à un autre objet. Dans ce cas, nous créons des copies de l'objet `user` et nous les ajoutons à l'objet` admin`. L'objet `admin` contient maintenant les paires clé / valeur copiées, ce qui donne `{admin: true, nom: \"Lydia\", age: 21}`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2854,7 +2889,7 @@
     "slug": "question-61",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst person = { name: \"Lydia\" };\n\nObject.defineProperty(person, \"age\", { value: 21 });\n\nconsole.log(person);\nconsole.log(Object.keys(person));\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : B\n\nAvec la méthode `defineProperty`, nous pouvons ajouter de nouvelles propriétés à un objet ou modifier celles existantes. Lorsque nous ajoutons une propriété à un objet en utilisant la méthode `defineProperty`, il s’agit par défaut d'une propriété _non énumérable_. La méthode `Object.keys` renvoie tous les noms de propriétés _énumérable_ à partir d'un objet, dans ce cas uniquement `\"name\"`.\n\nLes propriétés ajoutées à l'aide de la méthode `defineProperty` sont immuables par défaut. Vous pouvez remplacer ce comportement en utilisant les propriétés `writeable`, `configurable` et `enumerable`. De cette façon, la méthode `defineProperty` vous donne beaucoup plus de contrôle sur les propriétés que vous ajoutez à un objet.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst person = { name: \"Lydia\" };\n\nObject.defineProperty(person, \"age\", { value: 21 });\n\nconsole.log(person);\nconsole.log(Object.keys(person));\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2882,11 +2917,11 @@
         "text": "`{ name: \"Lydia\"}`, `[\"age\"]`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "B",
+    "explanationMarkdown": "Avec la méthode `defineProperty`, nous pouvons ajouter de nouvelles propriétés à un objet ou modifier celles existantes. Lorsque nous ajoutons une propriété à un objet en utilisant la méthode `defineProperty`, il s’agit par défaut d'une propriété _non énumérable_. La méthode `Object.keys` renvoie tous les noms de propriétés _énumérable_ à partir d'un objet, dans ce cas uniquement `\"name\"`.\n\nLes propriétés ajoutées à l'aide de la méthode `defineProperty` sont immuables par défaut. Vous pouvez remplacer ce comportement en utilisant les propriétés `writeable`, `configurable` et `enumerable`. De cette façon, la méthode `defineProperty` vous donne beaucoup plus de contrôle sur les propriétés que vous ajoutez à un objet.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2902,7 +2937,7 @@
     "slug": "question-62",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nconst settings = {\n  username: \"lydiahallie\",\n  level: 19,\n  health: 90\n};\n\nconst data = JSON.stringify(settings, [\"level\", \"health\"]);\nconsole.log(data);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nLe second argument de `JSON.stringify` est le _replaçant_. Le remplaçant peut être une fonction ou un tableau, et vous permet de contrôler quoi et comment les valeurs doivent être stringifiées.\n\nSi le remplaçant est un _tableau_, seules les propriétés dont les noms sont inclus dans le tableau seront ajoutées à la chaîne JSON. Dans ce cas, seules les propriétés avec les noms `\"level\"` et `\"health\"` sont incluses, `\"username\"` est exclu. `data` est maintenant égal à `\"{\"level\":19, \"health\":90}\"`.\n\nSi le remplaçant est une _fonction_, cette fonction est appelée sur chaque propriété de l'objet que vous personnalisez. La valeur renvoyée par cette fonction sera la valeur de la propriété lorsqu'elle sera ajoutée à la chaîne JSON. Si la valeur est `undefined`, cette propriété est exclue de la chaîne JSON.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst settings = {\n  username: \"lydiahallie\",\n  level: 19,\n  health: 90\n};\n\nconst data = JSON.stringify(settings, [\"level\", \"health\"]);\nconsole.log(data);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2930,11 +2965,11 @@
         "text": "`\"{\"username\": \"lydiahallie\", \"level\":19, \"health\":90}\"`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "Le second argument de `JSON.stringify` est le _replaçant_. Le remplaçant peut être une fonction ou un tableau, et vous permet de contrôler quoi et comment les valeurs doivent être stringifiées.\n\nSi le remplaçant est un _tableau_, seules les propriétés dont les noms sont inclus dans le tableau seront ajoutées à la chaîne JSON. Dans ce cas, seules les propriétés avec les noms `\"level\"` et `\"health\"` sont incluses, `\"username\"` est exclu. `data` est maintenant égal à `\"{\"level\":19, \"health\":90}\"`.\n\nSi le remplaçant est une _fonction_, cette fonction est appelée sur chaque propriété de l'objet que vous personnalisez. La valeur renvoyée par cette fonction sera la valeur de la propriété lorsqu'elle sera ajoutée à la chaîne JSON. Si la valeur est `undefined`, cette propriété est exclue de la chaîne JSON.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2950,7 +2985,7 @@
     "slug": "question-63",
     "locale": "fr",
     "title": "Quelle est la sortie ?",
-    "promptMarkdown": "```javascript\nlet num = 10;\n\nconst increaseNumber = () => num++;\nconst increasePassedNumber = number => number++;\n\nconst num1 = increaseNumber();\nconst num2 = increasePassedNumber(num1);\n\nconsole.log(num1);\nconsole.log(num2);\n```\n\n\n\n\n\n\n<details><summary><b>Réponse</b></summary>\n<p>\n\n#### Réponse : A\n\nL'opérateur arithmétique `++` _renvoie en premier_ la valeur de l'opérande, _puis incrémente_ la valeur de l'opérande. La valeur de `num1` est égale à `10`, puisque la fonction `increaseNumber` renvoie d'abord la valeur de `num`, qui correspond à `10`, et augmente la valeur de `num` par la suite.\n\n`num2` est égal à `10`, puisque nous avons passé `num1` à la commande `increasePassedNumber`. `number` est égal à `10` (la valeur de `num1`). Encore une fois, l'opérateur arithmétique `++` _renvoie d'abord_ la valeur de l'opérande, puis incrémente_ la valeur de l'opérande. La valeur de `nombre` est `10`, donc `num2` est égal à `10`.\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nlet num = 10;\n\nconst increaseNumber = () => num++;\nconst increasePassedNumber = number => number++;\n\nconst num1 = increaseNumber();\nconst num2 = increasePassedNumber(num1);\n\nconsole.log(num1);\nconsole.log(num2);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -2978,8 +3013,8 @@
         "text": "`11`, `12`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "A",
+    "explanationMarkdown": "L'opérateur arithmétique `++` _renvoie en premier_ la valeur de l'opérande, _puis incrémente_ la valeur de l'opérande. La valeur de `num1` est égale à `10`, puisque la fonction `increaseNumber` renvoie d'abord la valeur de `num`, qui correspond à `10`, et augmente la valeur de `num` par la suite.\n\n`num2` est égal à `10`, puisque nous avons passé `num1` à la commande `increasePassedNumber`. `number` est égal à `10` (la valeur de `num1`). Encore une fois, l'opérateur arithmétique `++` _renvoie d'abord_ la valeur de l'opérande, puis incrémente_ la valeur de l'opérande. La valeur de `nombre` est `10`, donc `num2` est égal à `10`.",
     "images": [],
     "tags": [
       "fundamentals"
@@ -2998,7 +3033,7 @@
     "slug": "question-64",
     "locale": "fr",
     "title": "Quelle est la sortie?",
-    "promptMarkdown": "```javascript\nconst value = { number: 10 };\n\nconst multiply = (x = { ...value }) => {\n  console.log((x.number *= 2));\n};\n\nmultiply();\nmultiply();\nmultiply(value);\nmultiply(value);\n```\n\n\n\n\n\n\n<details><summary><b>Répondre</b></summary>\n<p>\n\n#### Répondre: C\n\nDans ES6, nous pouvons initialiser les paramètres avec une valeur par défaut. La valeur du paramètre sera la valeur par défaut, si aucune autre valeur n'a été passée à la fonction, ou si la valeur du paramètre est `\"undefined\"`. Dans ce cas, nous répartissons les propriétés de l'objet `value` dans un nouvel objet, donc `x` a la valeur par défaut `{number: 10}`.\n\nL'argument par défaut est évalué at _call time_! Chaque fois que nous appelons la fonction, un a _new_ object  créé. Nous invoquons la fonction `multiply` les deux premières fois sans passer de valeur: `x` a la valeur par défaut `{number: 10}`. Nous enregistrons ensuite la valeur multipliée de ce nombre, qui est `20`.\n\nLa troisième fois que nous invoquons multiplier, nous passons un argument: l'objet appelé `value`. L'opérateur `* =` est en fait un raccourci pour `x.number = x.number * 2`: nous modifions la valeur de `x.number`, et enregistrons la valeur multipliée `20`.\n\nLa quatrième fois, nous passons à nouveau l'objet `value`. `x.number` a été précédemment modifié en `20`, donc `x.number * = 2` enregistre «40».\n\n</p>\n</details>\n\n---",
+    "promptMarkdown": "```javascript\nconst value = { number: 10 };\n\nconst multiply = (x = { ...value }) => {\n  console.log((x.number *= 2));\n};\n\nmultiply();\nmultiply();\nmultiply(value);\nmultiply(value);\n```",
     "codeBlocks": [
       {
         "id": "code-1",
@@ -3026,11 +3061,12 @@
         "text": "`NaN`, `NaN`, `20`, `40`"
       }
     ],
-    "correctOption": null,
-    "explanationMarkdown": "",
+    "correctOption": "C",
+    "explanationMarkdown": "Dans ES6, nous pouvons initialiser les paramètres avec une valeur par défaut. La valeur du paramètre sera la valeur par défaut, si aucune autre valeur n'a été passée à la fonction, ou si la valeur du paramètre est `\"undefined\"`. Dans ce cas, nous répartissons les propriétés de l'objet `value` dans un nouvel objet, donc `x` a la valeur par défaut `{number: 10}`.\n\nL'argument par défaut est évalué at _call time_! Chaque fois que nous appelons la fonction, un a _new_ object  créé. Nous invoquons la fonction `multiply` les deux premières fois sans passer de valeur: `x` a la valeur par défaut `{number: 10}`. Nous enregistrons ensuite la valeur multipliée de ce nombre, qui est `20`.\n\nLa troisième fois que nous invoquons multiplier, nous passons un argument: l'objet appelé `value`. L'opérateur `* =` est en fait un raccourci pour `x.number = x.number * 2`: nous modifions la valeur de `x.number`, et enregistrons la valeur multipliée `20`.\n\nLa quatrième fois, nous passons à nouveau l'objet `value`. `x.number` a été précédemment modifié en `20`, donc `x.number * = 2` enregistre «40».",
     "images": [],
     "tags": [
-      "fundamentals"
+      "objects",
+      "types"
     ],
     "difficulty": "advanced",
     "runnable": true,

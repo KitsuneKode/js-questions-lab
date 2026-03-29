@@ -55,7 +55,7 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
 
       {/* English fallback notice */}
       {question.isFallback && (
-        <div className="relative z-10 mx-auto mt-4 max-w-[1200px] w-full px-4">
+        <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-2 pb-1">
           <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[12px] text-amber-400/80">
             <span>ⓘ</span>
             <span>{t('fallbackNotice', { locale })}</span>
@@ -63,17 +63,20 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
         </div>
       )}
 
-      <QuestionIDEClient
-        key={question.id}
-        question={question}
-        prevId={prev?.id ?? null}
-        nextId={next?.id ?? null}
-        locale={locale}
-      />
+      {/* IDE — fills all remaining vertical space */}
+      <div className="flex flex-1 flex-col min-h-0 overflow-hidden">
+        <QuestionIDEClient
+          key={question.id}
+          question={question}
+          prevId={prev?.id ?? null}
+          nextId={next?.id ?? null}
+          locale={locale}
+        />
+      </div>
 
       {related.length > 0 && (
         <div className="relative border-t border-border-subtle bg-surface/30 backdrop-blur-sm mt-auto">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+          <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
           <Container>
             <section className="pt-12 pb-24 max-w-[1200px] mx-auto">
               <div className="flex items-center justify-between mb-8">

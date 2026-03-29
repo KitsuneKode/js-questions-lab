@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -31,14 +32,14 @@ const TextGenerateEffect = ({ words }: { words: string }) => {
 
   return (
     <motion.div>
-      {wordsArray.map((word, idx) => (
+      {wordsArray.map((word) => (
         <motion.span
           key={word}
           initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
           transition={{
             duration: 0.8,
-            delay: idx * 0.08,
+            delay: wordsArray.indexOf(word) * 0.08,
             type: 'spring',
             bounce: 0.1,
           }}
@@ -52,6 +53,7 @@ const TextGenerateEffect = ({ words }: { words: string }) => {
 };
 
 export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroProps) {
+  const t = useTranslations('landing');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const demoQuestion = {
@@ -98,7 +100,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
           </motion.div>
 
           <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
-            <TextGenerateEffect words="Master JavaScript. One question at a time." />
+            <TextGenerateEffect words={t('headline')} />
           </h1>
 
           <motion.p
@@ -107,8 +109,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
             transition={{ duration: 0.6, delay: 0.4, type: 'spring', bounce: 0.1 }}
             className="max-w-[540px] text-lg leading-relaxed text-secondary"
           >
-            Execute code in-browser, visualize execution flow, and master the core mechanics. A
-            precision instrument forged for advanced JavaScript mastery.
+            {t('subline')}
           </motion.p>
 
           <motion.div
@@ -122,7 +123,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
                 size="lg"
                 className="relative h-12 gap-2 rounded-md bg-primary px-8 font-medium text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.97]"
               >
-                Start Practicing
+                {t('cta')}
                 <IconArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -133,7 +134,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
                 className="h-12 gap-2 px-8 font-medium text-secondary transition-all duration-300 hover:bg-white/5 hover:text-foreground active:scale-[0.97]"
               >
                 <IconBrandGithub className="h-4 w-4" />
-                View on GitHub
+                {t('ctaGithub')}
               </Button>
             </Link>
           </motion.div>
@@ -144,7 +145,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
             transition={{ duration: 0.6, delay: 0.62, type: 'spring', bounce: 0.1 }}
             className="text-sm text-muted-foreground"
           >
-            Built by{' '}
+            {t('builtBy')}{' '}
             <Link
               href={siteConfig.creator.xUrl}
               target="_blank"
@@ -153,14 +154,15 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
             >
               {siteConfig.creator.displayHandle}
             </Link>
-            . Based on{' '}
+            {'. '}
+            {t('basedOn')}{' '}
             <Link
               href={siteConfig.source.repoUrl}
               target="_blank"
               rel="noreferrer"
               className="text-foreground transition-colors hover:text-primary"
             >
-              Lydia Hallie&apos;s questions
+              {t('lydiaQuestions')}
             </Link>
             .
           </motion.p>
@@ -192,16 +194,16 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
                   <span className="text-code-accent">function</span>{' '}
                   <span className="text-primary">getAge</span>() {'{\n'}
                   {'  '}
-                  <span className="text-status-correct">'use strict'</span>;\n{'  '}age ={' '}
-                  <span className="text-[#F59E0B]">21</span>;\n{'  '}console.
-                  <span className="text-code-accent">log</span>(age);\n{'}\n\n'}
+                  <span className="text-status-correct">'use strict'</span>;{'\n  '}age ={' '}
+                  <span className="text-[#F59E0B]">21</span>;{'\n  '}console.
+                  <span className="text-code-accent">log</span>(age);{'\n}\n\n'}
                   <span className="text-primary">getAge</span>();
                 </code>
               </pre>
             </div>
 
             <div className="relative flex flex-col gap-2 bg-surface p-5">
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent to-background/50" />
 
               {demoQuestion.options.map((opt) => {
                 const isSelected = selectedAnswer === opt.id;

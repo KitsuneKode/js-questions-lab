@@ -118,7 +118,7 @@
     "addition3": "Visualización del bucle de eventos para preguntas con uso intensivo del runtime",
     "addition4": "Progreso, indicaciones de repaso, marcadores y un bucle de práctica más claro",
     "originalLabel": "Créditos originales",
-    "originalBody1": "Gracias a {creator} por crear y mantener el material fuente en el que se basa esta experiencia. El contenido de las preguntas, las explicaciones y la base educativa original pertenecen a ese trabajo y sus colaboradores.",
+    "originalBody1": "El contenido de las preguntas, las explicaciones y la base educativa original pertenecen a ese trabajo y sus colaboradores.",
     "originalBody2": "Los enlaces del repositorio original y los archivos de idiomas admitidos permanecen visibles aquí para que el material fuente sea fácil de rastrear.",
     "originalRepo": "Repositorio original",
     "originalCreator": "Lydia Hallie",
@@ -130,7 +130,9 @@
     "languagesLabel": "Idiomas admitidos",
     "languagesTitle": "Preservados de la fuente upstream.",
     "languagesBody": "Estos enlaces de traducción provienen directamente del material fuente de Lydia Hallie y se mantienen en la página de créditos para que la cobertura de idiomas original permanezca visible.",
-    "startPracticing": "Empezar a practicar"
+    "startPracticing": "Empezar a practicar",
+    "originalThanks": "Gracias a",
+    "originalFor": "por crear y mantener el material fuente en el que se basa esta experiencia."
   },
   "common": {
     "loading": "Cargando…",
@@ -140,5 +142,13 @@
   "meta": {
     "title": "JS Questions Lab",
     "description": "Práctica interactiva de entrevistas de JavaScript con fragmentos ejecutables y visualizaciones del bucle de eventos."
+  },
+  "footer": {
+    "builtBy": "Creado por",
+    "originalBy": "Preguntas y explicaciones originales por",
+    "product": "Producto",
+    "resources": "Recursos",
+    "projectRepo": "Repositorio del proyecto",
+    "lydiaRepo": "Repo original de Lydia"
   }
 }

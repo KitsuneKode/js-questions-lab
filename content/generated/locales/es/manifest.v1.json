@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-03-29T01:10:50.608Z",
+  "generatedAt": "2026-03-29T02:22:01.815Z",
   "locale": {
     "code": "es",
     "label": "Español",
@@ -15,14 +15,18 @@
   "totals": {
     "questions": 115,
     "runnable": 109,
-    "withImages": 0
+    "withImages": 4
   },
   "tags": [
     "arrays",
     "async",
+    "dom-events",
     "fundamentals",
+    "modules",
     "objects",
-    "prototypes"
+    "prototypes",
+    "scope",
+    "types"
   ],
   "translations": [],
   "attribution": {

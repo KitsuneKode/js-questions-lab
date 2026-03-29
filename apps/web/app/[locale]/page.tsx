@@ -51,7 +51,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
         <ContinueLearningShelf questions={questions} locale={locale} />
 
-        <LandingSections tagCounts={tagCounts} />
+        <LandingSections tagCounts={tagCounts} locale={locale} />
 
         {/* Featured questions */}
         <section className="py-24 max-w-6xl mx-auto px-4 border-t border-border">

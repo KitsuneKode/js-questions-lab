@@ -84,7 +84,7 @@ export default async function QuestionsPage({
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('count', { count: allQuestions.length })}
               </span>
-              <span className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
+              <span className="h-px flex-1 bg-linear-to-r from-border/60 to-transparent" />
             </div>
             <h1 className="font-display text-3xl font-medium tracking-tight text-foreground md:text-4xl">
               {t('title')}

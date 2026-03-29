@@ -164,7 +164,7 @@ export function ExecutionFlow({ question, timeline }: ExecutionFlowProps) {
               {/* Connecting rail between steps */}
               {index < steps.length - 1 && (
                 <motion.div
-                  className="ml-[11px] w-[2px] bg-gradient-to-b from-primary/40 to-primary/10"
+                  className="ml-[11px] w-[2px] bg-linear-to-b from-primary/40 to-primary/10"
                   initial={{ scaleY: 0 }}
                   animate={{ scaleY: 1 }}
                   transition={{ delay: index * 0.15 + 0.1, duration: 0.3 }}

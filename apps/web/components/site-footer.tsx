@@ -10,25 +10,26 @@ import { getLocaleFromPathname, withLocale } from '@/lib/locale-paths';
 import { siteConfig, siteLinks } from '@/lib/site-config';
 
 export function SiteFooter() {
-  const t = useTranslations('nav');
+  const tNav = useTranslations('nav');
+  const tFooter = useTranslations('footer');
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname ?? '/en');
 
   const footerLinks = {
     product: [
-      { href: withLocale(locale, siteLinks.questions), label: t('questions') },
-      { href: withLocale(locale, siteLinks.dashboard), label: t('dashboard') },
-      { href: withLocale(locale, siteLinks.credits), label: t('credits') },
+      { href: withLocale(locale, siteLinks.questions), label: tNav('questions') },
+      { href: withLocale(locale, siteLinks.dashboard), label: tNav('dashboard') },
+      { href: withLocale(locale, siteLinks.credits), label: tNav('credits') },
     ],
     resources: [
       {
         href: siteConfig.repoUrl,
-        label: 'Project Repository',
+        label: tFooter('projectRepo'),
         external: true,
       },
       {
         href: siteConfig.source.repoUrl,
-        label: "Lydia's Original Repo",
+        label: tFooter('lydiaRepo'),
         external: true,
       },
     ],
@@ -40,6 +41,7 @@ export function SiteFooter() {
 
       <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.7fr_0.7fr]">
+          {/* Brand + tagline */}
           <div className="flex flex-col justify-between">
             <Link
               href={withLocale(locale, '/')}
@@ -50,7 +52,7 @@ export function SiteFooter() {
 
             <div className="mt-6 md:mt-auto">
               <p className="max-w-md text-sm leading-6 text-muted-foreground">
-                Built by{' '}
+                {tFooter('builtBy')}{' '}
                 <Link
                   href={siteConfig.creator.xUrl}
                   target="_blank"
@@ -59,7 +61,8 @@ export function SiteFooter() {
                 >
                   {siteConfig.creator.displayHandle}
                 </Link>
-                . Original questions and explanations by{' '}
+                {'. '}
+                {tFooter('originalBy')}{' '}
                 <Link
                   href={siteConfig.source.creatorUrl}
                   target="_blank"
@@ -87,15 +90,16 @@ export function SiteFooter() {
                   className="transition-colors hover:text-primary"
                 >
                   <IconBrandGithub className="h-4 w-4" />
-                  <span className="sr-only">Project repository</span>
+                  <span className="sr-only">{tFooter('projectRepo')}</span>
                 </a>
               </div>
             </div>
           </div>
 
+          {/* Product links */}
           <div>
             <h3 className="mb-4 text-xs font-medium uppercase tracking-wider text-foreground">
-              Product
+              {tFooter('product')}
             </h3>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
@@ -111,9 +115,10 @@ export function SiteFooter() {
             </ul>
           </div>
 
+          {/* Resources */}
           <div>
             <h3 className="mb-4 text-xs font-medium uppercase tracking-wider text-foreground">
-              Resources
+              {tFooter('resources')}
             </h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (

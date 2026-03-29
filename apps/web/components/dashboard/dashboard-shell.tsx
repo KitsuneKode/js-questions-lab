@@ -2,6 +2,7 @@
 
 import { ArrowRight, Library, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
 import { BookmarkedList } from '@/components/dashboard/bookmarked-list';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
@@ -11,13 +12,16 @@ import { TopicAccuracyChart } from '@/components/dashboard/topic-accuracy-chart'
 import { WeakestTopics } from '@/components/dashboard/weakest-topics';
 import { Button } from '@/components/ui/button';
 import type { QuestionRecord } from '@/lib/content/types';
+import { withLocale } from '@/lib/locale-paths';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface DashboardShellProps {
   questions: QuestionRecord[];
+  locale: string;
 }
 
-export function DashboardShell({ questions }: DashboardShellProps) {
+export function DashboardShell({ questions, locale }: DashboardShellProps) {
+  const t = useTranslations('dashboard');
   const {
     ready,
     overall,
@@ -45,6 +49,7 @@ export function DashboardShell({ questions }: DashboardShellProps) {
   }
 
   const hasData = overall.totalAnswered > 0;
+  const questionsHref = withLocale(locale, '/questions');
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
@@ -52,25 +57,25 @@ export function DashboardShell({ questions }: DashboardShellProps) {
       <header className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary bg-primary/10 px-2 py-0.5 rounded-sm">
-            Command Center
+            {t('title')}
           </span>
-          <span className="h-px flex-1 bg-gradient-to-r from-border-subtle to-transparent" />
+          <span className="h-px flex-1 bg-linear-to-r from-border-subtle to-transparent" />
         </div>
         <h1 className="font-display text-4xl md:text-5xl text-foreground">Welcome back.</h1>
         <p className="max-w-2xl text-lg text-secondary">
           {hasData
-            ? `You've answered \${overall.totalAnswered} questions across \${tagStats.length} topics. Maintain your momentum.`
+            ? `You've answered ${overall.totalAnswered} questions across ${tagStats.length} topics. Maintain your momentum.`
             : 'Start with one question, get immediate feedback, and build consistent practice habits.'}
         </p>
       </header>
 
-      {/* Stats overview (Top Row: 12 cols total -> 3 cards of 4 cols each) */}
+      {/* Stats overview */}
       <OverviewCards overall={overall} />
 
-      {/* Charts and lists - only show when there's data */}
+      {/* Charts and lists — only show when there's data */}
       {hasData && (
         <>
-          {/* Middle Row: Radar (8 cols) + Heatmap (4 cols) */}
+          {/* Radar + Activity Heatmap */}
           <div className="grid gap-5 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <TopicAccuracyChart tagStats={tagStats} />
@@ -116,7 +121,9 @@ export function DashboardShell({ questions }: DashboardShellProps) {
                   <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
                     <Link
                       href={
-                        suggestion.question ? `/questions/${suggestion.question.id}` : '/questions'
+                        suggestion.question
+                          ? withLocale(locale, `/questions/${suggestion.question.id}`)
+                          : questionsHref
                       }
                     >
                       <Button
@@ -127,7 +134,7 @@ export function DashboardShell({ questions }: DashboardShellProps) {
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
                     </Link>
-                    <Link href="/questions">
+                    <Link href={questionsHref}>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -142,7 +149,7 @@ export function DashboardShell({ questions }: DashboardShellProps) {
             ))}
           </div>
 
-          {/* Bottom Row: Needs Practice (6 cols) + Review Queue (6 cols) */}
+          {/* Bottom Row: Weakest Topics + Review Queue */}
           <div className="grid gap-5 lg:grid-cols-12">
             <div className="lg:col-span-6">
               <WeakestTopics topics={weakestTopics} />

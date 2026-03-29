@@ -23,7 +23,7 @@ export function ContinueLearningShelf({ questions, locale }: ContinueLearningShe
 
   return (
     <section className="mb-12">
-      <div className="overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-r from-primary/5 via-surface to-surface">
+      <div className="overflow-hidden rounded-lg border border-primary/20 bg-linear-to-r from-primary/5 via-surface to-surface">
         <div className="flex flex-col items-center justify-between gap-4 p-5 md:flex-row md:p-6">
           <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">

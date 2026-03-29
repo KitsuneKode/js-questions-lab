@@ -213,9 +213,9 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
   );
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col w-full">
+    <div className="flex h-full flex-col w-full">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/60 bg-gradient-to-r from-background via-background to-muted/5 px-6 py-4 shrink-0">
+      <div className="flex items-center justify-between border-b border-border/60 bg-linear-to-r from-background via-background to-muted/5 px-6 py-4 shrink-0">
         <div className="flex items-center gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -565,7 +565,7 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                       <span>{isCorrect ? 'Correct!' : `Answer: ${question.correctOption}`}</span>
                     </div>
 
-                    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-b from-card/60 to-background/80 p-6">
+                    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-linear-to-b from-card/60 to-background/80 p-6">
                       <div className="absolute top-0 right-0 p-4 opacity-5">
                         <Sparkles className="h-20 w-20" />
                       </div>

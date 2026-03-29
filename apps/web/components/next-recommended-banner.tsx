@@ -20,7 +20,7 @@ export function NextRecommendedBanner({ questions, locale }: NextRecommendedBann
 
   return (
     <section className="animate-in fade-in slide-in-from-top-2 duration-500">
-      <div className="group relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card/60 to-card/40 p-5">
+      <div className="group relative overflow-hidden rounded-xl border border-primary/20 bg-linear-to-r from-primary/5 via-card/60 to-card/40 p-5">
         {/* Subtle glow */}
         <div className="absolute -left-20 -top-20 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
 

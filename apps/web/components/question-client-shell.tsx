@@ -221,7 +221,7 @@ export function QuestionClientShell({ question, prevId, nextId }: QuestionClient
         {/* Code Block */}
         {question.codeBlocks.length > 0 && (
           <div className="relative group mb-10">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl blur transition-opacity duration-500" />
+            <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl blur transition-opacity duration-500" />
             <div className="relative bg-code rounded-xl border border-border-subtle overflow-hidden shadow-lg">
               <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/5">
                 <div className="flex gap-1.5">

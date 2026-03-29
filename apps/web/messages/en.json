@@ -118,7 +118,7 @@
     "addition3": "Event-loop visualization for runtime-heavy questions",
     "addition4": "Progress, review cues, bookmarks, and a cleaner practice loop",
     "originalLabel": "Original Credits",
-    "originalBody1": "Thank you to {creator} for creating and maintaining the source material this experience is built on. The question content, explanations, and the original educational foundation belong to that work and its contributors.",
+    "originalBody1": "The question content, explanations, and the original educational foundation all belong to that work and its contributors.",
     "originalBody2": "The original repo links and the supported language files stay visible here so the source material remains easy to trace back to.",
     "originalRepo": "Original repository",
     "originalCreator": "Lydia Hallie",
@@ -130,7 +130,9 @@
     "languagesLabel": "Supported Languages",
     "languagesTitle": "Preserved from the upstream source.",
     "languagesBody": "These translation links come directly from Lydia Hallie's source material and stay part of the credits page so the original language coverage remains visible.",
-    "startPracticing": "Start practicing"
+    "startPracticing": "Start practicing",
+    "originalThanks": "Thank you to",
+    "originalFor": "for creating and maintaining the source material this experience is built on."
   },
   "common": {
     "loading": "Loading…",
@@ -140,5 +142,13 @@
   "meta": {
     "title": "JS Questions Lab",
     "description": "Interactive JavaScript interview practice built on Lydia Hallie's questions, with runnable snippets and event-loop visualizations."
+  },
+  "footer": {
+    "builtBy": "Built by",
+    "originalBy": "Original questions and explanations by",
+    "product": "Product",
+    "resources": "Resources",
+    "projectRepo": "Project Repository",
+    "lydiaRepo": "Lydia's Original Repo"
   }
 }

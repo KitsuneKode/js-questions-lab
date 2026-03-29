@@ -118,7 +118,7 @@
     "addition3": "Visualisation de la boucle d'événements pour les questions nécessitant beaucoup de runtime",
     "addition4": "Progression, rappels de révision, signets et une boucle de pratique plus claire",
     "originalLabel": "Crédits originaux",
-    "originalBody1": "Merci à {creator} pour avoir créé et maintenu le matériel source sur lequel cette expérience est construite. Le contenu des questions, les explications et la base éducative originale appartiennent à ce travail et à ses contributeurs.",
+    "originalBody1": "Le contenu des questions, les explications et la base éducative originale appartiennent à ce travail et à ses contributeurs.",
     "originalBody2": "Les liens du dépôt d'origine et les fichiers de langues prises en charge restent visibles ici pour que le matériel source reste facile à retracer.",
     "originalRepo": "Dépôt original",
     "originalCreator": "Lydia Hallie",
@@ -130,7 +130,9 @@
     "languagesLabel": "Langues prises en charge",
     "languagesTitle": "Préservées de la source upstream.",
     "languagesBody": "Ces liens de traduction proviennent directement du matériel source de Lydia Hallie et restent dans la page de crédits pour que la couverture linguistique originale reste visible.",
-    "startPracticing": "Commencer à pratiquer"
+    "startPracticing": "Commencer à pratiquer",
+    "originalThanks": "Merci à",
+    "originalFor": "pour avoir créé et maintenu le matériel source sur lequel cette expérience est construite."
   },
   "common": {
     "loading": "Chargement…",
@@ -140,5 +142,13 @@
   "meta": {
     "title": "JS Questions Lab",
     "description": "Pratique interactive d'entretiens JavaScript avec des extraits de code exécutables et des visualisations de la boucle d'événements."
+  },
+  "footer": {
+    "builtBy": "Créé par",
+    "originalBy": "Questions et explications originales par",
+    "product": "Produit",
+    "resources": "Ressources",
+    "projectRepo": "Dépôt du projet",
+    "lydiaRepo": "Repo original de Lydia"
   }
 }

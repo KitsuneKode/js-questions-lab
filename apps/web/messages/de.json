@@ -118,7 +118,7 @@
     "addition3": "Event-Loop-Visualisierung für laufzeitintensive Fragen",
     "addition4": "Fortschritt, Wiederholungshinweise, Lesezeichen und eine klarere Übungsschleife",
     "originalLabel": "Ursprüngliche Credits",
-    "originalBody1": "Danke an {creator} für die Erstellung und Pflege des Quellmaterials, auf dem diese Erfahrung aufgebaut ist. Der Inhalt der Fragen, die Erklärungen und das ursprüngliche pädagogische Fundament gehören dieser Arbeit und ihren Mitwirkenden.",
+    "originalBody1": "Der Inhalt der Fragen, die Erklärungen und das ursprüngliche pädagogische Fundament gehören dieser Arbeit und ihren Mitwirkenden.",
     "originalBody2": "Die ursprünglichen Repository-Links und die unterstützten Sprachdateien bleiben hier sichtbar, damit das Quellmaterial leicht zurückgefunden werden kann.",
     "originalRepo": "Ursprüngliches Repository",
     "originalCreator": "Lydia Hallie",
@@ -130,7 +130,9 @@
     "languagesLabel": "Unterstützte Sprachen",
     "languagesTitle": "Aus der Upstream-Quelle erhalten.",
     "languagesBody": "Diese Übersetzungslinks stammen direkt aus Lydia Hallie's Quellmaterial und bleiben Teil der Credits-Seite, damit die ursprüngliche Sprachabdeckung sichtbar bleibt.",
-    "startPracticing": "Jetzt üben"
+    "startPracticing": "Jetzt üben",
+    "originalThanks": "Danke an",
+    "originalFor": "für die Erstellung und Pflege des Quellmaterials, auf dem diese Erfahrung aufgebaut ist."
   },
   "common": {
     "loading": "Lädt…",
@@ -140,5 +142,13 @@
   "meta": {
     "title": "JS Questions Lab",
     "description": "Interaktive JavaScript-Interviewvorbereitung mit Lydia Hallie's Fragen, ausführbaren Snippets und Event-Loop-Visualisierungen."
+  },
+  "footer": {
+    "builtBy": "Erstellt von",
+    "originalBy": "Originalfragen und -erklärungen von",
+    "product": "Produkt",
+    "resources": "Ressourcen",
+    "projectRepo": "Projekt-Repository",
+    "lydiaRepo": "Lydias Original-Repo"
   }
 }

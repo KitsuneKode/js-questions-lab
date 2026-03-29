@@ -58,12 +58,35 @@
     }
   },
   "landing": {
-    "headline": "Dominar entrevistas de JavaScript",
-    "subline": "Pratique com perguntas reais de entrevistas, execute o código e entenda por que sua resposta está certa ou errada.",
+    "headline": "Domine JavaScript. Uma pergunta de cada vez.",
+    "subline": "Execute código no navegador, visualize o event loop e grave os mecanismos na memória. Um instrumento de precisão para preparação de entrevistas.",
     "cta": "Começar a praticar",
+    "ctaGithub": "Ver no GitHub",
+    "builtBy": "Criado por",
+    "basedOn": "Baseado em",
+    "lydiaQuestions": "perguntas da Lydia Hallie",
     "featuredTitle": "Perguntas em destaque",
     "featuredSubline": "Comece com esses desafios populares",
-    "viewAll": "Ver todas ({count})"
+    "viewAll": "Ver todas ({count})",
+    "workflow": {
+      "sectionLabel": "Como funciona",
+      "sectionTitle": "O ciclo de prática",
+      "sectionSubline": "Um ciclo de feedback projetado com precisão para gravar JavaScript avançado na sua memória de longo prazo.",
+      "step1Title": "Encontre uma pergunta",
+      "step1Desc": "Filtre por tópico, ajuste a dificuldade ou pesquise diretamente um conceito.",
+      "step2Title": "Comprometa-se com uma resposta",
+      "step2Desc": "Sem espiar. Force-se a se comprometer antes que a explicação seja revelada.",
+      "step3Title": "Execute o código",
+      "step3Desc": "Abra o rascunho. Execute os trechos. Veja a saída imediatamente.",
+      "step4Title": "Entenda o porquê",
+      "step4Desc": "Aprofunde-se na explicação. Desconstrua o event loop e o contexto de execução."
+    },
+    "topics": {
+      "sectionLabel": "Cobertura",
+      "sectionTitle": "Domine cada conceito",
+      "sectionSubline": "Cobertura abrangente de {count} tópicos principais",
+      "challenges": "{count} desafios"
+    }
   },
   "dashboard": {
     "title": "Centro de prática",
@@ -78,13 +101,38 @@
     "correct": "Corretas"
   },
   "credits": {
-    "title": "Créditos e Atribuição",
-    "localeTable": {
-      "language": "Idioma",
-      "questions": "Perguntas",
-      "coverage": "Cobertura",
-      "status": "Status"
-    }
+    "label": "Créditos e Atribuição",
+    "heroTitle": "Criado por {creator}, impulsionado pelas perguntas da Lydia Hallie.",
+    "heroBody": "{name} é um produto de prática criado de forma independente. As perguntas e explicações originais vêm do {source} da Lydia Hallie. Minha contribuição é a camada de produto: a interface, o executor, a visualização, o rascunho e o ciclo de progresso.",
+    "heroNote": "Esta página estende os créditos originais, não os substitui. As referências da fonte upstream e a listagem de idiomas suportados permanecem preservadas abaixo.",
+    "xProfile": "Perfil no X",
+    "githubProfile": "Perfil no GitHub",
+    "projectRepo": "Repositório do projeto",
+    "whyLabel": "Por que construí",
+    "whyTitle": "Uma fonte sólida merecia uma superfície de prática mais sólida.",
+    "whyBody1": "O repositório da Lydia é uma das melhores referências de JavaScript na internet, mas a preparação para entrevistas geralmente precisa de um ciclo mais rápido do que ler um longo arquivo markdown. Construí isso para que você possa responder primeiro, revelar depois, executar o código imediatamente e voltar com progresso que ainda significa algo.",
+    "whyBody2": "Este projeto também é prova de trabalho pessoal. Eu queria que o próprio site mostrasse cuidado: contenção no design, interações mais rápidas, melhor ergonomia móvel e uma sensação clara de que alguém está ativamente melhorando a experiência.",
+    "addedLabel": "O que adicionei",
+    "addition1": "Uma biblioteca de perguntas focada em vez de uma longa rolagem de README",
+    "addition2": "Trechos executáveis baseados em worker que ficam dentro do app",
+    "addition3": "Visualização do event loop para perguntas intensivas em runtime",
+    "addition4": "Progresso, lembretes de revisão, marcadores e um ciclo de prática mais claro",
+    "originalLabel": "Créditos originais",
+    "originalBody1": "O conteúdo das perguntas, as explicações e a base educacional original pertencem a esse trabalho e seus contribuidores.",
+    "originalBody2": "Os links do repositório original e os arquivos de idiomas suportados permanecem visíveis aqui para que o material fonte seja fácil de rastrear.",
+    "originalRepo": "Repositório original",
+    "originalCreator": "Lydia Hallie",
+    "integrityLabel": "Integridade da fonte",
+    "integritySourceFile": "Arquivo fonte",
+    "integrityGenerated": "Gerado",
+    "integrityLocale": "Idioma atual",
+    "integrityQuestions": "Perguntas",
+    "languagesLabel": "Idiomas suportados",
+    "languagesTitle": "Preservados da fonte upstream.",
+    "languagesBody": "Esses links de tradução vêm diretamente do material fonte da Lydia Hallie e permanecem como parte da página de créditos para que a cobertura de idiomas original continue visível.",
+    "startPracticing": "Começar a praticar",
+    "originalThanks": "Obrigado a",
+    "originalFor": "por criar e manter o material fonte no qual esta experiência é construída."
   },
   "common": {
     "loading": "Carregando…",
@@ -93,6 +141,14 @@
   },
   "meta": {
     "title": "JS Questions Lab",
-    "description": "Prática interativa de entrevistas JavaScript baseada nas perguntas de Lydia Hallie, com snippets executáveis e visualizações do event loop."
+    "description": "Prática interativa de entrevistas JavaScript com perguntas da Lydia Hallie, trechos executáveis e visualizações de event loop."
+  },
+  "footer": {
+    "builtBy": "Criado por",
+    "originalBy": "Perguntas e explicações originais por",
+    "product": "Produto",
+    "resources": "Recursos",
+    "projectRepo": "Repositório do projeto",
+    "lydiaRepo": "Repo original da Lydia"
   }
 }

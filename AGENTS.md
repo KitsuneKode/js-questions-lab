@@ -27,6 +27,12 @@ All generated content derives from `README.upstream.md`. Do not edit generated f
 - Runtime execution is entirely worker-based for all JavaScript snippets, mocking browser globals natively. StackBlitz has been fully removed.
 - The scratchpad is a lazy-mounted bottom sheet for fast experiments. It should stay lightweight, feel secondary to the main question surface, and preserve the original snippet as the reset baseline when opened from a question.
 - Local progress is the primary persistence layer. Clerk + Supabase are optional sync layers when configured.
+- **i18n is fully implemented** for 6 pilot locales: `en`, `es`, `fr`, `de`, `ja`, `pt-BR`.
+  - Routes are locale-prefixed (`/[locale]/...`). Root `/` redirects to `/en`.
+  - `next-intl` powers translations. Message catalogs live in `apps/web/messages/`.
+  - All client components use `useTranslations()`. All server pages use `getTranslations()`.
+  - Missing locale questions fall back to English with a `isFallback: true` banner.
+  - `SiteHeader` has a locale switcher powered by `switchLocalePath()`.
 
 ## Validated Commands
 
@@ -43,16 +49,26 @@ Run these from the repository root:
 
 These commands were recently verified:
 
-- `bun run typecheck`
+- `bun run typecheck` — passes with zero errors (2.4s)
 - `bun run lint`
 - `bun run build`
+- `bun run parse:questions` — produces 6-locale JSON in `content/generated/locales/`
 
 ## Important Files
 
-- App shell: `apps/web/app/layout.tsx`
-- Landing page: `apps/web/app/page.tsx`
-- Questions list: `apps/web/app/questions/page.tsx`
-- Question detail: `apps/web/app/questions/[id]/page.tsx`
+- Root layout: `apps/web/app/layout.tsx` (minimal shell — no providers)
+- Locale layout: `apps/web/app/[locale]/layout.tsx` (NextIntlClientProvider + lang/dir injection)
+- Landing page: `apps/web/app/[locale]/page.tsx`
+- Questions list: `apps/web/app/[locale]/questions/page.tsx`
+- Question detail: `apps/web/app/[locale]/questions/[id]/page.tsx`
+- Credits page: `apps/web/app/[locale]/credits/page.tsx`
+- Root redirect: `apps/web/app/page.tsx` (301 → `/en`)
+- i18n config (app): `apps/web/lib/i18n/config.ts`
+- i18n request config: `apps/web/i18n/request.ts`
+- i18n routing: `apps/web/i18n/routing.ts`
+- Locale path helpers: `apps/web/lib/locale-paths.ts`
+- Message catalogs: `apps/web/messages/{en,es,fr,de,ja,pt-BR}.json`
+- Content loaders (locale-aware): `apps/web/lib/content/loaders.ts`
 - Runtime runner: `apps/web/lib/run/sandbox.ts`
 - Scratchpad sheet: `apps/web/components/scratchpad/floating-scratchpad.tsx`
 - Scratchpad state: `apps/web/components/scratchpad/scratchpad-context.tsx`
@@ -60,6 +76,10 @@ These commands were recently verified:
 - Playground UI: `apps/web/components/code-playground.tsx`
 - Progress store: `apps/web/lib/progress/progress-context.tsx`
 - Dashboard hub: `apps/web/components/dashboard/dashboard-shell.tsx`
+- Site header (locale switcher): `apps/web/components/site-header.tsx`
+- Site footer (translated): `apps/web/components/site-footer.tsx`
+- Landing hero (translated): `apps/web/components/landing-hero.tsx`
+- Landing sections (translated): `apps/web/components/landing-sections.tsx`
 - Parser: `scripts/parse-readme.mjs`
 
 ## Context And Token Discipline
@@ -118,6 +138,7 @@ Prefer:
 - Expanding offline capabilities or PWA features.
 - Continuing to refine the code runner's AST parsing if even deeper concept visualizations are needed.
 - Tightening worker completion behavior for promise-heavy snippets that launch async work without top-level `await`. If touching the runner, prefer idle/drain detection over patching broad Promise internals.
+- 9 pre-existing lint warnings (noArrayIndexKey in legacy components, noSvgWithoutTitle in dashboard icons, a11y in input-group/questions-results) — these predate i18n and should be addressed in a separate cleanup pass.
 
 ## Product Direction
 

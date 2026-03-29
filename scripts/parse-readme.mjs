@@ -134,7 +134,8 @@ function parseCodeBlocks(input) {
 
 function parseOptions(input) {
   const options = [];
-  const re = /^- ([A-D]):\s*(.+)$/gm;
+  // Match both '- A:' and '-   A:' (German uses 3 spaces after hyphen)
+  const re = /^-\s+([A-D]):\s*(.+)$/gm;
   let match = re.exec(input);
   while (match !== null) {
     options.push({ key: match[1], text: match[2].trim() });
@@ -206,7 +207,10 @@ function parseQuestions(readme, localeCode) {
       idx < headings.length - 1 ? (headings[idx + 1].index ?? readme.length) : readme.length;
     const chunk = readme.slice(start, end).trim();
 
-    const detailsIndex = chunk.indexOf('<details><summary><b>Answer</b></summary>');
+    // Generic: match any <details><summary><b>ANY WORD</b></summary> — works for all locales
+    const detailsRe = /<details><summary><b>[^<]+<\/b><\/summary>/i;
+    const detailsMatch = detailsRe.exec(chunk);
+    const detailsIndex = detailsMatch ? detailsMatch.index : -1;
     const promptChunk = detailsIndex === -1 ? chunk : chunk.slice(0, detailsIndex);
     const answerChunk = detailsIndex === -1 ? '' : chunk.slice(detailsIndex);
 
@@ -214,16 +218,20 @@ function parseQuestions(readme, localeCode) {
     const promptCodeBlocks = parseCodeBlocks(promptChunk);
     const explanationCodeBlocks = parseCodeBlocks(answerChunk);
 
+    // Match any locale's answer heading: '#### Answer: A', '#### Respuesta correcta: A',
+    // '#### Réponse : A' (space before colon), '#### Antwort: A', '#### 答え: A', etc.
     const answerMatch =
-      answerChunk.match(/####\s+Answer:\s*([A-D])/i) || chunk.match(/####\s+Answer:\s*([A-D])/i);
+      answerChunk.match(/####\s+[^\n]+?:\s*([A-D])\b/) ||
+      chunk.match(/####\s+[^\n]+?:\s*([A-D])\b/);
     const correctOption = answerMatch?.[1] ?? null;
 
     const detailsBodyMatch = answerChunk.match(
-      /<details><summary><b>Answer<\/b><\/summary>\s*<p>\s*([\s\S]*?)\s*<\/p>\s*<\/details>/i,
+      /<details><summary><b>[^<]+<\/b><\/summary>\s*<p>\s*([\s\S]*?)\s*<\/p>\s*<\/details>/i,
     );
     const rawExplanation = detailsBodyMatch ? detailsBodyMatch[1] : answerChunk;
+    // Strip the answer heading line (any locale variant) from the explanation
     const explanationMarkdown = stripPTags(
-      rawExplanation.replace(/####\s+Answer:\s*[A-D]\s*/i, '').trim(),
+      rawExplanation.replace(/####\s+[^\n]+?:\s*[A-D]\b\s*/i, '').trim(),
     );
 
     const promptBody = promptChunk

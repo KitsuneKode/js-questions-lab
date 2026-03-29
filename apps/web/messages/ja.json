@@ -2,7 +2,7 @@
   "nav": {
     "questions": "問題",
     "dashboard": "ダッシュボード",
-    "about": "このサイトについて",
+    "about": "について",
     "credits": "クレジット",
     "scratchpad": "スクラッチパッド"
   },
@@ -58,12 +58,35 @@
     }
   },
   "landing": {
-    "headline": "JavaScriptインタビューをマスターする",
-    "subline": "実際のインタビュー問題で練習し、コードを実行して、なぜ答えが正しいか間違っているかを理解しましょう。",
+    "headline": "JavaScriptをマスターする。一問ずつ。",
+    "subline": "ブラウザでコードを実行し、イベントループを可視化し、仕組みを記憶に定着させる。面接対策のための精密ツール。",
     "cta": "練習を始める",
+    "ctaGithub": "GitHubで見る",
+    "builtBy": "制作者",
+    "basedOn": "基にしている",
+    "lydiaQuestions": "Lydia Hallieの問題集",
     "featuredTitle": "注目の問題",
     "featuredSubline": "人気の問題から始めましょう",
-    "viewAll": "全{count}問を見る"
+    "viewAll": "全{count}問を見る",
+    "workflow": {
+      "sectionLabel": "使い方",
+      "sectionTitle": "練習ループ",
+      "sectionSubline": "高度なJavaScriptを長期記憶に定着させるために設計された精密なフィードバックサイクル。",
+      "step1Title": "問題を見つける",
+      "step1Desc": "トピックでフィルタリングするか、難易度を調整するか、概念に直接検索する。",
+      "step2Title": "答えにコミットする",
+      "step2Desc": "のぞき見禁止。解説が表示される前に必ず答えを確定させてください。",
+      "step3Title": "コードを実行する",
+      "step3Desc": "スクラッチパッドを開く。スニペットを実行する。すぐに生の出力を確認する。",
+      "step4Title": "理由を理解する",
+      "step4Desc": "解説を深く掘り下げる。イベントループと実行コンテキストを分解する。"
+    },
+    "topics": {
+      "sectionLabel": "カバー範囲",
+      "sectionTitle": "あらゆる概念をマスター",
+      "sectionSubline": "{count}のコアトピックを網羅",
+      "challenges": "{count}問"
+    }
   },
   "dashboard": {
     "title": "練習ハブ",
@@ -78,13 +101,38 @@
     "correct": "正解"
   },
   "credits": {
-    "title": "クレジットと帰属",
-    "localeTable": {
-      "language": "言語",
-      "questions": "問題数",
-      "coverage": "カバー率",
-      "status": "ステータス"
-    }
+    "label": "クレジットと帰属",
+    "heroTitle": "{creator}が制作、Lydia Hallieの問題集を活用。",
+    "heroBody": "{name}は独立して制作された練習プロダクトです。元の問題と解説はLydia Hallieの{source}から提供されています。私の貢献はプロダクト層：インターフェース、ランナー、可視化、スクラッチパッド、進捗ループ。",
+    "heroNote": "このページは元のクレジットを拡張するものであり、置き換えるものではありません。アップストリームソースの参照と対応言語リストは以下に保持されています。",
+    "xProfile": "Xプロフィール",
+    "githubProfile": "GitHubプロフィール",
+    "projectRepo": "プロジェクトリポジトリ",
+    "whyLabel": "なぜ作ったか",
+    "whyTitle": "優れた素材は、より優れた練習環境に値する。",
+    "whyBody1": "Lydiaのリポジトリはインターネット上で最高のJavaScript参考資料の一つですが、面接対策は通常、長いMarkdownファイルを読むより速いループが必要です。最初に答え、次に明かし、すぐにコードを実行し、意味のある進捗で戻ってこられるように作りました。",
+    "whyBody2": "このプロジェクトは個人的な証明でもあります。サイト自体にケアを示したかった：デザインの抑制、より速いインタラクション、より良いモバイルエルゴノミクス、そして誰かが積極的に体験を改善しているという明確な感覚。",
+    "addedLabel": "追加したもの",
+    "addition1": "長いREADMEスクロールではなく、集中した問題ライブラリ",
+    "addition2": "アプリ内に留まるワーカーベースの実行可能スニペット",
+    "addition3": "ランタイム重視の問題向けイベントループ可視化",
+    "addition4": "進捗、復習キュー、ブックマーク、より明確な練習ループ",
+    "originalLabel": "元のクレジット",
+    "originalBody1": "問題のコンテンツ、解説、元の教育的基盤はその作品とその貢献者に属します。",
+    "originalBody2": "元のリポジトリリンクと対応言語ファイルは、ソース素材を簡単にたどれるようにここに保持されています。",
+    "originalRepo": "元のリポジトリ",
+    "originalCreator": "Lydia Hallie",
+    "integrityLabel": "ソースの整合性",
+    "integritySourceFile": "ソースファイル",
+    "integrityGenerated": "生成日時",
+    "integrityLocale": "現在のロケール",
+    "integrityQuestions": "問題数",
+    "languagesLabel": "対応言語",
+    "languagesTitle": "アップストリームソースから保持。",
+    "languagesBody": "これらの翻訳リンクはLydia Hallieのソース素材から直接提供されており、元の言語対応が見えるようにクレジットページの一部として残されています。",
+    "startPracticing": "練習を始める",
+    "originalThanks": "この体験が構築されているソース素材を作成・維持してくれた",
+    "originalFor": "に感謝します。"
   },
   "common": {
     "loading": "読み込み中…",
@@ -93,6 +141,14 @@
   },
   "meta": {
     "title": "JS Questions Lab",
-    "description": "Lydia Hallie の質問をもとにした、実行可能なスニペットとイベントループ可視化を備えた JavaScript 面接練習アプリ。"
+    "description": "Lydia Hallieの問題集を基にした、実行可能なスニペットとイベントループ可視化を備えたインタラクティブなJavaScript面接練習。"
+  },
+  "footer": {
+    "builtBy": "制作者",
+    "originalBy": "オリジナルの問題と解説",
+    "product": "プロダクト",
+    "resources": "リソース",
+    "projectRepo": "プロジェクトリポジトリ",
+    "lydiaRepo": "Lydiaのオリジナルリポジトリ"
   }
 }
