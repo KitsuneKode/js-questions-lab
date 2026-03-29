@@ -1,18 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-function getRequiredEnv(name: 'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SUPABASE_ANON_KEY') {
-  const value = process.env[name];
-
-  if (!value) {
-    throw new Error(`${name} is required to initialize Supabase.`);
-  }
-
-  return value;
-}
-
-export function getSupabaseBrowserClient() {
+/**
+ * Creates a Supabase client for browser use with optional Clerk token injection.
+ * Pass a `getToken` function from Clerk's `useSession` hook for authenticated requests.
+ * Omit for anonymous/guest access.
+ */
+export function createBrowserSupabaseClient(getToken?: () => Promise<string | null>) {
   return createClient(
-    getRequiredEnv('NEXT_PUBLIC_SUPABASE_URL'),
-    getRequiredEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      async accessToken() {
+        return getToken ? getToken() : null;
+      },
+    },
   );
 }
