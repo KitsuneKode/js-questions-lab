@@ -157,20 +157,6 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/60 bg-gradient-to-r from-background via-background to-muted/5 px-6 py-4 shrink-0">
         <div className="flex items-center gap-4">
-          {prevId ? (
-            <Link href={`/questions/${prevId}`}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 w-9 rounded-full bg-card/50 p-0 hover:bg-muted"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-          ) : (
-            <div className="w-9" />
-          )}
-
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <h1 className="font-display text-lg font-semibold tracking-tight text-foreground uppercase">
@@ -204,6 +190,14 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
         </div>
 
         <div className="flex items-center gap-3">
+          {prevId && (
+            <Link href={`/questions/${prevId}`}>
+              <Button variant="secondary" size="sm" className="h-9 gap-2 px-4 text-xs font-medium">
+                <ChevronLeft className="h-4 w-4" />
+                Prev
+              </Button>
+            </Link>
+          )}
           <Button
             variant={item.bookmarked ? 'default' : 'secondary'}
             size="sm"
