@@ -133,7 +133,6 @@ interface ProgressContextValue {
   state: ProgressState;
   ready: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
-  dispatch: (action: ProgressAction) => void;
   saveAttempt: (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => void;
   saveSelfGrade: (questionId: number, grade: Grade) => void;
   toggleBookmark: (questionId: number) => void;
@@ -287,7 +286,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     state,
     ready,
     syncStatus,
-    dispatch,
     saveAttempt,
     saveSelfGrade,
     toggleBookmark,
