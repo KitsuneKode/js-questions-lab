@@ -27,6 +27,7 @@ All generated content derives from `README.upstream.md`. Do not edit generated f
 - Runtime execution is entirely worker-based for all JavaScript snippets, mocking browser globals natively. StackBlitz has been fully removed.
 - The scratchpad is a lazy-mounted bottom sheet for fast experiments. It should stay lightweight, feel secondary to the main question surface, and preserve the original snippet as the reset baseline when opened from a question.
 - Local progress is the primary persistence layer. Clerk + Supabase are optional sync layers when configured.
+- **Supabase Integration**: Fully implemented with native Clerk third-party auth (not JWT templates — deprecated April 2025). Row Level Security enforces user isolation via `auth.uid()`. Tables: `user_progress`, `user_srs_progress`. Migrations in `supabase/migrations/`. See `docs/supabase-clerk-setup.md`.
 - **i18n is fully implemented** for 6 pilot locales: `en`, `es`, `fr`, `de`, `ja`, `pt-BR`.
   - Routes are locale-prefixed (`/[locale]/...`). Root `/` redirects to `/en`.
   - `next-intl` powers translations. Message catalogs live in `apps/web/messages/`.
@@ -90,13 +91,13 @@ Read in this order:
 
 1. `AGENTS.md`
 2. `docs/agent-handoff.md`
-3. `docs/rebuild-roadmap.md`
+3. `docs/v2-roadmap-mastery.md`
 4. one focused implementation file based on the task
 
 Load only when necessary:
 
 - `docs/design-system-brief.md` for visual/product polish work
-- `docs/next16-tailwind4-migration.md` for framework upgrade work
+- `docs/supabase-clerk-setup.md` for auth/sync work
 - `docs/principal-engineer-prompt.md` or `docs/continue-agent-prompt.md` when another agent needs a continuation brief
 
 Avoid loading by default:
@@ -166,12 +167,19 @@ Avoid:
 - Treat content pipeline integrity as non-negotiable.
 - If migrating to Next 16 / Tailwind 4, do it as a coherent pass, not piecemeal.
 
+## Branching & CI/CD Workflow
+
+- All new work goes on a feature branch (`feat/`, `fix/`, `chore/` prefix).
+- Open PRs targeting the `dev` branch first. CI runs typecheck, lint, and build.
+- After `dev` is validated, merge to `main`.
+- Never commit directly to `main` for feature or fix work.
+- Hotfixes may use `hotfix/` branches targeting `main` directly if critical.
+
 ## Read Next
 
-- `docs/v2-roadmap-mastery.md` (New Roadmap for Advanced Interview Features)
+- `docs/v2-roadmap-mastery.md` (Active North Star — Phase 3 Active Recall is next)
 - `docs/agent-handoff.md`
-- `docs/rebuild-roadmap.md` (V1 Completed)
 - `docs/design-system-brief.md`
-- `docs/next16-tailwind4-migration.md`
+- `docs/supabase-clerk-setup.md` (auth/sync setup and integration details)
 - `docs/principal-engineer-prompt.md`
 - `docs/continue-agent-prompt.md`

@@ -54,13 +54,10 @@ The target feeling is:
 
 ## Highest-Priority Work From This Point On
 
-1. Upgrade the stack in a controlled way:
-   - Next.js 16
-   - Tailwind CSS v4
-   - latest compatible shadcn/ui patterns
-   - modern ESLint config instead of temporary compatibility mode
-   - preserve working root scripts
-   - keep the migration coherent instead of partial
+1. **Active Recall UX (Phase 3)**:
+   - Implement "Type the Output" mode on the question detail page
+   - Anki-style self-grading (Hard/Good/Easy) wired to SRS `calculateNextReview`
+   - The stack is already on Next 16 + Tailwind 4 + React 19 — no migration needed
 
 2. Refine the question detail page:
    - make it feel more like a dedicated practice environment

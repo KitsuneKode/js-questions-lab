@@ -27,10 +27,23 @@
 ### Not Finished Yet
 
 - The V1 Rebuild is complete (Next 16, Tailwind 4, Worker runtime, Streamdown).
-- The focus is now shifting to **V2: Interview Mastery**.
-- We need to implement Active Recall ("Type the Output" mode) to replace passive multiple-choice guessing.
-- A Spaced Repetition System (SRS) backend via Supabase needs to be wired up.
-- The content pipeline needs refactoring to support multi-source data ingestion (e.g., from Sudheer J's JS interview questions repo) into unified "Paths".
+- Phase 2 (SRS Backend via Supabase) is complete — see `docs/supabase-clerk-setup.md`.
+- **Current focus: Phase 3 — Active Recall UX.**
+  - "Type the Output" mode (hide A/B/C/D, user types expected console output)
+  - Anki-style self-grading (Hard/Good/Easy) wired to SRS review dates
+- Multi-source content pipeline (Phase 1 of v2 roadmap) comes after Active Recall.
+
+### Completed (Track B - Supabase & Auth V2)
+
+- ✅ Supabase database migrations created (`supabase/migrations/`)
+- ✅ `user_progress` table with RLS policies for data isolation
+- ✅ `user_srs_progress` table for optimized SRS queries
+- ✅ Clerk JWT template integration for secure authentication
+- ✅ Row Level Security enforced via `auth.jwt() ->> 'sub' = user_id`
+- ✅ Client-side sync with race condition handling and batching
+- ✅ Guest mode support (localStorage only, no auth required)
+- ✅ Sync status tracking and improved toast notifications
+- See `docs/supabase-clerk-setup.md` for implementation details
 
 ## Current Technical State
 
@@ -183,10 +196,10 @@ If changing content pipeline:
 - `AGENTS.md`
 - `docs/content-pipeline.md`
 - `CLAUDE.md`
-- `apps/web/app/questions/[id]/page.tsx`
+- `apps/web/app/[locale]/questions/[id]/page.tsx`
 - `apps/web/components/ide/question-ide-client.tsx`
 - `apps/web/components/scratchpad/floating-scratchpad.tsx`
-- `apps/web/components/question-client-shell.tsx`
+
 - `apps/web/components/code-playground.tsx`
 - `apps/web/lib/run/sandbox.ts`
 - `apps/web/lib/run/terminal.ts`

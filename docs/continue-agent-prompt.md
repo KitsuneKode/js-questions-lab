@@ -13,7 +13,7 @@ You are expected to act with the judgment of a principal engineer and the produc
 - Start with:
   1. `AGENTS.md`
   2. `docs/agent-handoff.md`
-  3. `docs/rebuild-roadmap.md`
+  3. `docs/v2-roadmap-mastery.md`
 - Then read only the files directly relevant to the task.
 - Do not load generated JSON, build artifacts, or unrelated routes unless required.
 - Summarize what exists before rewriting it.
@@ -48,12 +48,13 @@ Turn this into a premium JavaScript interview practice platform that feels like:
 
 ## Highest Priority
 
-1. upgrade to Next.js 16 and Tailwind CSS v4 in a controlled way
-2. keep root scripts working
-3. preserve worker-first runtime
-4. improve the question detail page into a better practice workstation
-5. strengthen recommendation/review loops
-6. tighten architecture and reduce unnecessary client weight
+1. Implement Active Recall UX (Phase 3): "Type the Output" mode + Anki-style self-grading
+2. Keep root scripts working
+3. Preserve worker-first runtime
+4. Strengthen recommendation/review loops
+5. Keep the architecture clean and maintainable
+
+Note: The stack upgrade (Next 16, Tailwind 4, React 19) is already complete.
 
 ## Required Technical Judgment
 
