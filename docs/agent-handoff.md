@@ -116,6 +116,7 @@ The strongest path through the product is:
 - Worker runner is the primary environment.
 - The product does not want a fake in-browser Node.js environment. Aim for lightweight worker execution with small browser-friendly shims only.
 - If async snippets appear to "run but do nothing", investigate worker completion/drain logic first. Promise-heavy snippets that spawn background async work without top-level `await` are the current sharp edge.
+- **Timer Support**: Both `setTimeout` and `setInterval` are supported. `setInterval` auto-clears after 50 iterations (with warning) to prevent infinite loops, and respects the 5-second worker timeout.
 - The scratchpad should stay a quick bottom sheet for experimentation, not a second full IDE competing with the question screen.
 - StackBlitz has been removed.
 - Future work may involve building AST representations or more complex data visualizers.
