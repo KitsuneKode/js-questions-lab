@@ -38,6 +38,7 @@ export async function fetchServerProgress(): Promise<ProgressItem[]> {
     return [];
   }
 
+  if (!Array.isArray(data)) return [];
   return (data as SupabaseProgressRow[]).map(toProgressItem);
 }
 
