@@ -6,19 +6,19 @@ import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
@@ -31,6 +31,8 @@ export function FloatingScratchpad() {
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+
+  const hasAsyncEvents = timeline.some((event) => event.kind === 'macro' || event.kind === 'micro');
 
   const runCode = useCallback(async () => {
     if (!code.trim()) return;
@@ -59,8 +61,8 @@ export function FloatingScratchpad() {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeScratchpad()}>
-      <SheetContent 
-        side="right" 
+      <SheetContent
+        side="right"
         showCloseButton={false}
         className="flex w-[95vw] sm:w-[90vw] lg:w-[85vw] max-w-[1200px] flex-col overflow-hidden border-l border-border-subtle bg-surface p-0 shadow-[-20px_0_40px_rgba(0,0,0,0.4)] backdrop-blur-xl"
       >
@@ -79,16 +81,16 @@ export function FloatingScratchpad() {
               <div className="hidden md:flex rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-[10px] uppercase tracking-wider text-tertiary font-mono">
                 Cmd/Ctrl + Enter to run
               </div>
-              
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
                     variant="secondary"
                     size="sm"
-                    disabled={timeline.length === 0}
+                    disabled={!hasAsyncEvents}
                     className={`h-8 gap-2 text-xs transition-all duration-300 ${
-                      timeline.length > 0 
-                        ? 'border-primary/50 bg-primary/10 text-primary shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:bg-primary/20 hover:scale-[1.02]' 
+                      hasAsyncEvents
+                        ? 'border-primary/50 bg-primary/10 text-primary shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:bg-primary/20 hover:scale-[1.02]'
                         : 'border-border/40 text-muted-foreground opacity-50'
                     }`}
                   >

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
@@ -88,6 +88,10 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
 
   const isAnswered = selected !== null || hasSubmittedRecall;
   const isCorrect = selected !== null ? selected === question.correctOption : hasSubmittedRecall;
+
+  const hasAsyncEvents = useMemo(() => {
+    return timeline.some((event) => event.kind === 'macro' || event.kind === 'micro');
+  }, [timeline]);
 
   const runCode = useCallback(async () => {
     if (!questionCode.trim()) return;
@@ -225,11 +229,16 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
         {/* Left: Question & Context */}
         <ResizablePanel defaultSize={40} minSize={25} className="flex flex-col">
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {cleanPromptMarkdown && (
-              <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
-                <Streamdown>{cleanPromptMarkdown}</Streamdown>
-              </div>
-            )}
+            <div className="space-y-4">
+              <h2 className="font-display text-2xl font-medium tracking-tight text-foreground">
+                {question.title}
+              </h2>
+              {cleanPromptMarkdown && (
+                <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
+                  <Streamdown>{cleanPromptMarkdown}</Streamdown>
+                </div>
+              )}
+            </div>
 
             {question.codeBlocks.length > 0 && (
               <div className="flex h-[18rem] flex-col overflow-hidden rounded-xl border border-border/30 bg-[#1e1e1e] md:h-[22rem]">
@@ -306,7 +315,7 @@ export function QuestionIDEClient({ question, prevId, nextId }: QuestionIDEClien
             )}
 
             <AnimatePresence>
-              {question.codeBlocks.length > 0 && isAnswered && timeline.length > 0 && (
+              {question.codeBlocks.length > 0 && isAnswered && hasAsyncEvents && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
                   animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
