@@ -58,10 +58,44 @@ async function syncLocale(locale) {
   }
 }
 
+async function fetchUpstreamCommit() {
+  const url = 'https://api.github.com/repos/lydiahallie/javascript-questions/git/refs/heads/master';
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'user-agent': 'js-questions-lab-sync-script',
+        accept: 'application/vnd.github.v3+json',
+      },
+    });
+    if (!res.ok) {
+      console.warn(`  [!] Could not fetch upstream commit SHA (${res.status}) — skipping.`);
+      return null;
+    }
+    const data = await res.json();
+    const sha = data?.object?.sha ?? null;
+    if (sha) {
+      console.log(`  [git] Upstream master commit: ${sha.slice(0, 7)}`);
+    }
+    return sha;
+  } catch (err) {
+    console.warn(`  [!] Error fetching upstream commit SHA:`, err.message);
+    return null;
+  }
+}
+
 async function main() {
   for (const locale of PILOT_LOCALES) {
     await syncLocale(locale);
   }
+
+  const commit = await fetchUpstreamCommit();
+  const metaPath = path.join(ROOT, 'content/source/upstream-meta.json');
+  const meta = {
+    commit,
+    fetchedAt: new Date().toISOString(),
+  };
+  fs.writeFileSync(metaPath, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
+  console.log(`  [+] Wrote upstream meta → content/source/upstream-meta.json`);
 }
 
 main().catch((error) => {

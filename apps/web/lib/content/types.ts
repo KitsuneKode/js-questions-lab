@@ -89,6 +89,8 @@ export interface QuestionsManifest {
     file?: string;
     localPath: string;
     sha256?: string;
+    /** Latest Git commit SHA from the upstream repository at time of sync. */
+    upstreamCommit?: string | null;
   };
   totals: {
     questions: number;

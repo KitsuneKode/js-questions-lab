@@ -2,6 +2,7 @@ import {
   IconArrowUpRight,
   IconBrandGithub,
   IconBrandX,
+  IconGitCommit,
   IconHammer,
   IconHeartHandshake,
   IconLayersIntersect,
@@ -221,6 +222,7 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
                   label: t('integritySourceFile'),
                   value: manifest.source.upstreamPath ?? manifest.source.localPath ?? 'n/a',
                   mono: true,
+                  href: null,
                 },
                 {
                   label: t('integrityGenerated'),
@@ -230,16 +232,19 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
                     day: 'numeric',
                   }),
                   mono: false,
+                  href: null,
                 },
                 {
                   label: t('integrityLocale'),
                   value: manifest.locale.label,
                   mono: true,
+                  href: null,
                 },
                 {
                   label: t('integrityQuestions'),
                   value: String(manifest.totals.questions),
                   mono: true,
+                  href: null,
                 },
               ].map(({ label, value, mono }) => (
                 <div
@@ -257,6 +262,31 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
                 </div>
               ))}
             </div>
+
+            {/* Upstream commit status */}
+            {manifest.source.upstreamCommit && (
+              <div className="mt-3 rounded-[18px] border border-border/50 bg-elevated/40 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      {t('integrityUpstreamCommit')}
+                    </p>
+                    <p className="mt-2 font-mono text-sm text-foreground">
+                      {manifest.source.upstreamCommit.slice(0, 7)}
+                    </p>
+                  </div>
+                  <Link
+                    href={`${siteConfig.source.repoUrl}/commit/${manifest.source.upstreamCommit}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex shrink-0 items-center gap-1.5 rounded-full border border-primary/25 bg-primary/8 px-3 py-1.5 text-xs text-primary transition-colors hover:bg-primary/15"
+                  >
+                    <IconGitCommit className="h-3.5 w-3.5" />
+                    latest
+                  </Link>
+                </div>
+              </div>
+            )}
           </article>
         </section>
 

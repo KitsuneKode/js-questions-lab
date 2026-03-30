@@ -128,6 +128,7 @@
     "integrityGenerated": "生成日時",
     "integrityLocale": "現在のロケール",
     "integrityQuestions": "問題数",
+    "integrityUpstreamCommit": "Upstream commit",
     "languagesLabel": "対応言語",
     "languagesTitle": "アップストリームソースから保持。",
     "languagesBody": "これらの翻訳リンクはLydia Hallieのソース素材から直接提供されており、元の言語対応が見えるようにクレジットページの一部として残されています。",

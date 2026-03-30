@@ -9,6 +9,16 @@ import { DEFAULT_LOCALE, PILOT_LOCALES } from './locale-config.mjs';
 const ROOT = process.cwd();
 const LOCALES_SOURCE_BASE = path.join(ROOT, 'content/source/locales');
 const LOCALES_OUT_BASE = path.join(ROOT, 'content/generated/locales');
+const UPSTREAM_META_PATH = path.join(ROOT, 'content/source/upstream-meta.json');
+
+function readUpstreamMeta() {
+  if (!fs.existsSync(UPSTREAM_META_PATH)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(UPSTREAM_META_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -292,6 +302,8 @@ function parseLocale(locale) {
   const outQuestions = path.join(outDir, 'questions.v1.json');
   const outManifest = path.join(outDir, 'manifest.v1.json');
 
+  const upstreamMeta = readUpstreamMeta();
+
   const manifest = {
     schemaVersion: 2,
     generatedAt: new Date(sourceStats.mtimeMs).toISOString(),
@@ -305,6 +317,7 @@ function parseLocale(locale) {
       upstreamPath: locale.upstreamPath,
       localPath: `content/source/locales/${locale.code}/README.upstream.md`,
       sha256: sourceHash,
+      upstreamCommit: upstreamMeta.commit ?? null,
     },
     totals: {
       questions: questions.length,

@@ -128,6 +128,7 @@
     "integrityGenerated": "Generated",
     "integrityLocale": "Current locale",
     "integrityQuestions": "Questions",
+    "integrityUpstreamCommit": "Upstream commit",
     "languagesLabel": "Supported Languages",
     "languagesTitle": "Preserved from the upstream source.",
     "languagesBody": "These translation links come directly from Lydia Hallie's source material and stay part of the credits page so the original language coverage remains visible.",

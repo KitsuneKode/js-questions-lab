@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-03-30T10:25:14.846Z",
+  "generatedAt": "2026-03-29T02:22:01.814Z",
   "locale": {
     "code": "en",
     "label": "English",
@@ -10,7 +10,8 @@
     "repo": "https://github.com/lydiahallie/javascript-questions",
     "upstreamPath": "README.md",
     "localPath": "content/source/locales/en/README.upstream.md",
-    "sha256": "e29b5b485813216c0935a25705653cc859025e4363c80caa569b7b972ead6720"
+    "sha256": "e29b5b485813216c0935a25705653cc859025e4363c80caa569b7b972ead6720",
+    "upstreamCommit": "a8b427b9f7f94f1a2965144ba544b475c5f65829"
   },
   "totals": {
     "questions": 155,
