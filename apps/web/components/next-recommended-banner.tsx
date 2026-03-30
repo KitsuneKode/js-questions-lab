@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  IconArrowRight as ArrowRight,
-  IconSparkles as Sparkles,
-} from '@tabler/icons-react';
+import { IconArrowRight as ArrowRight, IconSparkles as Sparkles } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { QuestionRecord } from '@/lib/content/types';

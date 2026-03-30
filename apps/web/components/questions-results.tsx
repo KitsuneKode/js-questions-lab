@@ -45,11 +45,13 @@ export function QuestionsResults({ questions, status, locale }: QuestionsResults
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: visual-only hover effect, no interaction
     <div
       className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
       onMouseLeave={() => setHoveredId(null)}
     >
       {filtered.map((question) => (
+        // biome-ignore lint/a11y/noStaticElementInteractions: visual-only hover effect, no interaction
         <div
           key={question.id}
           onMouseEnter={() => setHoveredId(question.id)}

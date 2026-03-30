@@ -4,8 +4,8 @@ import {
   IconAlertTriangle as AlertTriangle,
   IconHandClick as MousePointerClick,
   IconRotateClockwise2 as RotateCcw,
-  IconRoute2 as Waypoints,
   IconTarget as Target,
+  IconRoute2 as Waypoints,
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 

@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  IconArrowRight as ArrowRight,
-  IconPlayerPlay as Play,
-} from '@tabler/icons-react';
+import { IconArrowRight as ArrowRight, IconPlayerPlay as Play } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

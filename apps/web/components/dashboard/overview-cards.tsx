@@ -45,7 +45,11 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
 
         <div className="mt-6 flex items-center gap-4">
           <div className="relative h-12 w-12 flex-shrink-0">
-            <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 100 100">
+            <svg
+              className="h-full w-full -rotate-90 transform"
+              viewBox="0 0 100 100"
+              aria-hidden="true"
+            >
               <circle
                 className="text-elevated stroke-current"
                 strokeWidth="8"

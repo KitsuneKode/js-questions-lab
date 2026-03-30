@@ -68,7 +68,7 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
             return (
               <div
                 key={cell.date}
-                className={`w-3 h-3 rounded-sm border transition-all duration-300 hover:scale-125 hover:z-20 \${getIntensityClass(cell.attempts)}`}
+                className={`w-3 h-3 rounded-sm border transition-all duration-300 hover:scale-125 hover:z-20 ${getIntensityClass(cell.attempts)}`}
                 title={`${formatDate(cell.date)} — ${cell.attempts} questions, ${accuracy}% accuracy`}
               />
             );

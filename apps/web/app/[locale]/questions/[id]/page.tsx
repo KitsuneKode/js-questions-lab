@@ -63,7 +63,7 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
   const related = getRelatedQuestions(locale, question, 3);
 
   return (
-    <main className="min-h-screen bg-void overflow-x-hidden pt-12 flex flex-col">
+    <main className="min-h-screen bg-void overflow-x-hidden pt-12">
       {/* Decorative ambient background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none -z-10" />
 
@@ -77,8 +77,8 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
         </div>
       )}
 
-      {/* IDE — fills all remaining vertical space */}
-      <div className="flex flex-1 flex-col min-h-0 overflow-hidden">
+      {/* IDE — fixed height to fill viewport, with internal scrolling */}
+      <div className="h-[calc(100vh-3rem)] flex flex-col overflow-hidden">
         <QuestionIDEClient
           key={question.id}
           question={question}
@@ -89,7 +89,7 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
       </div>
 
       {related.length > 0 && (
-        <div className="relative border-t border-border-subtle bg-surface/30 backdrop-blur-sm mt-auto">
+        <div className="relative border-t border-border-subtle bg-surface/30 backdrop-blur-sm">
           <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
           <Container>
             <section className="pt-12 pb-24 max-w-[1200px] mx-auto">

@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  IconArrowRight as ArrowRight,
-  IconTarget as Target,
-} from '@tabler/icons-react';
+import { IconArrowRight as ArrowRight, IconTarget as Target } from '@tabler/icons-react';
 import Link from 'next/link';
 import type { TagStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';

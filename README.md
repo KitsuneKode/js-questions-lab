@@ -78,6 +78,8 @@ bun install
 Guest mode is the default experience. If you want to test auth or sync features, copy
 `.env.example` to `.env.local` and provide the Clerk and Supabase values.
 
+For Supabase + Clerk integration details, see `docs/supabase-clerk-setup.md`.
+
 ### 4. Run The App
 
 ```bash
@@ -98,6 +100,24 @@ Then open `http://localhost:3000`.
 | `bun run parse:questions` | Parse the synced upstream source into generated JSON |
 | `bun run sync:upstream` | Refresh the upstream Lydia source snapshot |
 | `bun run content:refresh` | Sync upstream content and regenerate JSON in one step |
+
+### Database Setup (Optional)
+
+If using Supabase for progress sync:
+
+```bash
+# Link to your Supabase project
+bun supabase link --project-ref your-project-id
+
+# Apply migrations
+bun supabase db push
+```
+
+Migrations are located in `supabase/migrations/` and include:
+
+- `user_progress` table with Row Level Security
+- `user_srs_progress` table for optimized SRS queries
+- RLS policies enforced via Clerk JWT tokens
 
 ## 📚 Documentation Map
 

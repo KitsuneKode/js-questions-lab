@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  IconArrowRight as ArrowRight,
-  IconChartPie as PieChart,
-} from '@tabler/icons-react';
+import { IconArrowRight as ArrowRight, IconChartPie as PieChart } from '@tabler/icons-react';
 import Link from 'next/link';
 import {
   PolarAngleAxis,
@@ -48,8 +45,20 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
   // Sort weakest to strongest for the list below
   const sortedByWeakness = [...activeTopics].sort((a, b) => a.accuracy - b.accuracy).slice(0, 3);
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: {
+      payload: {
+        subject: string;
+        raw: { correctAttempts: number; totalAttempts: number };
+        A: number;
+      };
+    }[];
+  }) => {
+    if (active && payload?.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-elevated border border-border-subtle p-3 rounded-xl shadow-lg backdrop-blur-xl">

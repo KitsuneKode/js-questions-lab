@@ -5,11 +5,11 @@ import {
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
   IconClock as Clock3,
+  IconStack3 as Layers3,
   IconPlayerPause as Pause,
   IconPlayerPlay as Play,
   IconRotateClockwise2 as RotateCcw,
   IconSparkles as Sparkles,
-  IconStack3 as Layers3,
   IconTerminal2 as Terminal,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';

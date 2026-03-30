@@ -20,3 +20,4 @@ node_modules
 .eslintcache
 .claude
 .worktrees
+docs/superpowers/

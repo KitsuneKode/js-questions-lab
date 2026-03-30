@@ -145,7 +145,7 @@ export function computeStreak(progress: ProgressState): { current: number; longe
     const curr = new Date(days[i]);
     const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (diff === 1) {
+    if (Math.round(diff) === 1) {
       currentRun++;
       if (currentRun > longest) longest = currentRun;
     } else {
@@ -165,7 +165,7 @@ export function computeStreak(progress: ProgressState): { current: number; longe
       const prev = new Date(days[i]);
       const curr = new Date(days[i + 1]);
       const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
-      if (diff === 1) {
+      if (Math.round(diff) === 1) {
         current++;
       } else {
         break;

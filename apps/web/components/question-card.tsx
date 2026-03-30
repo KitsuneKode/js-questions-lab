@@ -91,6 +91,7 @@ export function QuestionCard({ question, locale, isHovered }: QuestionCardProps)
           <pre className="min-w-0 w-full overflow-hidden font-mono text-[11px] leading-relaxed text-secondary/80">
             <code className="block min-w-0 w-full">
               {codeLines.map((line, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: static preview lines, order never changes
                 <div key={i} className="whitespace-pre truncate">
                   {line || ' '}
                 </div>

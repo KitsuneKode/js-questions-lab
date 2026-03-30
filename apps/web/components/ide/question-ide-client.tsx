@@ -2,16 +2,16 @@
 
 import {
   IconActivity as Activity,
-  IconAlertCircle as CircleAlert,
-  IconBolt as Zap,
   IconBookmark as Bookmark,
+  IconCircleCheck as CheckCircle2,
   IconChevronDown as ChevronDown,
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
-  IconCircleCheck as CheckCircle2,
+  IconAlertCircle as CircleAlert,
   IconPlayerPlay as Play,
   IconSparkles as Sparkles,
   IconTerminal2 as Terminal,
+  IconBolt as Zap,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
@@ -232,7 +232,7 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
   });
 
   return (
-    <div className="flex h-full flex-col w-full">
+    <div className="h-full min-h-0 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/60 bg-linear-to-r from-background via-background to-muted/5 px-6 py-4 shrink-0">
         <div className="flex items-center gap-4">
@@ -306,7 +306,7 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
       </div>
 
       {/* IDE Layout */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
+      <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
         {/* Left: Question & Context */}
         <ResizablePanel defaultSize={40} minSize={25} className="flex flex-col">
           <div className="flex-1 overflow-y-auto p-6 space-y-6">

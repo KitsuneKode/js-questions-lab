@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Geist, Roboto_Mono } from 'next/font/google';
 import '@/app/globals.css';
+import { Analytics } from '@vercel/analytics/next';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       )}
     >
       <body className="grain-overlay antialiased">{children}</body>
+      <Analytics />
     </html>
   );
 }

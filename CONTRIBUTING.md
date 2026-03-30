@@ -23,6 +23,8 @@ bun install
 For optional auth and sync features, copy `.env.example` to `.env.local` and provide Clerk and
 Supabase values. Guest mode should remain usable without auth.
 
+See `docs/supabase-clerk-setup.md` for detailed setup instructions for the Supabase + Clerk integration.
+
 Run the app:
 
 ```bash
@@ -85,6 +87,26 @@ If you changed sync or parsing logic, also run:
 ```bash
 bun run parse:questions
 ```
+
+## Branching Workflow
+
+All new work follows a feature → dev → main flow:
+
+```text
+feat/your-feature  →  PR to dev  →  CI passes  →  merge  →  PR to main  →  merge
+```
+
+1. **Create a branch** with a `feat/`, `fix/`, or `chore/` prefix:
+
+   ```bash
+   git checkout -b feat/your-feature
+   ```
+
+2. **Push and open a PR** targeting the `dev` branch — CI will run typecheck, lint, and build automatically.
+3. **After CI passes** and you're happy with the result, merge to `dev`.
+4. **When `dev` is stable**, open a PR from `dev` → `main` and merge manually.
+
+Never commit feature work directly to `main`.
 
 ## Pull Requests
 
