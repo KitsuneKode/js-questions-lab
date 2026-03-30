@@ -1,5 +1,6 @@
 {
   "name": "js-questions-lab",
+  "type": "module",
   "private": true,
   "packageManager": "bun@1.3.9",
   "engines": {
@@ -17,6 +18,8 @@
     "build": "turbo run build",
     "start": "turbo run start",
     "lint": "bunx biome check .",
+    "lint:md": "bunx markdownlint-cli2 .",
+    "lint:md:fix": "bunx markdownlint-cli2 --fix",
     "lint:fix": "bunx biome check --write .",
     "format": "bunx biome format --write .",
     "typecheck": "turbo run typecheck",
