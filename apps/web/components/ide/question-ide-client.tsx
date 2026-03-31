@@ -314,6 +314,7 @@ export function QuestionIDEClient({
               <Badge
                 variant="secondary"
                 className="px-2 py-0.5 text-[10px] uppercase tracking-widest opacity-80"
+                style={{ viewTransitionName: `question-num-${question.id}` }}
               >
                 #{question.id}
               </Badge>

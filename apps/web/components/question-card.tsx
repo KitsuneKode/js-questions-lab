@@ -51,7 +51,12 @@ export function QuestionCard({ question, locale, isHovered }: QuestionCardProps)
       {/* Top Row: Number, Difficulty, and Status */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="font-mono text-xs font-semibold text-secondary">#{question.id}</span>
+          <span
+            className="font-mono text-xs font-semibold text-secondary"
+            style={{ viewTransitionName: `question-num-${question.id}` }}
+          >
+            #{question.id}
+          </span>
           <span
             className={cn(
               'text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border bg-background/50',

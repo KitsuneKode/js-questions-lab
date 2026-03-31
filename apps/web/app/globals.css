@@ -378,3 +378,24 @@
     }
   }
 }
+
+/* View Transition API — page cross-fades */
+::view-transition-old(root) {
+  animation: 120ms ease-out both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 200ms ease-in both fade-in;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
