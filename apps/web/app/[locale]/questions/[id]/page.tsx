@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { Container } from '@/components/container';
-import { QuestionIDEClient } from '@/components/ide/question-ide-client';
+import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
 import { QuestionCard } from '@/components/question-card';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
 import { applyServerFilters } from '@/lib/content/query';
