@@ -250,6 +250,59 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: var(--text-tertiary);
   }
+
+  /* Custom scrollbar for debugger controls */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--text-ghost);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+  }
+
+  /* Monaco Editor - Visual Debugger Line Highlighting */
+  .debugger-active-line {
+    background: rgba(236, 72, 153, 0.12) !important;
+    border-left: 3px solid rgb(236, 72, 153) !important;
+  }
+
+  .debugger-active-glyph {
+    background: rgb(236, 72, 153);
+    border-radius: 50%;
+    width: 8px !important;
+    height: 8px !important;
+    margin-left: 4px;
+    margin-top: 6px;
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+  }
+
+  /* Monaco Editor - Microtask line highlight (violet) */
+  .debugger-micro-line {
+    background: rgba(139, 92, 246, 0.12) !important;
+    border-left: 3px solid rgb(139, 92, 246) !important;
+  }
+
+  /* Monaco Editor - Macrotask line highlight (amber) */
+  .debugger-macro-line {
+    background: rgba(245, 158, 11, 0.12) !important;
+    border-left: 3px solid rgb(245, 158, 11) !important;
+  }
+
+  /* Monaco Editor - RAF line highlight (cyan) */
+  .debugger-raf-line {
+    background: rgba(6, 182, 212, 0.12) !important;
+    border-left: 3px solid rgb(6, 182, 212) !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -12,6 +12,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@babel/standalone": "^7.29.2",
     "@clerk/nextjs": "^7.0.7",
     "@monaco-editor/react": "^4.7.0",
     "@supabase/supabase-js": "^2.101.0",
@@ -41,11 +42,13 @@
     "@tailwindcss/postcss": "4.2.2",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.9.1",
+    "@types/babel__standalone": "^7.1.9",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^28.1.0",
+    "monaco-editor": "^0.55.1",
     "postcss": "^8.5.8",
     "tailwindcss": "4.2.2",
     "typescript": "^6.0.2",

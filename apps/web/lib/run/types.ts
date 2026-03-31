@@ -1,3 +1,4 @@
+// Base timeline types (used by simple timeline view)
 export type TimelineKind = 'sync' | 'macro' | 'micro' | 'output';
 export type TimelinePhase = 'enqueue' | 'start' | 'end' | 'instant';
 
@@ -7,6 +8,61 @@ export interface TimelineEvent {
   kind: TimelineKind;
   phase: TimelinePhase;
   label: string;
+}
+
+// Enhanced timeline types (used by Visual Debugger)
+export type EnhancedTimelineKind = TimelineKind | 'scope' | 'raf';
+export type EnhancedTimelinePhase = TimelinePhase | 'enter' | 'exit';
+
+export interface SourceLocation {
+  line: number;
+  column: number;
+  endLine?: number;
+  endColumn?: number;
+}
+
+export interface SerializedValue {
+  type: 'primitive' | 'object' | 'array' | 'function' | 'undefined' | 'null';
+  preview: string;
+  value?: unknown;
+}
+
+export interface ScopeSnapshot {
+  type: 'global' | 'function' | 'block';
+  name: string;
+  variables: Record<string, SerializedValue>;
+}
+
+export interface ExecutionContext {
+  functionName: string | null;
+  scopeChain: ScopeSnapshot[];
+  thisBinding: string;
+}
+
+export interface ApiMeta {
+  type: 'timer' | 'raf' | 'fetch' | 'event';
+  delay?: number;
+  url?: string;
+  eventType?: string;
+  targetSelector?: string;
+}
+
+export interface EnhancedTimelineEvent {
+  id: number;
+  at: number;
+  kind: EnhancedTimelineKind;
+  phase: EnhancedTimelinePhase;
+  label: string;
+  loc?: SourceLocation;
+  context?: ExecutionContext;
+  apiMeta?: ApiMeta;
+}
+
+export interface EnhancedSandboxRunResult {
+  logs: string[];
+  errors: SandboxError[];
+  timeline: TimelineEvent[];
+  enhancedTimeline: EnhancedTimelineEvent[];
 }
 
 export interface SandboxStackFrame {

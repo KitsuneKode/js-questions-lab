@@ -8,6 +8,7 @@ import {
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
   IconAlertCircle as CircleAlert,
+  IconEye as Eye,
   IconPlayerPlay as Play,
   IconSparkles as Sparkles,
   IconTerminal2 as Terminal,
@@ -44,13 +45,14 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable-panel';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
+import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
-import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
+import { runJavaScriptInEnhancedSandbox } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
 import { getPrimaryErrorMessage, toTerminalLogEntries } from '@/lib/run/terminal';
-import type { TimelineEvent } from '@/lib/run/types';
+import type { EnhancedTimelineEvent, TimelineEvent } from '@/lib/run/types';
 
 type QuestionRuntimeKind = 'javascript' | 'dom-click-propagation' | 'static';
 
@@ -139,8 +141,10 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
   const { openScratchpad } = useScratchpad();
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
+  const [enhancedTimeline, setEnhancedTimeline] = useState<EnhancedTimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [runnerError, setRunnerError] = useState<string | null>(null);
+  const [_debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual'>('timeline');
 
   const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
 
@@ -166,12 +170,17 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
     setIsRunning(true);
     setLogs([]);
     setTimeline([]);
+    setEnhancedTimeline([]);
     setRunnerError(null);
 
     try {
-      const result = await runJavaScriptInSandbox(javascriptCodeBlock.code);
+      // Use enhanced sandbox for Visual Debugger support
+      const result = await runJavaScriptInEnhancedSandbox(javascriptCodeBlock.code, {
+        enableTracing: true,
+      });
       setLogs(toTerminalLogEntries(result));
       setTimeline(result.timeline);
+      setEnhancedTimeline(result.enhancedTimeline);
 
       if (result.errors.length > 0 && result.logs.length === 0) {
         setRunnerError(getPrimaryErrorMessage(result.errors[0]));
@@ -443,25 +452,48 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                   transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
                   className="overflow-hidden"
                 >
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="secondary"
-                        className="w-full gap-2 text-xs border border-primary/50 bg-primary/10 text-primary shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:bg-primary/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                      >
-                        <Activity className="h-3 w-3" />
-                        Event Loop Replay
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
-                      <DialogHeader>
-                        <DialogTitle>Event Loop Replay</DialogTitle>
-                      </DialogHeader>
-                      <div className="mt-4 pb-2">
-                        <TimelineChart events={timeline} />
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <div className="flex gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="secondary"
+                          className="flex-1 gap-2 text-xs border border-primary/50 bg-primary/10 text-primary shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:bg-primary/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+                          onClick={() => setDebuggerMode('timeline')}
+                        >
+                          <Activity className="h-3 w-3" />
+                          Event Loop Replay
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
+                        <DialogHeader>
+                          <DialogTitle>Event Loop Replay</DialogTitle>
+                        </DialogHeader>
+                        <div className="mt-4 pb-2">
+                          <TimelineChart events={timeline} />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="secondary"
+                          className="flex-1 gap-2 text-xs border border-violet-500/50 bg-violet-500/10 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:bg-violet-500/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+                          onClick={() => setDebuggerMode('visual')}
+                        >
+                          <Eye className="h-3 w-3" />
+                          Visual Debugger
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-h-[92vh] w-[98vw] max-w-7xl overflow-y-auto border-border-subtle bg-[#0A0A0A] p-0 shadow-glow">
+                        <VisualDebugger
+                          code={javascriptCodeBlock?.code ?? ''}
+                          enhancedTimeline={enhancedTimeline}
+                          logs={logs.map((l) => `[${l.type}] ${l.content}`)}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
