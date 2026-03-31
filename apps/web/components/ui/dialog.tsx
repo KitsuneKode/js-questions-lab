@@ -130,6 +130,14 @@ function DialogDescription({
   );
 }
 
+function VisuallyHidden({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="sr-only w-px h-px overflow-hidden whitespace-nowrap border-0 p-0 absolute -1">
+      {children}
+    </span>
+  );
+}
+
 export {
   Dialog,
   DialogClose,
@@ -141,4 +149,5 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  VisuallyHidden,
 };

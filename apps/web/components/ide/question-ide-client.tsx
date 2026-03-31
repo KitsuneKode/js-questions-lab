@@ -31,6 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  VisuallyHidden,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -486,6 +487,9 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-h-[92vh] w-[98vw] max-w-7xl overflow-y-auto border-border-subtle bg-[#0A0A0A] p-0 shadow-glow">
+                        <DialogTitle>
+                          <VisuallyHidden>Visual Debugger</VisuallyHidden>
+                        </DialogTitle>
                         <VisualDebugger
                           code={javascriptCodeBlock?.code ?? ''}
                           enhancedTimeline={enhancedTimeline}
