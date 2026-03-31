@@ -38,8 +38,8 @@
 - ✅ Supabase database migrations created (`supabase/migrations/`)
 - ✅ `user_progress` table with RLS policies for data isolation
 - ✅ `user_srs_progress` table for optimized SRS queries
-- ✅ Clerk JWT template integration for secure authentication
-- ✅ Row Level Security enforced via `auth.jwt() ->> 'sub' = user_id`
+- ✅ Native Clerk third-party auth integration (JWT templates deprecated April 2025)
+- ✅ Row Level Security enforced via `auth.uid()`
 - ✅ Client-side sync with race condition handling and batching
 - ✅ Guest mode support (localStorage only, no auth required)
 - ✅ Sync status tracking and improved toast notifications
@@ -52,7 +52,7 @@
 - Root scripts work from repo root.
 - Build succeeds.
 - Typecheck succeeds.
-- Lint succeeds (ESLint Flat Config active).
+- Lint succeeds (Biome).
 - Content generation succeeds (raw Markdown preserved for streamdown).
 - Question library, question detail, dashboard, auth shell, and credits page all render.
 
@@ -109,7 +109,7 @@ The strongest path through the product is:
 ### Stack / Platform
 
 - The platform is stable on Next 16 and Tailwind 4.
-- Linting uses flat config.
+- Linting uses Biome.
 
 ### Runtime / Playground
 
