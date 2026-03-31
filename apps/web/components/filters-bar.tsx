@@ -240,7 +240,7 @@ export function FiltersBar({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex items-center justify-between w-full sm:w-[280px] h-10 bg-surface border border-border-subtle rounded-lg px-3 text-sm text-tertiary hover:border-primary/40 hover:bg-elevated transition-all group active:scale-[0.98]"
+            className="flex items-center justify-between w-full sm:w-[280px] h-10 bg-surface/60 backdrop-blur-md border border-border-subtle/80 rounded-lg px-3 text-sm text-tertiary hover:border-primary/40 hover:bg-elevated/80 transition-all group active:scale-[0.98]"
           >
             <span className="flex items-center gap-2">
               <Search className="h-4 w-4 text-tertiary group-hover:text-primary transition-colors" />
