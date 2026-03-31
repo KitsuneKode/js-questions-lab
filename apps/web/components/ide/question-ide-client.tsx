@@ -45,6 +45,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable-panel';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import type { QuestionRecord } from '@/lib/content/types';
@@ -472,10 +473,17 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                         <div className="mt-4 pb-2">
                           <TimelineChart events={timeline} />
                         </div>
+                        <p className="text-xs text-muted-foreground mt-4">
+                          Simple timeline view of macro/micro tasks. For detailed expression-level
+                          tracing, use the Visual Debugger.
+                        </p>
                       </DialogContent>
                     </Dialog>
 
-                    <Dialog>
+                    <Sheet
+                      open={_debuggerMode === 'visual'}
+                      onOpenChange={(open) => setDebuggerMode(open ? 'visual' : 'timeline')}
+                    >
                       <DialogTrigger asChild>
                         <Button
                           variant="secondary"
@@ -486,17 +494,23 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                           Visual Debugger
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[92vh] w-[98vw] max-w-7xl overflow-y-auto border-border-subtle bg-[#0A0A0A] p-0 shadow-glow">
-                        <DialogTitle>
+                      <SheetContent
+                        side="right"
+                        className="w-[85vw] sm:max-w-none p-0 bg-[#0A0A0A] border-l border-border-subtle overflow-hidden"
+                        style={{ maxWidth: '1400px' }}
+                      >
+                        <SheetTitle>
                           <VisuallyHidden>Visual Debugger</VisuallyHidden>
-                        </DialogTitle>
-                        <VisualDebugger
-                          code={javascriptCodeBlock?.code ?? ''}
-                          enhancedTimeline={enhancedTimeline}
-                          logs={logs.map((l) => `[${l.type}] ${l.content}`)}
-                        />
-                      </DialogContent>
-                    </Dialog>
+                        </SheetTitle>
+                        <div className="h-full w-full">
+                          <VisualDebugger
+                            code={javascriptCodeBlock?.code ?? ''}
+                            enhancedTimeline={enhancedTimeline}
+                            logs={logs.map((l) => `[${l.type}] ${l.content}`)}
+                          />
+                        </div>
+                      </SheetContent>
+                    </Sheet>
                   </div>
                 </motion.div>
               )}
