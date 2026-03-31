@@ -136,6 +136,7 @@ export default async function QuestionDetailPage({
           prevId={prev?.id ?? null}
           nextId={next?.id ?? null}
           locale={locale}
+          allQuestions={all}
           filters={{
             tags: selectedTags,
             difficulties: selectedDifficulties,

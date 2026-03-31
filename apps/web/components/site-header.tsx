@@ -5,11 +5,10 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AuthControls } from '@/components/auth-controls';
 import { BrandMark } from '@/components/brand-mark';
-import { ReviewBadge } from '@/components/dashboard/review-badge';
 import { ReviewBadge } from '@/components/dashboard/review-badge';
 import { useKeyboardShortcuts } from '@/components/keyboard-shortcuts-modal';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
@@ -39,7 +38,39 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastYRef = useRef(0);
   const { openScratchpad } = useScratchpad();
-  useKeyboardShortcuts();
+  const { KeyboardShortcutsTrigger } = useKeyboardShortcuts();
+
+  // Global K key shortcut for scratchpad (works everywhere except when typing)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't trigger if typing in an input or textarea
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        // Also check for Monaco editor
+        target.closest('.monaco-editor') ||
+        target.closest('[data-monaco-editor-root]')
+      ) {
+        return;
+      }
+
+      // Block modifier keys (allow Ctrl+K and Cmd+K for search)
+      if (e.altKey) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') return;
+
+      if (e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openScratchpad();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [openScratchpad]);
 
   const locale = getLocaleFromPathname(pathname ?? `/${DEFAULT_LOCALE}`);
 
@@ -155,7 +186,8 @@ export function SiteHeader() {
               <AuthControls />
             </div>
 
-            {/* Keyboard shortcuts button removed - unused */}
+            {/* Keyboard shortcuts button */}
+            <KeyboardShortcutsTrigger />
 
             <Button
               variant="ghost"

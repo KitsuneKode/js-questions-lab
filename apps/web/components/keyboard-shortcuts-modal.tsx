@@ -8,38 +8,42 @@ import { cn } from '@/lib/utils';
 
 interface ShortcutGroup {
   title: string;
+  scope: 'global' | 'list' | 'detail';
   shortcuts: {
     keys: string[];
     description: string;
-    context?: 'global' | 'questions' | 'question-detail';
   }[];
 }
 
 const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
-    title: 'Global',
+    title: 'Global (Works Everywhere)',
+    scope: 'global',
     shortcuts: [
-      { keys: ['⌘', 'K'], description: 'Quick search questions', context: 'global' },
-      { keys: ['?'], description: 'Show keyboard shortcuts', context: 'global' },
+      { keys: ['⌘', 'K'], description: 'Quick search questions' },
+      { keys: ['?'], description: 'Show keyboard shortcuts help' },
+      { keys: ['K'], description: 'Open scratchpad' },
     ],
   },
   {
-    title: 'Questions List',
+    title: 'Questions List Page',
+    scope: 'list',
     shortcuts: [
-      { keys: ['J', '↓'], description: 'Next question', context: 'questions' },
-      { keys: ['K', '↑'], description: 'Previous question', context: 'questions' },
-      { keys: ['O', 'Enter'], description: 'Open selected question', context: 'questions' },
+      { keys: ['J', '↓'], description: 'Next question in list' },
+      { keys: ['K', '↑'], description: 'Previous question in list' },
+      { keys: ['O', 'Enter'], description: 'Open selected question' },
     ],
   },
   {
-    title: 'Question Detail',
+    title: 'Question Detail Page',
+    scope: 'detail',
     shortcuts: [
-      { keys: ['A', 'B', 'C', 'D'], description: 'Select answer option', context: 'question-detail' },
-      { keys: ['R'], description: 'Reveal/Hide explanation', context: 'question-detail' },
-      { keys: ['⌘', 'Enter'], description: 'Run code', context: 'question-detail' },
-      { keys: ['S'], description: 'Open scratchpad', context: 'question-detail' },
-      { keys: ['J'], description: 'Previous question', context: 'question-detail' },
-      { keys: ['K'], description: 'Next question', context: 'question-detail' },
+      { keys: ['A', 'B', 'C', 'D'], description: 'Select answer option' },
+      { keys: ['1', '2', '3', '4'], description: 'Select answer option (alternative)' },
+      { keys: ['Space'], description: 'Reveal/Hide explanation' },
+      { keys: ['R'], description: 'Run code' },
+      { keys: ['←'], description: 'Previous question' },
+      { keys: ['→'], description: 'Next question' },
     ],
   },
 ];
@@ -67,7 +71,8 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
         return;
       }
 
-      if (e.key === '?' && !e.shiftKey) {
+      // ? is Shift+/ so we need to check for both
+      if (e.key === '?' || (e.key === '/' && e.shiftKey)) {
         e.preventDefault();
         if (onOpenChange) {
           onOpenChange(!isOpen);
@@ -108,20 +113,37 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
         <div className="mt-6 space-y-6">
           {SHORTCUT_GROUPS.map((group) => (
             <div key={group.title}>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                {group.title}
-              </h3>
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  {group.title}
+                </h3>
+                {group.scope === 'global' && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                    Works everywhere
+                  </span>
+                )}
+                {group.scope === 'list' && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium">
+                    Questions list only
+                  </span>
+                )}
+                {group.scope === 'detail' && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
+                    Question detail only
+                  </span>
+                )}
+              </div>
               <div className="space-y-2">
-                {group.shortcuts.map((shortcut, index) => (
+                {group.shortcuts.map((shortcut) => (
                   <div
-                    key={index}
+                    key={shortcut.description}
                     className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface/50 hover:bg-surface transition-colors"
                   >
                     <span className="text-sm text-foreground">{shortcut.description}</span>
                     <div className="flex items-center gap-1.5">
-                      {shortcut.keys.map((key, keyIndex) => (
+                      {shortcut.keys.map((key) => (
                         <kbd
-                          key={keyIndex}
+                          key={key}
                           className={cn(
                             'inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-md border border-border-subtle bg-elevated text-xs font-medium text-foreground shadow-sm',
                             key.length === 1 && 'font-mono',

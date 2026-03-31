@@ -13,7 +13,7 @@ interface UseQuestionKeyboardOptions {
   onSelectOption: (key: string) => void;
   onRevealToggle?: () => void;
   onRunCode?: () => void;
-  onOpenScratchpad?: () => void;
+  onOpenSearch?: () => void;
 }
 
 const OPTION_KEYS: Record<string, OptionKey> = {
@@ -48,15 +48,25 @@ export function useQuestionKeyboard({
   onSelectOption,
   onRevealToggle,
   onRunCode,
-  onOpenScratchpad,
+  onOpenSearch,
 }: UseQuestionKeyboardOptions) {
   const router = useRouter();
 
   const handler = useCallback(
     (e: KeyboardEvent) => {
-      // Never fire on modifier combos (Ctrl+R, Cmd+K, etc.)
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Never fire on modifier combos (Ctrl+R, Cmd+K, etc.) — EXCEPT Ctrl+K for search
+      if (e.altKey) return;
       if (isEditableTarget(e.target)) return;
+
+      // Ctrl+K → open search dialog (always available)
+      if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey) && onOpenSearch) {
+        e.preventDefault();
+        onOpenSearch();
+        return;
+      }
+
+      // Block other modifier combos
+      if (e.ctrlKey || e.metaKey) return;
 
       const key = e.key.toLowerCase();
 
@@ -71,38 +81,31 @@ export function useQuestionKeyboard({
         return;
       }
 
-      // Arrow navigation
+      // Arrow navigation - always available
       if (e.key === 'ArrowLeft' && prevHref) {
         e.preventDefault();
         router.push(prevHref);
         return;
       }
 
-      // Only allow forward navigation after answering — enforces practice discipline
-      if (e.key === 'ArrowRight' && nextHref && isAnswered) {
+      // Forward navigation - always available
+      if (e.key === 'ArrowRight' && nextHref) {
         e.preventDefault();
         router.push(nextHref);
         return;
       }
 
-      // Space → reveal/toggle explanation (after answering)
-      if (e.key === ' ' && isAnswered && onRevealToggle) {
+      // Space → reveal/toggle explanation
+      if (e.key === ' ' && onRevealToggle) {
         e.preventDefault();
         onRevealToggle();
         return;
       }
 
-      // r → run code (after answering)
-      if (key === 'r' && isAnswered && onRunCode) {
+      // r → run code
+      if (key === 'r' && onRunCode) {
         e.preventDefault();
         onRunCode();
-        return;
-      }
-
-      // k → open scratchpad
-      if (key === 'k' && onOpenScratchpad) {
-        e.preventDefault();
-        onOpenScratchpad();
         return;
       }
     },
@@ -114,7 +117,7 @@ export function useQuestionKeyboard({
       onSelectOption,
       onRevealToggle,
       onRunCode,
-      onOpenScratchpad,
+      onOpenSearch,
       router,
     ],
   );

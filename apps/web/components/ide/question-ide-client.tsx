@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
@@ -25,6 +26,15 @@ import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -69,6 +79,7 @@ interface QuestionIDEClientProps {
   prevId: number | null;
   nextId: number | null;
   locale?: string;
+  allQuestions?: QuestionRecord[];
   filters?: {
     tags?: string[];
     difficulties?: string[];
@@ -116,14 +127,18 @@ export function QuestionIDEClient({
   prevId,
   nextId,
   locale,
+  allQuestions = [],
   filters,
 }: QuestionIDEClientProps) {
+  const router = useRouter();
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [isRecallMode, setIsRecallMode] = useState(false);
   const [recallAnswer, setRecallAnswer] = useState('');
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   const [explanationVisible, setExplanationVisible] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const updateSection = useSectionProgressStore((state) => state.updateSection);
   const primaryTag = question.tags[0];
@@ -283,9 +298,7 @@ export function QuestionIDEClient({
     onSelectOption: handleOptionSelect,
     onRevealToggle: () => setExplanationVisible((v) => !v),
     onRunCode: isJavascriptRuntime ? runCode : undefined,
-    onOpenScratchpad: isJavascriptRuntime
-      ? () => openScratchpad(questionCode, 'replace')
-      : undefined,
+    onOpenSearch: allQuestions.length > 0 ? () => setSearchOpen(true) : undefined,
   });
 
   return (
@@ -743,6 +756,57 @@ export function QuestionIDEClient({
         hasPrev={!!prevId}
         hasNext={!!nextId}
       />
+
+      {/* Search Dialog */}
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <Command className="flex h-full flex-col overflow-hidden rounded-xl border border-border-subtle bg-popover shadow-2xl">
+          <CommandInput
+            placeholder="Type a keyword, concept, or question number..."
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
+          <CommandList className="h-[400px]">
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Questions">
+              {allQuestions
+                .filter(
+                  (q) =>
+                    q.title.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+                    q.tags.some((t) => t.toLowerCase().includes((searchQuery || '').toLowerCase())),
+                )
+                .slice(0, 10)
+                .map((q) => (
+                  <CommandItem
+                    key={q.id}
+                    onSelect={() => {
+                      setSearchOpen(false);
+                      setSearchQuery('');
+                      router.push(
+                        `${linkPrefix}/questions/${q.id}${filterQuery ? `?${filterQuery}` : ''}`,
+                      );
+                    }}
+                    className="flex cursor-pointer items-center justify-between py-3 transition-colors hover:bg-muted/50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-[10px] text-tertiary">#{q.id}</span>
+                      <span className="text-sm font-medium text-foreground">{q.title}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      {q.tags.slice(0, 2).map((t) => (
+                        <span
+                          key={t}
+                          className="rounded border border-border-subtle bg-surface px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-tertiary"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </CommandItem>
+                ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </CommandDialog>
     </div>
   );
 }
