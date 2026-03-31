@@ -1,12 +1,14 @@
 import { getTranslations } from 'next-intl/server';
 
 import { Container } from '@/components/container';
+import { FilterLoadingOverlay } from '@/components/filter-loading-overlay';
 import { FiltersBar } from '@/components/filters-bar';
 import { NextRecommendedBanner } from '@/components/next-recommended-banner';
 import { PaginationNav } from '@/components/pagination-nav';
 import { QuestionsResults } from '@/components/questions-results';
 import { getManifest, getQuestions } from '@/lib/content/loaders';
 import { applyServerFilters, paginate } from '@/lib/content/query';
+import { FilterPendingProvider } from '@/lib/filters/filter-pending-context';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 
 const PAGE_SIZE = 18;
@@ -113,34 +115,42 @@ export default async function QuestionsPage({
 
           {/* Filters and Results */}
           <section className="space-y-6">
-            <FiltersBar
-              tags={manifest.tags}
-              selectedTags={selectedTags}
-              search={q}
-              runnable={runnable}
-              status={status}
-              difficulties={selectedDifficulties}
-              allQuestions={allQuestions}
-              locale={locale}
-            />
+            <FilterPendingProvider>
+              <FiltersBar
+                tags={manifest.tags}
+                selectedTags={selectedTags}
+                search={q}
+                runnable={runnable}
+                status={status}
+                difficulties={selectedDifficulties}
+                allQuestions={allQuestions}
+                locale={locale}
+              />
 
-            {/* Results count bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/50">
-              <p>
-                <span className="text-foreground/70">{paged.items.length}</span>
-                <span className="mx-1.5 text-muted-foreground/30">/</span>
-                <span>{paged.total} questions</span>
-              </p>
-              <p className="flex items-center gap-1.5 font-mono">
-                <span className="text-foreground/70">{paged.page}</span>
-                <span className="text-muted-foreground/30">/</span>
-                <span>{paged.pageCount}</span>
-              </p>
-            </div>
+              <FilterLoadingOverlay>
+                {/* Results count bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/50">
+                  <p>
+                    <span className="text-foreground/70">{paged.items.length}</span>
+                    <span className="mx-1.5 text-muted-foreground/30">/</span>
+                    <span>{paged.total} questions</span>
+                  </p>
+                  <p className="flex items-center gap-1.5 font-mono">
+                    <span className="text-foreground/70">{paged.page}</span>
+                    <span className="text-muted-foreground/30">/</span>
+                    <span>{paged.pageCount}</span>
+                  </p>
+                </div>
 
-            <QuestionsResults questions={paged.items} status={status} locale={locale} />
+                <QuestionsResults questions={paged.items} status={status} locale={locale} />
 
-            <PaginationNav page={paged.page} pageCount={paged.pageCount} createHref={createHref} />
+                <PaginationNav
+                  page={paged.page}
+                  pageCount={paged.pageCount}
+                  createHref={createHref}
+                />
+              </FilterLoadingOverlay>
+            </FilterPendingProvider>
           </section>
         </div>
       </Container>

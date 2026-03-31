@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { QuestionRecord } from '@/lib/content/types';
+import { useFilterPending } from '@/lib/filters/filter-pending-context';
 import { cn } from '@/lib/utils';
 
 interface FiltersBarProps {
@@ -52,6 +53,12 @@ export function FiltersBar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const { setIsPending } = useFilterPending();
+
+  // Keep context in sync with transition state
+  useEffect(() => {
+    setIsPending(isPending);
+  }, [isPending, setIsPending]);
 
   // React 19 optimistic state — initializes from props, shows optimistic value during transitions,
   // reverts automatically when navigation completes and new props arrive.
@@ -386,16 +393,6 @@ export function FiltersBar({
           )}
         </div>
       </div>
-
-      {/* Loading indicator */}
-      {isPending && (
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
-            Filtering...
-          </p>
-        </div>
-      )}
 
       {/* Progress Tracker Dialog */}
       <Dialog open={progressOpen} onOpenChange={setProgressOpen}>
