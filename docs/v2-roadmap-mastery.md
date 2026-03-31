@@ -66,15 +66,38 @@ The dashboard should act as a daily habit-tracker.
 - **Interviewer's Notes**: A new section in the explanation: *"What the interviewer is actually looking for."*
 - **Memory/Scope Visualizer**: Go beyond the Event Loop chart. Build a visualizer that shows Call Stack vs. Heap memory, and Lexical Scope chains for closure questions.
 
+### Phase 5 Progress
+
+#### ✅ Visual Debugger (Expression-Level Tracing) - COMPLETED
+
+Implemented a production-ready "Visual Debugger" with Lydia Hallie keynote-style animations:
+
+- Babel AST transformation for expression-level tracing (`@babel/standalone`)
+- Vertical call stack with animated push/pop
+- Web APIs lane (timers, RAF, fetch, events)
+- Task/Microtask queue visualization
+- Monaco editor integration with line highlighting
+- Event loop phase indicator (rotating ring animation)
+- Smooth spring animations via Framer Motion
+
+**Files:**
+
+- `apps/web/components/visualization/visual-debugger.tsx` (main container)
+- `apps/web/lib/run/babel-transform.ts` (AST tracer plugin)
+- `docs/specs/js-visualizer-enhancement.md` (full specification)
+
+**Still TODO:** Memory/Heap visualizer, Glossary tooltips, Interviewer's Notes
+
 ---
 
 ## Suggested Execution Order
 
 1. **Phase 3 (Active Recall UX)**: Implement the Anki-style self-grading and "Type the Output" mode on the existing UI. It's the highest impact for learning.
 2. **Phase 2 (Auth & SRS)**: ✅ **COMPLETED** - Wire the self-grading UI into Supabase and calculate review dates.
-3. **Phase 1 (Multi-Source)**: Refactor the content pipeline and pull in the `sudheerj` repository.
-4. **Phase 4 (Paths)**: Group the newly combined data into curated playlists.
-5. **Phase 5 (Visualizers)**: Add the finishing touches and advanced pedagogical tools.
+3. **Phase 5 (Visualizers) - Part 1**: ✅ **COMPLETED** - Visual Debugger with expression-level tracing is live.
+4. **Phase 1 (Multi-Source)**: Refactor the content pipeline and pull in the `sudheerj` repository.
+5. **Phase 4 (Paths)**: Group the newly combined data into curated playlists.
+6. **Phase 5 (Visualizers) - Part 2**: Memory/Heap visualizer, Glossary tooltips, Interviewer's Notes.
 
 ## Completed Implementation
 
@@ -85,5 +108,13 @@ The dashboard should act as a daily habit-tracker.
 - Per-item immediate sync (no queue, no race conditions)
 - Guest mode support (no auth required)
 - Sync status tracking and error recovery toasts
+
+**Phase 5 - Visual Debugger** has been fully implemented:
+
+- Expression-level tracing via Babel AST transformation
+- Vertical call stack + Web APIs lane + Queue visualization
+- Monaco editor line highlighting
+- Event loop phase indicator with smooth animations
+- Coexists with simple timeline view (user toggle)
 
 **Next Priority:** Phase 3 (Active Recall UX) — Implement "Type the Output" mode and Anki-style self-grading.

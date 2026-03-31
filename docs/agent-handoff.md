@@ -119,7 +119,7 @@ The strongest path through the product is:
 - **Timer Support**: Both `setTimeout` and `setInterval` are supported. `setInterval` auto-clears after 50 iterations (with warning) to prevent infinite loops, and respects the 5-second worker timeout.
 - The scratchpad should stay a quick bottom sheet for experimentation, not a second full IDE competing with the question screen.
 - StackBlitz has been removed.
-- Future work may involve building AST representations or more complex data visualizers.
+- **Visual Debugger**: Expression-level tracing via Babel AST transformation is now available. See `docs/specs/js-visualizer-enhancement.md` and `apps/web/components/visualization/visual-debugger.tsx`.
 
 ### Design
 
@@ -150,7 +150,7 @@ The strongest path through the product is:
 2. Extend Supabase Schema and wire up SRS (SM-2 Algorithm) for authenticated users.
 3. Refactor the `scripts/parse-readme.mjs` into a multi-source ingest pipeline (Phase 1).
 4. Introduce Curated Paths & Playlists on the Dashboard.
-5. Build advanced concept visualizers (Memory / Call Stack) for specific tags.
+5. Build additional visualizers (Memory/Heap, Glossary tooltips, Interviewer's Notes) — Visual Debugger is complete.
 
 ## Open Decisions
 

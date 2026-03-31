@@ -131,6 +131,7 @@ Prefer:
 - Dashboard analytics and progress model exist and are usable.
 - Question detail page operates as a focused split-pane workstation.
 - Event loop visualization has a polished industrial/diagnostics aesthetic with a vertical call stack.
+- **Visual Debugger** is production-ready with expression-level tracing, Babel AST transformation, and smooth animations.
 - App runs on Next 16 (Turbopack) and Tailwind v4, styled consistently without heavy generic dashboard bloat.
 
 ## Known Gaps / Next Priorities
@@ -140,6 +141,7 @@ Prefer:
 - Continuing to refine the code runner's AST parsing if even deeper concept visualizations are needed.
 - Tightening worker completion behavior for promise-heavy snippets that launch async work without top-level `await`. If touching the runner, prefer idle/drain detection over patching broad Promise internals.
 - 9 pre-existing lint warnings (noArrayIndexKey in legacy components, noSvgWithoutTitle in dashboard icons, a11y in input-group/questions-results) — these predate i18n and should be addressed in a separate cleanup pass.
+- **Visual Debugger Phase 5** ✅ COMPLETED — Expression-level tracing with Babel AST transformation, vertical call stack, Web APIs lane, and queue visualization. See `docs/specs/js-visualizer-enhancement.md`.
 
 ## Product Direction
 
