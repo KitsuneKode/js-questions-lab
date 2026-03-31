@@ -176,13 +176,13 @@ export function VisualDebugger({
       </div>
 
       {/* Main content */}
-      <div className="grid gap-6 p-5 md:p-6 xl:grid-cols-[1fr_320px]">
-        <div className="flex flex-col gap-5 lg:flex-row">
+      <div className="grid gap-4 p-4 md:p-5 xl:grid-cols-[1fr_340px]">
+        <div className="flex flex-col gap-4 lg:flex-row">
           {/* Code Panel */}
           <DebuggerCodePanel
             code={code}
             currentLine={currentStep.currentLine}
-            className="lg:w-[45%]"
+            className="lg:w-[48%]"
           />
 
           {/* Runtime Visualization */}

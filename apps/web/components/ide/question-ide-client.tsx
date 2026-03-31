@@ -493,11 +493,11 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                           Visual Debugger
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[90vh] w-[95vw] max-w-[1600px] p-0 bg-[#0A0A0A] border-border-subtle overflow-hidden">
+                      <DialogContent className="max-h-[95vh] w-[98vw] max-w-[1800px] p-0 bg-[#0A0A0A] border-border-subtle overflow-hidden">
                         <DialogTitle>
                           <VisuallyHidden>Visual Debugger</VisuallyHidden>
                         </DialogTitle>
-                        <div className="h-[calc(90vh-2rem)] overflow-auto">
+                        <div className="h-[calc(95vh-3rem)] overflow-auto">
                           <VisualDebugger
                             code={javascriptCodeBlock?.code ?? ''}
                             enhancedTimeline={enhancedTimeline}
