@@ -62,7 +62,10 @@ export async function generateMetadata({ params }: QuestionDetailPageProps) {
   };
 }
 
-export default async function QuestionDetailPage({ params, searchParams }: QuestionDetailPageProps) {
+export default async function QuestionDetailPage({
+  params,
+  searchParams,
+}: QuestionDetailPageProps) {
   const resolvedParams = await params;
   const locale = resolvedParams.locale as LocaleCode;
   const id = Number.parseInt(resolvedParams.id, 10);
@@ -91,7 +94,7 @@ export default async function QuestionDetailPage({ params, searchParams }: Quest
       : undefined;
 
   const all = getQuestions(locale);
-  
+
   // Apply filters to get scoped question list
   const filtered = applyServerFilters(all, {
     q,
@@ -102,11 +105,12 @@ export default async function QuestionDetailPage({ params, searchParams }: Quest
 
   // Find current question index in filtered list
   const currentIndex = filtered.findIndex((item) => item.id === id);
-  
+
   // Get prev/next within filtered scope
   const prev = currentIndex > 0 ? filtered[currentIndex - 1] : null;
-  const next = currentIndex >= 0 && currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
-  
+  const next =
+    currentIndex >= 0 && currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
+
   const related = getRelatedQuestions(locale, question, 3);
 
   return (

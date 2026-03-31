@@ -76,12 +76,16 @@ These commands were recently verified:
 - Terminal formatting helper: `apps/web/lib/run/terminal.ts`
 - Playground UI: `apps/web/components/code-playground.tsx`
 - Progress store: `apps/web/lib/progress/progress-context.tsx`
+- **Section progress store**: `apps/web/lib/progress/section-progress-store.ts` (Zustand + Zod)
+- **Progress tracker**: `apps/web/components/section-progress-tracker.tsx`
 - Dashboard hub: `apps/web/components/dashboard/dashboard-shell.tsx`
 - Site header (locale switcher): `apps/web/components/site-header.tsx`
 - Site footer (translated): `apps/web/components/site-footer.tsx`
 - Landing hero (translated): `apps/web/components/landing-hero.tsx`
 - Landing sections (translated): `apps/web/components/landing-sections.tsx`
 - Parser: `scripts/parse-readme.mjs`
+- **Multi-select filters**: `apps/web/components/filters-bar.tsx`
+- **Content query helpers**: `apps/web/lib/content/query.ts`
 
 ## Context And Token Discipline
 
@@ -142,6 +146,7 @@ Prefer:
 - Tightening worker completion behavior for promise-heavy snippets that launch async work without top-level `await`. If touching the runner, prefer idle/drain detection over patching broad Promise internals.
 - 9 pre-existing lint warnings (noArrayIndexKey in legacy components, noSvgWithoutTitle in dashboard icons, a11y in input-group/questions-results) — these predate i18n and should be addressed in a separate cleanup pass.
 - **Visual Debugger Phase 5** ✅ COMPLETED — Expression-level tracing with Babel AST transformation, vertical call stack, Web APIs lane, and queue visualization. See `docs/specs/js-visualizer-enhancement.md`.
+- **Multi-Select Filters & Progress Tracking** ✅ COMPLETED — Multi-select tags/difficulties, scoped navigation, Zustand-based progress tracking with mastery levels. See `docs/implementation-brief.md`.
 
 ## Product Direction
 

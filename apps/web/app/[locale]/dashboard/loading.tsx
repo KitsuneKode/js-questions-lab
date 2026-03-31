@@ -1,8 +1,5 @@
 import { Container } from '@/components/container';
-
-function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-muted/50 ${className ?? ''}`} />;
-}
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardLoading() {
   const statSkeletonIds = ['stats-1', 'stats-2', 'stats-3', 'stats-4'];

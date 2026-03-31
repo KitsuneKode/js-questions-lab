@@ -76,12 +76,12 @@ export default async function QuestionsPage({
     if (targetPage > 1) params.set('page', String(targetPage));
     if (q) params.set('q', q);
     if (selectedTags.length > 0) {
-      selectedTags.forEach((tag) => params.append('tags', tag));
+      selectedTags.forEach((tag) => void params.append('tags', tag));
     }
     if (runnable === 'true') params.set('runnable', 'true');
     if (status && status !== 'all') params.set('status', status);
     if (selectedDifficulties.length > 0) {
-      selectedDifficulties.forEach((diff) => params.append('difficulties', diff));
+      selectedDifficulties.forEach((diff) => void params.append('difficulties', diff));
     }
 
     const query = params.toString();

@@ -147,9 +147,9 @@ export function VisualDebugger({
   };
 
   return (
-    <div className={cn('font-sans', className)}>
+    <div className={cn('flex flex-col h-full font-sans', className)}>
       {/* Header */}
-      <div className="border-b border-border/50 bg-[#111] px-5 py-4">
+      <div className="border-b border-border/50 bg-surface px-5 py-4 shrink-0">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -170,131 +170,133 @@ export function VisualDebugger({
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="grid gap-4 p-4 md:p-5 xl:grid-cols-[1fr_340px]">
-        <div className="flex flex-col gap-4 lg:flex-row">
-          {/* Code Panel */}
-          <DebuggerCodePanel
-            code={code}
-            currentLine={currentStep.currentLine}
-            className="lg:w-[48%]"
-          />
-
-          {/* Runtime Visualization */}
-          <div className="flex flex-1 flex-col gap-4">
-            {/* Current Step Narrator */}
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={currentStep.key}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -5 }}
-                transition={prefersReducedMotion ? { duration: 0 } : SPRING_TRANSITION}
-                className="rounded-xl border border-border/50 bg-[#161616] p-4"
-              >
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-2 font-mono">
-                  <span className="text-primary/80">+{currentStep.atOffset.toFixed(2)}ms</span>
-                  <span>|</span>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      'border-transparent px-1.5 py-0 text-[9px] font-semibold',
-                      currentStep.badgeColor === 'pink' && 'bg-pink-500/20 text-pink-300',
-                      currentStep.badgeColor === 'violet' && 'bg-violet-500/20 text-violet-300',
-                      currentStep.badgeColor === 'amber' && 'bg-amber-500/20 text-amber-300',
-                      currentStep.badgeColor === 'cyan' && 'bg-cyan-500/20 text-cyan-300',
-                      currentStep.badgeColor === 'lime' && 'bg-lime-500/20 text-lime-300',
-                      currentStep.badgeColor === 'slate' && 'bg-slate-500/20 text-slate-300',
-                    )}
-                  >
-                    {currentStep.badge}
-                  </Badge>
-                </div>
-                <h4 className="text-base font-semibold text-foreground">{currentStep.title}</h4>
-                <p className="mt-1 text-xs text-muted-foreground/80 leading-relaxed">
-                  {currentStep.caption}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Visualization Grid */}
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* Call Stack */}
-              <DebuggerCallStack
-                frames={snapshot.callStack}
-                prefersReducedMotion={prefersReducedMotion}
-                className="md:row-span-2"
-              />
-
-              {/* Web APIs */}
-              <DebuggerWebApis
-                items={snapshot.webApis}
-                currentTime={currentStep.event.at}
-                isActive={currentStep.event.kind === 'raf' || currentStep.event.kind === 'macro'}
-                prefersReducedMotion={prefersReducedMotion}
-              />
-            </div>
-
-            {/* Queues */}
-            <DebuggerQueues
-              microtaskQueue={snapshot.microtaskQueue}
-              taskQueue={snapshot.taskQueue}
-              activeLane={getActiveLane()}
-              prefersReducedMotion={prefersReducedMotion}
+      {/* Main content — scrollable */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="grid gap-4 p-4 md:p-5 xl:grid-cols-[1fr_340px]">
+          <div className="flex flex-col gap-4 lg:flex-row">
+            {/* Code Panel */}
+            <DebuggerCodePanel
+              code={code}
+              currentLine={currentStep.currentLine}
+              className="lg:w-[48%]"
             />
 
-            {/* Event Loop */}
-            <DebuggerEventLoop
-              phase={snapshot.eventLoopPhase}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-
-            {/* Console Output */}
-            {snapshot.console.length > 0 && (
-              <section className="rounded-xl border border-lime-500/20 bg-lime-500/5 p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="h-1.5 w-1.5 rounded-full bg-lime-400" />
-                  <Terminal className="h-3.5 w-3.5 text-lime-400/70" />
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-lime-400/80">
-                    Console
-                  </span>
-                </div>
-                <div className="space-y-1 font-mono text-xs">
-                  {snapshot.console.map((entry) => (
-                    <div
-                      key={entry.id}
+            {/* Runtime Visualization */}
+            <div className="flex flex-1 flex-col gap-4">
+              {/* Current Step Narrator */}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={currentStep.key}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -5 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_TRANSITION}
+                  className="rounded-xl border border-border/50 bg-elevated p-4"
+                >
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-2 font-mono">
+                    <span className="text-primary/80">+{currentStep.atOffset.toFixed(2)}ms</span>
+                    <span>|</span>
+                    <Badge
+                      variant="outline"
                       className={cn(
-                        'flex items-start gap-2 px-2 py-1 rounded',
-                        entry.level === 'error' && 'bg-red-500/10 text-red-300',
-                        entry.level === 'warn' && 'bg-amber-500/10 text-amber-300',
-                        entry.level === 'log' && 'bg-lime-500/10 text-lime-200',
-                        entry.level === 'info' && 'bg-blue-500/10 text-blue-300',
+                        'border-transparent px-1.5 py-0 text-[9px] font-semibold',
+                        currentStep.badgeColor === 'pink' && 'bg-pink-500/20 text-pink-300',
+                        currentStep.badgeColor === 'violet' && 'bg-violet-500/20 text-violet-300',
+                        currentStep.badgeColor === 'amber' && 'bg-amber-500/20 text-amber-300',
+                        currentStep.badgeColor === 'cyan' && 'bg-cyan-500/20 text-cyan-300',
+                        currentStep.badgeColor === 'lime' && 'bg-lime-500/20 text-lime-300',
+                        currentStep.badgeColor === 'slate' && 'bg-slate-500/20 text-slate-300',
                       )}
                     >
-                      <span className="text-lime-500/50 select-none">{'>'}</span>
-                      <span className="flex-1 break-all">{entry.message}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </div>
+                      {currentStep.badge}
+                    </Badge>
+                  </div>
+                  <h4 className="text-base font-semibold text-foreground">{currentStep.title}</h4>
+                  <p className="mt-1 text-xs text-muted-foreground/80 leading-relaxed">
+                    {currentStep.caption}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
 
-        {/* Controls Sidebar */}
-        <DebuggerControls
-          steps={steps}
-          activeIndex={activeIndex}
-          isPlaying={isPlaying}
-          prefersReducedMotion={prefersReducedMotion}
-          onPrevious={handlePrevious}
-          onNext={handleNext}
-          onTogglePlay={handleTogglePlay}
-          onRestart={handleRestart}
-          onJumpToStart={handleJumpToStart}
-          onJumpToEnd={handleJumpToEnd}
-          onStepClick={handleStepClick}
-        />
+              {/* Visualization Grid */}
+              <div className="grid gap-4 md:grid-cols-2">
+                {/* Call Stack */}
+                <DebuggerCallStack
+                  frames={snapshot.callStack}
+                  prefersReducedMotion={prefersReducedMotion}
+                  className="md:row-span-2"
+                />
+
+                {/* Web APIs */}
+                <DebuggerWebApis
+                  items={snapshot.webApis}
+                  currentTime={currentStep.event.at}
+                  isActive={currentStep.event.kind === 'raf' || currentStep.event.kind === 'macro'}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              </div>
+
+              {/* Queues */}
+              <DebuggerQueues
+                microtaskQueue={snapshot.microtaskQueue}
+                taskQueue={snapshot.taskQueue}
+                activeLane={getActiveLane()}
+                prefersReducedMotion={prefersReducedMotion}
+              />
+
+              {/* Event Loop */}
+              <DebuggerEventLoop
+                phase={snapshot.eventLoopPhase}
+                prefersReducedMotion={prefersReducedMotion}
+              />
+
+              {/* Console Output */}
+              {snapshot.console.length > 0 && (
+                <section className="rounded-xl border border-lime-500/20 bg-lime-500/5 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="h-1.5 w-1.5 rounded-full bg-lime-400" />
+                    <Terminal className="h-3.5 w-3.5 text-lime-400/70" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-lime-400/80">
+                      Console
+                    </span>
+                  </div>
+                  <div className="space-y-1 font-mono text-xs">
+                    {snapshot.console.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className={cn(
+                          'flex items-start gap-2 px-2 py-1 rounded',
+                          entry.level === 'error' && 'bg-red-500/10 text-red-300',
+                          entry.level === 'warn' && 'bg-amber-500/10 text-amber-300',
+                          entry.level === 'log' && 'bg-lime-500/10 text-lime-200',
+                          entry.level === 'info' && 'bg-blue-500/10 text-blue-300',
+                        )}
+                      >
+                        <span className="text-lime-500/50 select-none">{'>'}</span>
+                        <span className="flex-1 break-all">{entry.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          </div>
+
+          {/* Controls Sidebar */}
+          <DebuggerControls
+            steps={steps}
+            activeIndex={activeIndex}
+            isPlaying={isPlaying}
+            prefersReducedMotion={prefersReducedMotion}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onTogglePlay={handleTogglePlay}
+            onRestart={handleRestart}
+            onJumpToStart={handleJumpToStart}
+            onJumpToEnd={handleJumpToEnd}
+            onStepClick={handleStepClick}
+          />
+        </div>
       </div>
     </div>
   );

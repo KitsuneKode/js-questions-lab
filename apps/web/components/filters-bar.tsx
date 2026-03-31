@@ -1,9 +1,14 @@
 'use client';
 
-import { IconFlame as Flame, IconSearch as Search, IconX as X } from '@tabler/icons-react';
-import { motion } from 'motion/react';
+import {
+  IconFlame as Flame,
+  IconProgress as Progress,
+  IconSearch as Search,
+  IconX as X,
+} from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { SectionProgressTracker } from '@/components/section-progress-tracker';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -14,6 +19,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { QuestionRecord } from '@/lib/content/types';
 import { cn } from '@/lib/utils';
 
@@ -49,6 +55,19 @@ export function FiltersBar({
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(search);
 
+  // Open command dialog with Ctrl/Cmd + K
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
+  const [progressOpen, setProgressOpen] = useState(false);
+
   // Support legacy single-tag mode or new multi-tag mode
   const activeTags = useMemo(() => {
     if (selectedTags && selectedTags.length > 0) return selectedTags;
@@ -63,6 +82,15 @@ export function FiltersBar({
   }, [difficulties, difficulty]);
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
+
+  // Calculate question counts per tag
+  const questionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    tags.forEach((tag) => {
+      counts[tag] = allQuestions.filter((q) => q.tags.includes(tag)).length;
+    });
+    return counts;
+  }, [tags, allQuestions]);
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -119,7 +147,9 @@ export function FiltersBar({
       if (currentDiffs.includes(diff)) {
         // Remove difficulty
         params.delete('difficulties');
-        currentDiffs.filter((d) => d !== diff).forEach((d) => void params.append('difficulties', d));
+        currentDiffs
+          .filter((d) => d !== diff)
+          .forEach((d) => void params.append('difficulties', d));
       } else {
         // Add difficulty
         params.append('difficulties', diff);
@@ -175,19 +205,13 @@ export function FiltersBar({
               type="button"
               onClick={() => toggleTag(tag)}
               className={cn(
-                'relative px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors rounded-full',
-                isActive ? 'text-primary' : 'text-secondary hover:text-foreground hover:bg-surface',
+                'relative px-4 py-2 text-sm font-medium whitespace-nowrap transition-all rounded-full',
+                isActive
+                  ? 'text-primary bg-primary/5 border-2 border-primary shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                  : 'text-secondary hover:text-foreground hover:bg-surface border-2 border-transparent',
               )}
             >
               {tag === 'all' ? 'All Questions' : tag.charAt(0).toUpperCase() + tag.slice(1)}
-              {isActive && (
-                <motion.div
-                  layoutId="active-pill"
-                  className="absolute inset-0 border-2 border-primary rounded-full bg-primary/5"
-                  initial={false}
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                />
-              )}
             </button>
           );
         })}
@@ -196,7 +220,7 @@ export function FiltersBar({
             variant="ghost"
             size="sm"
             onClick={resetTags}
-            className="h-8 px-3 text-xs text-tertiary hover:text-foreground ml-2 active:scale-[0.95] transition-all"
+            className="h-8 px-3 text-xs text-tertiary hover:text-foreground ml-2 active:scale-[0.95] transition-all border-2 border-transparent"
           >
             <X className="h-3.5 w-3.5 mr-1" />
             Reset Tags ({activeTags.length})
@@ -282,8 +306,8 @@ export function FiltersBar({
                   className={cn(
                     'px-3 py-1 text-xs font-medium rounded-md capitalize transition-all duration-200 active:scale-[0.95]',
                     isActive
-                      ? 'bg-primary text-background shadow-[0_0_20px_rgba(245,158,11,0.3)] font-semibold'
-                      : 'text-secondary hover:text-foreground hover:bg-elevated border border-transparent hover:border-border-subtle',
+                      ? 'bg-primary text-background shadow-[0_0_15px_rgba(245,158,11,0.25)] font-semibold border-2 border-primary'
+                      : 'text-secondary hover:text-foreground hover:bg-elevated border-2 border-transparent hover:border-border-subtle',
                   )}
                 >
                   {diff}
@@ -295,7 +319,7 @@ export function FiltersBar({
                 variant="ghost"
                 size="sm"
                 onClick={resetDifficulties}
-                className="h-7 px-2 text-[10px] text-tertiary hover:text-foreground ml-1 active:scale-[0.95] transition-all"
+                className="h-7 px-2 text-[10px] text-tertiary hover:text-foreground ml-1 active:scale-[0.95] transition-all border-2 border-transparent"
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -304,6 +328,17 @@ export function FiltersBar({
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Progress Tracker Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setProgressOpen(true)}
+            className="h-9 gap-2 text-xs font-medium border-border-subtle hover:border-primary/40 transition-all active:scale-[0.95]"
+          >
+            <Progress className="h-4 w-4" />
+            Progress
+          </Button>
+
           <button
             type="button"
             onClick={() => updateParam('runnable', runnable === 'true' ? '' : 'true')}
@@ -354,6 +389,25 @@ export function FiltersBar({
           </p>
         </div>
       )}
+
+      {/* Progress Tracker Dialog */}
+      <Dialog open={progressOpen} onOpenChange={setProgressOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Your Progress</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <SectionProgressTracker
+              availableTags={tags}
+              questionCounts={questionCounts}
+              onSectionClick={(tag) => {
+                toggleTag(tag);
+                setProgressOpen(false);
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

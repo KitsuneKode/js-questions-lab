@@ -52,7 +52,7 @@ export function DebuggerControls({
   return (
     <div className={cn('flex flex-col', className)}>
       {/* Main controls */}
-      <div className="rounded-xl border border-border/50 bg-[#111] p-4">
+      <div className="rounded-xl border border-border/50 bg-surface p-4">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -163,7 +163,7 @@ export function DebuggerControls({
       </div>
 
       {/* Step list */}
-      <div className="mt-4 rounded-xl border border-border/50 bg-[#111] p-4 flex-1 flex flex-col min-h-[200px] max-h-[400px]">
+      <div className="mt-4 rounded-xl border border-border/50 bg-surface p-4 flex-1 flex flex-col min-h-[200px] max-h-[400px]">
         <div className="mb-3 flex items-center justify-between">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Execution Log

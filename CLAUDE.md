@@ -1,56 +1,45 @@
 # CLAUDE.md
 
-Start with `AGENTS.md` and `docs/agent-handoff.md`.
+**Start here**: `AGENTS.md` → `docs/agent-handoff.md` → task-specific file
 
-## Short Context
+## Quick Context
 
-- This repo contains both source content and the app product.
-- `apps/web` is the product app (Next.js 16, Tailwind v4, React 19).
-- `scripts/` + `content/` are the content pipeline.
-- The current runtime decision is worker-first execution for JS snippets.
-- Guest mode must remain fully usable.
-- Auth (Clerk) is optional sync, not a prerequisite.
-- Supabase sync uses native Clerk third-party auth — no JWT templates.
+- **Product**: Next.js 16 + Tailwind v4 + React 19 interview practice app
+- **Content pipeline**: Parses Lydia Hallie's JS questions → multi-locale JSON
+- **Runtime**: Worker-based snippet execution (no StackBlitz)
+- **Guest-first**: Auth optional for sync, never required for learning
 
-## Minimal Reading Order
+## Reading Order
 
-Keep context tight:
+1. `AGENTS.md` — topology, commands, important files
+2. `docs/implementation-brief.md` — filters + progress tracking (Mar 2026)
+3. `docs/v2-roadmap-mastery.md` — active recall roadmap
+4. One focused implementation file
 
-1. `AGENTS.md`
-2. `docs/agent-handoff.md`
-3. `docs/v2-roadmap-mastery.md` ← active north star
-4. Only the files needed for the current task
+## Recent Work
 
-Do not load generated JSON or large unrelated files unless the change requires them.
+✅ **Multi-select filters** — Tags/difficulties support multiple selections with scoped navigation  
+✅ **Progress tracking** — Zustand store with Zod validation, mastery levels per topic  
+✅ **Scoped prev/next** — Navigation respects active filters  
 
-## Current Priority Order
+See `docs/implementation-brief.md` for details.
 
-1. Preserve working root scripts.
-2. Keep the question flow coherent and fast.
-3. **Active Recall UX (Phase 3)** — "Type the Output" mode + Anki-style self-grading.
-4. Multi-source content pipeline (Phase 1 of v2 roadmap).
+## Commands
 
-## Branching & CI/CD Workflow
-
-- All new work goes on a feature branch (`feat/`, `fix/`, `chore/` prefix).
-- Open PRs targeting `dev` branch first (CI runs typecheck + lint + build).
-- Merge to `main` only after `dev` is validated and tested.
-- Never commit directly to `main` for feature work.
+```bash
+bun run dev          # Development
+bun run build        # Production build
+bun run typecheck    # TypeScript check
+bun run lint         # Biome lint
+```
 
 ## What Not To Reintroduce
 
-- StackBlitz as the primary playground experience
-- Fragile localStorage race conditions
-- Auth-gated learning flow
-- Generic dashboard patterns with no recommendation logic
-- JWT template approach for Supabase (deprecated April 2025)
+- StackBlitz runtime (removed for bundle size)
+- Auth-gated learning flow (guest-first UX)
+- JWT templates for Supabase (deprecated, use native Clerk auth)
+- localStorage race conditions (use Zustand persistence)
 
-## Main Handoff Docs
+---
 
-- `AGENTS.md`
-- `docs/agent-handoff.md`
-- `docs/v2-roadmap-mastery.md`
-- `docs/design-system-brief.md`
-- `docs/supabase-clerk-setup.md` ← load for auth/sync work
-- `docs/principal-engineer-prompt.md`
-- `docs/continue-agent-prompt.md`
+*Keep context tight. Don't load generated JSON or unrelated route files.*

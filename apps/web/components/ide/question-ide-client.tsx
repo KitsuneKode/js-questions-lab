@@ -49,6 +49,7 @@ import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
+import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { runJavaScriptInEnhancedSandbox } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
@@ -110,13 +111,22 @@ function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
   return 'static';
 }
 
-export function QuestionIDEClient({ question, prevId, nextId, locale, filters }: QuestionIDEClientProps) {
+export function QuestionIDEClient({
+  question,
+  prevId,
+  nextId,
+  locale,
+  filters,
+}: QuestionIDEClientProps) {
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [isRecallMode, setIsRecallMode] = useState(false);
   const [recallAnswer, setRecallAnswer] = useState('');
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   const [explanationVisible, setExplanationVisible] = useState(true);
+
+  const updateSection = useSectionProgressStore((state) => state.updateSection);
+  const primaryTag = question.tags[0];
 
   const cleanPromptMarkdown = question.promptMarkdown
     .replace(/```[a-z]*\n[\s\S]*?\n```/g, '')
@@ -211,7 +221,11 @@ export function QuestionIDEClient({ question, prevId, nextId, locale, filters }:
     }
     setHasSubmittedRecall(true);
     saveAttempt(question.correctOption, 'correct');
-  }, [recallAnswer, question.correctOption, saveAttempt]);
+    // Update section progress
+    if (primaryTag) {
+      updateSection(primaryTag, { totalQuestions: Math.max(1, question.id) });
+    }
+  }, [recallAnswer, question.correctOption, saveAttempt, primaryTag, updateSection, question.id]);
 
   const handleSelfGrade = useCallback(
     (grade: 'hard' | 'good' | 'easy') => {
@@ -226,19 +240,27 @@ export function QuestionIDEClient({ question, prevId, nextId, locale, filters }:
       if (isAnswered) return;
       const optionKey = key as 'A' | 'B' | 'C' | 'D';
       setSelected(optionKey);
-      saveAttempt(optionKey, key === question.correctOption ? 'correct' : 'incorrect');
+      const isCorrect = key === question.correctOption;
+      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect');
+      // Update section progress
+      if (primaryTag) {
+        updateSection(primaryTag, {
+          totalQuestions: Math.max(1, question.id),
+          masteryLevel: isCorrect ? undefined : 'learning',
+        });
+      }
     },
-    [isAnswered, question.correctOption, saveAttempt],
+    [isAnswered, question.correctOption, saveAttempt, primaryTag, updateSection, question.id],
   );
 
   // Build prev/next hrefs with filter params preserved
   const buildFilterQuery = useCallback(() => {
     const params = new URLSearchParams();
     if (filters?.tags && filters.tags.length > 0) {
-      filters.tags.forEach((tag) => params.append('tags', tag));
+      filters.tags.forEach((tag) => void params.append('tags', tag));
     }
     if (filters?.difficulties && filters.difficulties.length > 0) {
-      filters.difficulties.forEach((diff) => params.append('difficulties', diff));
+      filters.difficulties.forEach((diff) => void params.append('difficulties', diff));
     }
     if (filters?.q) params.set('q', filters.q);
     if (filters?.runnable) params.set('runnable', filters.runnable);
@@ -518,8 +540,8 @@ export function QuestionIDEClient({ question, prevId, nextId, locale, filters }:
                           Visual Debugger
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[92vh] w-[98vw] max-w-[1920px] overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
-                        <DialogTitle>
+                      <DialogContent className="h-[90vh] w-[95vw] max-w-7xl overflow-hidden border-border-subtle bg-surface p-0 shadow-glow sm:max-w-7xl">
+                        <DialogTitle className="sr-only">
                           <VisuallyHidden>Visual Debugger</VisuallyHidden>
                         </DialogTitle>
                         <VisualDebugger

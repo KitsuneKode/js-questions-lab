@@ -126,7 +126,9 @@ export function DebuggerCallStack({
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className={cn('font-medium', colors.text)}>{frame.name}</span>
-                    {frame.loc && <span className="text-xs text-white/30">:{frame.loc.line}</span>}
+                    {frame.loc && (
+                      <span className="text-xs text-muted-foreground/40">:{frame.loc.line}</span>
+                    )}
                   </div>
 
                   {/* Variable preview */}
@@ -138,7 +140,7 @@ export function DebuggerCallStack({
                           <div key={key} className="flex items-center gap-1 text-xs">
                             <span className={cn('font-medium', colors.text)}>{key}</span>
                             <span className="text-white/30">:</span>
-                            <span className="text-white/60 truncate">{val.preview}</span>
+                            <span className="text-muted-foreground truncate">{val.preview}</span>
                           </div>
                         ))}
                       {Object.keys(frame.variables).length > 3 && (

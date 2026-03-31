@@ -10,6 +10,8 @@ import { useRef, useState } from 'react';
 import { AuthControls } from '@/components/auth-controls';
 import { BrandMark } from '@/components/brand-mark';
 import { ReviewBadge } from '@/components/dashboard/review-badge';
+import { ReviewBadge } from '@/components/dashboard/review-badge';
+import { useKeyboardShortcuts } from '@/components/keyboard-shortcuts-modal';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +39,7 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastYRef = useRef(0);
   const { openScratchpad } = useScratchpad();
+  useKeyboardShortcuts();
 
   const locale = getLocaleFromPathname(pathname ?? `/${DEFAULT_LOCALE}`);
 
@@ -151,6 +154,8 @@ export function SiteHeader() {
               <div className="mx-1 h-4 w-px bg-border/50" />
               <AuthControls />
             </div>
+
+            {/* Keyboard shortcuts button removed - unused */}
 
             <Button
               variant="ghost"

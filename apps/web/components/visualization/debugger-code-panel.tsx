@@ -123,7 +123,7 @@ export function DebuggerCodePanel({ code, currentLine, className }: DebuggerCode
       </div>
 
       {/* Editor */}
-      <div className="flex-1 h-[600px] max-h-[600px] overflow-auto">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <Editor
           height="100%"
           defaultLanguage="javascript"

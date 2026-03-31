@@ -64,30 +64,28 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
   }));
 
   return (
-    <main className="bg-void min-h-screen pt-24 pb-20 md:pt-32">
+    <main className="bg-void min-h-screen pt-24 pb-16 md:pt-32 md:pb-24">
       <Container>
         {/* ── Hero card ─────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden rounded-[32px] border border-border-subtle bg-surface/80 px-6 py-10 shadow-[0_32px_80px_rgba(0,0,0,0.28)] md:px-12 md:py-14">
-          {/* ambient glow */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.1)_0%,transparent_40%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.06)_0%,transparent_45%)]" />
-          {/* subtle grid texture */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[40px_40px]" />
+        <section className="relative overflow-hidden rounded-2xl border border-border-subtle bg-surface/50 px-6 py-10 md:px-10 md:py-12">
+          {/* subtle ambient glow */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.08)_0%,transparent_50%)]" />
 
-          <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
             {t('label')}
           </p>
-          <h1 className="mt-5 max-w-4xl font-display text-4xl tracking-[-0.03em] text-foreground md:text-6xl">
+          <h1 className="mt-4 max-w-3xl font-display text-3xl font-medium tracking-tight text-foreground md:text-4xl">
             {t('heroTitle', { creator: siteConfig.creator.displayHandle })}
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-7 text-secondary md:text-lg">
+          <p className="mt-5 max-w-3xl text-sm leading-relaxed text-secondary md:text-base">
             {t('heroBody', {
               name: siteConfig.name,
               source: siteConfig.source.name,
             })}
           </p>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground">{t('heroNote')}</p>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{t('heroNote')}</p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href={siteConfig.creator.xUrl}
               target="_blank"
@@ -119,39 +117,39 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
         </section>
 
         {/* ── Why / What I Added ──────────────────────────────────────────── */}
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <article className="flex flex-col rounded-xl border border-border-subtle bg-surface/50 p-6 md:p-7">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                 <IconHammer className="h-4 w-4" />
               </div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('whyLabel')}
               </p>
             </div>
-            <h2 className="mt-6 font-display text-2xl tracking-[-0.02em] text-foreground lg:text-3xl">
+            <h2 className="mt-5 font-display text-xl font-medium tracking-tight text-foreground md:text-2xl">
               {t('whyTitle')}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('whyBody1')}</p>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('whyBody2')}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('whyBody1')}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('whyBody2')}</p>
           </article>
 
-          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+          <article className="flex flex-col rounded-xl border border-border-subtle bg-surface/50 p-6 md:p-7">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                 <IconLayersIntersect className="h-4 w-4" />
               </div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('addedLabel')}
               </p>
             </div>
-            <ul className="mt-6 flex flex-1 flex-col justify-center gap-3">
+            <ul className="mt-5 flex flex-1 flex-col justify-center gap-2.5">
               {additions.map((item) => (
                 <li
                   key={item.slice(0, 30)}
-                  className="flex items-start gap-3 rounded-2xl border border-border/50 bg-elevated/50 px-4 py-3 text-sm leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-3 rounded-lg border border-border/50 bg-elevated/50 px-3.5 py-2.5 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[10px] font-bold text-primary">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[9px] font-bold text-primary">
                     +
                   </span>
                   {item}
@@ -162,17 +160,17 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
         </section>
 
         {/* ── Source Integrity / Original Credits ─────────────────────────── */}
-        <section className="mt-6 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+          <article className="flex flex-col rounded-xl border border-border-subtle bg-surface/50 p-6 md:p-7">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                 <IconHeartHandshake className="h-4 w-4" />
               </div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('originalLabel')}
               </p>
             </div>
-            <p className="mt-6 text-sm leading-7 text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {t('originalThanks')}{' '}
               <Link
                 href={siteConfig.source.creatorUrl}
@@ -184,9 +182,9 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               </Link>{' '}
               {t('originalFor')}
             </p>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">{t('originalBody1')}</p>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">{t('originalBody2')}</p>
-            <div className="mt-auto pt-6 flex flex-wrap gap-3">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('originalBody1')}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('originalBody2')}</p>
+            <div className="mt-auto pt-5 flex flex-wrap gap-3">
               <Link
                 href={siteConfig.source.repoUrl}
                 target="_blank"
@@ -207,16 +205,16 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
             </div>
           </article>
 
-          <article className="flex flex-col rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+          <article className="flex flex-col rounded-xl border border-border-subtle bg-surface/50 p-6 md:p-7">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                 <IconQuote className="h-4 w-4" />
               </div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('integrityLabel')}
               </p>
             </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
               {[
                 {
                   label: t('integritySourceFile'),
@@ -249,13 +247,13 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               ].map(({ label, value, mono }) => (
                 <div
                   key={label}
-                  className="rounded-[18px] border border-border/50 bg-elevated/40 p-4"
+                  className="rounded-lg border border-border/50 bg-elevated/40 p-3.5"
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
                     {label}
                   </p>
                   <p
-                    className={`mt-2 text-sm text-foreground ${mono ? 'font-mono break-all' : ''}`}
+                    className={`mt-1.5 text-sm text-foreground ${mono ? 'font-mono break-all' : ''}`}
                   >
                     {value}
                   </p>
@@ -265,13 +263,13 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
 
             {/* Upstream commit status */}
             {manifest.source.upstreamCommit && (
-              <div className="mt-3 rounded-[18px] border border-border/50 bg-elevated/40 p-4">
+              <div className="mt-2.5 rounded-lg border border-border/50 bg-elevated/40 p-3.5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
                       {t('integrityUpstreamCommit')}
                     </p>
-                    <p className="mt-2 font-mono text-sm text-foreground">
+                    <p className="mt-1.5 font-mono text-sm text-foreground">
                       {manifest.source.upstreamCommit.slice(0, 7)}
                     </p>
                   </div>
@@ -291,22 +289,22 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
         </section>
 
         {/* ── Supported Languages ─────────────────────────────── */}
-        <section className="mt-6 rounded-[28px] border border-border-subtle bg-surface/75 p-8 shadow-[0_18px_56px_rgba(0,0,0,0.22)]">
+        <section className="mt-8 rounded-xl border border-border-subtle bg-surface/50 p-6 md:p-7">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                 {t('languagesLabel')}
               </p>
-              <h2 className="mt-4 font-display text-2xl tracking-[-0.02em] text-foreground lg:text-3xl">
+              <h2 className="mt-4 font-display text-xl font-medium tracking-tight text-foreground md:text-2xl">
                 {t('languagesTitle')}
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 {t('languagesBody')}
               </p>
             </div>
             <Link
               href={withLocale(locale, '/questions')}
-              className="inline-flex items-center gap-2 text-sm text-primary transition-colors hover:text-primary/80"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >
               {t('startPracticing')}
               <IconArrowUpRight className="h-4 w-4" />
@@ -314,14 +312,14 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
           </div>
 
           {/* Pilot locales — always shown */}
-          <ul className="mt-8 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-3">
+          <ul className="mt-7 grid gap-2.5 text-sm sm:grid-cols-2 xl:grid-cols-3">
             {appLocales.map((entry) => {
               const isCurrent = entry.code === locale;
               return (
                 <li key={entry.code}>
                   <Link
                     href={withLocale(entry.code, '/credits')}
-                    className={`group flex h-full items-center justify-between gap-4 rounded-[18px] border px-4 py-3 transition-colors ${
+                    className={`group flex h-full items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors ${
                       isCurrent
                         ? 'border-primary/35 bg-primary/8'
                         : 'border-border/50 bg-elevated/40 hover:border-primary/30 hover:bg-elevated'
@@ -354,11 +352,11 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
 
           {/* Upstream community translations — always from EN manifest */}
           {enManifest.translations.length > 0 && (
-            <ul className="mt-6 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="mt-6 grid gap-2.5 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-3">
               {enManifest.translations.map((translation) => (
                 <li
                   key={translation.href}
-                  className="rounded-[18px] border border-border/50 bg-elevated/40 px-4 py-3 transition-colors hover:border-primary/30 hover:bg-elevated"
+                  className="rounded-lg border border-border/50 bg-elevated/40 px-4 py-3 transition-colors hover:border-primary/30 hover:bg-elevated"
                 >
                   <Link
                     href={`https://github.com/lydiahallie/javascript-questions/blob/master/${translation.href.replace('./', '')}`}

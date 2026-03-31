@@ -132,10 +132,12 @@ export function DebuggerWebApis({
                         {item.label}
                       </span>
                       {item.delay !== undefined && (
-                        <span className="text-[10px] font-mono text-white/40">{item.delay}ms</span>
+                        <span className="text-[10px] font-mono text-muted-foreground/50">
+                          {item.delay}ms
+                        </span>
                       )}
                       {item.url && (
-                        <span className="text-[10px] font-mono text-white/40 truncate max-w-[100px]">
+                        <span className="text-[10px] font-mono text-muted-foreground/50 truncate max-w-[100px]">
                           {item.url}
                         </span>
                       )}
@@ -161,7 +163,7 @@ export function DebuggerWebApis({
                           animate={prefersReducedMotion ? {} : { opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
                         />
-                        <span className="text-[10px] text-white/40">Waiting...</span>
+                        <span className="text-[10px] text-muted-foreground/50">Waiting...</span>
                       </div>
                     )}
                   </motion.div>
