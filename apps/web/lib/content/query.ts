@@ -4,9 +4,9 @@ export type ListingStatus = 'all' | 'answered' | 'unanswered' | 'bookmarked';
 
 export interface ListingFilters {
   q?: string;
-  tag?: string;
+  tags?: string[];
   runnable?: boolean;
-  difficulty?: string;
+  difficulties?: string[];
 }
 
 export function applyServerFilters(
@@ -24,19 +24,26 @@ export function applyServerFilters(
       }
     }
 
-    if (filters.tag && filters.tag !== 'all' && !question.tags.includes(filters.tag)) {
-      return false;
+    // Multi-select tags filter (OR logic - question must match at least one selected tag)
+    if (filters.tags && filters.tags.length > 0) {
+      const hasMatchingTag = filters.tags.some((tag) => question.tags.includes(tag));
+      if (!hasMatchingTag) {
+        return false;
+      }
     }
 
     if (typeof filters.runnable === 'boolean' && question.runnable !== filters.runnable) {
       return false;
     }
 
-    if (
-      filters.difficulty &&
-      question.difficulty?.toLowerCase() !== filters.difficulty.toLowerCase()
-    ) {
-      return false;
+    // Multi-select difficulties filter (OR logic - question must match at least one selected difficulty)
+    if (filters.difficulties && filters.difficulties.length > 0) {
+      const hasMatchingDifficulty = filters.difficulties.some(
+        (diff) => question.difficulty?.toLowerCase() === diff.toLowerCase(),
+      );
+      if (!hasMatchingDifficulty) {
+        return false;
+      }
     }
 
     return true;

@@ -68,9 +68,9 @@ describe('content query helpers', () => {
 
   it('filters by tag, runnable, and difficulty together', () => {
     const result = applyServerFilters(questions, {
-      tag: 'async',
+      tags: ['async'],
       runnable: true,
-      difficulty: 'advanced',
+      difficulties: ['advanced'],
     });
 
     expect(result.map((question) => question.id)).toEqual([2]);

@@ -19,10 +19,12 @@ import { cn } from '@/lib/utils';
 
 interface FiltersBarProps {
   tags: string[];
-  selectedTag: string;
+  selectedTags?: string[];
+  selectedTag?: string;
   search: string;
   runnable: string;
   status: string;
+  difficulties?: string[];
   difficulty?: string;
   allQuestions: QuestionRecord[];
   locale: string;
@@ -30,10 +32,12 @@ interface FiltersBarProps {
 
 export function FiltersBar({
   tags,
+  selectedTags,
   selectedTag,
   search,
   runnable,
   status,
+  difficulties,
   difficulty,
   allQuestions,
   locale,
@@ -44,6 +48,19 @@ export function FiltersBar({
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(search);
+
+  // Support legacy single-tag mode or new multi-tag mode
+  const activeTags = useMemo(() => {
+    if (selectedTags && selectedTags.length > 0) return selectedTags;
+    if (selectedTag && selectedTag !== 'all') return [selectedTag];
+    return [] as string[];
+  }, [selectedTags, selectedTag]);
+
+  const activeDifficulties = useMemo(() => {
+    if (difficulties && difficulties.length > 0) return difficulties;
+    if (difficulty) return [difficulty];
+    return [] as string[];
+  }, [difficulties, difficulty]);
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
 
@@ -64,6 +81,79 @@ export function FiltersBar({
     [pathname, router, searchParams],
   );
 
+  const toggleTag = useCallback(
+    (tag: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('page');
+
+      if (tag === 'all') {
+        // Clear all tags
+        params.delete('tags');
+        params.delete('tag');
+      } else {
+        // Get current tags
+        const currentTags = params.getAll('tags');
+        if (currentTags.includes(tag)) {
+          // Remove tag
+          params.delete('tags');
+          currentTags.filter((t) => t !== tag).forEach((t) => void params.append('tags', t));
+        } else {
+          // Add tag
+          params.append('tags', tag);
+        }
+      }
+
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`);
+      });
+    },
+    [pathname, router, searchParams],
+  );
+
+  const toggleDifficulty = useCallback(
+    (diff: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('page');
+
+      const currentDiffs = params.getAll('difficulties');
+      if (currentDiffs.includes(diff)) {
+        // Remove difficulty
+        params.delete('difficulties');
+        currentDiffs.filter((d) => d !== diff).forEach((d) => void params.append('difficulties', d));
+      } else {
+        // Add difficulty
+        params.append('difficulties', diff);
+      }
+
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`);
+      });
+    },
+    [pathname, router, searchParams],
+  );
+
+  const resetTags = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('tags');
+    params.delete('tag');
+    params.set('page', '1');
+
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
+  }, [pathname, router, searchParams]);
+
+  const resetDifficulties = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('difficulties');
+    params.delete('difficulty');
+    params.set('page', '1');
+
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
+  }, [pathname, router, searchParams]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (inputValue !== search) {
@@ -75,22 +165,22 @@ export function FiltersBar({
 
   return (
     <section className="space-y-6">
-      {/* Horizontal Pill Filter Bar for Topics */}
+      {/* Horizontal Pill Filter Bar for Topics with Multi-Select */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide w-full max-w-full">
         {allTags.map((tag) => {
-          const active = selectedTag === tag || (!selectedTag && tag === 'all');
+          const isActive = tag === 'all' ? activeTags.length === 0 : activeTags.includes(tag);
           return (
             <button
               key={tag}
               type="button"
-              onClick={() => updateParam('tag', tag)}
+              onClick={() => toggleTag(tag)}
               className={cn(
                 'relative px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors rounded-full',
-                active ? 'text-primary' : 'text-secondary hover:text-foreground hover:bg-surface',
+                isActive ? 'text-primary' : 'text-secondary hover:text-foreground hover:bg-surface',
               )}
             >
               {tag === 'all' ? 'All Questions' : tag.charAt(0).toUpperCase() + tag.slice(1)}
-              {active && (
+              {isActive && (
                 <motion.div
                   layoutId="active-pill"
                   className="absolute inset-0 border-2 border-primary rounded-full bg-primary/5"
@@ -101,6 +191,17 @@ export function FiltersBar({
             </button>
           );
         })}
+        {activeTags.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetTags}
+            className="h-8 px-3 text-xs text-tertiary hover:text-foreground ml-2 active:scale-[0.95] transition-all"
+          >
+            <X className="h-3.5 w-3.5 mr-1" />
+            Reset Tags ({activeTags.length})
+          </Button>
+        )}
       </div>
 
       {/* Secondary Filters */}
@@ -169,15 +270,15 @@ export function FiltersBar({
             </Command>
           </CommandDialog>
 
-          {/* Difficulty Dropdown Placeholder (using pill for now) */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-surface border border-border-subtle rounded-lg p-1">
+          {/* Difficulty Multi-Select */}
+          <div className="flex items-center gap-1.5 bg-surface border border-border-subtle rounded-lg p-1">
             {(['beginner', 'intermediate', 'advanced'] as const).map((diff) => {
-              const isActive = difficulty === diff;
+              const isActive = activeDifficulties.includes(diff);
               return (
                 <button
                   key={diff}
                   type="button"
-                  onClick={() => updateParam('difficulty', isActive ? '' : diff)}
+                  onClick={() => toggleDifficulty(diff)}
                   className={cn(
                     'px-3 py-1 text-xs font-medium rounded-md capitalize transition-all duration-200 active:scale-[0.95]',
                     isActive
@@ -189,6 +290,16 @@ export function FiltersBar({
                 </button>
               );
             })}
+            {activeDifficulties.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetDifficulties}
+                className="h-7 px-2 text-[10px] text-tertiary hover:text-foreground ml-1 active:scale-[0.95] transition-all"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -213,10 +324,10 @@ export function FiltersBar({
           </button>
 
           {(search ||
-            (selectedTag && selectedTag !== 'all') ||
+            activeTags.length > 0 ||
             runnable === 'true' ||
             (status && status !== 'all') ||
-            difficulty) && (
+            activeDifficulties.length > 0) && (
             <Button
               variant="ghost"
               size="sm"
@@ -228,7 +339,7 @@ export function FiltersBar({
               }}
             >
               <X className="h-3.5 w-3.5 mr-1" />
-              Clear
+              Clear All
             </Button>
           )}
         </div>

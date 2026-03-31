@@ -68,6 +68,12 @@ interface QuestionIDEClientProps {
   prevId: number | null;
   nextId: number | null;
   locale?: string;
+  filters?: {
+    tags?: string[];
+    difficulties?: string[];
+    q?: string;
+    runnable?: string;
+  };
 }
 
 const EDITOR_DEFAULT_CODE = `// Write your code here
@@ -104,7 +110,7 @@ function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
   return 'static';
 }
 
-export function QuestionIDEClient({ question, prevId, nextId, locale }: QuestionIDEClientProps) {
+export function QuestionIDEClient({ question, prevId, nextId, locale, filters }: QuestionIDEClientProps) {
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [isRecallMode, setIsRecallMode] = useState(false);
   const [recallAnswer, setRecallAnswer] = useState('');
@@ -225,8 +231,27 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
     [isAnswered, question.correctOption, saveAttempt],
   );
 
-  const prevHref = prevId ? `${linkPrefix}/questions/${prevId}` : null;
-  const nextHref = nextId ? `${linkPrefix}/questions/${nextId}` : null;
+  // Build prev/next hrefs with filter params preserved
+  const buildFilterQuery = useCallback(() => {
+    const params = new URLSearchParams();
+    if (filters?.tags && filters.tags.length > 0) {
+      filters.tags.forEach((tag) => params.append('tags', tag));
+    }
+    if (filters?.difficulties && filters.difficulties.length > 0) {
+      filters.difficulties.forEach((diff) => params.append('difficulties', diff));
+    }
+    if (filters?.q) params.set('q', filters.q);
+    if (filters?.runnable) params.set('runnable', filters.runnable);
+    return params.toString();
+  }, [filters]);
+
+  const filterQuery = buildFilterQuery();
+  const prevHref = prevId
+    ? `${linkPrefix}/questions/${prevId}${filterQuery ? `?${filterQuery}` : ''}`
+    : null;
+  const nextHref = nextId
+    ? `${linkPrefix}/questions/${nextId}${filterQuery ? `?${filterQuery}` : ''}`
+    : null;
 
   useQuestionKeyboard({
     isAnswered,
@@ -493,7 +518,7 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                           Visual Debugger
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[92vh] w-[98vw] max-w-[1920px] p-2 md:p-4 bg-[#0A0A0A] border-border-subtle overflow-y-auto">
+                      <DialogContent className="max-h-[92vh] w-[98vw] max-w-[1920px] overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
                         <DialogTitle>
                           <VisuallyHidden>Visual Debugger</VisuallyHidden>
                         </DialogTitle>

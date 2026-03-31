@@ -21,6 +21,16 @@ function firstValue(value: string | string[] | undefined): string {
   return value ?? '';
 }
 
+function getArrayValues(value: string | string[] | undefined): string[] {
+  if (Array.isArray(value)) {
+    return value;
+  }
+  if (value) {
+    return [value];
+  }
+  return [];
+}
+
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
@@ -43,9 +53,9 @@ export default async function QuestionsPage({
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 
   const q = firstValue(resolvedSearchParams.q);
-  const tag = firstValue(resolvedSearchParams.tag);
+  const selectedTags = getArrayValues(resolvedSearchParams.tags);
   const runnable = firstValue(resolvedSearchParams.runnable);
-  const difficulty = firstValue(resolvedSearchParams.difficulty);
+  const selectedDifficulties = getArrayValues(resolvedSearchParams.difficulties);
   const rawStatus = firstValue(resolvedSearchParams.status);
   const status: ListingStatus =
     rawStatus === 'answered' || rawStatus === 'unanswered' || rawStatus === 'bookmarked'
@@ -54,9 +64,9 @@ export default async function QuestionsPage({
 
   const filtered = applyServerFilters(allQuestions, {
     q,
-    tag,
+    tags: selectedTags,
     runnable: runnable === 'true' ? true : undefined,
-    difficulty,
+    difficulties: selectedDifficulties,
   });
 
   const paged = paginate(filtered, page, PAGE_SIZE);
@@ -65,10 +75,14 @@ export default async function QuestionsPage({
     const params = new URLSearchParams();
     if (targetPage > 1) params.set('page', String(targetPage));
     if (q) params.set('q', q);
-    if (tag && tag !== 'all') params.set('tag', tag);
+    if (selectedTags.length > 0) {
+      selectedTags.forEach((tag) => params.append('tags', tag));
+    }
     if (runnable === 'true') params.set('runnable', 'true');
     if (status && status !== 'all') params.set('status', status);
-    if (difficulty) params.set('difficulty', difficulty);
+    if (selectedDifficulties.length > 0) {
+      selectedDifficulties.forEach((diff) => params.append('difficulties', diff));
+    }
 
     const query = params.toString();
     return query ? `/${locale}/questions?${query}` : `/${locale}/questions`;
@@ -101,11 +115,11 @@ export default async function QuestionsPage({
           <section className="space-y-6">
             <FiltersBar
               tags={manifest.tags}
-              selectedTag={tag || 'all'}
+              selectedTags={selectedTags}
               search={q}
               runnable={runnable}
               status={status}
-              difficulty={difficulty}
+              difficulties={selectedDifficulties}
               allQuestions={allQuestions}
               locale={locale}
             />
