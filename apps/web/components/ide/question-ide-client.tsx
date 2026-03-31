@@ -45,7 +45,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable-panel';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import type { QuestionRecord } from '@/lib/content/types';
@@ -480,7 +479,7 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                       </DialogContent>
                     </Dialog>
 
-                    <Sheet
+                    <Dialog
                       open={_debuggerMode === 'visual'}
                       onOpenChange={(open) => setDebuggerMode(open ? 'visual' : 'timeline')}
                     >
@@ -494,23 +493,19 @@ export function QuestionIDEClient({ question, prevId, nextId, locale }: Question
                           Visual Debugger
                         </Button>
                       </DialogTrigger>
-                      <SheetContent
-                        side="right"
-                        className="w-[85vw] sm:max-w-none p-0 bg-[#0A0A0A] border-l border-border-subtle overflow-hidden"
-                        style={{ maxWidth: '1400px' }}
-                      >
-                        <SheetTitle>
+                      <DialogContent className="max-h-[90vh] w-[95vw] max-w-[1600px] p-0 bg-[#0A0A0A] border-border-subtle overflow-hidden">
+                        <DialogTitle>
                           <VisuallyHidden>Visual Debugger</VisuallyHidden>
-                        </SheetTitle>
-                        <div className="h-full w-full">
+                        </DialogTitle>
+                        <div className="h-[calc(90vh-2rem)] overflow-auto">
                           <VisualDebugger
                             code={javascriptCodeBlock?.code ?? ''}
                             enhancedTimeline={enhancedTimeline}
                             logs={logs.map((l) => `[${l.type}] ${l.content}`)}
                           />
                         </div>
-                      </SheetContent>
-                    </Sheet>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </motion.div>
               )}

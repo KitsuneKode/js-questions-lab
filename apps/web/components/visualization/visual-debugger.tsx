@@ -182,7 +182,7 @@ export function VisualDebugger({
           <DebuggerCodePanel
             code={code}
             currentLine={currentStep.currentLine}
-            className="lg:w-[45%] min-h-[300px]"
+            className="lg:w-[45%]"
           />
 
           {/* Runtime Visualization */}

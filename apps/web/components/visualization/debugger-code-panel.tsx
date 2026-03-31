@@ -123,7 +123,7 @@ export function DebuggerCodePanel({ code, currentLine, className }: DebuggerCode
       </div>
 
       {/* Editor */}
-      <div className="flex-1 min-h-[200px]">
+      <div className="flex-1 h-[600px] max-h-[600px] overflow-auto">
         <Editor
           height="100%"
           defaultLanguage="javascript"
@@ -138,6 +138,7 @@ export function DebuggerCodePanel({ code, currentLine, className }: DebuggerCode
           options={{
             readOnly: true,
             domReadOnly: true,
+            automaticLayout: true,
           }}
         />
       </div>
