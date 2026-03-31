@@ -147,14 +147,9 @@ export function VisualDebugger({
   };
 
   return (
-    <div
-      className={cn(
-        'overflow-hidden rounded-xl border border-border/50 bg-[#0A0A0A] font-sans shadow-2xl',
-        className,
-      )}
-    >
+    <div className={cn('font-sans', className)}>
       {/* Header */}
-      <div className="border-b border-border/50 bg-[#111] px-5 py-4">
+      <div className="border-b border-border/50 bg-[#111] px-5 py-4 rounded-t-xl">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
