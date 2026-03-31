@@ -7,7 +7,7 @@ import {
   IconX as X,
 } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useOptimistic, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useOptimistic, useState } from 'react';
 import { SectionProgressTracker } from '@/components/section-progress-tracker';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,13 +52,7 @@ export function FiltersBar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-  const { setIsPending } = useFilterPending();
-
-  // Keep context in sync with transition state
-  useEffect(() => {
-    setIsPending(isPending);
-  }, [isPending, setIsPending]);
+  const { startTransition } = useFilterPending();
 
   // React 19 optimistic state — initializes from props, shows optimistic value during transitions,
   // reverts automatically when navigation completes and new props arrive.
@@ -122,7 +116,7 @@ export function FiltersBar({
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, startTransition],
   );
 
   const toggleTag = useCallback(
@@ -150,7 +144,7 @@ export function FiltersBar({
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams, optimisticTags, setOptimisticTags],
+    [pathname, router, searchParams, optimisticTags, setOptimisticTags, startTransition],
   );
 
   const toggleDifficulty = useCallback(
@@ -169,7 +163,7 @@ export function FiltersBar({
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams, optimisticDifficulties, setOptimisticDiffs],
+    [pathname, router, searchParams, optimisticDifficulties, setOptimisticDiffs, startTransition],
   );
 
   const resetTags = useCallback(() => {
@@ -182,7 +176,7 @@ export function FiltersBar({
       setOptimisticTags([]);
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams, setOptimisticTags]);
+  }, [pathname, router, searchParams, setOptimisticTags, startTransition]);
 
   const resetDifficulties = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -194,7 +188,7 @@ export function FiltersBar({
       setOptimisticDiffs([]);
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams, setOptimisticDiffs]);
+  }, [pathname, router, searchParams, setOptimisticDiffs, startTransition]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

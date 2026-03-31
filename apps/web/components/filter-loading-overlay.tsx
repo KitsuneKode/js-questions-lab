@@ -1,11 +1,13 @@
 'use client';
 
 import { useFilterPending } from '@/lib/filters/filter-pending-context';
+import { cn } from '@/lib/utils';
 
 export function FilterLoadingOverlay({ children }: { children: React.ReactNode }) {
   const { isPending } = useFilterPending();
 
   return (
+    // Unconditional wrapper needed so the absolute overlay has a positioned ancestor
     <div className="relative">
       {isPending && (
         <div className="absolute inset-0 z-10 flex items-start justify-center pt-12 rounded-xl bg-void/50 backdrop-blur-[2px] pointer-events-none">
@@ -17,12 +19,12 @@ export function FilterLoadingOverlay({ children }: { children: React.ReactNode }
           </div>
         </div>
       )}
+      {/* Content wrapper is always present so no layout nodes are added/removed during filter */}
       <div
-        className={
-          isPending
-            ? 'pointer-events-none select-none opacity-50 transition-opacity duration-150'
-            : 'transition-opacity duration-150'
-        }
+        className={cn(
+          'transition-opacity duration-150',
+          isPending && 'pointer-events-none select-none opacity-50',
+        )}
       >
         {children}
       </div>

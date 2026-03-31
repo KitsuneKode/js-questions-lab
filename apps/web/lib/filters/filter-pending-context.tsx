@@ -1,24 +1,21 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useTransition } from 'react';
 
 interface FilterPendingContextValue {
   isPending: boolean;
-  setIsPending: (v: boolean) => void;
+  startTransition: (fn: () => void) => void;
 }
 
 const FilterPendingContext = createContext<FilterPendingContextValue>({
   isPending: false,
-  setIsPending: () => {},
+  startTransition: (fn) => fn(),
 });
 
 export function FilterPendingProvider({ children }: { children: React.ReactNode }) {
-  const [isPending, setIsPending] = useState(false);
-  return (
-    <FilterPendingContext.Provider value={{ isPending, setIsPending }}>
-      {children}
-    </FilterPendingContext.Provider>
-  );
+  const [isPending, startTransition] = useTransition();
+  const value = useMemo(() => ({ isPending, startTransition }), [isPending]);
+  return <FilterPendingContext.Provider value={value}>{children}</FilterPendingContext.Provider>;
 }
 
 export function useFilterPending() {
