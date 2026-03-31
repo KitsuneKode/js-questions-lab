@@ -314,6 +314,17 @@
   }
 }
 
+/* View Transition API — cross-fade animation for page navigation */
+::view-transition-old(root) {
+  animation-duration: 120ms;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: ease-in;
+}
+
 @theme inline {
   --font-heading: var(--font-bricolage-grotesque);
   --font-body: var(--font-geist);

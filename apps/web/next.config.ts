@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/**': ['../../content/generated/**/*'],
   },
+  experimental: {
+    viewTransition: true,
+  },
 };
 
 export default withNextIntl(nextConfig);
