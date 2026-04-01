@@ -45,7 +45,7 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGci...    # Supabase Dashboard → API → public key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=eyJhbGci...    # Supabase Dashboard → API → public key
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` is **not needed at runtime** — only for admin migration scripts.
@@ -54,7 +54,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGci...    # Supabase Dashboard → API
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-prod-project.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGci...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=eyJhbGci...
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
 CLERK_SECRET_KEY=sk_live_...
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
@@ -108,7 +108,7 @@ WITH CHECK ((auth.uid())::text = user_id)
 ### 401 errors / "Failed to fetch server progress"
 
 - Supabase dashboard: verify Clerk is configured as third-party auth provider
-- Check `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is set
+- Check `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` is set
 - Browser Network tab: look for failed requests to your Supabase URL
 
 ### Sync not working after sign-in
