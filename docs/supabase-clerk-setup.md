@@ -87,11 +87,20 @@ domain = "your-dev.clerk.accounts.dev"   # your Clerk dev Frontend API URL
 
 ## RLS Policies
 
-Both tables use `auth.uid()` which maps to the Clerk user ID (`sub` claim):
+Both tables use `auth.jwt()->>'sub'` to extract the Clerk user ID from the JWT token.
+This is the correct approach for Clerk third-party auth (not `auth.uid()` which is for Supabase native auth):
 
 ```sql
-USING ((auth.uid())::text = user_id)
-WITH CHECK ((auth.uid())::text = user_id)
+CREATE POLICY policy_name ON table_name FOR ALL
+  TO authenticated
+  USING (((SELECT auth.jwt()->>'sub') = user_id))
+  WITH CHECK (((SELECT auth.jwt()->>'sub') = user_id));
+```
+
+The `user_id` column also defaults to the Clerk user ID on insert:
+
+```sql
+user_id TEXT NOT NULL DEFAULT (auth.jwt()->>'sub')
 ```
 
 ## Verifying Integration
@@ -119,5 +128,15 @@ WITH CHECK ((auth.uid())::text = user_id)
 
 ### RLS policy violations
 
-- Apply migration `0003_update_rls_for_native_auth.sql`
-- Verify Clerk Frontend API URL in Supabase matches your actual Clerk instance
+- Ensure the Clerk Frontend API URL in Supabase matches your actual Clerk instance
+- Verify `auth.jwt()->>'sub'` returns your Clerk user ID by running in SQL Editor:
+
+  ```sql
+  SELECT auth.jwt()->>'sub';
+  ```
+
+### "invalid input syntax for type uuid" error
+
+This means the `user_id` column is defined as `UUID` instead of `TEXT`. Clerk user IDs
+are strings like `user_3Bm30nuXVucNTfnrjYBhGTCnQHO`, not UUIDs. Re-run the migration
+to fix the schema.
