@@ -7,7 +7,7 @@ import {
   IconX as X,
 } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SectionProgressTracker } from '@/components/section-progress-tracker';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { QuestionRecord } from '@/lib/content/types';
+import { useFilterPending } from '@/lib/filters/filter-pending-context';
 import { cn } from '@/lib/utils';
 
 interface FiltersBarProps {
@@ -51,7 +52,31 @@ export function FiltersBar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { startTransition } = useFilterPending();
+
+  // Local state gives immediate visual feedback on click; useEffect syncs when
+  // navigation settles and new props arrive from the server component.
+  const [activeTags, setActiveTags] = useState<string[]>(() =>
+    selectedTags?.length ? selectedTags : selectedTag && selectedTag !== 'all' ? [selectedTag] : [],
+  );
+  const [activeDifficulties, setActiveDifficulties] = useState<string[]>(() =>
+    difficulties?.length ? difficulties : difficulty ? [difficulty] : [],
+  );
+
+  useEffect(() => {
+    setActiveTags(
+      selectedTags?.length
+        ? selectedTags
+        : selectedTag && selectedTag !== 'all'
+          ? [selectedTag]
+          : [],
+    );
+  }, [selectedTags, selectedTag]);
+
+  useEffect(() => {
+    setActiveDifficulties(difficulties?.length ? difficulties : difficulty ? [difficulty] : []);
+  }, [difficulties, difficulty]);
+
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(search);
 
@@ -67,19 +92,6 @@ export function FiltersBar({
     return () => document.removeEventListener('keydown', down);
   }, []);
   const [progressOpen, setProgressOpen] = useState(false);
-
-  // Support legacy single-tag mode or new multi-tag mode
-  const activeTags = useMemo(() => {
-    if (selectedTags && selectedTags.length > 0) return selectedTags;
-    if (selectedTag && selectedTag !== 'all') return [selectedTag];
-    return [] as string[];
-  }, [selectedTags, selectedTag]);
-
-  const activeDifficulties = useMemo(() => {
-    if (difficulties && difficulties.length > 0) return difficulties;
-    if (difficulty) return [difficulty];
-    return [] as string[];
-  }, [difficulties, difficulty]);
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
 
@@ -106,63 +118,61 @@ export function FiltersBar({
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, startTransition],
   );
 
   const toggleTag = useCallback(
     (tag: string) => {
+      const newTags =
+        tag === 'all'
+          ? []
+          : activeTags.includes(tag)
+            ? activeTags.filter((t) => t !== tag)
+            : [...activeTags, tag];
+
+      setActiveTags(newTags); // immediate visual update
+
       const params = new URLSearchParams(searchParams.toString());
       params.delete('page');
 
       if (tag === 'all') {
-        // Clear all tags
         params.delete('tags');
         params.delete('tag');
       } else {
-        // Get current tags
-        const currentTags = params.getAll('tags');
-        if (currentTags.includes(tag)) {
-          // Remove tag
-          params.delete('tags');
-          currentTags.filter((t) => t !== tag).forEach((t) => void params.append('tags', t));
-        } else {
-          // Add tag
-          params.append('tags', tag);
-        }
+        params.delete('tags');
+        newTags.forEach((t) => void params.append('tags', t));
       }
 
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, activeTags, startTransition],
   );
 
   const toggleDifficulty = useCallback(
     (diff: string) => {
+      const newDiffs = activeDifficulties.includes(diff)
+        ? activeDifficulties.filter((d) => d !== diff)
+        : [...activeDifficulties, diff];
+
+      setActiveDifficulties(newDiffs); // immediate visual update
+
       const params = new URLSearchParams(searchParams.toString());
       params.delete('page');
-
-      const currentDiffs = params.getAll('difficulties');
-      if (currentDiffs.includes(diff)) {
-        // Remove difficulty
-        params.delete('difficulties');
-        currentDiffs
-          .filter((d) => d !== diff)
-          .forEach((d) => void params.append('difficulties', d));
-      } else {
-        // Add difficulty
-        params.append('difficulties', diff);
-      }
+      params.delete('difficulties');
+      newDiffs.forEach((d) => void params.append('difficulties', d));
 
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, activeDifficulties, startTransition],
   );
 
   const resetTags = useCallback(() => {
+    setActiveTags([]);
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete('tags');
     params.delete('tag');
@@ -171,9 +181,11 @@ export function FiltersBar({
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams]);
+  }, [pathname, router, searchParams, startTransition]);
 
   const resetDifficulties = useCallback(() => {
+    setActiveDifficulties([]);
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete('difficulties');
     params.delete('difficulty');
@@ -182,7 +194,7 @@ export function FiltersBar({
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams]);
+  }, [pathname, router, searchParams, startTransition]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -234,7 +246,7 @@ export function FiltersBar({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex items-center justify-between w-full sm:w-[280px] h-10 bg-surface border border-border-subtle rounded-lg px-3 text-sm text-tertiary hover:border-primary/40 hover:bg-elevated transition-all group active:scale-[0.98]"
+            className="flex items-center justify-between w-full sm:w-[280px] h-10 bg-surface/60 backdrop-blur-md border border-border-subtle/80 rounded-lg px-3 text-sm text-tertiary hover:border-primary/40 hover:bg-elevated/80 transition-all group active:scale-[0.98]"
           >
             <span className="flex items-center gap-2">
               <Search className="h-4 w-4 text-tertiary group-hover:text-primary transition-colors" />
@@ -368,6 +380,8 @@ export function FiltersBar({
               size="sm"
               className="text-xs text-tertiary hover:text-foreground h-9 active:scale-[0.95] transition-all"
               onClick={() => {
+                setActiveTags([]);
+                setActiveDifficulties([]);
                 startTransition(() => {
                   router.push(pathname);
                 });
@@ -379,16 +393,6 @@ export function FiltersBar({
           )}
         </div>
       </div>
-
-      {/* Loading indicator */}
-      {isPending && (
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
-            Filtering...
-          </p>
-        </div>
-      )}
 
       {/* Progress Tracker Dialog */}
       <Dialog open={progressOpen} onOpenChange={setProgressOpen}>

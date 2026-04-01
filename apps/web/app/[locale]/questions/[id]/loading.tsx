@@ -3,87 +3,88 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function QuestionDetailLoading() {
   return (
     <main className="min-h-screen bg-void overflow-x-hidden pt-12">
-      {/* Decorative ambient background placeholder */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none -z-10" />
 
-      {/* IDE skeleton — fixed height to match actual page */}
       <div className="h-[calc(100vh-3rem)] flex flex-col overflow-hidden">
-        <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-          {/* Left panel - Question prompt */}
-          <div className="flex-1 rounded-xl border border-border bg-surface/50 p-6 space-y-4 overflow-hidden">
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-4/5" />
-            
-            {/* Code block skeleton */}
-            <div className="rounded-lg bg-muted/50 p-4 font-mono text-sm">
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-3/4 mb-2" />
-              <Skeleton className="h-4 w-1/2" />
+        {/* Header bar — mirrors the actual IDE header */}
+        <div className="flex items-center justify-between border-b border-border/60 bg-background px-6 py-4 shrink-0">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-4 w-10 rounded" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-4 w-16 rounded" />
+              <Skeleton className="h-4 w-16 rounded" />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-9 w-16 rounded-md" />
+            <Skeleton className="h-9 w-16 rounded-md" />
+            <Skeleton className="h-9 w-16 rounded-md" />
+          </div>
+        </div>
+
+        {/* Two-panel layout — left: code editor, right: answer options */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left panel (~40%) — question prompt + Monaco editor + console */}
+          <div className="w-[40%] flex flex-col overflow-hidden border-r border-border/40 p-6 space-y-5">
+            <Skeleton className="h-7 w-4/5" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/5" />
             </div>
 
-            {/* Options skeleton */}
-            <div className="space-y-3 pt-4">
-              {Array.from({ length: 4 }, (_, i) => i).map((i) => (
-                <div key={`option-${i}`} className="flex items-center gap-3 rounded-lg border border-border p-3">
-                  <Skeleton className="h-5 w-5 rounded" />
-                  <Skeleton className="h-4 w-full" />
+            {/* Code editor block — dark background to match Monaco */}
+            <div
+              className="rounded-xl border border-border/30 bg-[#1e1e1e] overflow-hidden"
+              style={{ height: '22rem' }}
+            >
+              <div className="flex items-center justify-between px-3 py-1.5 bg-white/5 border-b border-white/10">
+                <Skeleton className="h-3 w-24 bg-white/10" />
+                <Skeleton className="h-5 w-16 rounded bg-white/10" />
+              </div>
+              <div className="p-4 space-y-2.5">
+                <Skeleton className="h-3.5 w-3/4 bg-white/10" />
+                <Skeleton className="h-3.5 w-1/2 bg-white/10" />
+                <Skeleton className="h-3.5 w-2/3 bg-white/10" />
+                <Skeleton className="h-3.5 w-2/5 bg-white/10" />
+                <Skeleton className="h-3.5 w-1/2 bg-white/10" />
+              </div>
+            </div>
+
+            {/* Console bar */}
+            <div className="rounded-xl border border-border/30 bg-[#1e1e1e] overflow-hidden flex-1 min-h-[5rem]">
+              <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/10">
+                <div className="flex gap-1.5">
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
                 </div>
-              ))}
+                <Skeleton className="h-3 w-16 bg-white/10" />
+              </div>
             </div>
           </div>
 
-          {/* Right panel - Code playground / visualization */}
-          <div className="flex-1 rounded-xl border border-border bg-surface/50 p-4 space-y-4 overflow-hidden">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-8 w-32" />
-              <div className="flex gap-2">
-                <Skeleton className="h-8 w-8 rounded" />
-                <Skeleton className="h-8 w-8 rounded" />
-              </div>
+          {/* Right panel (~60%) — answer options */}
+          <div className="flex-1 flex flex-col overflow-hidden p-8 space-y-6">
+            <Skeleton className="h-4 w-28 uppercase" />
+
+            <div className="space-y-3">
+              {(['A', 'B', 'C', 'D'] as const).map((label) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-4 rounded-xl border border-border/50 bg-surface/30 p-4"
+                >
+                  <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+                  <Skeleton className="h-4 flex-1" />
+                </div>
+              ))}
             </div>
-            
-            {/* Editor skeleton */}
-            <Skeleton className="flex-1 w-full rounded-lg bg-muted/50" />
-            
-            {/* Terminal/Output skeleton */}
-            <Skeleton className="h-32 w-full rounded-lg bg-muted/50" />
           </div>
         </div>
       </div>
-
-      {/* Related questions section skeleton */}
-      <div className="relative border-t border-border-subtle bg-surface/30 backdrop-blur-sm">
-        <Container>
-          <section className="pt-12 pb-24 max-w-[1200px] mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-8 w-48" />
-              </div>
-              <Skeleton className="h-6 w-20" />
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 3 }, (_, i) => i).map((i) => (
-                <div key={`related-${i}`} className="rounded-xl border border-border bg-surface/50 p-4 space-y-3">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <div className="flex gap-2 pt-2">
-                    <Skeleton className="h-5 w-16 rounded-full" />
-                    <Skeleton className="h-5 w-16 rounded-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </Container>
-      </div>
     </main>
   );
-}
-
-function Container({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto w-full max-w-[1400px] px-4 md:px-6">{children}</div>;
 }
