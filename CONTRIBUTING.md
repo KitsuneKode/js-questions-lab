@@ -20,7 +20,7 @@ Install dependencies:
 bun install
 ```
 
-For optional auth and sync features, copy `.env.example` to `.env.local` and provide Clerk and
+For optional auth and sync features, copy `apps/web/.env.example` to `apps/web/.env.local` and provide Clerk and
 Supabase values. Guest mode should remain usable without auth.
 
 See `docs/supabase-clerk-setup.md` for detailed setup instructions for the Supabase + Clerk integration.

@@ -9,7 +9,6 @@ node_modules
 .env
 .env.*
 .env.local
-!apps/web/.env.example
 .DS_Store
 *.log
 *.pid
@@ -22,3 +21,12 @@ node_modules
 .claude
 .worktrees
 docs/superpowers/
+
+# AI tool configs (personal, not project-specific)
+.agents/
+.forge/
+.kiro/
+.pi/
+.qoder/
+.windsurf/
+skills-lock.json

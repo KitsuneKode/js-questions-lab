@@ -108,10 +108,10 @@ If using Supabase for progress sync:
 
 ```bash
 # Link to your Supabase project
-bun supabase link --project-ref your-project-id
+bunx supabase link --project-ref your-project-id
 
 # Apply migrations
-bun supabase db push
+bunx supabase db push
 ```
 
 Migrations are located in `supabase/migrations/` and include:
@@ -127,8 +127,8 @@ Migrations are located in `supabase/migrations/` and include:
 | `CONTRIBUTING.md` | Setup, workflow, validation, and PR expectations |
 | `docs/content-pipeline.md` | Source-of-truth, sync flow, parser flow, and generated artifact rules |
 | `docs/agent-handoff.md` | Current repo state, guardrails, and engineering context |
-| `docs/rebuild-roadmap.md` | Completed V1 rebuild milestones and operating constraints |
 | `docs/v2-roadmap-mastery.md` | The next major product direction |
+| `docs/supabase-clerk-setup.md` | Auth and sync integration setup |
 
 ## 🎯 Current Focus
 
