@@ -7,7 +7,7 @@ import {
   IconX as X,
 } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useOptimistic, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SectionProgressTracker } from '@/components/section-progress-tracker';
 import { Button } from '@/components/ui/button';
 import {
@@ -54,26 +54,28 @@ export function FiltersBar({
   const searchParams = useSearchParams();
   const { startTransition } = useFilterPending();
 
-  // React 19 optimistic state — initializes from props, shows optimistic value during transitions,
-  // reverts automatically when navigation completes and new props arrive.
-  const initialTags = selectedTags?.length
-    ? selectedTags
-    : selectedTag && selectedTag !== 'all'
-      ? [selectedTag]
-      : [];
-  const initialDifficulties = difficulties?.length ? difficulties : difficulty ? [difficulty] : [];
-
-  const [optimisticTags, setOptimisticTags] = useOptimistic<string[], string[]>(
-    initialTags,
-    (_, newTags) => newTags,
+  // Local state gives immediate visual feedback on click; useEffect syncs when
+  // navigation settles and new props arrive from the server component.
+  const [activeTags, setActiveTags] = useState<string[]>(() =>
+    selectedTags?.length ? selectedTags : selectedTag && selectedTag !== 'all' ? [selectedTag] : [],
   );
-  const [optimisticDifficulties, setOptimisticDiffs] = useOptimistic<string[], string[]>(
-    initialDifficulties,
-    (_, newDiffs) => newDiffs,
+  const [activeDifficulties, setActiveDifficulties] = useState<string[]>(() =>
+    difficulties?.length ? difficulties : difficulty ? [difficulty] : [],
   );
 
-  const activeTags = optimisticTags;
-  const activeDifficulties = optimisticDifficulties;
+  useEffect(() => {
+    setActiveTags(
+      selectedTags?.length
+        ? selectedTags
+        : selectedTag && selectedTag !== 'all'
+          ? [selectedTag]
+          : [],
+    );
+  }, [selectedTags, selectedTag]);
+
+  useEffect(() => {
+    setActiveDifficulties(difficulties?.length ? difficulties : difficulty ? [difficulty] : []);
+  }, [difficulties, difficulty]);
 
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(search);
@@ -124,9 +126,11 @@ export function FiltersBar({
       const newTags =
         tag === 'all'
           ? []
-          : optimisticTags.includes(tag)
-            ? optimisticTags.filter((t) => t !== tag)
-            : [...optimisticTags, tag];
+          : activeTags.includes(tag)
+            ? activeTags.filter((t) => t !== tag)
+            : [...activeTags, tag];
+
+      setActiveTags(newTags); // immediate visual update
 
       const params = new URLSearchParams(searchParams.toString());
       params.delete('page');
@@ -140,18 +144,19 @@ export function FiltersBar({
       }
 
       startTransition(() => {
-        setOptimisticTags(newTags);
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams, optimisticTags, setOptimisticTags, startTransition],
+    [pathname, router, searchParams, activeTags, startTransition],
   );
 
   const toggleDifficulty = useCallback(
     (diff: string) => {
-      const newDiffs = optimisticDifficulties.includes(diff)
-        ? optimisticDifficulties.filter((d) => d !== diff)
-        : [...optimisticDifficulties, diff];
+      const newDiffs = activeDifficulties.includes(diff)
+        ? activeDifficulties.filter((d) => d !== diff)
+        : [...activeDifficulties, diff];
+
+      setActiveDifficulties(newDiffs); // immediate visual update
 
       const params = new URLSearchParams(searchParams.toString());
       params.delete('page');
@@ -159,36 +164,37 @@ export function FiltersBar({
       newDiffs.forEach((d) => void params.append('difficulties', d));
 
       startTransition(() => {
-        setOptimisticDiffs(newDiffs);
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [pathname, router, searchParams, optimisticDifficulties, setOptimisticDiffs, startTransition],
+    [pathname, router, searchParams, activeDifficulties, startTransition],
   );
 
   const resetTags = useCallback(() => {
+    setActiveTags([]);
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete('tags');
     params.delete('tag');
     params.set('page', '1');
 
     startTransition(() => {
-      setOptimisticTags([]);
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams, setOptimisticTags, startTransition]);
+  }, [pathname, router, searchParams, startTransition]);
 
   const resetDifficulties = useCallback(() => {
+    setActiveDifficulties([]);
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete('difficulties');
     params.delete('difficulty');
     params.set('page', '1');
 
     startTransition(() => {
-      setOptimisticDiffs([]);
       router.push(`${pathname}?${params.toString()}`);
     });
-  }, [pathname, router, searchParams, setOptimisticDiffs, startTransition]);
+  }, [pathname, router, searchParams, startTransition]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -374,9 +380,9 @@ export function FiltersBar({
               size="sm"
               className="text-xs text-tertiary hover:text-foreground h-9 active:scale-[0.95] transition-all"
               onClick={() => {
+                setActiveTags([]);
+                setActiveDifficulties([]);
                 startTransition(() => {
-                  setOptimisticTags([]);
-                  setOptimisticDiffs([]);
                   router.push(pathname);
                 });
               }}
