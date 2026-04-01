@@ -19,7 +19,14 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { buildQuestionScopeQuery, type ListingStatus } from '@/lib/content/query';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useFilterPending } from '@/lib/filters/filter-pending-context';
 import { cn } from '@/lib/utils';
@@ -92,8 +99,37 @@ export function FiltersBar({
     return () => document.removeEventListener('keydown', down);
   }, []);
   const [progressOpen, setProgressOpen] = useState(false);
+  const normalizedStatus: ListingStatus =
+    status === 'answered' || status === 'unanswered' || status === 'bookmarked' ? status : 'all';
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
+  const normalizedSelectedTags = useMemo(
+    () =>
+      selectedTags?.length
+        ? selectedTags
+        : selectedTag && selectedTag !== 'all'
+          ? [selectedTag]
+          : [],
+    [selectedTag, selectedTags],
+  );
+  const normalizedDifficulties = useMemo(
+    () => (difficulties?.length ? difficulties : difficulty ? [difficulty] : []),
+    [difficulties, difficulty],
+  );
+  const detailQuery = useMemo(
+    () =>
+      buildQuestionScopeQuery(
+        {
+          q: search,
+          tags: normalizedSelectedTags,
+          runnable: runnable === 'true',
+          difficulties: normalizedDifficulties,
+          status: normalizedStatus,
+        },
+        { includePage: false },
+      ),
+    [normalizedDifficulties, normalizedSelectedTags, normalizedStatus, runnable, search],
+  );
 
   // Calculate question counts per tag
   const questionCounts = useMemo(() => {
@@ -281,7 +317,9 @@ export function FiltersBar({
                         key={q.id}
                         onSelect={() => {
                           setOpen(false);
-                          router.push(`/${locale}/questions/${q.id}`);
+                          router.push(
+                            `/${locale}/questions/${q.id}${detailQuery ? `?${detailQuery}` : ''}`,
+                          );
                         }}
                         className="flex cursor-pointer items-center justify-between py-3 transition-colors hover:bg-muted/50"
                       >
@@ -399,6 +437,9 @@ export function FiltersBar({
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Your Progress</DialogTitle>
+            <DialogDescription>
+              Review your progress by topic and jump directly to a section from the tracker.
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             <SectionProgressTracker

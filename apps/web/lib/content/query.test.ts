@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
 import type { QuestionRecord } from '@/lib/content/types';
+import type { ProgressState } from '@/lib/progress/storage';
 
-import { applyServerFilters, paginate } from './query';
+import {
+  applyServerFilters,
+  applyStatusFilter,
+  buildQuestionScopeQuery,
+  paginate,
+  parseQuestionScope,
+} from './query';
 
 type QuestionFixture = QuestionRecord & {
   locale?: string;
@@ -74,6 +81,60 @@ describe('content query helpers', () => {
     });
 
     expect(result.map((question) => question.id)).toEqual([2]);
+  });
+
+  it('filters by status against progress state', () => {
+    const progressQuestions: ProgressState['questions'] = {
+      '1': {
+        questionId: 1,
+        attempts: [{ selected: 'A', status: 'correct', attemptedAt: '2026-01-01T00:00:00.000Z' }],
+        bookmarked: false,
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      },
+      '2': {
+        questionId: 2,
+        attempts: [],
+        bookmarked: true,
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      },
+    };
+
+    expect(
+      applyStatusFilter(questions, 'answered', progressQuestions).map((question) => question.id),
+    ).toEqual([1]);
+    expect(
+      applyStatusFilter(questions, 'unanswered', progressQuestions).map((question) => question.id),
+    ).toEqual([2]);
+    expect(
+      applyStatusFilter(questions, 'bookmarked', progressQuestions).map((question) => question.id),
+    ).toEqual([2]);
+  });
+
+  it('parses and serializes a normalized question scope', () => {
+    const scope = parseQuestionScope({
+      q: ' promises ',
+      tag: 'async',
+      difficulties: ['advanced'],
+      runnable: 'true',
+      status: 'unanswered',
+      page: '3',
+    });
+
+    expect(scope).toEqual({
+      q: 'promises',
+      tags: ['async'],
+      difficulties: ['advanced'],
+      runnable: true,
+      status: 'unanswered',
+      page: 3,
+    });
+
+    expect(buildQuestionScopeQuery(scope, { includePage: true })).toBe(
+      'q=promises&tags=async&runnable=true&difficulties=advanced&status=unanswered&page=3',
+    );
+    expect(buildQuestionScopeQuery(scope, { includePage: false })).toBe(
+      'q=promises&tags=async&runnable=true&difficulties=advanced&status=unanswered',
+    );
   });
 
   it('paginates and clamps the requested page', () => {

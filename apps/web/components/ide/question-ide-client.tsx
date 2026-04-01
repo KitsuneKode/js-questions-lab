@@ -17,7 +17,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { DomEventSimulator } from '@/components/ide/dom-event-simulator';
@@ -38,6 +38,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -57,8 +58,15 @@ import {
 } from '@/components/ui/resizable-panel';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
+import {
+  applyServerFilters,
+  applyStatusFilter,
+  buildQuestionScopeQuery,
+  type QuestionScope,
+} from '@/lib/content/query';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
+import { useProgress } from '@/lib/progress/progress-context';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { runJavaScriptInEnhancedSandbox } from '@/lib/run/sandbox';
@@ -76,17 +84,19 @@ type RuntimeAwareQuestion = QuestionRecord & {
 
 interface QuestionIDEClientProps {
   question: RuntimeAwareQuestion;
-  prevId: number | null;
-  nextId: number | null;
   locale?: string;
   allQuestions?: QuestionRecord[];
-  filters?: {
-    tags?: string[];
-    difficulties?: string[];
-    q?: string;
-    runnable?: string;
-  };
+  scope?: QuestionScope;
 }
+
+const DEFAULT_SCOPE: QuestionScope = {
+  q: '',
+  tags: [],
+  runnable: undefined,
+  difficulties: [],
+  status: 'all',
+  page: 1,
+};
 
 const EDITOR_DEFAULT_CODE = `// Write your code here
 // Press Ctrl/Cmd + Enter to run
@@ -124,11 +134,9 @@ function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
 
 export function QuestionIDEClient({
   question,
-  prevId,
-  nextId,
   locale,
   allQuestions = [],
-  filters,
+  scope = DEFAULT_SCOPE,
 }: QuestionIDEClientProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
@@ -179,6 +187,11 @@ export function QuestionIDEClient({
   const [_debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual'>('timeline');
 
   const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
+  const { state: progress, ready: progressReady } = useProgress();
+  const [frozenStatusScope, setFrozenStatusScope] = useState<{
+    key: string;
+    ids: number[];
+  } | null>(null);
 
   const isAnswered = selected !== null || hasSubmittedRecall;
   const isCorrect = selected !== null ? selected === question.correctOption : hasSubmittedRecall;
@@ -268,21 +281,104 @@ export function QuestionIDEClient({
     [isAnswered, question.correctOption, saveAttempt, primaryTag, updateSection, question.id],
   );
 
-  // Build prev/next hrefs with filter params preserved
-  const buildFilterQuery = useCallback(() => {
-    const params = new URLSearchParams();
-    if (filters?.tags && filters.tags.length > 0) {
-      filters.tags.forEach((tag) => void params.append('tags', tag));
-    }
-    if (filters?.difficulties && filters.difficulties.length > 0) {
-      filters.difficulties.forEach((diff) => void params.append('difficulties', diff));
-    }
-    if (filters?.q) params.set('q', filters.q);
-    if (filters?.runnable) params.set('runnable', filters.runnable);
-    return params.toString();
-  }, [filters]);
+  const filterQuery = useMemo(
+    () => buildQuestionScopeQuery(scope, { includePage: false }),
+    [scope],
+  );
+  const staticScopedQuestions = useMemo(
+    () => applyServerFilters(allQuestions, scope),
+    [allQuestions, scope],
+  );
+  const staticScopedIds = useMemo(
+    () => staticScopedQuestions.map((scopedQuestion) => scopedQuestion.id),
+    [staticScopedQuestions],
+  );
+  const liveStatusScopedIds = useMemo(
+    () =>
+      applyStatusFilter(staticScopedQuestions, scope.status, progress.questions).map(
+        (scopedQuestion) => scopedQuestion.id,
+      ),
+    [progress.questions, scope.status, staticScopedQuestions],
+  );
+  const allQuestionIds = useMemo(
+    () => allQuestions.map((availableQuestion) => availableQuestion.id),
+    [allQuestions],
+  );
 
-  const filterQuery = buildFilterQuery();
+  useEffect(() => {
+    if (scope.status === 'all') {
+      setFrozenStatusScope((current) => (current === null ? current : null));
+      return;
+    }
+
+    if (!progressReady) {
+      return;
+    }
+
+    setFrozenStatusScope((current) => {
+      if (current?.key === filterQuery) {
+        return current;
+      }
+
+      return {
+        key: filterQuery,
+        ids: liveStatusScopedIds,
+      };
+    });
+  }, [filterQuery, liveStatusScopedIds, progressReady, scope.status]);
+
+  const scopedNavigationIds = useMemo(() => {
+    if (scope.status !== 'all' && !progressReady) {
+      return [];
+    }
+
+    if (scope.status === 'all') {
+      return staticScopedIds;
+    }
+
+    if (frozenStatusScope?.key === filterQuery) {
+      return frozenStatusScope.ids;
+    }
+
+    return liveStatusScopedIds;
+  }, [
+    filterQuery,
+    frozenStatusScope,
+    liveStatusScopedIds,
+    progressReady,
+    scope.status,
+    staticScopedIds,
+  ]);
+
+  const navigationIds = useMemo(() => {
+    if (scope.status !== 'all' && !progressReady) {
+      return [];
+    }
+
+    if (scopedNavigationIds.includes(question.id)) {
+      return scopedNavigationIds;
+    }
+
+    if (staticScopedIds.includes(question.id)) {
+      return staticScopedIds;
+    }
+
+    return allQuestionIds;
+  }, [
+    allQuestionIds,
+    progressReady,
+    question.id,
+    scope.status,
+    scopedNavigationIds,
+    staticScopedIds,
+  ]);
+
+  const currentIndex = navigationIds.indexOf(question.id);
+  const prevId = currentIndex > 0 ? navigationIds[currentIndex - 1] : null;
+  const nextId =
+    currentIndex >= 0 && currentIndex < navigationIds.length - 1
+      ? navigationIds[currentIndex + 1]
+      : null;
   const prevHref = prevId
     ? `${linkPrefix}/questions/${prevId}${filterQuery ? `?${filterQuery}` : ''}`
     : null;
@@ -529,6 +625,9 @@ export function QuestionIDEClient({
                       <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
                         <DialogHeader>
                           <DialogTitle>Event Loop Replay</DialogTitle>
+                          <DialogDescription>
+                            Replay the recorded macro and microtask timeline for this snippet.
+                          </DialogDescription>
                         </DialogHeader>
                         <div className="mt-4 pb-2">
                           <TimelineChart events={timeline} />
@@ -555,9 +654,15 @@ export function QuestionIDEClient({
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="h-[90vh] w-[95vw] max-w-7xl overflow-hidden border-border-subtle bg-surface p-0 shadow-glow sm:max-w-7xl">
-                        <DialogTitle className="sr-only">
-                          <VisuallyHidden>Visual Debugger</VisuallyHidden>
-                        </DialogTitle>
+                        <DialogHeader className="sr-only">
+                          <DialogTitle>
+                            <VisuallyHidden>Visual Debugger</VisuallyHidden>
+                          </DialogTitle>
+                          <DialogDescription>
+                            Step through expression-level execution, queues, and logs for this
+                            snippet.
+                          </DialogDescription>
+                        </DialogHeader>
                         <VisualDebugger
                           code={javascriptCodeBlock?.code ?? ''}
                           enhancedTimeline={enhancedTimeline}

@@ -15,6 +15,7 @@ interface QuestionCardProps {
   question: QuestionRecord;
   locale: string;
   isHovered?: boolean;
+  href?: string;
 }
 
 const difficultyStyles = {
@@ -23,7 +24,7 @@ const difficultyStyles = {
   hard: 'border-status-wrong text-status-wrong',
 } as const;
 
-export function QuestionCard({ question, locale, isHovered }: QuestionCardProps) {
+export function QuestionCard({ question, locale, isHovered, href }: QuestionCardProps) {
   const { ready, item } = useQuestionProgress(question.id);
 
   const hasAttempts = item.attempts.length > 0;
@@ -40,7 +41,7 @@ export function QuestionCard({ question, locale, isHovered }: QuestionCardProps)
 
   return (
     <Link
-      href={`/${locale}/questions/${question.id}`}
+      href={href ?? `/${locale}/questions/${question.id}`}
       className={cn(
         'group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface p-5 transition-all duration-500',
         isHovered

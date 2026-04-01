@@ -7,27 +7,10 @@ import { Container } from '@/components/container';
 import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
 import { QuestionCard } from '@/components/question-card';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
-import { applyServerFilters } from '@/lib/content/query';
+import { parseQuestionScope } from '@/lib/content/query';
 import { DEFAULT_LOCALE, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 
 type SearchParams = Record<string, string | string[] | undefined>;
-
-function getArrayValues(value: string | string[] | undefined): string[] {
-  if (Array.isArray(value)) {
-    return value;
-  }
-  if (value) {
-    return [value];
-  }
-  return [];
-}
-
-function firstValue(value: string | string[] | undefined): string {
-  if (Array.isArray(value)) {
-    return value[0] ?? '';
-  }
-  return value ?? '';
-}
 
 /**
  * Pre-generate all locale × question-id combinations at build time.
@@ -82,35 +65,9 @@ export default async function QuestionDetailPage({
     notFound();
   }
 
-  // Extract filter params for scoped navigation
-  const selectedTags = getArrayValues((resolvedSearchParams as SearchParams | undefined)?.tags);
-  const selectedDifficulties = getArrayValues(
-    (resolvedSearchParams as SearchParams | undefined)?.difficulties,
-  );
-  const q = firstValue((resolvedSearchParams as SearchParams | undefined)?.q);
-  const runnable =
-    firstValue((resolvedSearchParams as SearchParams | undefined)?.runnable) === 'true'
-      ? true
-      : undefined;
+  const scope = parseQuestionScope(resolvedSearchParams as SearchParams);
 
   const all = getQuestions(locale);
-
-  // Apply filters to get scoped question list
-  const filtered = applyServerFilters(all, {
-    q,
-    tags: selectedTags,
-    runnable,
-    difficulties: selectedDifficulties,
-  });
-
-  // Find current question index in filtered list
-  const currentIndex = filtered.findIndex((item) => item.id === id);
-
-  // Get prev/next within filtered scope
-  const prev = currentIndex > 0 ? filtered[currentIndex - 1] : null;
-  const next =
-    currentIndex >= 0 && currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
-
   const related = getRelatedQuestions(locale, question, 3);
 
   return (
@@ -133,19 +90,9 @@ export default async function QuestionDetailPage({
         <QuestionIDEClient
           key={question.id}
           question={question}
-          prevId={prev?.id ?? null}
-          nextId={next?.id ?? null}
           locale={locale}
           allQuestions={all}
-          filters={{
-            tags: selectedTags,
-            difficulties: selectedDifficulties,
-            q,
-            runnable:
-              firstValue((resolvedSearchParams as SearchParams | undefined)?.runnable) === 'true'
-                ? 'true'
-                : undefined,
-          }}
+          scope={scope}
         />
       </div>
 
