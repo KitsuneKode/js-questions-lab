@@ -13,8 +13,8 @@ Supabase validates them natively — no JWT secret sharing required.
 createClient(url, key, {
   async accessToken() {
     return (await auth()).getToken(); // raw Clerk session token, no template
-  }
-})
+  },
+});
 ```
 
 ## One-Time Setup Per Environment
@@ -34,11 +34,18 @@ createClient(url, key, {
 
 ## Environment Variables
 
+In this monorepo, the Next.js app reads runtime environment variables from
+`apps/web/.env.local`. Start by copying `apps/web/.env.example`.
+
 ### Dev (`apps/web/.env.local`)
 
 ```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...    # Supabase Dashboard → API → anon/public key
+NEXT_PUBLIC_SUPABASE_KEY=eyJhbGci...    # Supabase Dashboard → API → public key
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` is **not needed at runtime** — only for admin migration scripts.

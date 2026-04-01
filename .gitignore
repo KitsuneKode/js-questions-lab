@@ -9,6 +9,7 @@ node_modules
 .env
 .env.*
 .env.local
+!apps/web/.env.example
 .DS_Store
 *.log
 *.pid

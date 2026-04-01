@@ -76,7 +76,8 @@ bun install
 ### 3. Optional Environment Setup
 
 Guest mode is the default experience. If you want to test auth or sync features, copy
-`.env.example` to `.env.local` and provide the Clerk and Supabase values.
+`apps/web/.env.example` to `apps/web/.env.local` and provide the Clerk and Supabase values.
+You can leave the placeholders in place if you want to stay in guest mode locally.
 
 For Supabase + Clerk integration details, see `docs/supabase-clerk-setup.md`.
 
