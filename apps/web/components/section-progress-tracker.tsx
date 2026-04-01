@@ -100,15 +100,15 @@ export function SectionProgressTracker({
   return (
     <div className="space-y-6">
       {/* Overall Progress Summary */}
-      <div className="rounded-xl border border-border-subtle bg-surface/50 p-4 backdrop-blur-sm">
-        <div className="flex items-center justify-between mb-3">
+      <div className="rounded-xl border border-border-subtle bg-surface/50 p-5 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Overall Progress
           </h3>
           <Badge
             variant="secondary"
             className={cn(
-              'text-[10px] px-2 py-0.5',
+              'text-[10px] px-2.5 py-1',
               masteredCount === availableTags.length
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : 'bg-primary/10 text-primary',
@@ -118,13 +118,16 @@ export function SectionProgressTracker({
           </Badge>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground">Completed</p>
-            <p className="text-lg font-semibold text-foreground">
-              {overallProgress.totalAnswered}/{overallProgress.totalQuestions}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground font-medium">Completed</p>
+            <p className="text-2xl font-semibold text-foreground tabular-nums">
+              {overallProgress.totalAnswered}
+              <span className="text-base text-muted-foreground font-normal">
+                /{overallProgress.totalQuestions}
+              </span>
             </p>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${overallProgress.overallCompletion}%` }}
@@ -132,17 +135,17 @@ export function SectionProgressTracker({
                 className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full"
               />
             </div>
-            <p className="text-[9px] text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground">
               {overallProgress.overallCompletion.toFixed(0)}% complete
             </p>
           </div>
 
-          <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground">Accuracy</p>
-            <p className="text-lg font-semibold text-foreground">
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground font-medium">Accuracy</p>
+            <p className="text-2xl font-semibold text-foreground tabular-nums">
               {overallProgress.overallAccuracy.toFixed(0)}%
             </p>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${overallProgress.overallAccuracy}%` }}
@@ -150,39 +153,39 @@ export function SectionProgressTracker({
                 className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
               />
             </div>
-            <p className="text-[9px] text-muted-foreground">
-              {overallProgress.totalCorrect} correct
+            <p className="text-[10px] text-muted-foreground">
+              {overallProgress.totalCorrect} correct answers
             </p>
           </div>
 
-          <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground">Status</p>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-[9px] text-muted-foreground">{masteredCount}</span>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground font-medium">Mastery Status</p>
+            <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                <span className="text-xs text-muted-foreground">{masteredCount} mastered</span>
               </div>
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
-                <span className="text-[9px] text-muted-foreground">{inProgressCount}</span>
+              <div className="flex items-center gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                <span className="text-xs text-muted-foreground">{inProgressCount} in progress</span>
               </div>
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
-                <span className="text-[9px] text-muted-foreground">
-                  {availableTags.length - masteredCount - inProgressCount}
-                </span>
-              </div>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
+              <span className="text-xs text-muted-foreground">
+                {availableTags.length - masteredCount - inProgressCount} not started
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Individual Section Progress */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
           Topic Breakdown
         </h3>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {availableTags.map((tag) => {
             const stats = statsByTag.get(tag) || {
               totalQuestions: questionCounts[tag] || 0,
@@ -196,24 +199,32 @@ export function SectionProgressTracker({
             const config = masteryConfig[stats.masteryLevel || 'not_started'];
 
             return (
-              <motion.button
+              <motion.div
                 key={tag}
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => onSectionClick?.(tag)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSectionClick?.(tag);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  'group relative flex flex-col items-start gap-3 rounded-lg border p-3 text-left transition-all',
+                  'group relative flex flex-col gap-3 rounded-lg border p-4 text-left transition-all cursor-pointer',
                   config.bgColor,
                   config.borderColor,
                   'hover:shadow-md hover:-translate-y-0.5',
                 )}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <div
                       className={cn('flex items-center justify-center', config.color)}
                       title={config.description}
@@ -225,7 +236,7 @@ export function SectionProgressTracker({
                   <Badge
                     variant="outline"
                     className={cn(
-                      'text-[9px] px-1.5 py-0.5 h-auto',
+                      'text-[10px] px-2 py-0.5 h-auto font-medium',
                       config.color,
                       config.borderColor,
                     )}
@@ -234,12 +245,12 @@ export function SectionProgressTracker({
                   </Badge>
                 </div>
 
-                <div className="w-full space-y-2">
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                    <span>
+                <div className="w-full space-y-2.5">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="tabular-nums">
                       {stats.answeredQuestions}/{stats.totalQuestions} completed
                     </span>
-                    <span>{stats.accuracy.toFixed(0)}% accuracy</span>
+                    <span className="tabular-nums">{stats.accuracy.toFixed(0)}% accuracy</span>
                   </div>
                   <div className="h-1.5 w-full bg-muted/50 rounded-full overflow-hidden">
                     <motion.div
@@ -276,7 +287,7 @@ export function SectionProgressTracker({
                 >
                   <span className="sr-only">Reset progress</span>×
                 </Button>
-              </motion.button>
+              </motion.div>
             );
           })}
         </div>

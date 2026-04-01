@@ -434,14 +434,16 @@ export function FiltersBar({
 
       {/* Progress Tracker Dialog */}
       <Dialog open={progressOpen} onOpenChange={setProgressOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Your Progress</DialogTitle>
-            <DialogDescription>
-              Review your progress by topic and jump directly to a section from the tracker.
+        <DialogContent className="!max-w-4xl w-[95vw] !p-0 !gap-0 max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border-subtle/50 flex-shrink-0">
+            <DialogTitle className="text-lg font-semibold tracking-tight">
+              Your Progress
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
+              Track mastery by topic and continue where you left off.
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-5">
             <SectionProgressTracker
               availableTags={tags}
               questionCounts={questionCounts}
