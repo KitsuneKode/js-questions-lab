@@ -15,19 +15,19 @@ export function FilterLoading({ message = 'Filtering questions...' }: FilterLoad
         <div className="absolute inset-0 animate-spin-slow">
           <div className="h-full w-full rounded-full border-2 border-dashed border-primary/30" />
         </div>
-        
+
         {/* Middle counter-rotating ring */}
         <div className="absolute inset-2 animate-spin-reverse-slow">
           <div className="h-full w-full rounded-full border-2 border-dotted border-secondary/40" />
         </div>
-        
+
         {/* Center icon cycle */}
         <div className="relative z-10 flex h-12 w-12 items-center justify-center">
           <div className="animate-pulse">
             <Brain className="h-6 w-6 text-primary" />
           </div>
         </div>
-        
+
         {/* Orbiting dots */}
         <div className="absolute inset-0 animate-spin">
           <div className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1 rounded-full bg-primary shadow-[0_0_10px_rgba(245,158,11,0.6)]" />

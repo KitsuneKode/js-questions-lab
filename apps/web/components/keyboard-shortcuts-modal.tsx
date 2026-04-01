@@ -3,7 +3,13 @@
 import { IconKeyboard, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface ShortcutGroup {
@@ -108,6 +114,9 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
               <IconX className="h-4 w-4" />
             </Button>
           </div>
+          <DialogDescription>
+            Quick reference for the global, question list, and question detail keyboard controls.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-6 space-y-6">

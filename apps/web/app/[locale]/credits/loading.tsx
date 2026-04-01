@@ -12,7 +12,7 @@ export default function CreditsLoading() {
           <Skeleton className="h-5 w-full max-w-3xl mb-3" />
           <Skeleton className="h-5 w-3/4 max-w-3xl mb-4" />
           <Skeleton className="h-4 w-full max-w-3xl mb-8" />
-          
+
           <div className="flex flex-wrap gap-3">
             <Skeleton className="h-9 w-36 rounded-full" />
             <Skeleton className="h-9 w-32 rounded-full" />
@@ -71,7 +71,10 @@ export default function CreditsLoading() {
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {Array.from({ length: 4 }, (_, i) => i).map((i) => (
-                <div key={`stat-${i}`} className="rounded-[18px] border border-border/50 bg-elevated/40 p-4">
+                <div
+                  key={`stat-${i}`}
+                  className="rounded-[18px] border border-border/50 bg-elevated/40 p-4"
+                >
                   <Skeleton className="h-3 w-24 mb-2" />
                   <Skeleton className="h-4 w-32" />
                 </div>
@@ -113,7 +116,10 @@ export default function CreditsLoading() {
           {/* Upstream translations skeleton */}
           <ul className="mt-6 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 3 }, (_, i) => i).map((i) => (
-              <li key={`translation-${i}`} className="rounded-[18px] border border-border/50 bg-elevated/40 px-4 py-3">
+              <li
+                key={`translation-${i}`}
+                className="rounded-[18px] border border-border/50 bg-elevated/40 px-4 py-3"
+              >
                 <div className="flex items-center justify-between gap-3">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-4 w-4" />

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -106,6 +107,10 @@ export function FloatingScratchpad() {
                 <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]">
                   <DialogHeader>
                     <DialogTitle>Event Loop Replay (Scratchpad)</DialogTitle>
+                    <DialogDescription>
+                      Replay the recorded async timeline for the code currently running in the
+                      scratchpad.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="mt-4 pb-2">
                     <TimelineChart events={timeline} />

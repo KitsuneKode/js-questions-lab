@@ -2,15 +2,8 @@
 
 import { IconArrowRight as ArrowRight, IconChartPie as PieChart } from '@tabler/icons-react';
 import Link from 'next/link';
-import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
+import { useEffect, useRef, useState } from 'react';
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from 'recharts';
 import { Button } from '@/components/ui/button';
 import type { TagStats } from '@/lib/progress/analytics';
 
@@ -19,6 +12,33 @@ interface TopicAccuracyChartProps {
 }
 
 export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
+
+  useEffect(() => {
+    const element = chartRef.current;
+    if (!element) return;
+
+    const setMeasuredWidth = (width: number) => {
+      setChartWidth(Math.max(Math.round(width), 0));
+    };
+    const measure = () => setMeasuredWidth(element.clientWidth);
+
+    measure();
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      setMeasuredWidth(entries[0]?.contentRect.width ?? element.clientWidth);
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   // Only plot topics that have been attempted
   const activeTopics = tagStats.filter((t) => t.totalAttempts > 0);
 
@@ -44,6 +64,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
 
   // Sort weakest to strongest for the list below
   const sortedByWeakness = [...activeTopics].sort((a, b) => a.accuracy - b.accuracy).slice(0, 3);
+  const chartHeight = 280;
 
   const CustomTooltip = ({
     active,
@@ -73,15 +94,22 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
   };
 
   return (
-    <div className="col-span-2 rounded-2xl border border-border-subtle bg-surface p-6 lg:col-span-1 flex flex-col">
+    <div className="col-span-2 flex min-w-0 flex-col rounded-2xl border border-border-subtle bg-surface p-6 lg:col-span-1">
       <div className="mb-2">
         <h3 className="font-display text-xl text-foreground">Topic Mastery</h3>
         <p className="text-xs text-secondary">Your accuracy across core concepts.</p>
       </div>
 
-      <div className="h-[280px] w-full mt-4 -ml-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+      <div ref={chartRef} className="relative mt-4 h-[280px] min-h-[280px] min-w-0 w-full">
+        {chartWidth > 0 ? (
+          <RadarChart
+            width={chartWidth}
+            height={chartHeight}
+            cx="50%"
+            cy="50%"
+            outerRadius="70%"
+            data={data}
+          >
             <PolarGrid stroke="var(--border-subtle)" />
             <PolarAngleAxis
               dataKey="subject"
@@ -98,7 +126,9 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
               strokeWidth={2}
             />
           </RadarChart>
-        </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full rounded-2xl bg-elevated/30" aria-hidden="true" />
+        )}
       </div>
 
       <div className="mt-auto pt-6 border-t border-border-subtle space-y-3">

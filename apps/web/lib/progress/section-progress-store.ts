@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 /**
  * Zod schema for section progress data
@@ -192,14 +192,10 @@ export function useSectionStats(tag: string) {
   }
 
   const accuracy =
-    section.answeredQuestions > 0
-      ? (section.correctAnswers / section.answeredQuestions) * 100
-      : 0;
+    section.answeredQuestions > 0 ? (section.correctAnswers / section.answeredQuestions) * 100 : 0;
 
   const completionPercentage =
-    section.totalQuestions > 0
-      ? (section.answeredQuestions / section.totalQuestions) * 100
-      : 0;
+    section.totalQuestions > 0 ? (section.answeredQuestions / section.totalQuestions) * 100 : 0;
 
   return {
     ...section,
@@ -214,14 +210,10 @@ export function useAllSectionStats() {
 
   return Object.entries(sections).map(([tag, data]) => {
     const accuracy =
-      data.answeredQuestions > 0
-        ? (data.correctAnswers / data.answeredQuestions) * 100
-        : 0;
+      data.answeredQuestions > 0 ? (data.correctAnswers / data.answeredQuestions) * 100 : 0;
 
     const completionPercentage =
-      data.totalQuestions > 0
-        ? (data.answeredQuestions / data.totalQuestions) * 100
-        : 0;
+      data.totalQuestions > 0 ? (data.answeredQuestions / data.totalQuestions) * 100 : 0;
 
     return {
       tag,

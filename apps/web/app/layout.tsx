@@ -61,12 +61,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={cn(
         bricolageGrotesque.variable,
         geist.variable,
         robotoMono.variable,
-        'font-sans dark',
+        'relative font-sans dark',
       )}
     >
       <body className="grain-overlay antialiased">{children}</body>

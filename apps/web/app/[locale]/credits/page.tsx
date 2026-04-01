@@ -83,7 +83,9 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               source: siteConfig.source.name,
             })}
           </p>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{t('heroNote')}</p>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            {t('heroNote')}
+          </p>
 
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -182,8 +184,12 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
               </Link>{' '}
               {t('originalFor')}
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('originalBody1')}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('originalBody2')}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {t('originalBody1')}
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {t('originalBody2')}
+            </p>
             <div className="mt-auto pt-5 flex flex-wrap gap-3">
               <Link
                 href={siteConfig.source.repoUrl}

@@ -53,7 +53,10 @@ export default function Loading() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }, (_, i) => i).map((i) => (
-              <div key={`featured-${i}`} className="rounded-xl border border-border bg-surface/50 p-4 space-y-3">
+              <div
+                key={`featured-${i}`}
+                className="rounded-xl border border-border bg-surface/50 p-4 space-y-3"
+              >
                 <Skeleton className="h-5 w-full" />
                 <Skeleton className="h-4 w-3/4" />
                 <div className="flex gap-2 pt-2">
