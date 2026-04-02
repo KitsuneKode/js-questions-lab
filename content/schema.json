@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QuestionRecord",
+  "description": "Canonical schema for question data in the lydia-js-questions content pipeline. This schema defines the structure that all question sources (Lydia Hallie, SudheerJ, custom) must conform to.",
+  "type": "object",
+  "required": [
+    "id",
+    "slug",
+    "locale",
+    "title",
+    "promptMarkdown",
+    "options",
+    "correctOption",
+    "explanationMarkdown",
+    "tags",
+    "difficulty"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier for the question within this locale"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier (e.g., 'question-1')",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "locale": {
+      "type": "string",
+      "description": "ISO 639-1 locale code (e.g., 'en', 'es', 'fr')",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Question title or prompt header"
+    },
+    "promptMarkdown": {
+      "type": "string",
+      "description": "The question prompt with optional markdown formatting (code blocks, emphasis)"
+    },
+    "codeBlocks": {
+      "type": "array",
+      "description": "Code snippets associated with the question",
+      "items": {
+        "$ref": "#/definitions/CodeBlock"
+      },
+      "default": []
+    },
+    "explanationCodeBlocks": {
+      "type": "array",
+      "description": "Code examples shown in the explanation",
+      "items": {
+        "$ref": "#/definitions/CodeBlock"
+      },
+      "default": []
+    },
+    "options": {
+      "type": "array",
+      "description": "Multiple choice options",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/definitions/Option"
+      }
+    },
+    "correctOption": {
+      "type": "string",
+      "description": "The correct answer key",
+      "enum": ["A", "B", "C", "D"]
+    },
+    "explanationMarkdown": {
+      "type": "string",
+      "description": "Detailed explanation of the correct answer"
+    },
+    "images": {
+      "type": "array",
+      "description": "Images referenced in the question/explanation",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "description": "Categorization tags for filtering and organization",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "difficulty": {
+      "type": "string",
+      "description": "Difficulty level for the question",
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "runnable": {
+      "type": "boolean",
+      "description": "Whether the question code can be executed in the sandbox",
+      "default": false
+    },
+    "runtime": {
+      "$ref": "#/definitions/Runtime"
+    },
+    "source": {
+      "$ref": "#/definitions/Source"
+    },
+    "isFallback": {
+      "type": "boolean",
+      "description": "Whether this is a fallback to English when locale is missing",
+      "default": false
+    }
+  },
+  "definitions": {
+    "CodeBlock": {
+      "type": "object",
+      "required": ["id", "order", "language", "code"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this code block within the question"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Display order of the code block"
+        },
+        "language": {
+          "type": "string",
+          "description": "Programming language for syntax highlighting",
+          "enum": ["javascript", "js", "html", "css", "typescript", "ts", "json", "plain"]
+        },
+        "code": {
+          "type": "string",
+          "description": "The actual code content"
+        }
+      }
+    },
+    "Option": {
+      "type": "object",
+      "required": ["key", "text"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Option identifier",
+          "enum": ["A", "B", "C", "D"]
+        },
+        "text": {
+          "type": "string",
+          "description": "Option text shown to the user"
+        }
+      }
+    },
+    "Runtime": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "description": "Runtime execution type",
+          "enum": ["javascript", "dom-click-propagation", "static"],
+          "default": "static"
+        }
+      }
+    },
+    "Source": {
+      "type": "object",
+      "description": "Metadata about the source of this question",
+      "properties": {
+        "startLineHint": {
+          "type": ["integer", "null"],
+          "description": "Line number hint in the source markdown for debugging"
+        }
+      }
+    }
+  }
+}
