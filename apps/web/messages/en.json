@@ -151,7 +151,15 @@
     "timeJustNow": "just now",
     "timeMinutesAgo": "{count}m ago",
     "timeHoursAgo": "{count}h ago",
-    "timeDaysAgo": "{count}d ago"
+    "timeDaysAgo": "{count}d ago",
+    "notEnoughData": "Not enough data",
+    "radarUnlock": "Practice at least 3 topics to unlock your mastery radar.",
+    "radarLabel": "Mastery",
+    "correctRatio": "{correct}/{total} correct ({accuracy}%)",
+    "labelSaved": "Saved Questions",
+    "savedSub": "Questions you've set aside for later review.",
+    "savedCount": "{count} saved",
+    "viewAllSaved": "View all {count} saved"
   },
   "credits": {
     "label": "Credits & Attribution",

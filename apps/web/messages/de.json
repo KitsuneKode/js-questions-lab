@@ -151,7 +151,15 @@
     "timeJustNow": "gerade eben",
     "timeMinutesAgo": "vor {count}m",
     "timeHoursAgo": "vor {count}h",
-    "timeDaysAgo": "vor {count}d"
+    "timeDaysAgo": "vor {count}d",
+    "notEnoughData": "Nicht genügend Daten",
+    "radarUnlock": "Üben Sie mindestens 3 Themen, um Ihr Meisterschaftsradar freizuschalten.",
+    "radarLabel": "Meisterschaft",
+    "correctRatio": "{correct}/{total} richtig ({accuracy}%)",
+    "labelSaved": "Gespeicherte Fragen",
+    "savedSub": "Fragen, die Sie für eine spätere Wiederholung beiseite gelegt haben.",
+    "savedCount": "{count} gespeichert",
+    "viewAllSaved": "Alle {count} gespeicherten ansehen"
   },
   "credits": {
     "label": "Credits & Mitwirkende",

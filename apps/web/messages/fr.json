@@ -151,7 +151,15 @@
     "timeJustNow": "à l'instant",
     "timeMinutesAgo": "il y a {count}m",
     "timeHoursAgo": "il y a {count}h",
-    "timeDaysAgo": "il y a {count}d"
+    "timeDaysAgo": "il y a {count}d",
+    "notEnoughData": "Pas assez de données",
+    "radarUnlock": "Pratiquez au moins 3 sujets pour débloquer votre radar de maîtrise.",
+    "radarLabel": "Maîtrise",
+    "correctRatio": "{correct}/{total} correctes ({accuracy}%)",
+    "labelSaved": "Questions enregistrées",
+    "savedSub": "Questions que vous avez mises de côté pour une révision ultérieure.",
+    "savedCount": "{count} enregistrées",
+    "viewAllSaved": "Voir les {count} enregistrées"
   },
   "credits": {
     "label": "Crédits et attribution",

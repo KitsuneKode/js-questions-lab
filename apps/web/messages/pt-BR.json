@@ -151,7 +151,15 @@
     "timeJustNow": "agora mesmo",
     "timeMinutesAgo": "há {count}m",
     "timeHoursAgo": "há {count}h",
-    "timeDaysAgo": "há {count}d"
+    "timeDaysAgo": "há {count}d",
+    "notEnoughData": "Dados insuficientes",
+    "radarUnlock": "Pratique pelo menos 3 tópicos para desbloquear seu radar de maestria.",
+    "radarLabel": "Maestria",
+    "correctRatio": "{correct}/{total} corretas ({accuracy}%)",
+    "labelSaved": "Questões Salvas",
+    "savedSub": "Questões que você reservou para revisão posterior.",
+    "savedCount": "{count} salvas",
+    "viewAllSaved": "Ver todas as {count} salvas"
   },
   "credits": {
     "label": "Créditos e Atribuição",

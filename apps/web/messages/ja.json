@@ -151,7 +151,15 @@
     "timeJustNow": "たった今",
     "timeMinutesAgo": "{count}分前",
     "timeHoursAgo": "{count}時間前",
-    "timeDaysAgo": "{count}日前"
+    "timeDaysAgo": "{count}日前",
+    "notEnoughData": "データが不足しています",
+    "radarUnlock": "マスタリーレーダーをアンロックするには、少なくとも3つのトピックを練習してください。",
+    "radarLabel": "習熟度",
+    "correctRatio": "{total}問中{correct}問正解 ({accuracy}%)",
+    "labelSaved": "保存された問題",
+    "savedSub": "後で復習するために取っておいた問題。",
+    "savedCount": "{count}件保存済み",
+    "viewAllSaved": "保存された{count}件をすべて見る"
   },
   "credits": {
     "label": "クレジットと帰属",

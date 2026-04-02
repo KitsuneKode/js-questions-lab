@@ -8,6 +8,7 @@ import {
   IconTrendingUp as TrendingUp,
 } from '@tabler/icons-react';
 import { motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import type { OverallStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +17,7 @@ interface OverviewCardsProps {
 }
 
 export function OverviewCards({ overall }: OverviewCardsProps) {
+  const t = useTranslations('dashboard');
   const totalQuestions = 155; // Hardcoded or passed down
   const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
@@ -45,7 +47,9 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-tertiary">Journey</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-tertiary">
+              {t('labelJourney')}
+            </p>
             <div className="inline-flex items-center gap-1 rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-[0_0_10px_rgba(245,158,11,0.15)]">
               Level {currentLevel}
             </div>
@@ -88,10 +92,11 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
             </div>
           </div>
           <p className="text-xs text-secondary leading-snug">
-            <strong className="text-foreground">{questionsToNextLevel}</strong> questions to Level{' '}
-            {currentLevel + 1}.
+            <strong className="text-foreground">
+              {t('levelRequirement', { count: questionsToNextLevel, next: currentLevel + 1 })}
+            </strong>
             <br />
-            Keep pushing.
+            {t('keepPushing')}
           </p>
         </div>
       </div>
@@ -103,7 +108,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-tertiary mb-1">
-            Accuracy
+            {t('labelAccuracy')}
           </p>
           <div className="flex items-baseline gap-2">
             <p className={cn('font-display text-4xl', accuracyColor)}>{accuracyPercent}%</p>
@@ -143,7 +148,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         <div>
           <div className="flex items-center justify-between mb-1">
             <p className="text-xs font-semibold uppercase tracking-widest text-tertiary">
-              Consistency
+              {t('labelConsistency')}
             </p>
             {hasActiveStreak && (
               <motion.div
@@ -152,7 +157,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
                 className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#F59E0B] drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]"
               >
                 <Flame className="h-3.5 w-3.5 fill-[#F59E0B]" />
-                Active
+                {t('activeStreak')}
               </motion.div>
             )}
           </div>
@@ -170,9 +175,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           <p className="text-xs text-secondary leading-snug">
             Best streak: <strong className="text-foreground">{overall.longestStreak} days</strong>.
             <br />
-            {hasActiveStreak
-              ? 'You are on fire! Practice tomorrow to keep it going.'
-              : 'Practice today to start a new streak.'}
+            {hasActiveStreak ? t('streakFire') : t('noStreak')}
           </p>
         </div>
       </div>

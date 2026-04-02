@@ -151,7 +151,15 @@
     "timeJustNow": "ahora mismo",
     "timeMinutesAgo": "hace {count}m",
     "timeHoursAgo": "hace {count}h",
-    "timeDaysAgo": "hace {count}d"
+    "timeDaysAgo": "hace {count}d",
+    "notEnoughData": "No hay suficientes datos",
+    "radarUnlock": "Practica al menos 3 temas para desbloquear tu radar de dominio.",
+    "radarLabel": "Dominio",
+    "correctRatio": "{correct}/{total} correctas ({accuracy}%)",
+    "labelSaved": "Preguntas guardadas",
+    "savedSub": "Preguntas que has reservado para revisar más tarde.",
+    "savedCount": "{count} guardadas",
+    "viewAllSaved": "Ver las {count} guardadas"
   },
   "credits": {
     "label": "Créditos y atribución",
