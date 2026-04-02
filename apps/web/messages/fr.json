@@ -21,6 +21,22 @@
     "pagination": {
       "prev": "Précédent",
       "next": "Suivant"
+    },
+    "filters": {
+      "all": "Toutes les questions",
+      "search": "Rechercher des questions...",
+      "searchLabel": "Rechercher",
+      "searchPlaceholder": "Tapez un mot-clé, un concept ou un numéro de question...",
+      "noResults": "Aucun résultat trouvé.",
+      "groupQuestions": "Questions",
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé",
+      "runnable": "Mode Difficile Uniquement",
+      "clear": "Tout effacer",
+      "showLess": "Voir moins",
+      "more": "+{count} de plus",
+      "resetTags": "Réinitialiser les tags ({count})"
     }
   },
   "question": {

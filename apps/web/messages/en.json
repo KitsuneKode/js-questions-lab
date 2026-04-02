@@ -21,6 +21,22 @@
     "pagination": {
       "prev": "Previous",
       "next": "Next"
+    },
+    "filters": {
+      "all": "All Questions",
+      "search": "Search questions...",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Type a keyword, concept, or question number...",
+      "noResults": "No results found.",
+      "groupQuestions": "Questions",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "runnable": "Hard Mode Only",
+      "clear": "Clear All",
+      "showLess": "Show Less",
+      "more": "+{count} More",
+      "resetTags": "Reset Tags ({count})"
     }
   },
   "question": {

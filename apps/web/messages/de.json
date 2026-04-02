@@ -21,6 +21,22 @@
     "pagination": {
       "prev": "Zurück",
       "next": "Weiter"
+    },
+    "filters": {
+      "all": "Alle Fragen",
+      "search": "Fragen suchen...",
+      "searchLabel": "Suchen",
+      "searchPlaceholder": "Geben Sie ein Stichwort, Konzept oder eine Fragennummer ein...",
+      "noResults": "Keine Ergebnisse gefunden.",
+      "groupQuestions": "Fragen",
+      "beginner": "Anfänger",
+      "intermediate": "Mittelstufe",
+      "advanced": "Fortgeschritten",
+      "runnable": "Nur Schwerer Modus",
+      "clear": "Alles löschen",
+      "showLess": "Weniger anzeigen",
+      "more": "+{count} mehr",
+      "resetTags": "Themen zurücksetzen ({count})"
     }
   },
   "question": {

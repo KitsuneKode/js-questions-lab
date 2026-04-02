@@ -21,6 +21,22 @@
     "pagination": {
       "prev": "前へ",
       "next": "次へ"
+    },
+    "filters": {
+      "all": "すべての問題",
+      "search": "問題を検索...",
+      "searchLabel": "検索",
+      "searchPlaceholder": "キーワード、コンセプト、または問題番号を入力してください...",
+      "noResults": "結果が見つかりませんでした。",
+      "groupQuestions": "問題",
+      "beginner": "初級",
+      "intermediate": "中級",
+      "advanced": "上級",
+      "runnable": "ハードモードのみ",
+      "clear": "すべてクリア",
+      "showLess": "表示を減らす",
+      "more": "+{count}件をさらに表示",
+      "resetTags": "タグをリセット ({count})"
     }
   },
   "question": {
