@@ -66,23 +66,20 @@ export default async function QuestionsPage({
   const filtered = applyServerFilters(allQuestions, scope);
 
   return (
-    <main className="pt-24 pb-16 md:pt-32">
+    <main className="pt-32 pb-16 md:pt-40">
       <Container>
         <div className="space-y-8">
           {/* Header */}
-          <header className="space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+          <header className="space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+              <span className="uppercase tracking-widest font-bold">
                 {t('count', { count: allQuestions.length })}
               </span>
-              <span className="h-px flex-1 bg-linear-to-r from-border/60 to-transparent" />
             </div>
-            <h1 className="font-display text-3xl font-medium tracking-tight text-foreground md:text-4xl">
+            <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
               {t('title')}
             </h1>
-            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground/80">
-              {t('description')}
-            </p>
+            <p className="max-w-2xl text-lg leading-relaxed text-secondary">{t('description')}</p>
           </header>
 
           {/* Recommended Banner */}

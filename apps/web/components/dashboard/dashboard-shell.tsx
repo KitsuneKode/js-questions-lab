@@ -58,15 +58,14 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
   return (
     <div className="max-w-6xl mx-auto space-y-12">
       {/* Header */}
-      <header className="space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary bg-primary/10 px-2 py-0.5 rounded-sm">
-            {t('title')}
-          </span>
-          <span className="h-px flex-1 bg-linear-to-r from-border-subtle to-transparent" />
+      <header className="space-y-8">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+          <span className="uppercase tracking-widest font-bold">{t('title')}</span>
         </div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground">Welcome back.</h1>
-        <p className="max-w-2xl text-lg text-secondary">
+        <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
+          Welcome back.
+        </h1>
+        <p className="max-w-2xl text-lg leading-relaxed text-secondary">
           {hasData
             ? `You've answered ${overall.totalAnswered} questions across ${tagStats.length} topics. Maintain your momentum.`
             : 'Start with one question, get immediate feedback, and build consistent practice habits.'}

@@ -53,7 +53,7 @@ export default async function DashboardPage({
   const questions = getQuestions(locale);
 
   return (
-    <main className="pt-24 pb-16 md:pt-32">
+    <main className="pt-32 pb-16 md:pt-40">
       <Container>
         <DashboardShell questions={questions} locale={locale} />
       </Container>

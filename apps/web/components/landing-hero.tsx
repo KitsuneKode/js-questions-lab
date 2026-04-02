@@ -75,7 +75,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
   };
 
   return (
-    <section className="relative flex min-h-[90vh] flex-col justify-center overflow-hidden px-4 py-20 sm:px-6 lg:px-8 md:py-32">
+    <section className="relative flex flex-col overflow-hidden px-4 pt-32 pb-20 sm:px-6 lg:px-8 md:pt-40 md:pb-32">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
