@@ -144,16 +144,9 @@ export function QuestionIDEClient({
   const router = useRouter();
   const { state: progress, ready: progressReady } = useProgress();
 
-  const defaultRecallMode = useMemo(() => {
-    const correctCount = Object.values(progress.questions).filter((q) =>
-      q.attempts.some((a) => a.status === 'correct'),
-    ).length;
-    return correctCount >= 10;
-  }, [progress]);
-
-  const [userRecallMode, setUserRecallMode] = useState<boolean | null>(null);
-  const isRecallMode = userRecallMode ?? defaultRecallMode;
-  const setIsRecallMode = setUserRecallMode;
+  const preferredMode = useSectionProgressStore((state) => state.preferredMode);
+  const setPreferredMode = useSectionProgressStore((state) => state.setPreferredMode);
+  const isRecallMode = preferredMode === 'hard';
 
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [recallAnswer, setRecallAnswer] = useState('');
@@ -747,7 +740,7 @@ export function QuestionIDEClient({
                 {!isAnswered && (
                   <button
                     type="button"
-                    onClick={() => setIsRecallMode(!isRecallMode)}
+                    onClick={() => setPreferredMode(isRecallMode ? 'quiz' : 'hard')}
                     className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary/80 hover:text-primary transition-colors"
                   >
                     <Zap className="h-3 w-3" />

@@ -29,6 +29,7 @@ export type MasteryLevel = SectionProgressData['sections'][string]['masteryLevel
 interface SectionProgressState {
   sections: SectionProgressData['sections'];
   updatedAt: number;
+  preferredMode: 'quiz' | 'hard';
 
   // Actions
   updateSection: (tag: string, updates: Partial<SectionProgressData['sections'][string]>) => void;
@@ -37,10 +38,22 @@ interface SectionProgressState {
   getAllSections: () => SectionProgressData['sections'];
   resetSection: (tag: string) => void;
   resetAll: () => void;
+  setPreferredMode: (mode: 'quiz' | 'hard') => void;
 }
 
-const initialState: Omit<SectionProgressData, 'updatedAt'> = {
+const initialState: Omit<
+  SectionProgressState,
+  | 'updatedAt'
+  | 'updateSection'
+  | 'markQuestionAnswered'
+  | 'getSectionProgress'
+  | 'getAllSections'
+  | 'resetSection'
+  | 'resetAll'
+  | 'setPreferredMode'
+> = {
   sections: {},
+  preferredMode: 'quiz',
 };
 
 export const useSectionProgressStore = create<SectionProgressState>()(
@@ -48,6 +61,10 @@ export const useSectionProgressStore = create<SectionProgressState>()(
     (set, get) => ({
       ...initialState,
       updatedAt: Date.now(),
+
+      setPreferredMode: (mode) => {
+        set({ preferredMode: mode, updatedAt: Date.now() });
+      },
 
       updateSection: (tag, updates) => {
         set((state) => {
@@ -181,6 +198,7 @@ export const useSectionProgressStore = create<SectionProgressState>()(
       partialize: (state) => ({
         sections: state.sections,
         updatedAt: state.updatedAt,
+        preferredMode: state.preferredMode,
       }),
       version: 1,
     },
