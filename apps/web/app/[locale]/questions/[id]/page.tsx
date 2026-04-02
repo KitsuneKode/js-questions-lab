@@ -1,4 +1,5 @@
 import { IconArrowRight as ArrowRight, IconSparkles as Sparkles } from '@tabler/icons-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
@@ -6,9 +7,12 @@ import { getTranslations } from 'next-intl/server';
 import { Container } from '@/components/container';
 import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
 import { QuestionCard } from '@/components/question-card';
+import { QuestionJsonLd } from '@/components/seo/question-json-ld';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
 import { parseQuestionScope } from '@/lib/content/query';
 import { DEFAULT_LOCALE, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import { getAlternateLanguages, getCanonicalUrl, truncateDescription } from '@/lib/seo/config';
+import { siteConfig } from '@/lib/site-config';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -31,17 +35,40 @@ interface QuestionDetailPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({ params }: QuestionDetailPageProps) {
+export async function generateMetadata({ params }: QuestionDetailPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const locale = resolvedParams.locale as LocaleCode;
   const id = Number.parseInt(resolvedParams.id, 10);
   const question = getQuestionById(locale, id);
 
-  if (!question) return { title: 'JS Questions Lab' };
+  if (!question) return { title: siteConfig.name };
+
+  const questionPath = `questions/${id}`;
+  const canonicalUrl = getCanonicalUrl(locale, questionPath);
+  const alternateLanguages = getAlternateLanguages(questionPath);
+  const description = truncateDescription(question.promptMarkdown ?? question.title);
 
   return {
-    title: `${question.title} | JS Questions Lab`,
-    description: question.promptMarkdown?.slice(0, 155) ?? '',
+    title: `${question.title} | ${siteConfig.name}`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: alternateLanguages,
+    },
+    openGraph: {
+      title: question.title,
+      description,
+      url: canonicalUrl,
+      siteName: siteConfig.name,
+      locale: locale,
+      type: 'article',
+      tags: question.tags,
+    },
+    twitter: {
+      title: question.title,
+      description,
+    },
+    keywords: [...question.tags, 'javascript', 'interview question', question.difficulty],
   };
 }
 
@@ -72,6 +99,8 @@ export default async function QuestionDetailPage({
 
   return (
     <main className="min-h-screen bg-void overflow-x-hidden pt-12">
+      <QuestionJsonLd question={question} locale={locale} />
+
       {/* Decorative ambient background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none -z-10" />
 

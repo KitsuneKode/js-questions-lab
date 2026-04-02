@@ -86,6 +86,11 @@ These commands were recently verified:
 - Parser: `scripts/parse-readme.mjs`
 - **Multi-select filters**: `apps/web/components/filters-bar.tsx`
 - **Content query helpers**: `apps/web/lib/content/query.ts`
+- **SEO config**: `apps/web/lib/seo/config.ts`
+- **JSON-LD components**: `apps/web/components/seo/site-json-ld.tsx`, `apps/web/components/seo/question-json-ld.tsx`
+- **Robots/Sitemap**: `apps/web/app/robots.ts`, `apps/web/app/sitemap.ts`
+- **LLM endpoints**: `apps/web/public/llms.txt`, `apps/web/app/llms-full.txt/route.ts`
+- **Questions API**: `apps/web/app/api/questions/route.ts`, `apps/web/app/api/questions/[id]/route.ts`
 
 ## Context And Token Discipline
 
@@ -186,5 +191,6 @@ Avoid:
 - `docs/agent-handoff.md`
 - `docs/design-system-brief.md`
 - `docs/supabase-clerk-setup.md` (auth/sync setup and integration details)
+- `docs/seo-llm-guide.md` (SEO and LLM optimization implementation)
 - `docs/principal-engineer-prompt.md`
 - `docs/continue-agent-prompt.md`

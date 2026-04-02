@@ -5,7 +5,9 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 
 import { Provider } from '@/app/provider';
+import { SiteJsonLd } from '@/components/seo/site-json-ld';
 import { isValidLocale, LOCALE_DIRS, type LocaleCode } from '@/lib/i18n/config';
+import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 
@@ -31,14 +33,23 @@ export async function generateMetadata({
   if (!isValidLocale(locale)) return {};
 
   const t = await getTranslations({ locale, namespace: 'meta' });
+  const canonicalUrl = getCanonicalUrl(locale as LocaleCode);
+  const alternateLanguages = getAlternateLanguages();
 
   return {
     title: t('title'),
     description: t('description'),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: alternateLanguages,
+    },
     openGraph: {
       title: t('title'),
       description: t('description'),
       siteName: siteConfig.name,
+      url: canonicalUrl,
+      locale: locale,
+      type: 'website',
     },
     twitter: {
       title: t('title'),
@@ -67,6 +78,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     // next-intl's plugin handles setting html lang/dir via the root layout.
     // We wrap content only.
     <div lang={locale} dir={dir} className={cn('contents', isJapanese && notoSansJP.variable)}>
+      <SiteJsonLd />
       <NextIntlClientProvider messages={messages}>
         <Provider>{children}</Provider>
       </NextIntlClientProvider>

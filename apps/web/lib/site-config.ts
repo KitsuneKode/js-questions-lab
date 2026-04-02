@@ -3,7 +3,9 @@ export const siteConfig = {
   shortName: 'JSQL',
   description:
     "Interactive JavaScript interview practice built on Lydia Hallie's questions, with runnable snippets, event-loop visualization, and a tighter answer-to-feedback loop.",
+  url: 'https://jsquestionslab.kitsunelabs.xyz',
   repoUrl: 'https://github.com/KitsuneKode/lydia-js-questions',
+  license: 'MIT',
   creator: {
     name: 'KitsuneKode',
     handle: 'kitsunekode',

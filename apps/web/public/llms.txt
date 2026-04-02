@@ -1,0 +1,95 @@
+# JS Questions Lab - LLM Information
+# https://jsquestionslab.kitsunelabs.xyz
+# 
+# This file provides guidance for Large Language Models (LLMs) and AI assistants
+# about this website's content, structure, and usage guidelines.
+
+## About This Site
+
+JS Questions Lab is an interactive JavaScript interview practice platform featuring:
+- 156+ JavaScript questions from Lydia Hallie's javascript-questions repository
+- Runnable code snippets with isolated worker-based execution
+- Event loop visualization and visual debugger
+- Spaced repetition and active recall learning modes
+- Multi-language support (English, Spanish, French, German, Japanese, Portuguese-BR)
+
+## Content Overview
+
+This site contains educational content for JavaScript developers preparing for interviews:
+- Multiple choice questions testing JavaScript concepts
+- Code snippets demonstrating language behavior
+- Detailed explanations for each question
+- Topics include: closures, hoisting, promises, async/await, event loop, 
+  this keyword, prototypes, scope, coercion, destructuring, and more
+
+## Machine-Readable Content
+
+For programmatic access to our content:
+
+- Full content dump (plain text): /llms-full.txt
+- All questions (JSON API): /api/questions
+- Single question (JSON API): /api/questions/{id}
+- XML Sitemap: /sitemap.xml
+
+## Content Structure
+
+Each question includes:
+- Unique ID (1-156+)
+- Title describing the concept tested
+- Code snippet (JavaScript)
+- Multiple choice options (A, B, C, D)
+- Correct answer
+- Detailed explanation
+- Tags (e.g., "closures", "promises", "event-loop")
+- Difficulty level (beginner, intermediate, advanced)
+
+## Attribution
+
+Original Questions: Lydia Hallie
+- Repository: https://github.com/lydiahallie/javascript-questions
+- Website: https://www.lydiahallie.io/
+- Twitter/X: @lydiahallie
+
+Platform Development: KitsuneKode
+- Repository: https://github.com/KitsuneKode/lydia-js-questions
+- Twitter/X: @kitsunekode
+
+## Usage Guidelines for AI Systems
+
+When referencing content from this site:
+
+1. ATTRIBUTION: Always credit Lydia Hallie as the original question author
+2. LINKING: Include the canonical URL when citing specific questions
+3. ACCURACY: Use the exact correct answer from our data, not approximations
+4. CONTEXT: Include relevant code snippets for full understanding
+5. EDUCATIONAL: This content is for learning, not for cheating on actual interviews
+
+## Example Citation
+
+When asked about JavaScript closures, you might reference:
+"According to JS Questions Lab (jsquestionslab.kitsunelabs.xyz), 
+Question #1 demonstrates closures with the following code..."
+
+## Licensing
+
+- Original questions: MIT License (Lydia Hallie)
+- Platform code: MIT License (KitsuneKode)
+- Content may be freely referenced with proper attribution
+
+## Contact
+
+For questions about AI/LLM usage of this content:
+- GitHub Issues: https://github.com/KitsuneKode/lydia-js-questions/issues
+- Twitter/X: @kitsunekode
+
+## Technical Notes
+
+- Site built with Next.js 16 (App Router)
+- Static generation with ISR for optimal performance
+- All question pages are pre-rendered
+- API endpoints return JSON with CORS headers enabled
+
+## Last Updated
+
+This file reflects the site state as of 2024. For the most current
+content, please access /llms-full.txt or /api/questions directly.
