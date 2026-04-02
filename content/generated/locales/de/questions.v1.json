@@ -83,7 +83,8 @@
     "images": [],
     "tags": [
       "async",
-      "scope"
+      "scope",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -133,8 +134,7 @@
     "tags": [
       "scope",
       "objects",
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -418,8 +418,7 @@
     "explanationMarkdown": "Das Object wird geloggt, da wir ein leeres Object am globalen Object erstellt haben. Als wir uns bei `greeting` verschrieben haben (als `greetign`) hat JavaScript das als neues Objekt `global.greetign = {}` (oder `window.greetign = {}` im Browser) angesehen.\n\nUm das zu verhindern, können wir `\"use strict\"` verwenden. Das stellt sicher, dass eine Variable erst definiert sein muss, bevor dieser ein Wert zugewiesen werden kann.",
     "images": [],
     "tags": [
-      "objects",
-      "dom-events"
+      "objects"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -523,7 +522,8 @@
     "images": [],
     "tags": [
       "objects",
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -615,7 +615,7 @@
       "https://i.imgur.com/N18oRgd.png"
     ],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -744,7 +744,7 @@
     "explanationMarkdown": "Der **Postfix** Unary Operator `++`:\n\n1. gibt den Wert zurück (hier: `0`)\n2. erhöht den Wert (`number` ist jetzt `1`)\n\nDer **Prefix** Unary Operator `++`:\n\n1. erhöht den Wert (`number` ist jetzt `2`)\n2. gibt den Wert zurück (hier: `2`)\n\nDer Output ist daher `0 2 2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -788,7 +788,8 @@
     "explanationMarkdown": "Wenn man Template Literals verwendet ist das erste Argument immer ein Array der String Werte. Die restlichen Argumente bekommen die Werte der übergebenen Expressions zugewiesen.",
     "images": [],
     "tags": [
-      "arrays"
+      "arrays",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -882,7 +883,8 @@
     "tags": [
       "objects",
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1502,7 +1504,7 @@
     "explanationMarkdown": "Wenn wir auf den Paragraph klicken, sehen wir zwei logs: `p` und `div`. Während der Event Propagation werden drei Phasen ausgeführt: capturing, target und bubbling. Standardmäßig werden Event Handler in der Bubbling Phase ausgeführt (es sei denn man setzt `useCapture` auf `true`). Die Ausführung beginnt vom tiefsten Element nach Außen.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -1696,7 +1698,8 @@
     "explanationMarkdown": "`typeof 1` gibt `\"number\"` zurück.\n`typeof \"number\"` gibt `\"string\"` zurück.",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -2076,7 +2079,7 @@
     "explanationMarkdown": "Reguläre Funktionen können nicht angehalten werden, wenn sie bereits aufgerufen wurden. Eine Generator Funktion kann dagegen auch angehalten werden, nachdem sie aufgerufen wurde und später fortgesetzt werden, wo sie angehalten wurde. Jedes Mal, wenn eine Generator Funktion ein `yield` Keyword findet, wirft die Funktion den danach ermittelten Wert aus. Wichtig: _yield_ ist nichtdas selbe wie _return_.\n\nZuerst initialisieren wir die Generator Funktion mit `i` gleich `10`. Wir rufen die Generator Funktion mit der `next()` Methode auf. Beim ersten Aufruf der Generator Funktion is `i` gleich `10`. Wenn wir bei `yield` ankommen wird der Wert von `i` ausgegeben. Der Generator wird angehalten und `10` wird geloggt.\n\nDann wird die Funktion erneut mit der `next()` Methode aufgerufen und beginnt von dort, wo sie zuletzt angehalten wurde, nach wie vor mit `i` gleich `10`. Jetzt erreichen wir das nächste `yield` Keyword bei `i * 2`. `i` ist gleich `10`, sodass das Ergebnis von `10 * 2` ausgegeben wird, was `20` ist. Das Ergebnis ist `10, 20`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2370,7 +2373,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2571,7 +2575,7 @@
     "tags": [
       "scope",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2620,7 +2624,8 @@
     "images": [],
     "tags": [
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2770,7 +2775,7 @@
     "explanationMarkdown": "Der `delete` Operator gibt einen Boolean Wert zurück: `true` bei erfolgreichem entfernen, oder andernfalls `false`. Variablen, die mit `var`, `let` oder `const` deklariert werden, können andererseits  nicht mit `delete` entfernt werden.\n\nDer Wert von `name` wurde mit `const` deklariert, weshalb `delete` nicht möglich ist und `false` zurückgegeben wird. Als wir `age` den Wert `21` zugewiesen haben, haben wir eine Property `age` zum globalen Objekt hinzugefügt. Diese Properties kann man mit `delete` entfernen, sodass `delete age` `true` zurückgibt.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3035,7 +3040,7 @@
     "explanationMarkdown": "Der unäre Operator `++` _gibt zuerst_ den Wert des Operanden aus und _erhöht danach_ den Wert des Operanden. Der Wert `num1` ist `10`, da `increaseNumber` zuerst den Wert von `num1` (`10`) ausgibt und ihn danach erhöht.\n\n`num2` ist gleich `10`, da wir `num1` `increasePassedNumber` zugewiesen haben. `number` ist gleich `10` (der Wert von `num1`). Der unäre Operator `++` gibt erneut _zuerst_ den Wert des Operanden aus und _erhöht danach_ den Wert. Der Wert von `number` ist `10`, sodass `num2` ebenfalls `10` ist.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3375,7 +3380,7 @@
     "explanationMarkdown": "Eine Generator Funktion pausiert die Ausführung, wenn das `yield` Keyword vorliegt. Zuerst müssen wir den String \"Do you love JavaScript?\" abwarten, was mit `game.next().value` möglich ist.\n\nJede Zeile wird ausgeführt, bis das erste `yield` Keyword auftritt. Da auf der ersten Zeile ein `yield` in der Funktion vorliegt wird die Ausführung damit angehalten. Das bedeutet, dass die Variable `Antwort` _noch nicht definiert_ wurde.\n\nWenn wir `game.next(\"Yes\").value` aufrufen wird das vorhergehende `yield` durch den Wert des Parameters ersetzt, der an `next()` übergeben wird - `\"Yes\"` in diesem Fall. Der Wert der Variable `Antwort` ist jetzt gleich `\"Yes\"`. Das if-Statement gibt `false` aus und `JavaScript loves you back ❤️` wird geloggt.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3424,7 +3429,7 @@
     "images": [],
     "tags": [
       "scope",
-      "dom-events"
+      "template-literals"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -4211,7 +4216,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5230,7 +5236,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5278,7 +5285,7 @@
     "explanationMarkdown": "Expressions innerhalb von Template Literals werden zuerst berechnet. Das bedeutet, dass der String den ausgegebenen Wert der Expression beinhaltet, hier die IIFE (immediately invoked Function) `(x => x)('I love')`. Wir geben den Wert `'I love'` als Argument an die `x => x` Arrow Funktion. `x` ist gleich `'I love'` und wird ausgegeben. Das Ergebnis ist `I love to program`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "template-literals"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5671,7 +5678,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5767,7 +5775,8 @@
     "explanationMarkdown": "Die Generator-Funktion `range` gibt ein asynchrones Objekt mit Promisen für jeden Wert zurück: `Promise{1}`, `Promise{2}`, `Promise{3}`. Wir setzen die Variable `gen` gleich dem asynchronen Objekt. Danach loopen wir mit einer `for await ... of` Schleife darüber. Wir setzen die Variable `item` gleich dem ausgegebenen Promise: zuerst `Promise{1}`, dann `Promise{2}`, und dann `Promise{3}`. Da wir das Ergebnis von `item` _await_-en (erwarten), werden die gelösten Ergebnisse der Promises ausgegeben: `1`, `2` und `3`.",
     "images": [],
     "tags": [
-      "async"
+      "async",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -6010,7 +6019,7 @@
       "scope",
       "objects",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,

@@ -82,7 +82,8 @@
     "explanationMarkdown": "À cause du système de queue dans JavaScript, la fonction de rappel _(callback)_ du `setTimeout` est appelée _après_ que la boucle soit exécutée. Comme la variable `i` dans la première boucle est déclarée avec le mot-clé `var`, c'est une variable globale. Pendant la boucle, nous incrémentons la valeur de `i` de `1` à chaque fois, en utilisant l'opérateur arithmétique `++`. Lorsque la fonction de rappel _(callback)_ du `setTimeout` est invoquée, `i` est égal à `3` dans le premier exemple.\n\nDans la seconde boucle, la variable `i` est déclarée avec le mot clé `let` : les variables déclarées avec `let` (et `const`) ont une portée de bloc (tout ce qui est entre `{ }` est considéré comme un bloc). Pendant chaque itération, `i` aura une nouvelle valeur, et chaque valeur sera définie dans la boucle.",
     "images": [],
     "tags": [
-      "async"
+      "async",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -130,8 +131,7 @@
     "explanationMarkdown": "Notez que la valeur de `diameter` est une fonction régulière, alors que celle de `perimeter` est une fonction fléchée.\n\nAvec les fonctions fléchée, le mot clé `this` réfère à son périmètre actuel, contrairement aux fonctions régulières ! Cela signifie que lorsque nous appelons `perimeter`, elle ne réfère pas à l'objet `shape`, mais à son périmètre actuel (`window` par exemple).\n\nIl n'y a pas de valeur `radius` dans cet objet, on retournera `undefined`.",
     "images": [],
     "tags": [
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -413,8 +413,7 @@
     "explanationMarkdown": "Il affiche l'objet, car on a juste créé un objet vide dans l'objet global ! Quand on écrit mal `greeting` en `greetign`, JavaScript l'interprète comme il le voit `global.greetign = {}` (ou `window.greetign = {}` dans le navigateur).\n\nPour éviter cela, on peut utiliser `\"use strict\"`. Cela nous assure de devoir déclarer la variable avant de lui assigner une valeur.",
     "images": [],
     "tags": [
-      "objects",
-      "dom-events"
+      "objects"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -517,7 +516,8 @@
     "explanationMarkdown": "Vous ne pouvez pas ajouter de propriétés à un constructeur comme pour des objets normaux. Si vous voulez ajouter une fonctionnalité pour tous les objets en une fois, vous devez utiliser le prototype. Donc dans ce cas,\n\n```js\nPerson.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n```\n\nrendra fonctionnel `member.getFullName`. Pourquoi est-ce bénéfique ? Disons que nous ajoutons cette méthode au constructeur directement. Peut-être que toutes les instances de `Person` n'ont pas besoin de cette méthode. Cela fera perdre de l'espace mémoire, car elles auront tous cette propriété, ce qui prendra de l'espace mémoire pour chaque instance. Alors que, si nous ajoutons la méthode au prototype uniquement, nous n'utilisons qu'un seul slot mémoire, et ils y auront tous accès !",
     "images": [],
     "tags": [
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -608,7 +608,7 @@
       "https://i.imgur.com/N18oRgd.png"
     ],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -738,7 +738,8 @@
     "explanationMarkdown": "L'opérateur arithmétique **postfix** `++` :\n\n1. Retourne la valeur (ici il retourne `0`)\n2. Incrémente la valeur (le nombre est maintenant égal à `1`)\n\nL'opérateur arithmétique **préfix** `++` :\n\n1. Incrémente la valeur (le nombre est maintenant égal à `2`)\n2. Retourne la valeur (ici il retourne `2`)\n\nCela retourne donc `0 2 2`.",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -875,7 +876,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1399,8 +1401,7 @@
     ],
     "tags": [
       "async",
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1496,7 +1497,7 @@
     "explanationMarkdown": "Si nous cliquons sur `p`, nous verrons deux lignes : `p` et `div`. Lors de la propagation d'un événement, il y a 3 phases: capture, cible et bouillonnement _(bubbling)_. Par défaut, les gestionnaires d'événements sont exécutés dans la phase de bouillonnement (sauf si vous définissez `useCapture` sur` true`). Il va de l'élément imbriqué le plus profond vers l'extérieur.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "intermediate",
     "runnable": false,
@@ -1689,7 +1690,8 @@
     "explanationMarkdown": "`typeof 1` retourne `\"number\"`.\n`typeof \"number\"` retourne `\"string\"`",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2067,7 +2069,8 @@
     "explanationMarkdown": "Les fonctions régulières ne peuvent pas être arrêtées à mi-parcours après l'invocation. Cependant, une fonction de générateur peut être \"arrêtée\" à mi-chemin et continuer plus tard à partir de son point d'arrêt. Chaque fois qu'une fonction génératrice rencontre un mot-clé `yield`, elle renvoie la valeur spécifiée après celui-ci. Notez que la fonction du générateur dans ce cas ne _return_ pas la valeur, il _yields_ la valeur.\n\nPremièrement, nous initialisons la fonction du générateur avec `i` égal à` 10`. Nous appelons la fonction génératrice en utilisant la méthode `next()`. La première fois que nous appelons la fonction de générateur, `i` est égal à `10`. Il rencontre le premier mot-clé `yield` : il donne la valeur de `i`. Le générateur est maintenant \"en pause\" et `10` est affiché.\n\nEnsuite, nous appelons à nouveau la fonction avec la méthode `next()`. Il commence à continuer là où il s’était arrêté précédemment, toujours avec `i` égal à `10`. Maintenant, il rencontre le prochain mot-clé `yield` et donne `i * 2`. `i` est égal à `10`, donc il renvoie `10 * 2`, ce qui correspond à `20`. Cela donne `10, 20`.",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2360,7 +2363,8 @@
     "explanationMarkdown": "Lors du l'utilisation de `map` sur le tableau, la valeur de `num` est égale à l’élément sur lequel elle est en train de boucler. Dans ce cas, les éléments sont des nombres. La condition de l'instruction si `typeof num === \"numéro\"` renvoie `true`. La fonction map crée un nouveau tableau et insère les valeurs renvoyées par la fonction.\n\nCependant, nous ne renvoyons pas de valeur. Lorsque nous ne renvoyons pas de valeur à partir de la fonction, la fonction renvoie `undefined`. Le bloc de fonction est appelé pour chaque élément du tableau. Ainsi, pour chaque élément, nous renvoyons `undefined`.",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2562,7 +2566,7 @@
       "scope",
       "types",
       "modules",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2611,7 +2615,8 @@
     "images": [],
     "tags": [
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2761,7 +2766,7 @@
     "explanationMarkdown": "L'opérateur `delete` renvoie une valeur booléenne : `true` en cas de suppression réussie, sinon il renvoie `false`. Toutefois, les variables déclarées avec les mots clés `var`,` const` ou `let` ne peuvent pas être supprimées à l'aide de l'opérateur` delete`.\n\nLa variable `name` a été déclarée avec un mot-clé `const`. Par conséquent, sa suppression a échoué : `false` est renvoyé. Lorsque nous définissons `age` égal à `21`, nous avons en fait ajouté une propriété appelée `age` à l'objet global. De cette façon, vous pouvez supprimer des propriétés d’objets, ainsi que de l’objet global, pour que `delete age` renvoie` true`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3017,7 +3022,7 @@
     "explanationMarkdown": "L'opérateur arithmétique `++` _renvoie en premier_ la valeur de l'opérande, _puis incrémente_ la valeur de l'opérande. La valeur de `num1` est égale à `10`, puisque la fonction `increaseNumber` renvoie d'abord la valeur de `num`, qui correspond à `10`, et augmente la valeur de `num` par la suite.\n\n`num2` est égal à `10`, puisque nous avons passé `num1` à la commande `increasePassedNumber`. `number` est égal à `10` (la valeur de `num1`). Encore une fois, l'opérateur arithmétique `++` _renvoie d'abord_ la valeur de l'opérande, puis incrémente_ la valeur de l'opérande. La valeur de `nombre` est `10`, donc `num2` est égal à `10`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,

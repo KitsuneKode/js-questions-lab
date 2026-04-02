@@ -21,12 +21,14 @@
   "tags": [
     "arrays",
     "async",
-    "dom-events",
     "fundamentals",
+    "generators",
     "modules",
     "objects",
+    "operators",
     "prototypes",
     "scope",
+    "template-literals",
     "types"
   ],
   "translations": [],
