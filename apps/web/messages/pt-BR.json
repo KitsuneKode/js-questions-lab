@@ -5,7 +5,8 @@
     "about": "Sobre",
     "credits": "Créditos",
     "scratchpad": "Rascunho",
-    "language": "Idioma"
+    "language": "Idioma",
+    "contact": "Contato"
   },
   "questions": {
     "title": "Biblioteca de perguntas",
@@ -158,5 +159,9 @@
     "resources": "Recursos",
     "projectRepo": "Repositório do projeto",
     "lydiaRepo": "Repo original da Lydia"
+  },
+  "contact": {
+    "title": "Contate-nos",
+    "description": "Tem dúvidas sobre o JS Questions Lab? Interessado em patrocínios ou colaborações? Entre em contato."
   }
 }

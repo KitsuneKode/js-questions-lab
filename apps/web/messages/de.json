@@ -5,7 +5,8 @@
     "about": "Über uns",
     "credits": "Mitwirkende",
     "scratchpad": "Notizblock",
-    "language": "Sprache"
+    "language": "Sprache",
+    "contact": "Kontakt"
   },
   "questions": {
     "title": "Fragenbibliothek",
@@ -158,5 +159,9 @@
     "resources": "Ressourcen",
     "projectRepo": "Projekt-Repository",
     "lydiaRepo": "Lydias Original-Repo"
+  },
+  "contact": {
+    "title": "Kontaktiere uns",
+    "description": "Haben Sie Fragen zum JS Questions Lab? Interessiert an Sponsoring oder Zusammenarbeit? Kontaktieren Sie uns."
   }
 }

@@ -5,7 +5,8 @@
     "about": "について",
     "credits": "クレジット",
     "scratchpad": "スクラッチパッド",
-    "language": "言語"
+    "language": "言語",
+    "contact": "お問い合わせ"
   },
   "questions": {
     "title": "問題ライブラリ",
@@ -158,5 +159,9 @@
     "resources": "リソース",
     "projectRepo": "プロジェクトリポジトリ",
     "lydiaRepo": "Lydiaのオリジナルリポジトリ"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "description": "JS Questions Labについてご質問がありますか？スポンサーシップやコラボレーションに興味がありますか？お気軽にお問い合わせください。"
   }
 }

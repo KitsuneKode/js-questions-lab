@@ -54,24 +54,26 @@ export default function Contact() {
   }
 
   return (
-    <section className="bg-background @container py-24 relative overflow-hidden">
+    <section className="@container relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="relative mx-auto max-w-4xl px-6">
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-2">
-            <IconMailFilled className="h-3.5 w-3.5" />
-            Contact
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <header className="mb-12 space-y-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+            <span className="uppercase tracking-widest font-bold flex items-center gap-2">
+              <IconMailFilled className="h-3 w-3" />
+              Contact
+            </span>
           </div>
-          <h1 className="text-balance font-display text-4xl font-bold sm:text-5xl md:text-6xl text-foreground tracking-tight">
+          <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
             Let's build <span className="text-primary">something</span> together.
           </h1>
-          <p className="text-muted-foreground mx-auto max-w-lg text-balance text-lg">
+          <p className="max-w-2xl text-lg leading-relaxed text-secondary">
             Have questions about the platform? Interested in sponsorships or collaborations? Reach
             out and I'll get back to you.
           </p>
-        </div>
+        </header>
 
         <div className="@xl:grid-cols-12 grid gap-10 items-start">
           {/* Contact Info Sidebar */}
