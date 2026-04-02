@@ -82,7 +82,8 @@
     "explanationMarkdown": "JavaScriptのイベントキューのため、`setTimeout`コールバック関数はループが実行された後に呼び出されます。最初のループの変数 `i`は`var`キーワードを使って宣言されているので、この値はグローバル変数となります。ループの間、単項演算子 `++`を使用して、毎回 `i`の値を`1`ずつインクリメントしました。 最初の例では `setTimeout`コールバック関数が呼び出されるまでに`i`は`3`となりました。\n\n2番目のループでは、変数 `i`が `let`キーワードを使って宣言されました。 `let`（または`const`）キーワードで宣言された変数はブロックスコープです（ブロックは `{}`の間のものです）。それぞれの繰り返しの間、 `i`は新しい値を持ち、それぞれの値はループの内側にあります。",
     "images": [],
     "tags": [
-      "async"
+      "async",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -130,8 +131,7 @@
     "explanationMarkdown": "`diameter`の値は正則関数であり、`perimeter`の値はアロー関数です。\n\nアロー関数では、`this`キーワードは通常の関数とは異なり、現在の周囲の範囲を参照します。これは、`perimeter`関数を呼ぶと、shapeオブジェクトではなく、その周囲の範囲（例えば window）を参照することを意味します。\n\nそのオブジェクトには`radius`という値はなく、`undefined`を返します。",
     "images": [],
     "tags": [
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -413,7 +413,7 @@
     "explanationMarkdown": "グローバルオブジェクトに、空のオブジェクトを作成したばかりなので、オブジェクトはログ出力されます。`greeting`を`greetign`と誤って入力した場合、JSインタプリタは実際にこれを `global.greetign = {}`（またはブラウザの `window.greetign = {}`）と見なします。\n\nこれを避けるために、\"use strict\"を使用する事ができます。これにより、変数を何かに設定する前に、変数宣言したことを確認できます。",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -516,7 +516,8 @@
     "explanationMarkdown": "通常のオブジェクトのようにコンストラクタにプロパティを追加することはできません。一度にすべてのオブジェクトに機能を追加したい場合は、代わりにプロトタイプを使用する必要があります。だからこの場合は、\n\n```js\nPerson.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n```\n\nで、`member.getFullName()`が、機能するはずです。これはなぜ有益なのでしょうか。例えば、このメソッドをコンストラクタ自体に追加したとします。すべての`Person`インスタンスがこのメソッドを必要としなかったのかもしれません。\n\nその場合、多くのメモリスペースを浪費する事でしょう。なぜならそれらはまだその特性を持ち、それは各インスタンスのためにメモリスペースを消費するからです。\n\nその代わりに、プロトタイプに追加するだけであれば、メモリ内の1箇所に配置するだけで、すべてのユーザーがアクセスできます。",
     "images": [],
     "tags": [
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -736,7 +737,7 @@
     "explanationMarkdown": "**接尾辞** 単項演算子 `++`：\n\n1.値を返す（これは`0`を返す）\n2.値を増やす（numberは現在`1`です）\n\n**接頭辞** 単項演算子 `++`：\n\n1.値を増やす（数値は2になります）\n2.値を返す（これは`2`を返します）\n\nこれは`0 2 2`を返します。",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -873,7 +874,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1403,8 +1405,7 @@
       "https://i.imgur.com/uyiScAI.png"
     ],
     "tags": [
-      "async",
-      "dom-events"
+      "async"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1645,7 +1646,8 @@
     "explanationMarkdown": "`typeof 1`は、`\"number\"`を返します。\n\n`typeof \"number\"`は、`\"string\"`を返します。",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2022,7 +2024,7 @@
     "explanationMarkdown": "通常の関数は、呼び出し後に途中で停止することはできません。ただし、ジェネレータ関数は途中で\"停止\"し、後で停止した場所から続行することができます。\n\nジェネレータ関数が`yield`キーワードを見つけるたびに、その関数はその後に指定された値を返します。その場合のジェネレータ関数は、値を\"返す\"わけではないことに注意してください。値を生み出しています。\n\nまず、`i`に`10`を指定してジェネレータ関数を初期化します。次に`next()`メソッドを使用してジェネレータ関数を呼び出します。\n\n最初にジェネレータ関数を呼び出すと、`i`は`10`になり、最初の`yield`キーワードに遭遇します。そこから`i`の値が得られます。ジェネレータは\"一時停止\"され、`10`がログ出力されます。\n\nそれから、`next()`メソッドを使って関数を再度呼び出します。依然として`i`は`10`のまま、以前に停止したところから継続し始めます。\n\nそれから次の`yield`キーワードに遭遇し、そこから`i * 2`の値が得られます。`i`は`10`のままなので、`10 * 2`、つまり`20`を返します。なので、`10、20`が返る事になります。",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2314,7 +2316,8 @@
     "explanationMarkdown": "配列をマッピングするとき、`num`の値に代入されるのは、ループで渡ってくる要素となります。この場合、要素は数値なので、ifステートメント `typeof num === \"number\"`の条件は`true`を返します。 map関数は新しい配列を作成して関数から返された値を挿入します。\n\nただし、値は返されません。関数から値を返さないと、関数は`undefined`を返します。配列内のすべての要素に対して関数ブロックが呼び出されるので、各要素に対して`undefined`を返します。",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2521,7 +2524,7 @@
     "tags": [
       "scope",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2671,7 +2674,7 @@
     "explanationMarkdown": "`delete`演算子は、ブール値を返します: 正常に削除された場合はtrue、それ以外の場合はfalseを返します。`var`, `const`または`let`キーワードで宣言された変数は`delete`演算子を使って削除することはできません。\n\n`name`変数は`const`キーワードで宣言されているので、削除は成功しません: `false`が返されます。 \n\n`age`を`21`に設定すると、実際にはグローバルオブジェクトに`age`というプロパティを追加されました。グローバルオブジェクトからもプロパティを削除することができますので、`delete age`は`true`を返します。",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2928,7 +2931,7 @@
     "explanationMarkdown": "単項演算子`++`はオペランドの値を _最初に返し_ 、_その後に インクリメント_ します。`num1`の値は`10`となります。 なぜなら`incrementNumber`関数は、最初に`num`の値`10`を返し、その後に`num`の値をインクリメントするだけです。\n\n`num1`を`increPassedNumber`に渡したので、`num2`は`10`です。`number`は`10`（`num1`の値です。繰り返しますが、単項演算子`++`は、オペランドの値を _最初に返し_、_その後に インクリメント_ します。したがって、`num2`は`10`となります。",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3273,7 +3276,7 @@
     "explanationMarkdown": "ジェネレータ関数は、`yield`キーワードを見るとその実行を「一時停止」します。まず、関数に文字列 \"Do you love JavaScript?\" を返させる必要があります。これは `game.next().value`を呼び出すことによって行うことができます。\n\n最初の`yield`キーワードが見つかるまで、すべての行が実行されます。関数内の最初の行に`yield`キーワードがあります: 実行は最初のyieldで停止します！ _これは変数 `answer`がまだ定義されていないことを意味します！_\n\n`game.next(\"Yes\").value`を呼び出すと、前の`yield`は`next()`関数に渡されたパラメータの値、この場合は`\"Yes\"`に置き換えられます。変数`answer`の値は現在`\"Yes\"`となります。 \n\nif-statemnetの条件は`false`を返し、`JavaScript loves you back ❤️`が、出力されます。",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3322,7 +3325,7 @@
     "images": [],
     "tags": [
       "scope",
-      "dom-events"
+      "template-literals"
     ],
     "difficulty": "advanced",
     "runnable": true,

@@ -83,7 +83,8 @@
     "images": [],
     "tags": [
       "async",
-      "scope"
+      "scope",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -133,8 +134,7 @@
     "tags": [
       "scope",
       "objects",
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -178,7 +178,8 @@
     "explanationMarkdown": "The unary plus tries to convert an operand to a number. `true` is `1`, and `false` is `0`.\n\nThe string `'Lydia'` is a truthy value. What we're actually asking, is \"Is this truthy value falsy?\". This returns `false`.",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -419,7 +420,7 @@
     "images": [],
     "tags": [
       "objects",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -523,7 +524,8 @@
     "images": [],
     "tags": [
       "objects",
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -615,7 +617,7 @@
       "https://i.imgur.com/N18oRgd.png"
     ],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -746,7 +748,7 @@
     "explanationMarkdown": "The **postfix** unary operator `++`:\n\n1. Returns the value (this returns `0`)\n2. Increments the value (number is now `1`)\n\nThe **prefix** unary operator `++`:\n\n1. Increments the value (number is now `2`)\n2. Returns the value (this returns `2`)\n\nThis returns `0 2 2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -790,7 +792,8 @@
     "explanationMarkdown": "If you use tagged template literals, the value of the first argument is always an array of the string values. The remaining arguments get the values of the passed expressions!",
     "images": [],
     "tags": [
-      "arrays"
+      "arrays",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -884,7 +887,8 @@
     "tags": [
       "objects",
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1408,8 +1412,7 @@
       "https://i.imgur.com/uyiScAI.png"
     ],
     "tags": [
-      "async",
-      "dom-events"
+      "async"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1505,7 +1508,7 @@
     "explanationMarkdown": "If we click `p`, we see two logs: `p` and `div`. During event propagation, there are 3 phases: capturing, targeting, and bubbling. By default, event handlers are executed in the bubbling phase (unless you set `useCapture` to `true`). It goes from the deepest nested element outwards.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -1602,7 +1605,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1699,7 +1703,8 @@
     "explanationMarkdown": "`typeof 1` returns `\"number\"`.\n`typeof \"number\"` returns `\"string\"`",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -2080,7 +2085,7 @@
     "explanationMarkdown": "Regular functions cannot be stopped mid-way after invocation. However, a generator function can be \"stopped\" midway, and later continue from where it stopped. Every time a generator function encounters a `yield` keyword, the function yields the value specified after it. Note that the generator function in that case doesn’t _return_ the value, it _yields_ the value.\n\nFirst, we initialize the generator function with `i` equal to `10`. We invoke the generator function using the `next()` method. The first time we invoke the generator function, `i` is equal to `10`. It encounters the first `yield` keyword: it yields the value of `i`. The generator is now \"paused\", and `10` gets logged.\n\nThen, we invoke the function again with the `next()` method. It starts to continue where it stopped previously, still with `i` equal to `10`. Now, it encounters the next `yield` keyword, and yields `i * 2`. `i` is equal to `10`, so it returns `10 * 2`, which is `20`. This results in `10, 20`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -2376,7 +2381,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -2579,7 +2585,7 @@
       "scope",
       "objects",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2629,7 +2635,8 @@
     "tags": [
       "objects",
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2779,7 +2786,8 @@
     "explanationMarkdown": "The `delete` operator returns a boolean value: `true` on a successful deletion, else it'll return `false`. However, variables declared with the `var`, `const`, or `let` keywords cannot be deleted using the `delete` operator.\n\nThe `name` variable was declared with a `const` keyword, so its deletion is not successful: `false` is returned. When we set `age` equal to `21`, we actually added a property called `age` to the global object. You can successfully delete properties from objects this way, also the global object, so `delete age` returns `true`.",
     "images": [],
     "tags": [
-      "objects"
+      "objects",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3038,7 +3046,7 @@
     "explanationMarkdown": "The unary operator `++` _first returns_ the value of the operand, _then increments_ the value of the operand. The value of `num1` is `10`, since the `increaseNumber` function first returns the value of `num`, which is `10`, and only increments the value of `num` afterward.\n\n`num2` is `10`, since we passed `num1` to the `increasePassedNumber`. `number` is equal to `10`(the value of `num1`). Again, the unary operator `++` _first returns_ the value of the operand, _then increments_ the value of the operand. The value of `number` is `10`, so `num2` is equal to `10`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3426,7 +3434,8 @@
     "explanationMarkdown": "A generator function \"pauses\" its execution when it sees the `yield` keyword. First, we have to let the function yield the string \"Do you love JavaScript?\", which can be done by calling `game.next().value`.\n\nEvery line is executed, until it finds the first `yield` keyword. There is a `yield` keyword on the first line within the function: the execution stops with the first yield! _This means that the variable `answer` is not defined yet!_\n\nWhen we call `game.next(\"Yes\").value`, the previous `yield` is replaced with the value of the parameters passed to the `next()` function, `\"Yes\"` in this case. The value of the variable `answer` is now equal to `\"Yes\"`. The condition of the if-statement returns `false`, and `JavaScript loves you back ❤️` gets logged.",
     "images": [],
     "tags": [
-      "scope"
+      "scope",
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3475,7 +3484,7 @@
     "images": [],
     "tags": [
       "scope",
-      "dom-events"
+      "template-literals"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3690,7 +3699,7 @@
       "scope",
       "objects",
       "arrays",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3973,7 +3982,8 @@
     "images": [],
     "tags": [
       "async",
-      "objects"
+      "objects",
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -4370,7 +4380,8 @@
     "tags": [
       "objects",
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -5478,7 +5489,8 @@
     "tags": [
       "objects",
       "arrays",
-      "types"
+      "types",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5526,7 +5538,7 @@
     "explanationMarkdown": "Expressions within template literals are evaluated first. This means that the string will contain the returned value of the expression, the immediately invoked function `(x => x)('I love')` in this case. We pass the value `'I love'` as an argument to the `x => x` arrow function. `x` is equal to `'I love'`, which gets returned. This results in `I love to program`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "template-literals"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5963,7 +5975,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -6060,7 +6073,8 @@
     "images": [],
     "tags": [
       "async",
-      "objects"
+      "objects",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -6305,7 +6319,7 @@
       "scope",
       "objects",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -6858,7 +6872,8 @@
     "images": [],
     "tags": [
       "objects",
-      "arrays"
+      "arrays",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -7052,7 +7067,8 @@
     "images": [],
     "tags": [
       "objects",
-      "arrays"
+      "arrays",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -7588,7 +7604,7 @@
     "images": [],
     "tags": [
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,

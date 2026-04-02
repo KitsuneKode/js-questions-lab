@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 import { Container } from '@/components/container';
@@ -9,6 +10,8 @@ import { getManifest, getQuestions } from '@/lib/content/loaders';
 import { applyServerFilters, parseQuestionScope } from '@/lib/content/query';
 import { FilterPendingProvider } from '@/lib/filters/filter-pending-context';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
+import { siteConfig } from '@/lib/site-config';
 
 const PAGE_SIZE = 18;
 
@@ -16,6 +19,34 @@ type SearchParams = Record<string, string | string[] | undefined>;
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: LocaleCode }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'questions' });
+  const canonicalUrl = getCanonicalUrl(locale, 'questions');
+  const alternateLanguages = getAlternateLanguages('questions');
+
+  return {
+    title: `${t('title')} | ${siteConfig.name}`,
+    description: t('description'),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: alternateLanguages,
+    },
+    openGraph: {
+      title: `${t('title')} | ${siteConfig.name}`,
+      description: t('description'),
+      url: canonicalUrl,
+      siteName: siteConfig.name,
+      locale: locale,
+      type: 'website',
+    },
+  };
 }
 
 export default async function QuestionsPage({

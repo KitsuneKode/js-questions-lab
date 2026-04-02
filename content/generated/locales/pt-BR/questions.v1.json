@@ -82,7 +82,8 @@
     "explanationMarkdown": "Por causa da fila de eventos em JavaScript, a callback de `setTimeout` é chamada <i>depois</i> do laço ter sido executado. Já que a variável `i` no primeiro laço foi declarada usando a palavra-chave `var`, seu valor era global. Durante o laço, incrementamos o valor de `i` por `1` em cada repetição, usando o operador unário `++`. Quando a callback de `setTimeout` foi chamada, `i` valia `3`.\n\nNo segundo laço, a variável `i` foi declarada usando a palavra-chave `let`: Variáveis declaradas com `let` (e `const`) só são acessíveis nos escopos de seus blocos (um bloco é qualquer código entre `{ }`). Durante cada repetição do laço, `i` vai ter um novo valor, e cada valor tem seu escopo dentro do laço.",
     "images": [],
     "tags": [
-      "async"
+      "async",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -130,8 +131,7 @@
     "explanationMarkdown": "Perceba que o valor de `diameter` é uma função normal, enquanto que o valor de `perimeter` é uma arrow function.\n\nCom arrow functions, a palavra-chave `this` faz referência ao escopo atual em que está inserida, diferente de funções normais! Isso significa que quando nós chamamos `perimeter`, ela não faz referência ao objeto <i>shape</i>, mas ao seu escopo atual (por exemplo, <i>window</i>).\n\nNão há `radius` fora de <i>shape</i>, então retorna `undefined`.",
     "images": [],
     "tags": [
-      "types",
-      "dom-events"
+      "types"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -413,7 +413,7 @@
     "explanationMarkdown": "Cria o log do objeto, pois criamos um objeto vazio no objeto global! Quando erramos a digitação de `greeting` como `greetign`, o interpretador do JavaScript viu isso como `global.greetign = {}` (ou `window.greetign = {}` em um navegador).\n\nPara evitar esse comportamento, podemos usar `\"use strict\"`. Isso garante que você  tenha declarado uma variável antes de poder inicializá-la com algum valor.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -516,7 +516,8 @@
     "explanationMarkdown": "Você não pode adicionar propriedades para um construtor igual aos objetos normais. Se você quer adicionar uma funcionalidade para todos objetos ao mesmo tempo, você deve usar o prototype.\n\nEntão nesse caso\n\n```js\nPerson.prototype.getFullName = function() {\n  return `${this.firstName} ${this.lastName}`;\n};\n```\n\nfaria `member.getFullName()` funcionar. Por quê isso é beneficial? Digamos que tivéssemos esse método no próprio construtor. Talvez nem toda instância de `Person` precisasse desse método. Isso gastaria muita memória, uma vez que cada instância teria esse propriedade e teria seu espaço alocado. Ao invés disso, se adicionarmos somente ao protótipo, alocamos somente um único espaço na memória, e todas instâncias de `Person` ainda tem acesso ao método.",
     "images": [],
     "tags": [
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -607,7 +608,7 @@
       "https://i.imgur.com/N18oRgd.png"
     ],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -736,7 +737,7 @@
     "explanationMarkdown": "O operador unário no **sufixo**  `++`:\n\n1. Retorna o valor (retorna o valor `0`)\n2. Incrementa o valor (numero agora é `1`)\n\nO operador unário **prefixo** `++`:\n\n1. Incrementa o valor (numero agora é `2`)\n2. Retorna o valor (Retorna o valor `2`)\n\nIsso retorna `0 2 2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -780,7 +781,8 @@
     "explanationMarkdown": "Se usamos template literals marcadas, ou tagged template literals, o valor do primeiro argumento é sempre um array com a string, separada pelos tagged template liberals. Os argumentos restantes recebem os valores das expressões passadas!",
     "images": [],
     "tags": [
-      "arrays"
+      "arrays",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -874,7 +876,8 @@
     "tags": [
       "objects",
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1397,8 +1400,7 @@
       "https://i.imgur.com/uyiScAI.png"
     ],
     "tags": [
-      "async",
-      "dom-events"
+      "async"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -1494,7 +1496,7 @@
     "explanationMarkdown": "Se clicarmos em `p`, veremos dois itens adicionaos ao log: `p` e `div`. Durante a propagação de eventos, existem 3 fases: capturar, adquirir o _target_, e o bubbling. Por padrão, manipuladores de eventos são executados junto a fase de bubbling (a não ser que você marque `useCapture` como `true`). Percorre do elemento aninhando mais interno, propagando para fora.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "intermediate",
     "runnable": false,
@@ -1687,7 +1689,8 @@
     "explanationMarkdown": "`typeof 1` retorna `\"number\"`.\n`typeof \"number\"` retorna `\"string\"`",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2065,7 +2068,7 @@
     "explanationMarkdown": "Funções regulares não podem ser interrompidas durante execução após sua invocação. Entretanto, uma função generator pode ser interrompida, e depois continuar de onde parou. Uma função generator sempre possue a palavra chave `yield`, a função gera o valor específicado logo após. Note que a função generator, neste caso não retorna o valor, ele utiliza _yields_ no valor.\n\nPrimeiro, nós inicializamos a função generator com `i` igual a `10`. Nós chamamos a função generator utilizando o `next()` para próxima função. A primeira vez que executamos a função generator o `i` é igual a `10`. que possue a palavra chave `yield`: que atribue o yields ao valor de `i`. O generator é pausado e `10` é logado.\n\nEntão, chamamos a próxima função novamente com o `next()`. Que continua de onde foi interrompido anteirormente, ainda com `i` igual a `10`. Agora, ele encontra o próximo `yield`, e yields `i * 2`. `i` é igual a `10`, que então retorna `10 * 2`, que é `20`. Seu resultado é `10, 20`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2359,7 +2362,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2560,7 +2564,7 @@
     "tags": [
       "scope",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2609,7 +2613,8 @@
     "images": [],
     "tags": [
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -2759,7 +2764,7 @@
     "explanationMarkdown": "O operador `delete` retorna um valor booleano: `true` em uma exclusão bem-sucedida, caso contrário, ele retorna `false`. No entanto, variáveis declaradas com `var`, `const` ou `let` não podem ser excluídas usando o operador `delete`.\n\nA variável `name` foi declarada com `const`, portanto sua exclusão não é bem-sucedida: `false` é retornado. Quando definimos `age` igual a `21`, na verdade adicionamos uma propriedade chamada `age` para o objeto global. Dessa forma, você pode excluir propriedades dos objetos, portanto `delete age` returns `true`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3017,7 +3022,7 @@
     "explanationMarkdown": "O operador unário `++` primeiro _retorna_ o valor do operando, depois _incrementa_ esse valor. O valor de `num1` é `10`, pois a função `increaseNumber` retorna primeiro o valor de` num`, que é `10`, e apenas incrementa o valor de `num` posteriormente.\n\n`num2` é `10`, já que passamos `num1` para o `increasePassedNumber`. `number` é igual a` 10` (o valor de `num1`. Novamente, o operador unário `++` primeiro _retorna_ o valor do operando, depois _aumenta_ esse valor. O valor de` number` é `10`, então `num2` é igual a `10`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3405,7 +3410,7 @@
     "explanationMarkdown": "Uma função geradora \"pausa\" a sua execução quando encontra a palavra-chave `yield`. Primeiro, temos que deixar a função produzir a string \"Você ama JavaScript?\", o que pode ser feito chamando `jogo.next().value`.\n\nCada linha é executada, até encontrar a primeira palavra-chave `yield`. Há uma palavra-chave `yield` na primeira linha da função: a execução para com o primeiro retorno! _Isso significa que a variável `resposta` ainda não foi definida!_\n\nQuando chamamos `jogo.next(\"Sim\").value`, o `yield` anterior é substituído pelo valor dos parâmetros passados para a função `next()`, `\"Sim\"` neste caso. O valor da variável `\"resposta\"` agora é igual a `\"Sim\"`. A condição da instrução if retorna `false` e `JavaScript também ama você ❤️` é registrada.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -3454,7 +3459,7 @@
     "images": [],
     "tags": [
       "scope",
-      "dom-events"
+      "template-literals"
     ],
     "difficulty": "advanced",
     "runnable": true,

@@ -45,6 +45,18 @@
 - ✅ Sync status tracking and improved toast notifications
 - See `docs/supabase-clerk-setup.md` for implementation details
 
+### Completed (Track C - SEO & LLM Optimization)
+
+- ✅ Dynamic `robots.txt` with AI crawler permissions (GPTBot, Claude-Web, PerplexityBot)
+- ✅ Dynamic `sitemap.xml` with all locales × questions (~1000+ URLs)
+- ✅ JSON-LD structured data (FAQPage, LearningResource, Course, Quiz schemas)
+- ✅ Hreflang alternate links for 6 locales + x-default
+- ✅ Canonical URLs on all pages
+- ✅ `llms.txt` and `/llms-full.txt` for LLM content access
+- ✅ `/api/questions` JSON API for programmatic access
+- ✅ XSS-safe JSON-LD serialization per Next.js best practices
+- See `docs/seo-llm-guide.md` for implementation details
+
 ## Current Technical State
 
 ### Working
@@ -200,8 +212,16 @@ If changing content pipeline:
 - `apps/web/app/[locale]/questions/[id]/page.tsx`
 - `apps/web/components/ide/question-ide-client.tsx`
 - `apps/web/components/scratchpad/floating-scratchpad.tsx`
-
 - `apps/web/components/code-playground.tsx`
 - `apps/web/lib/run/sandbox.ts`
 - `apps/web/lib/run/terminal.ts`
 - `apps/web/lib/progress/progress-context.tsx`
+
+### SEO & LLM Files
+
+- `apps/web/app/robots.ts`
+- `apps/web/app/sitemap.ts`
+- `apps/web/public/llms.txt`
+- `apps/web/components/seo/site-json-ld.tsx`
+- `apps/web/components/seo/question-json-ld.tsx`
+- `apps/web/lib/seo/config.ts`

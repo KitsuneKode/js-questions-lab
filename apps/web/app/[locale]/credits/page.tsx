@@ -16,6 +16,7 @@ import { Container } from '@/components/container';
 import { getLocaleIndex, getManifest } from '@/lib/content/loaders';
 import { LOCALE_LABELS, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { withLocale } from '@/lib/locale-paths';
+import { getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
 export async function generateMetadata({
@@ -25,7 +26,29 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'credits' });
-  return { title: `${t('label')} — ${siteConfig.name}` };
+  const canonicalUrl = getCanonicalUrl(locale, 'credits');
+  const description =
+    t('description') ??
+    "Learn about the creators and contributors behind JS Questions Lab, including Lydia Hallie's original JavaScript questions.";
+
+  return {
+    title: `${t('label')} — ${siteConfig.name}`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: Object.fromEntries(
+        SUPPORTED_LOCALES.map((loc) => [loc, getCanonicalUrl(loc, 'credits')]),
+      ),
+    },
+    openGraph: {
+      title: `${t('label')} — ${siteConfig.name}`,
+      description,
+      url: canonicalUrl,
+      siteName: siteConfig.name,
+      locale: locale,
+      type: 'website',
+    },
+  };
 }
 
 export function generateStaticParams() {

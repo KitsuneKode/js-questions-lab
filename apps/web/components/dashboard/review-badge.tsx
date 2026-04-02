@@ -19,9 +19,9 @@ export function ReviewBadge({ className = '' }: ReviewBadgeProps) {
     if (!ready) return 0;
     const now = new Date();
     return Object.values(state.questions).filter((item) => {
-      const srs = (item as { srs?: { nextReviewDate?: string } }).srs;
-      if (!srs?.nextReviewDate) return false;
-      return new Date(srs.nextReviewDate) <= now;
+      const srsData = item.srsData;
+      if (!srsData?.nextReviewDate) return false;
+      return new Date(srsData.nextReviewDate).getTime() <= now.getTime();
     }).length;
   }, [ready, state]);
 

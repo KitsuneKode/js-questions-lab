@@ -1,4 +1,5 @@
 import { IconArrowRight } from '@tabler/icons-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
@@ -9,6 +10,8 @@ import { LandingSections } from '@/components/landing-sections';
 import { QuestionCard } from '@/components/question-card';
 import { getManifest, getQuestions } from '@/lib/content/loaders';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
+import { siteConfig } from '@/lib/site-config';
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
@@ -16,6 +19,30 @@ export function generateStaticParams() {
 
 interface HomePageProps {
   params: Promise<{ locale: LocaleCode }>;
+}
+
+export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'meta' });
+  const canonicalUrl = getCanonicalUrl(locale);
+  const alternateLanguages = getAlternateLanguages();
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: alternateLanguages,
+    },
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: canonicalUrl,
+      siteName: siteConfig.name,
+      locale: locale,
+      type: 'website',
+    },
+  };
 }
 
 export default async function HomePage({ params }: HomePageProps) {

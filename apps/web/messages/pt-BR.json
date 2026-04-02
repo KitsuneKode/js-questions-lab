@@ -51,6 +51,10 @@
     "fallbackNotice": "Esta pergunta ainda não foi traduzida para {locale} — exibindo em inglês.",
     "answer": "Resposta",
     "explanation": "Explicação",
+    "breadcrumb": {
+      "home": "Início",
+      "questions": "Perguntas"
+    },
     "options": {
       "A": "A",
       "B": "B",
@@ -99,10 +103,12 @@
     "progress": "Progresso",
     "streak": "Sequência",
     "answered": "Respondidas",
-    "correct": "Corretas"
+    "correct": "Corretas",
+    "description": "Track your JavaScript interview practice progress, review weak topics, and maintain your learning streak."
   },
   "credits": {
     "label": "Créditos e Atribuição",
+    "description": "Conheça os criadores e colaboradores por trás do JS Questions Lab, incluindo as perguntas originais de JavaScript da Lydia Hallie.",
     "heroTitle": "Criado por {creator}, impulsionado pelas perguntas da Lydia Hallie.",
     "heroBody": "{name} é um produto de prática criado de forma independente. As perguntas e explicações originais vêm do {source} da Lydia Hallie. Minha contribuição é a camada de produto: a interface, o executor, a visualização, o rascunho e o ciclo de progresso.",
     "heroNote": "Esta página estende os créditos originais, não os substitui. As referências da fonte upstream e a listagem de idiomas suportados permanecem preservadas abaixo.",

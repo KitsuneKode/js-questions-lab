@@ -82,7 +82,8 @@
     "explanationMarkdown": "Debido a la cola de eventos en JavaScript, la función `setTimeout` se llama una vez el ciclo se ha ejecutado. Dado que la variable `i` en el primer bucle se declaró utilizando la palabra reservada ` var`, este valor es global. Durante el bucle, incrementamos el valor de `i` en` 1` cada vez, utilizando el operador unario `++`. Cuando se invocó la función `setTimeout`,` i` era igual a `3` en el primer ejemplo.\n\nEn el segundo bucle, la variable `i` se declaró utilizando la palabra reservada` let`: las variables declaradas con la palabra reservada `let` (y` const`) tienen un ámbito de bloque (un bloque es lo que se encuentra entre `{}`). Durante cada iteración, `i` tendrá un nuevo valor, y cada valor se encuentra dentro del bucle.",
     "images": [],
     "tags": [
-      "async"
+      "async",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -410,7 +411,7 @@
     "explanationMarkdown": "Lo que hace JS aquí es registrar el objeto debido a que acabamos de crear un objeto vacío en el objeto global. Cuando escribimos erróneamente `greeting` como `greetign`, el intérprete de JS ve esto como `global.greetign = {}` (o `window.greetign = {}` en un navegador).\n\nPara evitar esto, podemos usar el [\"uso estricto\"](https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Modo_estricto). Esto asegura que se haya declarado una variable antes de establecerla igual a cualquier cosa.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -514,7 +515,8 @@
     "images": [],
     "tags": [
       "objects",
-      "prototypes"
+      "prototypes",
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -605,7 +607,7 @@
       "https://i.imgur.com/N18oRgd.png"
     ],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -736,7 +738,7 @@
     "explanationMarkdown": "El operador **postfix** unario `++`:\n\n1. Devuelve el valor (esto devuelve `0`)\n2. Incrementa el valor (el número es ahora `1`)\n\nEl operador unario **prefix** `++`:\n\n1. Incrementa el valor (el número es ahora `2`)\n2. Devuelve el valor (esto devuelve `2`)\n\nPor lo tanto, devuelve `0 2 2 2`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -780,7 +782,7 @@
     "explanationMarkdown": "_Tagged templates_ es un caso de uso de [template literals](https://codeburst.io/javascript-template-literals-tag-functions-for-beginners-758a041160e1). Una _plantilla etiquetada_ es una llamada de función que utiliza una plantilla literal de la que obtener sus argumentos. Si se usan literales de plantillas etiquetadas, el valor del primer argumento es siempre una matriz de los valores de las cadenas. El resto de los argumentos obtienen los valores de las expresiones pasadas.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "template-literals"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -874,7 +876,8 @@
     "tags": [
       "objects",
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1398,8 +1401,7 @@
       "https://i.imgur.com/uyiScAI.png"
     ],
     "tags": [
-      "async",
-      "dom-events"
+      "async"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1495,7 +1497,7 @@
     "explanationMarkdown": "Si hacemos clic en `p`, vemos dos _outputs_: `p` y `div`. Durante la propagación del evento, hay 3 [fases](https://www.sitepoint.com/event-bubbling-javascript/): _capturing_, _target_ y _bubbling_. De forma predeterminada, los controladores de eventos se ejecutan en la fase uno (a menos que se establezca `useCapture` en `true`). Va desde el elemento anidado más profundo hacia el exterior.",
     "images": [],
     "tags": [
-      "dom-events"
+      "fundamentals"
     ],
     "difficulty": "beginner",
     "runnable": false,
@@ -1592,7 +1594,8 @@
     "images": [],
     "tags": [
       "objects",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -1689,7 +1692,8 @@
     "explanationMarkdown": "`typeof 1` devuelve `\"number\" `.\n`typeof \"number\"` devuelve `\"string\"`",
     "images": [],
     "tags": [
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "beginner",
     "runnable": true,
@@ -2066,7 +2070,7 @@
     "explanationMarkdown": "Las funciones regulares no pueden pararse a mitad de ejecución después de invocarse. Sin embargo, una función generadora sí puede ser parada, y más adelante continuar desde donde fue detenida. Cada vez que una función generadora encuentra un `yield`, la función cede el valor especificado después de él. Observa que la función generadora en este caso no _devuelve_ el valor, _cede_ el valor.\n\nPrimero, iniciamos la función generadora con `i` igual a `10`. Invocamos la función generadora usando el método `next()`. La primera vez que invocamos la función generadora, `i` es igual a `10`. Encuentra el primer `yield`: cede el valor de `i`. El generador está ahora \"pausado\", y `10` es mostrado por consola.\n\nDespués, invocamos la función otra vez con el método `next()`. Continúa donde fue detenida previamente, todavía con `i` igual a `10`. Ahora, encuentra el siguiente `yield`, y cede `i * 2`. `i` es igual a `10`, así que devuelve `10 * 2`, que es `20`. Esto da como resultado `10, 20`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2360,7 +2364,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2561,7 +2566,7 @@
     "tags": [
       "scope",
       "types",
-      "dom-events"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2610,7 +2615,8 @@
     "images": [],
     "tags": [
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -2760,7 +2766,7 @@
     "explanationMarkdown": "El operador `delete` devuelve un valor booleano: `true` en una eliminación exitosa, sino devolverá `false`. Sin embargo, las variables declaradas con `var`, `const` o `let` no pueden ser borradas usando el operador `delete`.\n\nLa variable `name` se declara con `const`, por lo que su eliminación no es exitosa: se devuelve `false`. Cuando asignamos `age` igual a `21`, en realidad hemos añadido una propiedad llamada `age` al objeto global. Puedes borrar exitosamente propiedades de objetos de esta forma, también del objeto global, así que `delete age` devuelve `true`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3017,7 +3023,7 @@
     "explanationMarkdown": "El operador unario `++` _devuelve primero_ el valor del operando, _y después incrementa_ el valor del operando. El valor de `num1` es `10`, ya que la función `increaseNumber` primero devuelve el valor de `num`, que es `10`, y solo incrementa el valor de `num` después.\n\n`num2` es `10`, ya que pasamos `num1` a `increasePassedNumber`. `number` es igual a `10` (el valor de `num1`. Una vez más, el operador unario `++` _primero devuelve_ el valor del operando, _y después incrementa_ el valor del operando. El valor de `number` es `10`, así que `num2` es igual a `10`.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "operators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3405,7 +3411,7 @@
     "explanationMarkdown": "Una función generadora \"pausa\" su ejecución cuando ve un `yield`. Primero, tenemos que dejar a la función ceder el string \"Do you love JavaScript?\", lo cual se puede hacer llamando a `game.next().value`.\n\nTodas las líneas son ejecutadas, hasta que encuentra el primer `yield`. Hay un `yield` en la primera línea dentro de la función: ¡la ejecución se para en el primer yield! _¡Esto significa que la variable `answer` todavía no está definida!_\n\nCuando llamamos a `game.next(\"Yes\").value`, el `yield` anterior se reemplaza con el valor de los parámetros pasados en la función `next()`, `\"Yes\"` en este caso. El valor de la variable `answer` es ahora igual a `\"Yes\"`. La condición del if devuelve `false`, y `JavaScript loves you back ❤️` se muestra por consola.",
     "images": [],
     "tags": [
-      "fundamentals"
+      "generators"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3454,7 +3460,7 @@
     "images": [],
     "tags": [
       "scope",
-      "dom-events"
+      "template-literals"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -4323,7 +4329,8 @@
     "tags": [
       "objects",
       "prototypes",
-      "types"
+      "types",
+      "operators"
     ],
     "difficulty": "advanced",
     "runnable": true,
@@ -5390,7 +5397,8 @@
     "images": [],
     "tags": [
       "arrays",
-      "types"
+      "types",
+      "generators"
     ],
     "difficulty": "advanced",
     "runnable": true,

@@ -29,7 +29,9 @@ const bricolageGrotesque = Bricolage_Grotesque({
  * Providers live in [locale]/layout.tsx as well.
  */
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz',
+  ),
   applicationName: siteConfig.name,
   title: siteConfig.name,
   description: siteConfig.description,
@@ -42,7 +44,25 @@ export const metadata: Metadata = {
     'event loop visualization',
     'runnable snippets',
     'js interview prep',
+    'javascript closures',
+    'hoisting interview questions',
+    'promise async await',
+    'frontend interview prep',
+    'javascript quiz',
+    'lydia hallie questions',
+    'javascript concepts',
+    'scope and closure',
+    'this keyword javascript',
+    'prototype inheritance',
+    'javascript tricky questions',
   ],
+  other: {
+    'ai-content-declaration': 'educational',
+    'ai-generated': 'false',
+    'content-license': 'MIT',
+    'original-source': 'https://github.com/lydiahallie/javascript-questions',
+    'original-author': 'Lydia Hallie',
+  },
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.description,

@@ -89,7 +89,27 @@ function detectTags(question, explanation) {
     { tag: 'modules', keywords: ['import', 'export', 'module'] },
     {
       tag: 'dom-events',
-      keywords: ['bubbling', 'capturing', 'event.target', 'dom', 'window', 'document'],
+      keywords: [
+        'event bubbling',
+        'event capturing',
+        'event.target',
+        'addEventListener',
+        'preventDefault',
+        'stopPropagation',
+        'event listener',
+        'click event',
+        'mouse event',
+        'dispatchEvent',
+      ],
+    },
+    { tag: 'generators', keywords: ['yield', 'generator', 'function*', 'next()', '*function'] },
+    {
+      tag: 'template-literals',
+      keywords: ['template literal', 'string.raw', 'tagged template', '`${'],
+    },
+    {
+      tag: 'operators',
+      keywords: ['typeof', 'delete ', 'void ', '++', '--', 'unary', 'comma operator'],
     },
   ];
 
