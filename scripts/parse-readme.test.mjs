@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const questionsPath = path.join(process.cwd(), 'content/generated/locales/en/questions.v1.json');
 const questions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));

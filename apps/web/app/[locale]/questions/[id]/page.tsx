@@ -116,7 +116,7 @@ export default async function QuestionDetailPage({
   const canonicalUrl = getCanonicalUrl(locale, questionPath);
 
   return (
-    <main className="min-h-screen bg-void overflow-x-hidden pt-12">
+    <main className="min-h-screen bg-void overflow-x-hidden pt-24 flex flex-col">
       <QuestionJsonLd question={question} locale={locale} />
       <BreadcrumbJsonLd
         items={[
@@ -134,7 +134,7 @@ export default async function QuestionDetailPage({
 
       {/* English fallback notice */}
       {question.isFallback && (
-        <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-2 pb-1">
+        <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-2 pb-1 shrink-0">
           <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[12px] text-amber-400/80">
             <span>ⓘ</span>
             <span>{t('fallbackNotice', { locale })}</span>
@@ -142,25 +142,24 @@ export default async function QuestionDetailPage({
         </div>
       )}
 
-      {/* Breadcrumbs */}
-      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-4 pb-2">
-        <Breadcrumbs
-          items={[
-            { label: t('breadcrumb.home'), href: `/${locale}` },
-            { label: t('breadcrumb.questions'), href: `/${locale}/questions` },
-            { label: question.title, href: `/${locale}/questions/${id}` },
-          ]}
-        />
-      </div>
-
-      {/* IDE — fixed height to fill viewport, with internal scrolling */}
-      <div className="h-[calc(100vh-3rem)] flex flex-col overflow-hidden">
+      {/* IDE — fixed height to fill viewport approximately, with internal scrolling */}
+      <div className="h-[calc(100vh-5rem)] min-h-[600px] flex flex-col overflow-hidden shrink-0">
         <QuestionIDEClient
           key={question.id}
           question={question}
           locale={locale}
           allQuestions={all}
           scope={scope}
+          breadcrumbs={
+            <Breadcrumbs
+              items={[
+                { label: t('breadcrumb.home'), href: `/${locale}` },
+                { label: t('breadcrumb.questions'), href: `/${locale}/questions` },
+                { label: question.title, href: `/${locale}/questions/${id}` },
+              ]}
+              className="bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-border/50 shadow-sm w-max"
+            />
+          }
         />
       </div>
 

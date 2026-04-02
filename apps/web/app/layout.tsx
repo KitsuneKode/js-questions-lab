@@ -62,6 +62,7 @@ export const metadata: Metadata = {
     'content-license': 'MIT',
     'original-source': 'https://github.com/lydiahallie/javascript-questions',
     'original-author': 'Lydia Hallie',
+    'og:logo': `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz'}/icon`,
   },
   openGraph: {
     title: siteConfig.name,

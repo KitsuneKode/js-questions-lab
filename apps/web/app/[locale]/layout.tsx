@@ -59,6 +59,7 @@ export async function generateMetadata({
     other: {
       // next-intl reads lang from here; root layout sets the html tag
       'x-locale': locale,
+      'og:logo': `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz'}/icon`,
     },
   };
 }

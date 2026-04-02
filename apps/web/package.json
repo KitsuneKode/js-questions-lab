@@ -15,6 +15,7 @@
     "@babel/standalone": "^7.29.2",
     "@clerk/nextjs": "^7.0.8",
     "@monaco-editor/react": "^4.7.0",
+    "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.101.1",
     "@tabler/icons-react": "^3.41.1",
     "@vercel/analytics": "^2.0.1",
