@@ -33,24 +33,22 @@ describe('ReviewBadge', () => {
           attempts: [],
           bookmarked: false,
           updatedAt: new Date().toISOString(),
-          srsData: q.srsData
-            ? {
-                repetition: 1,
-                interval: 1,
-                easeFactor: 2.5,
-                nextReviewDate: q.srsData.nextReviewDate ?? undefined,
-              }
-            : undefined,
+          srsData:
+            q.srsData && q.srsData.nextReviewDate
+              ? {
+                  repetition: 1,
+                  interval: 1,
+                  easeFactor: 2.5,
+                  nextReviewDate: q.srsData.nextReviewDate,
+                }
+              : undefined,
         },
       ]),
     ),
   });
 
   it('returns null when no questions have SRS data', () => {
-    const mockState = createMockState([
-      { id: 1, srsData: null },
-      { id: 2, srsData: null },
-    ]);
+    const mockState = createMockState([{ id: 1 }, { id: 2 }]);
     mockUseProgress.mockReturnValue({ state: mockState, ready: true });
 
     const { container } = render(<ReviewBadge />);
