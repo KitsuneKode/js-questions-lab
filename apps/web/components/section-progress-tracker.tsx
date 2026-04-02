@@ -162,7 +162,7 @@ export function SectionProgressTracker({
               />
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {overallProgress.totalCorrect} {t('correctAnswers')}
+              {t('correctAnswers', { count: overallProgress.totalCorrect })}
             </p>
           </div>
 
