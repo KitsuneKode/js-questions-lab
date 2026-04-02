@@ -3,10 +3,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-
+import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
 import { QuestionCard } from '@/components/question-card';
+import { BreadcrumbJsonLd } from '@/components/seo/breadcrumb-json-ld';
 import { QuestionJsonLd } from '@/components/seo/question-json-ld';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
 import { parseQuestionScope } from '@/lib/content/query';
@@ -47,6 +48,7 @@ export async function generateMetadata({ params }: QuestionDetailPageProps): Pro
   const canonicalUrl = getCanonicalUrl(locale, questionPath);
   const alternateLanguages = getAlternateLanguages(questionPath);
   const description = truncateDescription(question.promptMarkdown ?? question.title);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz';
 
   return {
     title: `${question.title} | ${siteConfig.name}`,
@@ -63,10 +65,22 @@ export async function generateMetadata({ params }: QuestionDetailPageProps): Pro
       locale: locale,
       type: 'article',
       tags: question.tags,
+      publishedTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+      authors: [siteConfig.source.creatorName],
+      images: [
+        {
+          url: `${baseUrl}/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: question.title,
+        },
+      ],
     },
     twitter: {
       title: question.title,
       description,
+      card: 'summary_large_image',
     },
     keywords: [...question.tags, 'javascript', 'interview question', question.difficulty],
   };
@@ -97,9 +111,22 @@ export default async function QuestionDetailPage({
   const all = getQuestions(locale);
   const related = getRelatedQuestions(locale, question, 3);
 
+  const questionPath = `questions/${id}`;
+  const canonicalUrl = getCanonicalUrl(locale, questionPath);
+
   return (
     <main className="min-h-screen bg-void overflow-x-hidden pt-12">
       <QuestionJsonLd question={question} locale={locale} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: t('breadcrumb.home'), url: canonicalUrl.replace(`/questions/${id}`, '') },
+          {
+            name: t('breadcrumb.questions'),
+            url: canonicalUrl.replace(`/questions/${id}`, 'questions'),
+          },
+          { name: question.title, url: canonicalUrl },
+        ]}
+      />
 
       {/* Decorative ambient background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none -z-10" />
@@ -113,6 +140,17 @@ export default async function QuestionDetailPage({
           </div>
         </div>
       )}
+
+      {/* Breadcrumbs */}
+      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-4 pb-2">
+        <Breadcrumbs
+          items={[
+            { label: t('breadcrumb.home'), href: `/${locale}` },
+            { label: t('breadcrumb.questions'), href: `/${locale}/questions` },
+            { label: question.title, href: `/${locale}/questions/${id}` },
+          ]}
+        />
+      </div>
 
       {/* IDE — fixed height to fill viewport, with internal scrolling */}
       <div className="h-[calc(100vh-3rem)] flex flex-col overflow-hidden">

@@ -51,6 +51,10 @@
     "fallbackNotice": "Esta pregunta aún no está traducida al {locale} — se muestra en inglés.",
     "answer": "Respuesta",
     "explanation": "Explicación",
+    "breadcrumb": {
+      "home": "Inicio",
+      "questions": "Preguntas"
+    },
     "options": {
       "A": "A",
       "B": "B",
@@ -103,6 +107,7 @@
   },
   "credits": {
     "label": "Créditos y atribución",
+    "description": "Conoce a los creadores y contribuyentes detrás de JS Questions Lab, incluidas las preguntas originales de JavaScript de Lydia Hallie.",
     "heroTitle": "Hecho por {creator}, impulsado por las preguntas de Lydia Hallie.",
     "heroBody": "{name} es un producto de práctica creado de forma independiente. Las preguntas y explicaciones originales provienen del {source} de Lydia Hallie. Mi contribución es la capa de producto: la interfaz, el ejecutor, la visualización, el bloc de notas y el bucle de progreso.",
     "heroNote": "Esta página amplía los créditos originales, no los reemplaza. Las referencias de la fuente upstream y el listado de idiomas admitidos se conservan a continuación.",

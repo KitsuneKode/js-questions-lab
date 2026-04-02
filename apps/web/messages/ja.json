@@ -51,6 +51,10 @@
     "fallbackNotice": "この問題はまだ{locale}に翻訳されていません — 英語で表示しています。",
     "answer": "答え",
     "explanation": "解説",
+    "breadcrumb": {
+      "home": "ホーム",
+      "questions": "問題"
+    },
     "options": {
       "A": "A",
       "B": "B",
@@ -103,6 +107,7 @@
   },
   "credits": {
     "label": "クレジットと帰属",
+    "description": "JS Questions Lab の背後にいる作成者と貢献者、そして Lydia Hallie による元の JavaScript 質問について学びましょう。",
     "heroTitle": "{creator}が制作、Lydia Hallieの問題集を活用。",
     "heroBody": "{name}は独立して制作された練習プロダクトです。元の問題と解説はLydia Hallieの{source}から提供されています。私の貢献はプロダクト層：インターフェース、ランナー、可視化、スクラッチパッド、進捗ループ。",
     "heroNote": "このページは元のクレジットを拡張するものであり、置き換えるものではありません。アップストリームソースの参照と対応言語リストは以下に保持されています。",

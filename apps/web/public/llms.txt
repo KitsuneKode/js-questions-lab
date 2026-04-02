@@ -91,5 +91,5 @@ For questions about AI/LLM usage of this content:
 
 ## Last Updated
 
-This file reflects the site state as of 2024. For the most current
+This file reflects the site state as of April 2026. For the most current
 content, please access /llms-full.txt or /api/questions directly.
