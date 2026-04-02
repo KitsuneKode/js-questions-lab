@@ -1,6 +1,6 @@
 import enQuestions from '../../../../content/generated/locales/en/questions.v1.json';
 
-export function getTagQuestionCounts(locale = 'en'): Record<string, number> {
+export function getTagQuestionCounts(_locale = 'en'): Record<string, number> {
   // For now, only using English fallback for client-side to avoid fs module issues
   const questions = enQuestions;
   const counts: Record<string, number> = {};
@@ -12,7 +12,7 @@ export function getTagQuestionCounts(locale = 'en'): Record<string, number> {
   return counts;
 }
 
-export function getQuestionTags(id: number, locale = 'en'): string[] {
+export function getQuestionTags(id: number, _locale = 'en'): string[] {
   const q = enQuestions.find((q) => q.id === id);
   return q?.tags || [];
 }

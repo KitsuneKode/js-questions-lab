@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import React, { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { ProgressProvider, useProgress } from '../../lib/progress/progress-context';
 import { useSectionProgressStore } from '../../lib/progress/section-progress-store';

@@ -1,6 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ProgressProvider } from '@/lib/progress/progress-context';
 import type { ProgressState } from '@/lib/progress/storage';
 import { ReviewBadge } from './review-badge';
 
@@ -33,15 +32,14 @@ describe('ReviewBadge', () => {
           attempts: [],
           bookmarked: false,
           updatedAt: new Date().toISOString(),
-          srsData:
-            q.srsData && q.srsData.nextReviewDate
-              ? {
-                  repetition: 1,
-                  interval: 1,
-                  easeFactor: 2.5,
-                  nextReviewDate: q.srsData.nextReviewDate,
-                }
-              : undefined,
+          srsData: q.srsData?.nextReviewDate
+            ? {
+                repetition: 1,
+                interval: 1,
+                easeFactor: 2.5,
+                nextReviewDate: q.srsData.nextReviewDate,
+              }
+            : undefined,
         },
       ]),
     ),
