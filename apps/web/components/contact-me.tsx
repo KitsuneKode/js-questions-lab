@@ -6,7 +6,6 @@ import {
   IconCheck,
   IconLoader2,
   IconMailFilled,
-  IconSend,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import type React from 'react';
@@ -135,10 +134,24 @@ export default function Contact() {
           </div>
 
           {/* Contact Form */}
-          <Card className="@xl:col-span-8 p-1 relative overflow-hidden bg-surface/50 border-border-subtle shadow-2xl backdrop-blur-xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
-            <div className="relative bg-background rounded-xl p-6 sm:p-8 border border-border/50">
-              <form onSubmit={handleSubmit} className="space-y-6">
+          <Card className="@xl:col-span-8 relative overflow-hidden border-border-subtle bg-surface/80 shadow-[0_16px_48px_rgba(0,0,0,0.4)] backdrop-blur-xl rounded-2xl">
+            {/* Top Accent Line */}
+            <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-primary/80 to-transparent" />
+
+            {/* Inner ambient glow */}
+            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/10 blur-[80px] pointer-events-none" />
+
+            <div className="relative p-8 sm:p-10">
+              <div className="mb-8">
+                <h3 className="font-display text-2xl font-medium text-foreground tracking-tight">
+                  Send a Message
+                </h3>
+                <p className="text-sm text-secondary mt-1">
+                  Fill out the form below and I'll get back to you shortly.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                 {/* Hidden input for bot prevention in Web3Forms */}
                 <input
                   type="checkbox"
@@ -147,9 +160,12 @@ export default function Contact() {
                   style={{ display: 'none' }}
                 />
 
-                <div className="@md:grid-cols-2 grid gap-6">
-                  <div className="space-y-2.5">
-                    <Label htmlFor="name" className="text-sm font-medium text-foreground/90">
+                <div className="@md:grid-cols-2 grid gap-4 sm:gap-5">
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="name"
+                      className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
+                    >
                       Name
                     </Label>
                     <Input
@@ -158,11 +174,14 @@ export default function Contact() {
                       name="name"
                       placeholder="Manash Pratim Bhuyan"
                       required
-                      className="bg-surface border-border-subtle focus-visible:ring-primary"
+                      className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                     />
                   </div>
-                  <div className="space-y-2.5">
-                    <Label htmlFor="email" className="text-sm font-medium text-foreground/90">
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="email"
+                      className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
+                    >
                       Email
                     </Label>
                     <Input
@@ -171,13 +190,16 @@ export default function Contact() {
                       name="email"
                       placeholder="bhuyanmanash2002@gmail.com"
                       required
-                      className="bg-surface border-border-subtle focus-visible:ring-primary"
+                      className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="subject" className="text-sm font-medium text-foreground/90">
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="subject"
+                    className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
+                  >
                     Subject
                   </Label>
                   <Input
@@ -186,55 +208,69 @@ export default function Contact() {
                     name="subject"
                     placeholder="Sponsorship inquiry for JSQL"
                     required
-                    className="bg-surface border-border-subtle focus-visible:ring-primary"
+                    className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="message" className="text-sm font-medium text-foreground/90">
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="message"
+                    className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
+                  >
                     Message
                   </Label>
                   <Textarea
                     id="message"
                     name="message"
-                    rows={5}
+                    rows={4}
                     placeholder="Hello, I'd like to discuss..."
                     required
-                    className="min-h-32 bg-surface border-border-subtle focus-visible:ring-primary resize-none"
+                    className="min-h-[100px] bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl p-4 resize-y"
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={status === 'loading' || status === 'success'}
-                  className="w-full sm:w-auto min-w-[140px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all"
-                >
-                  {status === 'idle' && (
-                    <>
-                      Send Message
-                      <IconSend className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                  {status === 'loading' && (
-                    <>
-                      Sending...
-                      <IconLoader2 className="ml-2 h-4 w-4 animate-spin" />
-                    </>
-                  )}
-                  {status === 'success' && (
-                    <>
-                      Sent Successfully
-                      <IconCheck className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                  {status === 'error' && 'Error - Try Again'}
-                </Button>
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <Button
+                    type="submit"
+                    disabled={status === 'loading' || status === 'success'}
+                    className="w-full sm:w-auto h-11 px-8 font-bold tracking-wide bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all rounded-xl active:scale-[0.98]"
+                  >
+                    {status === 'idle' && <>Send Message</>}
+                    {status === 'loading' && (
+                      <>
+                        Sending...
+                        <IconLoader2 className="ml-2 h-4 w-4 animate-spin" />
+                      </>
+                    )}
+                    {status === 'success' && (
+                      <>
+                        Sent Successfully
+                        <IconCheck className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                    {status === 'error' && 'Error - Try Again'}
+                  </Button>
+
+                  <p className="text-xs text-tertiary flex items-center gap-1.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-40"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                    </span>
+                    Usually responds within 24 hours
+                  </p>
+                </div>
 
                 {status === 'error' && (
-                  <p className="text-xs text-danger mt-2">
-                    Failed to send message. Please ensure you have set
-                    NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY in your environment, or email me directly.
-                  </p>
+                  <div className="p-3 mt-4 rounded-lg bg-danger/10 border border-danger/20 text-danger text-xs flex items-start gap-2">
+                    <IconBrandX className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p>
+                      Failed to send message. Please ensure you have set the{' '}
+                      <code className="bg-danger/20 px-1 py-0.5 rounded font-mono">
+                        NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY
+                      </code>{' '}
+                      in your environment variables, or email me directly instead.
+                    </p>
+                  </div>
                 )}
               </form>
             </div>
