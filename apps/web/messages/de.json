@@ -137,7 +137,21 @@
     "needsPracticeDesc": "Konzentriere dich auf diese Konzepte, um deine Beherrschung zu verbessern.",
     "reviewsDue": "Wiederholungen fällig",
     "reviewsDueDesc": "Du hast {count} Frage(n) zur zeitversetzten Wiederholung fällig. Meistern Sie Ihre Konzepte.",
-    "reviewNow": "Jetzt wiederholen"
+    "reviewNow": "Jetzt wiederholen",
+    "labelActivity": "Aktivität",
+    "activitySub": "Beständigkeit ist der Schlüssel zur Beherrschung.",
+    "labelLess": "Weniger",
+    "labelMore": "Mehr",
+    "activityTitle": "{date} — {count} Fragen, {accuracy}% Genauigkeit",
+    "labelRecent": "Letzte Aktivitäten",
+    "recentSub": "Deine letzten Übungsversuche.",
+    "labelReviewQueue": "Wiederholungs-Queue",
+    "reviewQueueSub": "Heute fällige zeitversetzte Wiederholungen.",
+    "labelReviewAction": "Wiederholen",
+    "timeJustNow": "gerade eben",
+    "timeMinutesAgo": "vor {count}m",
+    "timeHoursAgo": "vor {count}h",
+    "timeDaysAgo": "vor {count}d"
   },
   "credits": {
     "label": "Credits & Mitwirkende",

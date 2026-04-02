@@ -143,14 +143,13 @@ export function QuestionIDEClient({
 }: QuestionIDEClientProps) {
   const router = useRouter();
   const { state: progress, ready: progressReady } = useProgress();
-
-  const preferredMode = useSectionProgressStore((state) => state.preferredMode);
-  const setPreferredMode = useSectionProgressStore((state) => state.setPreferredMode);
+  const [preferredMode, setPreferredMode] = useState<'quiz' | 'hard'>('quiz');
   const isRecallMode = preferredMode === 'hard';
 
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [recallAnswer, setRecallAnswer] = useState('');
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
+  const [isRecallCorrect, setIsRecallCorrect] = useState<boolean | null>(null);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   const [explanationVisible, setExplanationVisible] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -207,7 +206,8 @@ export function QuestionIDEClient({
   } | null>(null);
 
   const isAnswered = selected !== null || hasSubmittedRecall;
-  const isCorrect = selected !== null ? selected === question.correctOption : hasSubmittedRecall;
+  const isCorrect =
+    selected !== null ? selected === question.correctOption : isRecallCorrect === true;
 
   const hasAsyncEvents = useMemo(() => {
     return (
@@ -271,21 +271,33 @@ export function QuestionIDEClient({
       setHasSubmittedRecall(true);
       return;
     }
+
+    const correctKey = question.correctOption.toLowerCase();
+    const correctOpt = question.options.find((o) => o.key === question.correctOption);
+    const recallStr = recallAnswer.trim().toLowerCase();
+
+    // Check if what they typed exactly matches the key or the text
+    const isStrictMatch =
+      recallStr === correctKey ||
+      recallStr === `option ${correctKey}` ||
+      (correctOpt !== undefined && recallStr === correctOpt.text.toLowerCase().trim());
+
     setHasSubmittedRecall(true);
-    saveAttempt(question.correctOption, 'correct');
-    // Update section progress using markQuestionAnswered for proper incrementing
+    setIsRecallCorrect(isStrictMatch);
+    saveAttempt(question.correctOption, isStrictMatch ? 'correct' : 'incorrect');
+
+    // Update section progress
     if (primaryTag) {
-      // Initialize totalQuestions if first answer in this tag
       const existing = useSectionProgressStore.getState().sections[primaryTag];
       if (!existing || existing.totalQuestions === 0) {
         updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
       }
-      // Increment answered/correct counts
-      markQuestionAnswered(primaryTag, true);
+      markQuestionAnswered(primaryTag, isStrictMatch);
     }
   }, [
     recallAnswer,
     question.correctOption,
+    question.options,
     saveAttempt,
     primaryTag,
     updateSection,

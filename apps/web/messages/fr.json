@@ -137,7 +137,21 @@
     "needsPracticeDesc": "Concentrez-vous sur ces concepts pour améliorer votre maîtrise.",
     "reviewsDue": "Révisions prévues",
     "reviewsDueDesc": "Vous avez {count} question(s) à réviser par répétition espacée. Maîtrisez vos concepts.",
-    "reviewNow": "Réviser maintenant"
+    "reviewNow": "Réviser maintenant",
+    "labelActivity": "Activité",
+    "activitySub": "La régularité est la clé de la maîtrise.",
+    "labelLess": "Moins",
+    "labelMore": "Plus",
+    "activityTitle": "{date} — {count} questions, {accuracy}% de précision",
+    "labelRecent": "Activité récente",
+    "recentSub": "Vos dernières tentatives de pratique.",
+    "labelReviewQueue": "File de révision",
+    "reviewQueueSub": "Révisions par répétition espacée prévues aujourd'hui.",
+    "labelReviewAction": "Réviser",
+    "timeJustNow": "à l'instant",
+    "timeMinutesAgo": "il y a {count}m",
+    "timeHoursAgo": "il y a {count}h",
+    "timeDaysAgo": "il y a {count}d"
   },
   "credits": {
     "label": "Crédits et attribution",

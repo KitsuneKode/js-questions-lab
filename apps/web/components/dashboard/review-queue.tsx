@@ -5,6 +5,7 @@ import {
   IconRotateClockwise2 as RotateCcw,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type { QuestionRecord } from '@/lib/content/types';
 
 interface ReviewQueueProps {
@@ -12,6 +13,7 @@ interface ReviewQueueProps {
 }
 
 export function ReviewQueue({ questions }: ReviewQueueProps) {
+  const t = useTranslations('dashboard');
   if (questions.length === 0) return null;
 
   return (
@@ -22,8 +24,8 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
 
       <div className="mb-6 relative z-10 flex items-center justify-between">
         <div>
-          <h3 className="font-display text-xl text-foreground">Review Queue</h3>
-          <p className="text-xs text-secondary mt-1">Spaced repetition reviews due today.</p>
+          <h3 className="font-display text-xl text-foreground">{t('labelReviewQueue')}</h3>
+          <p className="text-xs text-secondary mt-1">{t('reviewQueueSub')}</p>
         </div>
       </div>
 
@@ -49,7 +51,7 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
             </div>
             <div className="mt-3 flex items-center justify-end border-t border-border-subtle/50 pt-2">
               <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary opacity-0 transition-all group-hover/item:opacity-100 transform translate-x-2 group-hover/item:translate-x-0">
-                Review <ArrowRight className="h-3 w-3" />
+                {t('labelReviewAction')} <ArrowRight className="h-3 w-3" />
               </span>
             </div>
           </Link>

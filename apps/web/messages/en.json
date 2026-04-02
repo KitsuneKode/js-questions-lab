@@ -137,7 +137,21 @@
     "needsPracticeDesc": "Focus on these concepts to improve your mastery.",
     "reviewsDue": "Reviews Due",
     "reviewsDueDesc": "You have {count} question(s) due for spaced repetition review. Master your concepts.",
-    "reviewNow": "Review Now"
+    "reviewNow": "Review Now",
+    "labelActivity": "Activity",
+    "activitySub": "Consistency is the key to mastery.",
+    "labelLess": "Less",
+    "labelMore": "More",
+    "activityTitle": "{date} — {count} questions, {accuracy}% accuracy",
+    "labelRecent": "Recent Activity",
+    "recentSub": "Your latest practice attempts.",
+    "labelReviewQueue": "Review Queue",
+    "reviewQueueSub": "Spaced repetition reviews due today.",
+    "labelReviewAction": "Review",
+    "timeJustNow": "just now",
+    "timeMinutesAgo": "{count}m ago",
+    "timeHoursAgo": "{count}h ago",
+    "timeDaysAgo": "{count}d ago"
   },
   "credits": {
     "label": "Credits & Attribution",

@@ -137,7 +137,21 @@
     "needsPracticeDesc": "Concéntrate en estos conceptos para mejorar tu dominio.",
     "reviewsDue": "Revisiones pendientes",
     "reviewsDueDesc": "Tienes {count} pregunta(s) pendientes de revisión por repetición espaciada. Domina tus conceptos.",
-    "reviewNow": "Revisar ahora"
+    "reviewNow": "Revisar ahora",
+    "labelActivity": "Actividad",
+    "activitySub": "La constancia es la clave del dominio.",
+    "labelLess": "Menos",
+    "labelMore": "Más",
+    "activityTitle": "{date} — {count} preguntas, {accuracy}% de precisión",
+    "labelRecent": "Actividad reciente",
+    "recentSub": "Tus últimos intentos de práctica.",
+    "labelReviewQueue": "Cola de revisión",
+    "reviewQueueSub": "Revisiones de repetición espaciada para hoy.",
+    "labelReviewAction": "Revisar",
+    "timeJustNow": "ahora mismo",
+    "timeMinutesAgo": "hace {count}m",
+    "timeHoursAgo": "hace {count}h",
+    "timeDaysAgo": "hace {count}d"
   },
   "credits": {
     "label": "Créditos y atribución",

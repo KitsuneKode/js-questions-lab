@@ -137,7 +137,21 @@
     "needsPracticeDesc": "習熟度を向上させるために、これらのコンセプトに集中しましょう。",
     "reviewsDue": "復習が必要",
     "reviewsDueDesc": "間隔反復による復習が必要な問題が{count}件あります。コンセプトをマスターしましょう。",
-    "reviewNow": "今すぐ復習する"
+    "reviewNow": "今すぐ復習する",
+    "labelActivity": "アクティビティ",
+    "activitySub": "継続は力なり。",
+    "labelLess": "少",
+    "labelMore": "多",
+    "activityTitle": "{date} — {count}問、正解率{accuracy}%",
+    "labelRecent": "最近のアクティビティ",
+    "recentSub": "最近の練習の試行。",
+    "labelReviewQueue": "復習キュー",
+    "reviewQueueSub": "今日が期限の間隔反復による復習。",
+    "labelReviewAction": "復習する",
+    "timeJustNow": "たった今",
+    "timeMinutesAgo": "{count}分前",
+    "timeHoursAgo": "{count}時間前",
+    "timeDaysAgo": "{count}日前"
   },
   "credits": {
     "label": "クレジットと帰属",

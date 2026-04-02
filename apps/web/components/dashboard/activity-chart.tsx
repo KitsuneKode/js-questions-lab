@@ -1,6 +1,7 @@
 'use client';
 
 import { IconActivity as Activity } from '@tabler/icons-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import type { DailyActivity } from '@/lib/progress/analytics';
 
@@ -9,6 +10,8 @@ interface ActivityChartProps {
 }
 
 export function ActivityChart({ dailyActivity }: ActivityChartProps) {
+  const t = useTranslations('dashboard');
+  const locale = useLocale();
   // Generate last 119 days (17 weeks * 7 days) to fit well in the container
   const WEEKS = 17;
   const DAYS = WEEKS * 7;
@@ -46,7 +49,7 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
   };
 
   return (
@@ -56,8 +59,8 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
       </div>
 
       <div className="mb-6 relative z-10">
-        <h3 className="font-display text-xl text-foreground">Activity</h3>
-        <p className="text-xs text-secondary">Consistency is the key to mastery.</p>
+        <h3 className="font-display text-xl text-foreground">{t('labelActivity')}</h3>
+        <p className="text-xs text-secondary">{t('activitySub')}</p>
       </div>
 
       <div className="relative z-10 w-full overflow-x-auto pb-2 scrollbar-thin">
@@ -69,7 +72,11 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
               <div
                 key={cell.date}
                 className={`w-3 h-3 rounded-sm border transition-all duration-300 hover:scale-125 hover:z-20 ${getIntensityClass(cell.attempts)}`}
-                title={`${formatDate(cell.date)} — ${cell.attempts} questions, ${accuracy}% accuracy`}
+                title={t('activityTitle', {
+                  date: formatDate(cell.date),
+                  count: cell.attempts,
+                  accuracy,
+                })}
               />
             );
           })}
@@ -77,7 +84,7 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
       </div>
 
       <div className="mt-4 flex items-center justify-between text-[10px] uppercase tracking-widest text-tertiary relative z-10">
-        <span>Less</span>
+        <span>{t('labelLess')}</span>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-sm bg-elevated border border-border-subtle" />
           <div className="w-2.5 h-2.5 rounded-sm bg-primary/20 border border-primary/20" />
@@ -85,7 +92,7 @@ export function ActivityChart({ dailyActivity }: ActivityChartProps) {
           <div className="w-2.5 h-2.5 rounded-sm bg-primary/70 border border-primary/60" />
           <div className="w-2.5 h-2.5 rounded-sm bg-primary border border-primary" />
         </div>
-        <span>More</span>
+        <span>{t('labelMore')}</span>
       </div>
     </div>
   );
