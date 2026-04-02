@@ -107,6 +107,7 @@ export default function Contact() {
                     <Link
                       href={siteConfig.creator.xUrl}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="text-secondary hover:text-primary text-sm transition-colors"
                     >
                       {siteConfig.creator.displayHandle}
@@ -123,6 +124,7 @@ export default function Contact() {
                     <Link
                       href={siteConfig.creator.githubUrl}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="text-secondary hover:text-primary text-sm transition-colors"
                     >
                       {siteConfig.creator.handle}
