@@ -65,23 +65,27 @@ export const useSectionProgressStore = create<SectionProgressState>()(
 
           // Auto-calculate mastery level if not provided
           if (!updates.masteryLevel) {
-            const ratio =
-              updatedSection.totalQuestions > 0
-                ? updatedSection.correctAnswers / updatedSection.totalQuestions
+            // Use answeredQuestions as denominator (actual accuracy), not totalQuestions
+            const accuracy =
+              updatedSection.answeredQuestions > 0
+                ? updatedSection.correctAnswers / updatedSection.answeredQuestions
                 : 0;
-            const answerRatio =
+            const completionRatio =
               updatedSection.totalQuestions > 0
                 ? updatedSection.answeredQuestions / updatedSection.totalQuestions
                 : 0;
 
-            if (answerRatio === 0) {
+            if (completionRatio === 0) {
               updatedSection.masteryLevel = 'not_started';
-            } else if (ratio < 0.5) {
+            } else if (accuracy < 0.5) {
               updatedSection.masteryLevel = 'learning';
-            } else if (ratio < 0.8) {
+            } else if (accuracy < 0.8) {
               updatedSection.masteryLevel = 'practicing';
-            } else {
+            } else if (completionRatio >= 0.8 && accuracy >= 0.8) {
+              // Require both high accuracy AND high completion for mastered
               updatedSection.masteryLevel = 'mastered';
+            } else {
+              updatedSection.masteryLevel = 'practicing';
             }
           }
 
@@ -113,18 +117,26 @@ export const useSectionProgressStore = create<SectionProgressState>()(
             lastPracticedAt: Date.now(),
           };
 
-          // Calculate mastery level
-          const ratio =
+          // Calculate mastery level using correct formula (accuracy / answeredQuestions)
+          const accuracy =
+            updatedSection.answeredQuestions > 0
+              ? updatedSection.correctAnswers / updatedSection.answeredQuestions
+              : 0;
+          const completionRatio =
             updatedSection.totalQuestions > 0
-              ? updatedSection.correctAnswers / updatedSection.totalQuestions
+              ? updatedSection.answeredQuestions / updatedSection.totalQuestions
               : 0;
 
-          if (ratio < 0.5) {
+          if (completionRatio === 0) {
+            updatedSection.masteryLevel = 'not_started';
+          } else if (accuracy < 0.5) {
             updatedSection.masteryLevel = 'learning';
-          } else if (ratio < 0.8) {
+          } else if (accuracy < 0.8) {
             updatedSection.masteryLevel = 'practicing';
-          } else {
+          } else if (completionRatio >= 0.8 && accuracy >= 0.8) {
             updatedSection.masteryLevel = 'mastered';
+          } else {
+            updatedSection.masteryLevel = 'practicing';
           }
 
           return {

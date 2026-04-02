@@ -139,16 +139,30 @@ export function QuestionIDEClient({
   scope = DEFAULT_SCOPE,
 }: QuestionIDEClientProps) {
   const router = useRouter();
+  const { state: progress, ready: progressReady } = useProgress();
+
+  const defaultRecallMode = useMemo(() => {
+    const correctCount = Object.values(progress.questions).filter((q) =>
+      q.attempts.some((a) => a.status === 'correct'),
+    ).length;
+    return correctCount >= 10;
+  }, [progress]);
+
+  const [userRecallMode, setUserRecallMode] = useState<boolean | null>(null);
+  const isRecallMode = userRecallMode ?? defaultRecallMode;
+  const setIsRecallMode = setUserRecallMode;
+
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
-  const [isRecallMode, setIsRecallMode] = useState(false);
   const [recallAnswer, setRecallAnswer] = useState('');
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   const [explanationVisible, setExplanationVisible] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [errorType, setErrorType] = useState('');
 
   const updateSection = useSectionProgressStore((state) => state.updateSection);
+  const markQuestionAnswered = useSectionProgressStore((state) => state.markQuestionAnswered);
   const primaryTag = question.tags[0];
 
   const cleanPromptMarkdown = question.promptMarkdown
@@ -187,7 +201,6 @@ export function QuestionIDEClient({
   const [_debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual'>('timeline');
 
   const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
-  const { state: progress, ready: progressReady } = useProgress();
   const [frozenStatusScope, setFrozenStatusScope] = useState<{
     key: string;
     ids: number[];
@@ -202,6 +215,17 @@ export function QuestionIDEClient({
       timeline.some((event) => event.kind === 'macro' || event.kind === 'micro')
     );
   }, [isJavascriptRuntime, timeline]);
+
+  // Compute question counts per tag from allQuestions for progress tracking
+  const tagQuestionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allQuestions.forEach((q) => {
+      (q.tags || []).forEach((tag) => {
+        counts[tag] = (counts[tag] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [allQuestions]);
 
   const runCode = useCallback(async () => {
     if (!isJavascriptRuntime || !javascriptCodeBlock?.code.trim()) {
@@ -249,11 +273,25 @@ export function QuestionIDEClient({
     }
     setHasSubmittedRecall(true);
     saveAttempt(question.correctOption, 'correct');
-    // Update section progress
+    // Update section progress using markQuestionAnswered for proper incrementing
     if (primaryTag) {
-      updateSection(primaryTag, { totalQuestions: Math.max(1, question.id) });
+      // Initialize totalQuestions if first answer in this tag
+      const existing = useSectionProgressStore.getState().sections[primaryTag];
+      if (!existing || existing.totalQuestions === 0) {
+        updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
+      }
+      // Increment answered/correct counts
+      markQuestionAnswered(primaryTag, true);
     }
-  }, [recallAnswer, question.correctOption, saveAttempt, primaryTag, updateSection, question.id]);
+  }, [
+    recallAnswer,
+    question.correctOption,
+    saveAttempt,
+    primaryTag,
+    updateSection,
+    markQuestionAnswered,
+    tagQuestionCounts,
+  ]);
 
   const handleSelfGrade = useCallback(
     (grade: 'hard' | 'good' | 'easy') => {
@@ -270,15 +308,26 @@ export function QuestionIDEClient({
       setSelected(optionKey);
       const isCorrect = key === question.correctOption;
       saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect');
-      // Update section progress
+      // Update section progress using markQuestionAnswered for proper incrementing
       if (primaryTag) {
-        updateSection(primaryTag, {
-          totalQuestions: Math.max(1, question.id),
-          masteryLevel: isCorrect ? undefined : 'learning',
-        });
+        // Initialize totalQuestions if first answer in this tag
+        const existing = useSectionProgressStore.getState().sections[primaryTag];
+        if (!existing || existing.totalQuestions === 0) {
+          updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
+        }
+        // Increment answered/correct counts
+        markQuestionAnswered(primaryTag, isCorrect);
       }
     },
-    [isAnswered, question.correctOption, saveAttempt, primaryTag, updateSection, question.id],
+    [
+      isAnswered,
+      question.correctOption,
+      saveAttempt,
+      primaryTag,
+      updateSection,
+      markQuestionAnswered,
+      tagQuestionCounts,
+    ],
   );
 
   const filterQuery = useMemo(
@@ -828,20 +877,46 @@ export function QuestionIDEClient({
                       )}
                     </AnimatePresence>
 
+                    {!isCorrect && !errorType && (
+                      <div className="flex flex-col gap-2 rounded-xl border border-border/50 bg-muted/10 p-4">
+                        <label
+                          className="text-sm font-medium text-foreground"
+                          htmlFor="error-type-select"
+                        >
+                          What went wrong?
+                        </label>
+                        <select
+                          id="error-type-select"
+                          className="w-full rounded-lg border border-border/50 bg-background p-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50"
+                          onChange={(e) => setErrorType(e.target.value)}
+                          value={errorType}
+                        >
+                          <option value="">Select...</option>
+                          <option value="misread">Misread the question</option>
+                          <option value="forgot">Forgot the rule</option>
+                          <option value="wrong_concept">Applied wrong concept</option>
+                          <option value="guess">Guessed without reasoning</option>
+                        </select>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-3 gap-2">
                       {(['hard', 'good', 'easy'] as const).map((grade) => (
                         <button
                           key={grade}
                           type="button"
+                          disabled={!isCorrect && !errorType}
                           onClick={() => handleSelfGrade(grade)}
                           className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
-                            selfGrade === grade
-                              ? grade === 'hard'
-                                ? 'border-danger/50 bg-danger/20 text-danger'
-                                : grade === 'good'
-                                  ? 'border-warning/50 bg-warning/20 text-warning'
-                                  : 'border-success/50 bg-success/20 text-success'
-                              : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
+                            !isCorrect && !errorType
+                              ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
+                              : selfGrade === grade
+                                ? grade === 'hard'
+                                  ? 'border-danger/50 bg-danger/20 text-danger'
+                                  : grade === 'good'
+                                    ? 'border-warning/50 bg-warning/20 text-warning'
+                                    : 'border-success/50 bg-success/20 text-success'
+                                : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
                           }`}
                         >
                           {grade}
