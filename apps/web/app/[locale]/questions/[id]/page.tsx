@@ -7,6 +7,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
 import { QuestionCard } from '@/components/question-card';
+import { RelatedTopics } from '@/components/related-topics';
 import { BreadcrumbJsonLd } from '@/components/seo/breadcrumb-json-ld';
 import { QuestionJsonLd } from '@/components/seo/question-json-ld';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
@@ -189,6 +190,15 @@ export default async function QuestionDetailPage({
                   <QuestionCard key={item.id} question={item} locale={locale} />
                 ))}
               </div>
+
+              {question.tags.length > 0 && (
+                <div className="mt-10 pt-6 border-t border-border-subtle">
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-4">
+                    {t('relatedConcepts')}
+                  </h3>
+                  <RelatedTopics tags={question.tags} locale={locale} />
+                </div>
+              )}
             </section>
           </Container>
         </div>
