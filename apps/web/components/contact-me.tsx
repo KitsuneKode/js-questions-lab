@@ -22,13 +22,20 @@ export default function Contact() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      console.error(
+        'Web3Forms access key is missing. Set NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY in your environment.',
+      );
+      setStatus('error');
+      return;
+    }
+
     setStatus('loading');
 
     const formData = new FormData(e.currentTarget);
-    formData.append(
-      'access_key',
-      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE',
-    );
+    formData.append('access_key', accessKey);
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
