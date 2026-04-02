@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CreditsLoading() {
   return (
-    <main className="bg-void min-h-screen pt-24 pb-20 md:pt-32">
+    <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40 md:pb-24">
       <Container>
         {/* Hero card skeleton */}
         <section className="relative overflow-hidden rounded-[32px] border border-border-subtle bg-surface/80 px-6 py-10 shadow-[0_32px_80px_rgba(0,0,0,0.28)] md:px-12 md:py-14">
