@@ -1,5 +1,8 @@
+'use client';
+
 import { IconArrowRight } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/components/auth-provider';
 import { NotificationManager } from '@/components/notification-manager';
@@ -12,6 +15,8 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ProgressProvider } from '@/lib/progress/progress-context';
 
 export function Provider({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('banner');
+
   return (
     <AuthProvider>
       <TooltipProvider>
@@ -23,7 +28,7 @@ export function Provider({ children }: { children: React.ReactNode }) {
             >
               <div className="flex flex-wrap items-center justify-center gap-2 max-w-[90%] text-[11px] sm:text-xs font-semibold uppercase">
                 <span>
-                  Interested in supporting{' '}
+                  {t('sponsor')}{' '}
                   <strong className="font-extrabold bg-black/10 px-1 py-0.5 rounded">
                     JS Questions Lab
                   </strong>
@@ -34,7 +39,7 @@ export function Provider({ children }: { children: React.ReactNode }) {
                   href="/contact"
                   className="group flex items-center gap-1 hover:underline underline-offset-2 transition-all"
                 >
-                  Contact for Sponsorship
+                  {t('contact')}
                   <IconArrowRight className="h-3 w-3 opacity-70 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </div>

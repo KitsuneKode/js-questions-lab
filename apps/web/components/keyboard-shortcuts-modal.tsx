@@ -1,6 +1,7 @@
 'use client';
 
 import { IconKeyboard, IconX } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 
 interface ShortcutGroup {
-  title: string;
+  titleKey: string;
   scope: 'global' | 'list' | 'detail';
   shortcuts: {
     keys: string[];
@@ -23,7 +24,7 @@ interface ShortcutGroup {
 
 const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
-    title: 'Global (Works Everywhere)',
+    titleKey: 'global',
     scope: 'global',
     shortcuts: [
       { keys: ['⌘', 'K'], description: 'Quick search questions' },
@@ -32,7 +33,7 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
     ],
   },
   {
-    title: 'Questions List Page',
+    titleKey: 'list',
     scope: 'list',
     shortcuts: [
       { keys: ['J', '↓'], description: 'Next question in list' },
@@ -41,7 +42,7 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
     ],
   },
   {
-    title: 'Question Detail Page',
+    titleKey: 'detail',
     scope: 'detail',
     shortcuts: [
       { keys: ['A', 'B', 'C', 'D'], description: 'Select answer option' },
@@ -61,6 +62,7 @@ interface KeyboardShortcutsModalProps {
 
 export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcutsModalProps) {
   const [isOpen, setIsOpen] = useState(open ?? false);
+  const t = useTranslations('shortcuts');
 
   // Sync with external open state if provided
   useEffect(() => {
@@ -103,7 +105,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <IconKeyboard className="h-5 w-5 text-primary" />
-              Keyboard Shortcuts
+              {t('title')}
             </DialogTitle>
             <Button
               variant="ghost"
@@ -114,31 +116,29 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
               <IconX className="h-4 w-4" />
             </Button>
           </div>
-          <DialogDescription>
-            Quick reference for the global, question list, and question detail keyboard controls.
-          </DialogDescription>
+          <DialogDescription>{t('desc')}</DialogDescription>
         </DialogHeader>
 
         <div className="mt-6 space-y-6">
           {SHORTCUT_GROUPS.map((group) => (
-            <div key={group.title}>
+            <div key={group.titleKey}>
               <div className="flex items-center gap-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  {group.title}
+                  {t(group.titleKey as any)}
                 </h3>
                 {group.scope === 'global' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
-                    Works everywhere
+                    {t('globalTag')}
                   </span>
                 )}
                 {group.scope === 'list' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium">
-                    Questions list only
+                    {t('listTag')}
                   </span>
                 )}
                 {group.scope === 'detail' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
-                    Question detail only
+                    {t('detailTag')}
                   </span>
                 )}
               </div>
@@ -170,11 +170,13 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
 
           <div className="pt-4 border-t border-border-subtle">
             <p className="text-xs text-muted-foreground text-center">
-              Press{' '}
-              <kbd className="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded border border-border-subtle bg-muted/50 text-[10px] font-mono">
-                ?
-              </kbd>{' '}
-              anytime to toggle this help dialog
+              {t.rich('toggleHint', {
+                key: () => (
+                  <kbd className="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded border border-border-subtle bg-muted/50 text-[10px] font-mono">
+                    ?
+                  </kbd>
+                ),
+              })}
             </p>
           </div>
         </div>
@@ -186,6 +188,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
 // Helper hook for opening shortcuts from anywhere
 export function useKeyboardShortcuts() {
   const [open, setOpen] = useState(false);
+  const tNav = useTranslations('nav');
 
   const KeyboardShortcutsTrigger = () => (
     <>
@@ -197,7 +200,7 @@ export function useKeyboardShortcuts() {
         title="Keyboard shortcuts (?)"
       >
         <IconKeyboard className="h-4 w-4" />
-        <span className="hidden sm:inline">Shortcuts</span>
+        <span className="hidden sm:inline">{tNav('shortcuts')}</span>
         <kbd className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded border border-border-subtle bg-muted/50 text-[9px] font-mono">
           ?
         </kbd>

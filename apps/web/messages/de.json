@@ -6,7 +6,8 @@
     "credits": "Mitwirkende",
     "scratchpad": "Notizblock",
     "language": "Sprache",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "shortcuts": "Tastenkürzel"
   },
   "questions": {
     "title": "Fragenbibliothek",
@@ -17,16 +18,21 @@
       "searchLabel": "Suchen",
       "tag": "Thema",
       "difficulty": "Schwierigkeitsgrad",
-      "runnable": "Nur ausführbare",
+      "runnable": "Nur Schwerer Modus",
       "status": "Status",
       "all": "Alle",
       "answered": "Beantwortet",
       "unanswered": "Unbeantwortet",
       "bookmarked": "Gespeichert",
       "beginner": "Anfänger",
-      "intermediate": "Mittel",
+      "intermediate": "Mittelstufe",
       "advanced": "Fortgeschritten",
-      "clearFilters": "Filter zurücksetzen"
+      "clearFilters": "Filter zurücksetzen",
+      "searchPlaceholder": "Geben Sie ein Stichwort, Konzept oder eine Fragennummer ein...",
+      "noResults": "Keine Ergebnisse gefunden.",
+      "groupQuestions": "Fragen",
+      "clear": "Alles löschen",
+      "resetTags": "Themen zurücksetzen ({count})"
     },
     "results": {
       "showing": "{shown} / {total} Fragen",
@@ -162,6 +168,71 @@
   },
   "contact": {
     "title": "Kontaktiere uns",
-    "description": "Haben Sie Fragen zum JS Questions Lab? Interessiert an Sponsoring oder Zusammenarbeit? Kontaktieren Sie uns."
+    "description": "Haben Sie Fragen zum JS Questions Lab? Interessiert an Sponsoring oder Zusammenarbeit? Kontaktieren Sie uns.",
+    "badge": "Kontakt",
+    "headline": "Lass uns {something} zusammen bauen.",
+    "something": "etwas",
+    "subheadline": "Haben Sie Fragen zur Plattform? Interessiert an Sponsoring oder Zusammenarbeit? Melden Sie sich und ich melde mich bei Ihnen zurück.",
+    "connect": "Verbinden",
+    "formTitle": "Nachricht senden",
+    "formSubtitle": "Füllen Sie das folgende Formular aus und ich melde mich in Kürze bei Ihnen.",
+    "labelName": "Name",
+    "labelEmail": "E-Mail",
+    "labelSubject": "Betreff",
+    "labelMessage": "Nachricht",
+    "placeholderSubject": "Sponsoring-Anfrage für JSQL",
+    "placeholderMessage": "Hallo, ich würde gerne über ... sprechen",
+    "submitIdle": "Nachricht senden",
+    "submitLoading": "Senden...",
+    "submitSuccess": "Erfolgreich gesendet",
+    "submitError": "Fehler - Erneut versuchen",
+    "responseNotice": "Antwortet in der Regel innerhalb von 24 Stunden"
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "help": "Tastenkürzel-Hilfe anzeigen",
+    "global": "Global (Funktioniert überall)",
+    "list": "Fragenlisten-Seite",
+    "detail": "Fragen-Detailseite",
+    "desc": "Kurzreferenz für globale, Fragenlisten- und Fragendetail-Tastatursteuerungen.",
+    "globalTag": "Funktioniert überall",
+    "listTag": "Nur Fragenliste",
+    "detailTag": "Nur Fragendetail",
+    "toggleHint": "Drücke jederzeit {key}, um diesen Hilfedialog umzuschalten"
+  },
+  "progress": {
+    "title": "Dein Fortschritt",
+    "subtitle": "Verfolge die Beherrschung nach Thema und mache dort weiter, wo du aufgehört hast.",
+    "overall": "Gesamtfortschritt",
+    "completed": "Abgeschlossen",
+    "complete": "abgeschlossen",
+    "accuracy": "Genauigkeit",
+    "correctAnswers": "richtige Antworten",
+    "masteryStatus": "Meisterschaftsstatus",
+    "mastered": "gemeistert",
+    "inProgress": "in Bearbeitung",
+    "notStarted": "nicht gestartet",
+    "topicBreakdown": "Themenübersicht",
+    "questions": "Fragen",
+    "learning": "Lernen",
+    "practicing": "Üben",
+    "descNotStarted": "Noch keine Versuche",
+    "descLearning": "Erste Schritte",
+    "descPracticing": "Fortschritte machen",
+    "descMastered": "Ausgezeichnet!"
+  },
+  "banner": {
+    "sponsor": "Interessiert daran, ... zu unterstützen",
+    "contact": "Kontakt für Sponsoring"
+  },
+  "hints": {
+    "select": "Option auswählen",
+    "numbers": "oder Zahlen verwenden",
+    "explanation": "Erklärung umschalten",
+    "run": "Code ausführen",
+    "scratchpad": "Notizblock",
+    "prev": "vorherige",
+    "next": "nächste",
+    "keyboard": "Tastatur"
   }
 }

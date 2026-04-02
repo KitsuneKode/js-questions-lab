@@ -3,8 +3,11 @@
 import {
   IconActivity as Activity,
   IconCompass as Compass,
+  IconFlame as Flame,
   IconTarget as Target,
+  IconTrendingUp as TrendingUp,
 } from '@tabler/icons-react';
+import { motion } from 'motion/react';
 import type { OverallStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +20,11 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
   const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
+  // Level Calculation (Every 15 questions = 1 Level up)
+  const currentLevel = Math.floor(overall.totalAnswered / 15) + 1;
+  const nextLevelRequirement = currentLevel * 15;
+  const questionsToNextLevel = nextLevelRequirement - overall.totalAnswered;
+
   // Trend indicator based on a naive metric for demo purposes
   const accuracyTrend = accuracyPercent > 60 ? 'up' : accuracyPercent < 40 ? 'down' : 'neutral';
   const accuracyColor =
@@ -26,6 +34,8 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         ? 'text-status-wrong'
         : 'text-[#F59E0B]';
 
+  const hasActiveStreak = overall.currentStreak > 0;
+
   return (
     <div className="grid gap-5 sm:grid-cols-3">
       {/* Journey Card with Progress Ring */}
@@ -34,10 +44,13 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           <Compass className="w-24 h-24 text-primary" />
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-tertiary mb-1">
-            Journey
-          </p>
-          <p className="font-display text-3xl text-foreground">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-tertiary">Journey</p>
+            <div className="inline-flex items-center gap-1 rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+              Level {currentLevel}
+            </div>
+          </div>
+          <p className="font-display text-3xl text-foreground mt-1">
             {overall.totalAnswered}{' '}
             <span className="text-lg text-secondary">/ {totalQuestions}</span>
           </p>
@@ -59,7 +72,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
                 fill="transparent"
               />
               <circle
-                className="text-primary stroke-current transition-all duration-1000 ease-out-expo"
+                className="text-primary stroke-current transition-all duration-1000 ease-out-expo drop-shadow-[0_0_3px_rgba(245,158,11,0.5)]"
                 strokeWidth="8"
                 strokeLinecap="round"
                 cx="50"
@@ -75,7 +88,8 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
             </div>
           </div>
           <p className="text-xs text-secondary leading-snug">
-            Questions answered.
+            <strong className="text-foreground">{questionsToNextLevel}</strong> questions to Level{' '}
+            {currentLevel + 1}.
             <br />
             Keep pushing.
           </p>
@@ -102,13 +116,17 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               className={cn(
                 'flex h-6 w-6 items-center justify-center rounded-full bg-opacity-20',
                 accuracyTrend === 'up'
-                  ? 'bg-status-correct text-status-correct'
+                  ? 'bg-status-correct/20 text-status-correct'
                   : accuracyTrend === 'down'
-                    ? 'bg-status-wrong text-status-wrong'
-                    : 'bg-[#F59E0B] text-[#F59E0B]',
+                    ? 'bg-status-wrong/20 text-status-wrong'
+                    : 'bg-[#F59E0B]/20 text-[#F59E0B]',
               )}
             >
-              <Activity className="h-3 w-3" />
+              {accuracyTrend === 'up' ? (
+                <TrendingUp className="h-3 w-3" />
+              ) : (
+                <Activity className="h-3 w-3" />
+              )}
             </div>
             <p className="text-xs text-secondary">
               {overall.totalCorrect} correct out of {overall.totalAttempts} attempts
@@ -123,10 +141,27 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           <Activity className="w-24 h-24 text-primary" />
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-tertiary mb-1">
-            Consistency
-          </p>
-          <p className="font-display text-4xl text-foreground">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-tertiary">
+              Consistency
+            </p>
+            {hasActiveStreak && (
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+                className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#F59E0B] drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+              >
+                <Flame className="h-3.5 w-3.5 fill-[#F59E0B]" />
+                Active
+              </motion.div>
+            )}
+          </div>
+          <p
+            className={cn(
+              'font-display text-4xl',
+              hasActiveStreak ? 'text-[#F59E0B]' : 'text-foreground',
+            )}
+          >
             {overall.currentStreak} <span className="text-lg text-secondary">days</span>
           </p>
         </div>
@@ -135,7 +170,9 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           <p className="text-xs text-secondary leading-snug">
             Best streak: <strong className="text-foreground">{overall.longestStreak} days</strong>.
             <br />
-            Practice daily to build mastery.
+            {hasActiveStreak
+              ? 'You are on fire! Practice tomorrow to keep it going.'
+              : 'Practice today to start a new streak.'}
           </p>
         </div>
       </div>

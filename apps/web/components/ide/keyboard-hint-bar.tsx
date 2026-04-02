@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 
 interface Shortcut {
   keys: string[];
@@ -29,17 +30,19 @@ export function KeyboardHintBar({
   hasPrev,
   hasNext,
 }: KeyboardHintBarProps) {
+  const t = useTranslations('hints');
+
   const preAnswerShortcuts: Shortcut[] = [
-    { keys: ['A', 'B', 'C', 'D'], label: 'select option', active: !isAnswered },
-    { keys: ['1', '2', '3', '4'], label: 'or use numbers', active: !isAnswered },
+    { keys: ['A', 'B', 'C', 'D'], label: t('select'), active: !isAnswered },
+    { keys: ['1', '2', '3', '4'], label: t('numbers'), active: !isAnswered },
   ];
 
   const postAnswerShortcuts: Shortcut[] = [
-    { keys: ['Space'], label: 'toggle explanation', active: isAnswered },
-    ...(isRunnable ? [{ keys: ['R'], label: 'run code', active: isAnswered }] : []),
-    { keys: ['K'], label: 'scratchpad', active: true },
-    ...(hasPrev ? [{ keys: ['←'], label: 'prev', active: true }] : []),
-    ...(hasNext ? [{ keys: ['→'], label: 'next', active: isAnswered }] : []),
+    { keys: ['Space'], label: t('explanation'), active: isAnswered },
+    ...(isRunnable ? [{ keys: ['R'], label: t('run'), active: isAnswered }] : []),
+    { keys: ['K'], label: t('scratchpad'), active: true },
+    ...(hasPrev ? [{ keys: ['←'], label: t('prev'), active: true }] : []),
+    ...(hasNext ? [{ keys: ['→'], label: t('next'), active: isAnswered }] : []),
   ];
 
   const shortcuts = isAnswered
@@ -68,7 +71,7 @@ export function KeyboardHintBar({
         ))}
       </AnimatePresence>
       <div className="ml-auto shrink-0 text-[9px] font-mono uppercase tracking-widest text-muted-foreground/30">
-        keyboard
+        {t('keyboard')}
       </div>
     </div>
   );

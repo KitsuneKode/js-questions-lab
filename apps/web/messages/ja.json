@@ -6,7 +6,8 @@
     "credits": "クレジット",
     "scratchpad": "スクラッチパッド",
     "language": "言語",
-    "contact": "お問い合わせ"
+    "contact": "お問い合わせ",
+    "shortcuts": "ショートカット"
   },
   "questions": {
     "title": "問題ライブラリ",
@@ -17,7 +18,7 @@
       "searchLabel": "検索",
       "tag": "トピック",
       "difficulty": "難易度",
-      "runnable": "実行可能のみ",
+      "runnable": "ハードモードのみ",
       "status": "ステータス",
       "all": "すべて",
       "answered": "回答済み",
@@ -26,7 +27,12 @@
       "beginner": "初級",
       "intermediate": "中級",
       "advanced": "上級",
-      "clearFilters": "フィルターをクリア"
+      "clearFilters": "フィルターをクリア",
+      "searchPlaceholder": "キーワード、コンセプト、または問題番号を入力してください...",
+      "noResults": "結果が見つかりませんでした。",
+      "groupQuestions": "問題",
+      "clear": "すべてクリア",
+      "resetTags": "タグをリセット ({count})"
     },
     "results": {
       "showing": "{shown} / {total}問",
@@ -162,6 +168,71 @@
   },
   "contact": {
     "title": "お問い合わせ",
-    "description": "JS Questions Labについてご質問がありますか？スポンサーシップやコラボレーションに興味がありますか？お気軽にお問い合わせください。"
+    "description": "JS Questions Labについてご質問がありますか？スポンサーシップやコラボレーションに興味がありますか？お気軽にお問い合わせください。",
+    "badge": "お問い合わせ",
+    "headline": "一緒に {something} を築きましょう。",
+    "something": "何か",
+    "subheadline": "プラットフォームについてご質問がありますか？スポンサーシップやコラボレーションに興味がありますか？お気軽にお問い合わせください。折り返しご連絡いたします。",
+    "connect": "つながる",
+    "formTitle": "メッセージを送信",
+    "formSubtitle": "以下のフォームにご記入ください。間もなくご連絡いたします。",
+    "labelName": "お名前",
+    "labelEmail": "メールアドレス",
+    "labelSubject": "件名",
+    "labelMessage": "メッセージ",
+    "placeholderSubject": "JSQLのスポンサーシップに関するお問い合わせ",
+    "placeholderMessage": "こんにちは、お話ししたいことがありまして...",
+    "submitIdle": "メッセージを送信",
+    "submitLoading": "送信中...",
+    "submitSuccess": "送信完了",
+    "submitError": "エラー - 再試行してください",
+    "responseNotice": "通常24時間以内に返信します"
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "help": "キーボードショートカットのヘルプを表示",
+    "global": "グローバル (どこでも機能)",
+    "list": "質問リストページ",
+    "detail": "質問詳細ページ",
+    "desc": "グローバル、質問リスト、および質問詳細のキーボードコントロールのクイックリファレンス。",
+    "globalTag": "どこでも機能",
+    "listTag": "質問リストのみ",
+    "detailTag": "質問詳細のみ",
+    "toggleHint": "いつでも {key} を押して、このヘルプダイアログを切り替えます"
+  },
+  "progress": {
+    "title": "あなたの進捗",
+    "subtitle": "トピックごとの習熟度を追跡し、中断したところから再開します。",
+    "overall": "全体的な進捗",
+    "completed": "完了",
+    "complete": "完了",
+    "accuracy": "正解率",
+    "correctAnswers": "正解",
+    "masteryStatus": "習熟状況",
+    "mastered": "習得済み",
+    "inProgress": "進行中",
+    "notStarted": "未開始",
+    "topicBreakdown": "トピックごとの内訳",
+    "questions": "質問",
+    "learning": "学習中",
+    "practicing": "練習中",
+    "descNotStarted": "まだ試行されていません",
+    "descLearning": "慣れ親しんでいるところです",
+    "descPracticing": "進歩しています",
+    "descMastered": "素晴らしい！"
+  },
+  "banner": {
+    "sponsor": "サポートにご興味がありますか？",
+    "contact": "スポンサーシップのお問い合わせ"
+  },
+  "hints": {
+    "select": "オプションを選択",
+    "numbers": "または数字を使用",
+    "explanation": "解説を切り替え",
+    "run": "コードを実行",
+    "scratchpad": "スクラッチパッド",
+    "prev": "前へ",
+    "next": "次へ",
+    "keyboard": "キーボード"
   }
 }

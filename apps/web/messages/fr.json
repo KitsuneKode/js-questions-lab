@@ -6,7 +6,8 @@
     "credits": "Crédits",
     "scratchpad": "Bloc-notes",
     "language": "Langue",
-    "contact": "Contact"
+    "contact": "Contact",
+    "shortcuts": "Raccourcis"
   },
   "questions": {
     "title": "Bibliothèque de questions",
@@ -17,7 +18,7 @@
       "searchLabel": "Rechercher",
       "tag": "Sujet",
       "difficulty": "Difficulté",
-      "runnable": "Exécutables uniquement",
+      "runnable": "Mode Difficile Uniquement",
       "status": "Statut",
       "all": "Toutes",
       "answered": "Répondues",
@@ -26,7 +27,12 @@
       "beginner": "Débutant",
       "intermediate": "Intermédiaire",
       "advanced": "Avancé",
-      "clearFilters": "Effacer les filtres"
+      "clearFilters": "Effacer les filtres",
+      "searchPlaceholder": "Tapez un mot-clé, un concept ou un numéro de question...",
+      "noResults": "Aucun résultat trouvé.",
+      "groupQuestions": "Questions",
+      "clear": "Tout effacer",
+      "resetTags": "Réinitialiser les tags ({count})"
     },
     "results": {
       "showing": "{shown} / {total} questions",
@@ -162,6 +168,71 @@
   },
   "contact": {
     "title": "Contactez-nous",
-    "description": "Vous avez des questions sur JS Questions Lab ? Intéressé par des parrainages ou des collaborations ? Contactez-nous."
+    "description": "Vous avez des questions sur JS Questions Lab ? Intéressé par des parrainages ou des collaborations ? Contactez-nous.",
+    "badge": "Contact",
+    "headline": "Construisons {something} ensemble.",
+    "something": "quelque chose",
+    "subheadline": "Des questions sur la plateforme ? Intéressé par des parrainages ou des collaborations ? Contactez-moi et je vous répondrai.",
+    "connect": "Se connecter",
+    "formTitle": "Envoyer un Message",
+    "formSubtitle": "Remplissez le formulaire ci-dessous et je vous répondrai sous peu.",
+    "labelName": "Nom",
+    "labelEmail": "E-mail",
+    "labelSubject": "Sujet",
+    "labelMessage": "Message",
+    "placeholderSubject": "Demande de parrainage pour JSQL",
+    "placeholderMessage": "Bonjour, j'aimerais discuter de...",
+    "submitIdle": "Envoyer le Message",
+    "submitLoading": "Envoi en cours...",
+    "submitSuccess": "Envoyé avec Succès",
+    "submitError": "Erreur - Réessayer",
+    "responseNotice": "Répond généralement sous 24 heures"
+  },
+  "shortcuts": {
+    "title": "Raccourcis Clavier",
+    "help": "Afficher l'aide des raccourcis",
+    "global": "Global (Fonctionne partout)",
+    "list": "Page de liste des questions",
+    "detail": "Page de détail de la question",
+    "desc": "Référence rapide pour les contrôles clavier globaux, la liste des questions et les détails des questions.",
+    "globalTag": "Fonctionne partout",
+    "listTag": "Liste des questions uniquement",
+    "detailTag": "Détail de la question uniquement",
+    "toggleHint": "Appuyez sur {key} à tout moment pour basculer cette boîte de dialogue d'aide"
+  },
+  "progress": {
+    "title": "Votre Progression",
+    "subtitle": "Suivez la maîtrise par sujet et reprenez là où vous vous êtes arrêté.",
+    "overall": "Progression Globale",
+    "completed": "Terminé",
+    "complete": "terminé",
+    "accuracy": "Précision",
+    "correctAnswers": "bonnes réponses",
+    "masteryStatus": "Statut de Maîtrise",
+    "mastered": "maîtrisé",
+    "inProgress": "en cours",
+    "notStarted": "non commencé",
+    "topicBreakdown": "Répartition des Sujets",
+    "questions": "questions",
+    "learning": "Apprentissage",
+    "practicing": "Pratique",
+    "descNotStarted": "Aucune tentative pour le moment",
+    "descLearning": "Apprentissage en cours",
+    "descPracticing": "Fait des progrès",
+    "descMastered": "Excellent !"
+  },
+  "banner": {
+    "sponsor": "Intéressé à soutenir",
+    "contact": "Contact pour le parrainage"
+  },
+  "hints": {
+    "select": "sélectionner l'option",
+    "numbers": "ou utiliser des chiffres",
+    "explanation": "basculer l'explication",
+    "run": "exécuter le code",
+    "scratchpad": "brouillon",
+    "prev": "préc",
+    "next": "suiv",
+    "keyboard": "clavier"
   }
 }

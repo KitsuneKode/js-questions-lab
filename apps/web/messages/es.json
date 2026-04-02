@@ -6,7 +6,8 @@
     "credits": "Créditos",
     "scratchpad": "Bloc de notas",
     "language": "Idioma",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "shortcuts": "Atajos"
   },
   "questions": {
     "title": "Biblioteca de preguntas",
@@ -17,7 +18,7 @@
       "searchLabel": "Buscar",
       "tag": "Tema",
       "difficulty": "Dificultad",
-      "runnable": "Solo ejecutables",
+      "runnable": "Solo Modo Difícil",
       "status": "Estado",
       "all": "Todas",
       "answered": "Respondidas",
@@ -26,7 +27,12 @@
       "beginner": "Principiante",
       "intermediate": "Intermedio",
       "advanced": "Avanzado",
-      "clearFilters": "Limpiar filtros"
+      "clearFilters": "Limpiar filtros",
+      "searchPlaceholder": "Escribe una palabra clave, concepto o número de pregunta...",
+      "noResults": "No se encontraron resultados.",
+      "groupQuestions": "Preguntas",
+      "clear": "Limpiar Todo",
+      "resetTags": "Reiniciar temas ({count})"
     },
     "results": {
       "showing": "{shown} / {total} preguntas",
@@ -162,6 +168,71 @@
   },
   "contact": {
     "title": "Contáctanos",
-    "description": "¿Tienes preguntas sobre JS Questions Lab? ¿Te interesan patrocinios o colaboraciones? Ponte en contacto con nosotros."
+    "description": "¿Tienes preguntas sobre JS Questions Lab? ¿Te interesan patrocinios o colaboraciones? Ponte en contacto con nosotros.",
+    "badge": "Contacto",
+    "headline": "Construyamos {something} juntos.",
+    "something": "algo",
+    "subheadline": "¿Tienes preguntas sobre la plataforma? ¿Interesado en patrocinios o colaboraciones? Ponte en contacto y te responderé.",
+    "connect": "Conectar",
+    "formTitle": "Enviar un Mensaje",
+    "formSubtitle": "Completa el formulario a continuación y te responderé a la brevedad.",
+    "labelName": "Nombre",
+    "labelEmail": "Correo electrónico",
+    "labelSubject": "Asunto",
+    "labelMessage": "Mensaje",
+    "placeholderSubject": "Consulta de patrocinio para JSQL",
+    "placeholderMessage": "Hola, me gustaría discutir...",
+    "submitIdle": "Enviar Mensaje",
+    "submitLoading": "Enviando...",
+    "submitSuccess": "Enviado con éxito",
+    "submitError": "Error - Intentar de nuevo",
+    "responseNotice": "Suele responder en 24 horas"
+  },
+  "shortcuts": {
+    "title": "Atajos de Teclado",
+    "help": "Mostrar ayuda de atajos de teclado",
+    "global": "Global (Funciona en todas partes)",
+    "list": "Página de lista de preguntas",
+    "detail": "Página de detalle de la pregunta",
+    "desc": "Referencia rápida para los controles de teclado globales, de lista de preguntas y de detalles de preguntas.",
+    "globalTag": "Funciona en todas partes",
+    "listTag": "Solo lista de preguntas",
+    "detailTag": "Solo detalle de pregunta",
+    "toggleHint": "Presiona {key} en cualquier momento para alternar este diálogo de ayuda"
+  },
+  "progress": {
+    "title": "Tu Progreso",
+    "subtitle": "Haz un seguimiento del dominio por tema y continúa donde lo dejaste.",
+    "overall": "Progreso General",
+    "completed": "Completado",
+    "complete": "completado",
+    "accuracy": "Precisión",
+    "correctAnswers": "respuestas correctas",
+    "masteryStatus": "Estado de Dominio",
+    "mastered": "dominado",
+    "inProgress": "en progreso",
+    "notStarted": "no comenzado",
+    "topicBreakdown": "Desglose de Temas",
+    "questions": "preguntas",
+    "learning": "Aprendiendo",
+    "practicing": "Practicando",
+    "descNotStarted": "Sin intentos aún",
+    "descLearning": "Familiarizándose",
+    "descPracticing": "Haciendo progresos",
+    "descMastered": "¡Excelente!"
+  },
+  "banner": {
+    "sponsor": "¿Interesado en apoyar a",
+    "contact": "Contacto para Patrocinio"
+  },
+  "hints": {
+    "select": "seleccionar opción",
+    "numbers": "o usar números",
+    "explanation": "alternar explicación",
+    "run": "ejecutar código",
+    "scratchpad": "borrador",
+    "prev": "ant",
+    "next": "sig",
+    "keyboard": "teclado"
   }
 }

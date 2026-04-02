@@ -2,6 +2,7 @@
 
 import {
   IconArrowRight as ArrowRight,
+  IconBrain as Brain,
   IconLibrary as Library,
   IconSparkles as Sparkles,
 } from '@tabler/icons-react';
@@ -55,6 +56,27 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const hasData = overall.totalAnswered > 0;
   const questionsHref = withLocale(locale, '/questions');
 
+  // Dynamic secondary suggestion: Prioritize reviews if they exist
+  const secondarySuggestion =
+    reviewQueue.length > 0
+      ? {
+          label: 'Reviews Due',
+          description: `You have ${reviewQueue.length} question(s) due for spaced repetition review. Master your concepts.`,
+          question: reviewQueue[0],
+          icon: Brain,
+          isUrgent: true,
+        }
+      : {
+          ...recommended,
+          icon: Sparkles,
+          isUrgent: false,
+        };
+
+  const topSuggestions = [
+    { ...continueLearning, icon: Library, isUrgent: false },
+    secondarySuggestion,
+  ];
+
   return (
     <div className="max-w-6xl mx-auto space-y-12">
       {/* Header */}
@@ -90,66 +112,63 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
 
           {/* Quick action cards */}
           <div className="grid gap-5 sm:grid-cols-2">
-            {[continueLearning, recommended].map((suggestion, index) => (
-              <div
-                key={suggestion.label}
-                className="group relative overflow-hidden rounded-2xl border border-border-subtle bg-surface p-6 transition-all hover:border-border-focus hover:shadow-glow"
-              >
-                <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
-                  {index === 0 ? (
-                    <Library className="h-24 w-24 text-primary" />
-                  ) : (
-                    <Sparkles className="h-24 w-24 text-primary" />
-                  )}
-                </div>
+            {topSuggestions.map((suggestion, index) => {
+              const Icon = suggestion.icon;
+              return (
+                <div
+                  key={suggestion.label}
+                  className={`group relative overflow-hidden rounded-2xl border border-border-subtle bg-surface p-6 transition-all hover:border-border-focus hover:shadow-glow ${suggestion.isUrgent ? 'ring-1 ring-primary/30 bg-primary/5' : ''}`}
+                >
+                  <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+                    <Icon className="h-24 w-24 text-primary" />
+                  </div>
 
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary mb-3">
-                      {index === 0 ? (
-                        <Library className="h-3.5 w-3.5" />
-                      ) : (
-                        <Sparkles className="h-3.5 w-3.5" />
-                      )}
-                      {suggestion.label}
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary mb-3">
+                        <Icon
+                          className={`h-3.5 w-3.5 ${suggestion.isUrgent ? 'animate-pulse' : ''}`}
+                        />
+                        {suggestion.label}
+                      </div>
+                      <h2 className="font-display text-2xl text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                        {suggestion.question
+                          ? suggestion.question.title
+                          : 'Start your first question'}
+                      </h2>
+                      <p className="text-sm text-secondary">{suggestion.description}</p>
                     </div>
-                    <h2 className="font-display text-2xl text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {suggestion.question
-                        ? suggestion.question.title
-                        : 'Start your first question'}
-                    </h2>
-                    <p className="text-sm text-secondary">{suggestion.description}</p>
-                  </div>
 
-                  <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
-                    <Link
-                      href={
-                        suggestion.question
-                          ? withLocale(locale, `/questions/${suggestion.question.id}`)
-                          : questionsHref
-                      }
-                    >
-                      <Button
-                        size="sm"
-                        className="h-9 gap-2 text-xs font-semibold px-4 bg-primary text-background hover:bg-primary/90"
+                    <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
+                      <Link
+                        href={
+                          suggestion.question
+                            ? withLocale(locale, `/questions/${suggestion.question.id}`)
+                            : questionsHref
+                        }
                       >
-                        {index === 0 ? 'Resume' : 'Try this'}
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Button>
-                    </Link>
-                    <Link href={questionsHref}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 text-xs font-medium text-secondary hover:text-foreground"
-                      >
-                        Browse all
-                      </Button>
-                    </Link>
+                        <Button
+                          size="sm"
+                          className="h-9 gap-2 text-xs font-semibold px-4 bg-primary text-background hover:bg-primary/90"
+                        >
+                          {suggestion.isUrgent ? 'Review Now' : index === 0 ? 'Resume' : 'Try this'}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Button>
+                      </Link>
+                      <Link href={questionsHref}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-9 text-xs font-medium text-secondary hover:text-foreground"
+                        >
+                          Browse all
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Bottom Row: Weakest Topics + Review Queue */}

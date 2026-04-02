@@ -8,6 +8,7 @@ import {
   IconMailFilled,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ import { siteConfig } from '@/lib/site-config';
 
 export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const t = useTranslations('contact');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -69,16 +71,15 @@ export default function Contact() {
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)]">
             <span className="uppercase tracking-widest font-bold flex items-center gap-2">
               <IconMailFilled className="h-3 w-3" />
-              Contact
+              {t('badge')}
             </span>
           </div>
           <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
-            Let's build <span className="text-primary">something</span> together.
+            {t.rich('headline', {
+              something: (children) => <span className="text-primary">{children}</span>,
+            })}
           </h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-secondary">
-            Have questions about the platform? Interested in sponsorships or collaborations? Reach
-            out and I'll get back to you.
-          </p>
+          <p className="max-w-2xl text-lg leading-relaxed text-secondary">{t('subheadline')}</p>
         </header>
 
         <div className="@xl:grid-cols-12 grid gap-10 items-start">
@@ -86,7 +87,7 @@ export default function Contact() {
           <div className="@xl:col-span-4 space-y-8">
             <div className="space-y-6">
               <h3 className="font-display text-xl font-semibold text-foreground border-b border-border/50 pb-4">
-                Connect
+                {t('connect')}
               </h3>
 
               <div className="space-y-4">
@@ -153,11 +154,9 @@ export default function Contact() {
             <div className="relative p-8 sm:p-10">
               <div className="mb-8">
                 <h3 className="font-display text-2xl font-medium text-foreground tracking-tight">
-                  Send a Message
+                  {t('formTitle')}
                 </h3>
-                <p className="text-sm text-secondary mt-1">
-                  Fill out the form below and I'll get back to you shortly.
-                </p>
+                <p className="text-sm text-secondary mt-1">{t('formSubtitle')}</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
@@ -175,7 +174,7 @@ export default function Contact() {
                       htmlFor="name"
                       className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
                     >
-                      Name
+                      {t('labelName')}
                     </Label>
                     <Input
                       type="text"
@@ -191,7 +190,7 @@ export default function Contact() {
                       htmlFor="email"
                       className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
                     >
-                      Email
+                      {t('labelEmail')}
                     </Label>
                     <Input
                       type="email"
@@ -209,13 +208,13 @@ export default function Contact() {
                     htmlFor="subject"
                     className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
                   >
-                    Subject
+                    {t('labelSubject')}
                   </Label>
                   <Input
                     type="text"
                     id="subject"
                     name="subject"
-                    placeholder="Sponsorship inquiry for JSQL"
+                    placeholder={t('placeholderSubject')}
                     required
                     className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                   />
@@ -226,13 +225,13 @@ export default function Contact() {
                     htmlFor="message"
                     className="text-[11px] font-semibold uppercase tracking-wider text-tertiary"
                   >
-                    Message
+                    {t('labelMessage')}
                   </Label>
                   <Textarea
                     id="message"
                     name="message"
                     rows={4}
-                    placeholder="Hello, I'd like to discuss..."
+                    placeholder={t('placeholderMessage')}
                     required
                     className="min-h-[100px] bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl p-4 resize-y"
                   />
@@ -244,20 +243,20 @@ export default function Contact() {
                     disabled={status === 'loading' || status === 'success'}
                     className="w-full sm:w-auto h-11 px-8 font-bold tracking-wide bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all rounded-xl active:scale-[0.98]"
                   >
-                    {status === 'idle' && <>Send Message</>}
+                    {status === 'idle' && t('submitIdle')}
                     {status === 'loading' && (
                       <>
-                        Sending...
+                        {t('submitLoading')}
                         <IconLoader2 className="ml-2 h-4 w-4 animate-spin" />
                       </>
                     )}
                     {status === 'success' && (
                       <>
-                        Sent Successfully
+                        {t('submitSuccess')}
                         <IconCheck className="ml-2 h-4 w-4" />
                       </>
                     )}
-                    {status === 'error' && 'Error - Try Again'}
+                    {status === 'error' && t('submitError')}
                   </Button>
 
                   <p className="text-xs text-tertiary flex items-center gap-1.5">
@@ -265,7 +264,7 @@ export default function Contact() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-40"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
                     </span>
-                    Usually responds within 24 hours
+                    {t('responseNotice')}
                   </p>
                 </div>
 

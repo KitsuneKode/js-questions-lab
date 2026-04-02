@@ -6,7 +6,8 @@
     "credits": "Credits",
     "scratchpad": "Scratchpad",
     "language": "Language",
-    "contact": "Contact"
+    "contact": "Contact",
+    "shortcuts": "Shortcuts"
   },
   "questions": {
     "title": "Question Library",
@@ -17,7 +18,7 @@
       "searchLabel": "Search",
       "tag": "Topic",
       "difficulty": "Difficulty",
-      "runnable": "Runnable only",
+      "runnable": "Hard Mode Only",
       "status": "Status",
       "all": "All",
       "answered": "Answered",
@@ -26,7 +27,12 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate",
       "advanced": "Advanced",
-      "clearFilters": "Clear filters"
+      "clearFilters": "Clear filters",
+      "searchPlaceholder": "Type a keyword, concept, or question number...",
+      "noResults": "No results found.",
+      "groupQuestions": "Questions",
+      "clear": "Clear All",
+      "resetTags": "Reset Tags ({count})"
     },
     "results": {
       "showing": "{shown} / {total} questions",
@@ -162,6 +168,71 @@
   },
   "contact": {
     "title": "Contact Us",
-    "description": "Have questions about JS Questions Lab? Interested in sponsorships or collaborations? Reach out and get in touch."
+    "description": "Have questions about JS Questions Lab? Interested in sponsorships or collaborations? Reach out and get in touch.",
+    "badge": "Contact",
+    "headline": "Let's build {something} together.",
+    "something": "something",
+    "subheadline": "Have questions about the platform? Interested in sponsorships or collaborations? Reach out and I'll get back to you.",
+    "connect": "Connect",
+    "formTitle": "Send a Message",
+    "formSubtitle": "Fill out the form below and I'll get back to you shortly.",
+    "labelName": "Name",
+    "labelEmail": "Email",
+    "labelSubject": "Subject",
+    "labelMessage": "Message",
+    "placeholderSubject": "Sponsorship inquiry for JSQL",
+    "placeholderMessage": "Hello, I'd like to discuss...",
+    "submitIdle": "Send Message",
+    "submitLoading": "Sending...",
+    "submitSuccess": "Sent Successfully",
+    "submitError": "Error - Try Again",
+    "responseNotice": "Usually responds within 24 hours"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "help": "Show keyboard shortcuts help",
+    "global": "Global (Works Everywhere)",
+    "list": "Questions List Page",
+    "detail": "Question Detail Page",
+    "desc": "Quick reference for the global, question list, and question detail keyboard controls.",
+    "globalTag": "Works everywhere",
+    "listTag": "Questions list only",
+    "detailTag": "Question detail only",
+    "toggleHint": "Press {key} anytime to toggle this help dialog"
+  },
+  "progress": {
+    "title": "Your Progress",
+    "subtitle": "Track mastery by topic and continue where you left off.",
+    "overall": "Overall Progress",
+    "completed": "Completed",
+    "complete": "complete",
+    "accuracy": "Accuracy",
+    "correctAnswers": "correct answers",
+    "masteryStatus": "Mastery Status",
+    "mastered": "mastered",
+    "inProgress": "in progress",
+    "notStarted": "not started",
+    "topicBreakdown": "Topic Breakdown",
+    "questions": "questions",
+    "learning": "Learning",
+    "practicing": "Practicing",
+    "descNotStarted": "No attempts yet",
+    "descLearning": "Getting familiar",
+    "descPracticing": "Making progress",
+    "descMastered": "Excellent!"
+  },
+  "banner": {
+    "sponsor": "Interested in supporting",
+    "contact": "Contact for Sponsorship"
+  },
+  "hints": {
+    "select": "select option",
+    "numbers": "or use numbers",
+    "explanation": "toggle explanation",
+    "run": "run code",
+    "scratchpad": "scratchpad",
+    "prev": "prev",
+    "next": "next",
+    "keyboard": "keyboard"
   }
 }

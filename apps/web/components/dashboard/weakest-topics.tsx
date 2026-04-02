@@ -1,7 +1,8 @@
 'use client';
 
-import { IconArrowRight as ArrowRight, IconTarget as Target } from '@tabler/icons-react';
+import { IconTarget as Target } from '@tabler/icons-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import type { TagStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';
 
@@ -20,11 +21,13 @@ export function WeakestTopics({ topics }: WeakestTopicsProps) {
         <Target className="w-32 h-32 text-rose-500" />
       </div>
 
-      <div className="mb-6 relative z-10">
-        <h3 className="font-display text-xl text-foreground">Needs Practice</h3>
-        <p className="text-xs text-secondary mt-1">
-          Focus on these concepts to improve your mastery.
-        </p>
+      <div className="mb-6 relative z-10 flex items-center justify-between">
+        <div>
+          <h3 className="font-display text-xl text-foreground">Needs Practice</h3>
+          <p className="text-xs text-secondary mt-1">
+            Focus on these concepts to improve your mastery.
+          </p>
+        </div>
       </div>
 
       <ul className="space-y-3 relative z-10 flex-1">
@@ -34,10 +37,10 @@ export function WeakestTopics({ topics }: WeakestTopicsProps) {
             <li key={topic.tag}>
               <Link
                 href={`/questions?tag=${encodeURIComponent(topic.tag)}`}
-                className="group/item flex items-center justify-between rounded-xl border border-border-subtle bg-background p-3.5 transition-all duration-300 hover:border-[#F59E0B]/40 hover:bg-[#F59E0B]/5 hover:shadow-[0_4px_20px_rgba(245,158,11,0.05)]"
+                className="group/item flex items-center justify-between rounded-xl border border-border-subtle bg-background p-3 transition-all duration-300 hover:border-danger/40 hover:bg-danger/5 hover:shadow-[0_4px_20px_rgba(244,63,94,0.1)]"
               >
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground capitalize group-hover/item:text-primary transition-colors">
+                <div className="flex flex-col px-1">
+                  <span className="text-sm font-medium text-foreground capitalize group-hover/item:text-danger transition-colors">
                     {topic.tag}
                   </span>
                   <span className="text-[10px] text-tertiary mt-0.5">
@@ -58,9 +61,13 @@ export function WeakestTopics({ topics }: WeakestTopicsProps) {
                       Accuracy
                     </span>
                   </div>
-                  <div className="h-8 w-8 rounded-full border border-border-subtle bg-surface flex items-center justify-center group-hover/item:border-primary/30 group-hover/item:bg-primary/10 transition-colors">
-                    <ArrowRight className="h-3.5 w-3.5 text-tertiary group-hover/item:text-primary transition-transform group-hover/item:translate-x-0.5" />
-                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 rounded-lg bg-surface border border-border-subtle text-xs px-3 font-medium text-secondary group-hover/item:bg-danger group-hover/item:text-white group-hover/item:border-danger transition-all shadow-sm"
+                  >
+                    Practice
+                  </Button>
                 </div>
               </Link>
             </li>
