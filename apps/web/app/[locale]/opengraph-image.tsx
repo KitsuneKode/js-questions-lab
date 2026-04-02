@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { getTranslations } from 'next-intl/server';
 
+export const runtime = 'edge';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -13,7 +14,8 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
         display: 'flex',
         height: '100%',
         width: '100%',
-        background: 'linear-gradient(135deg, #F59E0B 0%, #38BDF8 100%)',
+        background: '#09090b',
+        backgroundImage: 'radial-gradient(circle at center, rgba(250,204,21,0.1), transparent 70%)',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -28,23 +30,24 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '40px',
+          marginBottom: '48px',
         }}
       >
         <div
           style={{
             display: 'flex',
-            height: 120,
-            width: 120,
+            height: 140,
+            width: 140,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 28,
-            border: '4px solid rgba(255,255,255,0.3)',
-            background: 'rgba(255,255,255,0.15)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-            color: 'white',
-            fontSize: 48,
-            fontWeight: 800,
+            borderRadius: 36,
+            border: '4px solid #facc15',
+            background: '#09090b',
+            boxShadow: '0 0 60px rgba(250,204,21,0.25)',
+            color: '#facc15',
+            fontSize: 64,
+            fontWeight: 900,
+            letterSpacing: '-0.1em',
           }}
         >
           JS
@@ -54,7 +57,7 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
         style={{
           fontSize: 72,
           fontWeight: 800,
-          color: 'white',
+          color: '#fafafa',
           textAlign: 'center',
           marginBottom: '24px',
           letterSpacing: '-0.02em',
@@ -65,7 +68,7 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
       <p
         style={{
           fontSize: 32,
-          color: 'rgba(255,255,255,0.9)',
+          color: '#a1a1aa',
           textAlign: 'center',
           maxWidth: '900px',
           lineHeight: 1.5,
@@ -74,8 +77,6 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
         {t('description')}
       </p>
     </div>,
-    {
-      ...size,
-    },
+    { ...size },
   );
 }

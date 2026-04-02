@@ -7,7 +7,7 @@ const handleI18nRouting = createIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-export default clerkMiddleware(async (auth, request: NextRequest) => {
+export const proxy = clerkMiddleware(async (auth, request: NextRequest) => {
   if (isProtectedRoute(request)) {
     await auth.protect();
   }
@@ -17,8 +17,8 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
 
 export const config = {
   matcher: [
-    // Match all paths except static assets, API routes, _next internals
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Match all paths except static assets, API routes, _next internals, and metadata routes
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)|icon|apple-icon|twitter-image|opengraph-image).*)',
     '/(api|trpc)(.*)',
   ],
 };

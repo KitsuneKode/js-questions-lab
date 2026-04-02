@@ -103,7 +103,8 @@
     "progress": "Fortschritt",
     "streak": "Serie",
     "answered": "Beantwortet",
-    "correct": "Richtig"
+    "correct": "Richtig",
+    "description": "Track your JavaScript interview practice progress, review weak topics, and maintain your learning streak."
   },
   "credits": {
     "label": "Credits & Mitwirkende",

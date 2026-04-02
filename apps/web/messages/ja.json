@@ -103,7 +103,8 @@
     "progress": "進捗",
     "streak": "連続記録",
     "answered": "回答済み",
-    "correct": "正解"
+    "correct": "正解",
+    "description": "Track your JavaScript interview practice progress, review weak topics, and maintain your learning streak."
   },
   "credits": {
     "label": "クレジットと帰属",
