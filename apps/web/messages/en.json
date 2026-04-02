@@ -224,7 +224,7 @@
     "globalTag": "Works everywhere",
     "listTag": "Questions list only",
     "detailTag": "Question detail only",
-    "toggleHint": "Press {key} anytime to toggle this help dialog",
+    "toggleHint": "Press <key>?</key> anytime to toggle this help dialog",
     "desc_search": "Quick search questions",
     "desc_help": "Show keyboard shortcuts help",
     "desc_scratchpad": "Open scratchpad",
@@ -305,7 +305,9 @@
     "reset": "Reset",
     "run": "Run",
     "close": "Close",
-    "emptyTerminal": "> Run code to see output..."
+    "emptyTerminal": "> Run code to see output...",
+    "open": "Open Scratchpad",
+    "append": "Append to Scratchpad"
   },
   "debugger": {
     "visualizer": "JavaScript Execution Visualizer",

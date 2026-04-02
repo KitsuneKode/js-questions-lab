@@ -224,7 +224,7 @@
     "globalTag": "Funciona em todos os lugares",
     "listTag": "Apenas lista de perguntas",
     "detailTag": "Apenas detalhes da pergunta",
-    "toggleHint": "Pressione {key} a qualquer momento para alternar este diálogo de ajuda",
+    "toggleHint": "Pressione <key>?</key> a qualquer momento para alternar este diálogo de ajuda",
     "desc_search": "Busca rápida de perguntas",
     "desc_help": "Mostrar ajuda de atalhos",
     "desc_scratchpad": "Abrir rascunho",
@@ -305,7 +305,9 @@
     "reset": "Resetar",
     "run": "Executar",
     "close": "Fechar",
-    "emptyTerminal": "> Execute o código para ver a saída..."
+    "emptyTerminal": "> Execute o código para ver a saída...",
+    "open": "Abrir rascunho",
+    "append": "Adicionar ao rascunho"
   },
   "debugger": {
     "visualizer": "Visualizador de execução JavaScript",

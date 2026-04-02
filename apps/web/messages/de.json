@@ -224,7 +224,7 @@
     "globalTag": "Funktioniert überall",
     "listTag": "Nur Fragenliste",
     "detailTag": "Nur Fragendetail",
-    "toggleHint": "Drücke jederzeit {key}, um diesen Hilfedialog umzuschalten",
+    "toggleHint": "Drücke jederzeit <key>?</key>, um diesen Hilfedialog umzuschalten",
     "desc_search": "Schnellsuche nach Fragen",
     "desc_help": "Tastenkürzel-Hilfe anzeigen",
     "desc_scratchpad": "Notizblock öffnen",
@@ -305,7 +305,9 @@
     "reset": "Zurücksetzen",
     "run": "Ausführen",
     "close": "Schließen",
-    "emptyTerminal": "> Code ausführen, um die Ausgabe zu sehen..."
+    "emptyTerminal": "> Code ausführen, um die Ausgabe zu sehen...",
+    "open": "Notizblock öffnen",
+    "append": "An Notizblock anhängen"
   },
   "debugger": {
     "visualizer": "JavaScript-Ausführungs-Visualisierer",

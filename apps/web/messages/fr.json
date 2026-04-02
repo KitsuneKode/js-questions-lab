@@ -224,7 +224,7 @@
     "globalTag": "Fonctionne partout",
     "listTag": "Liste des questions uniquement",
     "detailTag": "Détail de la question uniquement",
-    "toggleHint": "Appuyez sur {key} à tout moment pour basculer cette boîte de dialogue d'aide",
+    "toggleHint": "Appuyez sur <key>?</key> à tout moment pour basculer cette boîte de dialogue d'aide",
     "desc_search": "Recherche rapide de questions",
     "desc_help": "Afficher l'aide des raccourcis",
     "desc_scratchpad": "Ouvrir le brouillon",
@@ -305,7 +305,9 @@
     "reset": "Réinitialiser",
     "run": "Exécuter",
     "close": "Fermer",
-    "emptyTerminal": "> Exécutez le code pour voir la sortie..."
+    "emptyTerminal": "> Exécutez le code pour voir la sortie...",
+    "open": "Ouvrir le brouillon",
+    "append": "Ajouter au brouillon"
   },
   "debugger": {
     "visualizer": "Visualiseur d'exécution JavaScript",

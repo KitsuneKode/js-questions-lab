@@ -170,6 +170,7 @@ export function QuestionIDEClient({
   const t = useTranslations('ide');
   const tCommon = useTranslations('common');
   const tQuestion = useTranslations('question');
+  const tScratchpad = useTranslations('scratchpad');
 
   const cleanPromptMarkdown = question.promptMarkdown
     .replace(/```[a-z]*\n[\s\S]*?\n```/g, '')
@@ -568,14 +569,14 @@ export function QuestionIDEClient({
                               onClick={() => openScratchpad(questionCode, 'replace')}
                             >
                               <Terminal className="h-4 w-4 mr-2" />
-                              Open Scratchpad
+                              {tScratchpad('open')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => openScratchpad(questionCode, 'append')}
                             >
                               <Terminal className="h-4 w-4 mr-2" />
-                              Append to Scratchpad
+                              {tScratchpad('append')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

@@ -224,7 +224,7 @@
     "globalTag": "どこでも機能",
     "listTag": "質問リストのみ",
     "detailTag": "質問詳細のみ",
-    "toggleHint": "いつでも {key} を押して、このヘルプダイアログを切り替えます",
+    "toggleHint": "いつでも <key>?</key> を押して、このヘルプダイアログを切り替えます",
     "desc_search": "質問をクイック検索",
     "desc_help": "ヘルプを表示",
     "desc_scratchpad": "スクラッチパッドを開く",
@@ -305,7 +305,9 @@
     "reset": "リセット",
     "run": "実行",
     "close": "閉じる",
-    "emptyTerminal": "> 出力を表示するにはコードを実行してください..."
+    "emptyTerminal": "> 出力を表示するにはコードを実行してください...",
+    "open": "スクラッチパッドを開く",
+    "append": "スクラッチパッドに追加"
   },
   "debugger": {
     "visualizer": "JavaScript実行ビジュアライザー",
