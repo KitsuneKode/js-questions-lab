@@ -16,6 +16,7 @@ import {
   syncProgressToServer,
   upsertSingleQuestion,
 } from '@/lib/progress/actions';
+import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
 import {
   type AnswerStatus,
@@ -25,6 +26,7 @@ import {
   readProgress,
   writeProgress,
 } from '@/lib/progress/storage';
+import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
 
 // ---------------------------------------------------------------------------
 // Actions
@@ -230,6 +232,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
             console.error('Failed to sync attempt:', err);
             setSyncStatus('error');
           });
+      }
+
+      // Auto-sync section progress
+      const questionTags = getQuestionTags(questionId);
+      const tagCounts = getTagQuestionCounts();
+
+      for (const tag of questionTags) {
+        const store = useSectionProgressStore.getState();
+        // Initialize if first time
+        if (!store.sections[tag]) {
+          store.updateSection(tag, { totalQuestions: tagCounts[tag] || 1 });
+        }
+        store.markQuestionAnswered(tag, status === 'correct');
       }
     },
     [isSignedIn],
