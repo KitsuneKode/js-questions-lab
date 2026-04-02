@@ -78,6 +78,7 @@ export function SiteHeader() {
     { href: withLocale(locale, siteLinks.questions), label: t('questions'), badge: false },
     { href: withLocale(locale, siteLinks.dashboard), label: t('dashboard'), badge: true },
     { href: withLocale(locale, siteLinks.credits), label: t('credits'), badge: false },
+    { href: withLocale(locale, siteLinks.contact), label: t('contact'), badge: false },
   ];
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -102,7 +103,7 @@ export function SiteHeader() {
         }}
         animate={hidden ? 'hidden' : 'visible'}
         transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-12 sm:px-6"
       >
         <header
           className="pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full border border-border/50 px-4 shadow-sm sm:px-5"
