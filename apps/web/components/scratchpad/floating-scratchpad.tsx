@@ -6,6 +6,7 @@ import {
   IconRotateClockwise2 as RotateCcw,
   IconSparkles as Sparkles,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
@@ -34,6 +35,7 @@ import { useScratchpad } from './scratchpad-context';
 
 export function FloatingScratchpad() {
   const { isOpen, closeScratchpad, code, setCode } = useScratchpad();
+  const t = useTranslations('scratchpad');
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -70,17 +72,17 @@ export function FloatingScratchpad() {
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="flex w-[95vw] sm:w-[90vw] lg:w-[85vw] max-w-[1200px] flex-col overflow-hidden border-l border-border-subtle bg-surface p-0 shadow-[-20px_0_40px_rgba(0,0,0,0.4)] backdrop-blur-xl"
+        className="flex w-[95vw] sm:w-[90vw] lg:w-[85vw] max-w-[1200px] flex-col overflow-hidden border-l border-border-subtle bg-surface p-0 shadow-[-20px_0_40px_rgba(0,0,0,0.4)] backdrop-blur-xl pt-10"
       >
         <SheetHeader className="border-b border-border-subtle bg-elevated/80 px-6 py-4 text-left shrink-0">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <SheetTitle className="flex items-center gap-2 text-xl text-primary font-display font-medium">
                 <Sparkles className="h-5 w-5" />
-                Scratchpad
+                {t('title')}
               </SheetTitle>
               <SheetDescription className="hidden sm:block text-xs text-secondary">
-                Edit, run, and visualize isolated JavaScript code.
+                {t('subtitle')}
               </SheetDescription>
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -100,8 +102,8 @@ export function FloatingScratchpad() {
                         : 'border-border/40 text-muted-foreground opacity-50'
                     }`}
                   >
-                    <Activity className="h-3 w-3" />
-                    Event Loop Replay
+                    <Activity className="h-3.5 w-3.5" />
+                    {t('eventLoop')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]">
@@ -125,7 +127,7 @@ export function FloatingScratchpad() {
                 className="h-8 text-xs text-secondary hover:text-primary transition-colors"
               >
                 <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
-                Reset
+                {t('reset')}
               </Button>
               <Button
                 size="sm"
@@ -134,7 +136,7 @@ export function FloatingScratchpad() {
                 className="h-8 gap-2 rounded-lg px-4 text-xs font-semibold bg-primary text-background hover:bg-primary/90 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]"
               >
                 <Play className="h-3.5 w-3.5" />
-                {isRunning ? 'Running...' : 'Run'}
+                {isRunning ? '...' : t('run')}
               </Button>
               <Button
                 variant="ghost"
@@ -142,7 +144,7 @@ export function FloatingScratchpad() {
                 onClick={closeScratchpad}
                 className="h-8 px-3 text-xs text-secondary hover:text-foreground"
               >
-                Close
+                {t('close')}
               </Button>
             </div>
           </div>
@@ -171,11 +173,7 @@ export function FloatingScratchpad() {
               <span>Output</span>
             </div>
             <div className="flex-1 p-4 bg-void overflow-auto">
-              <TerminalOutput
-                logs={logs}
-                isRunning={isRunning}
-                emptyMessage="Run code to see output..."
-              />
+              <TerminalOutput logs={logs} isRunning={isRunning} emptyMessage={t('emptyTerminal')} />
             </div>
           </section>
         </div>

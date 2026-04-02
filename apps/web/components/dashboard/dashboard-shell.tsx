@@ -85,12 +85,12 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
           <span className="uppercase tracking-widest font-bold">{t('title')}</span>
         </div>
         <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
-          Welcome back.
+          {t('welcome')}
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-secondary">
           {hasData
-            ? `You've answered ${overall.totalAnswered} questions across ${tagStats.length} topics. Maintain your momentum.`
-            : 'Start with one question, get immediate feedback, and build consistent practice habits.'}
+            ? t('statSummary', { count: overall.totalAnswered, topics: tagStats.length })
+            : t('statHero')}
         </p>
       </header>
 

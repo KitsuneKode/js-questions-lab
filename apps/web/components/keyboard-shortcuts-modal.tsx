@@ -18,7 +18,7 @@ interface ShortcutGroup {
   scope: 'global' | 'list' | 'detail';
   shortcuts: {
     keys: string[];
-    description: string;
+    descriptionKey: string;
   }[];
 }
 
@@ -27,30 +27,30 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
     titleKey: 'global',
     scope: 'global',
     shortcuts: [
-      { keys: ['⌘', 'K'], description: 'Quick search questions' },
-      { keys: ['?'], description: 'Show keyboard shortcuts help' },
-      { keys: ['K'], description: 'Open scratchpad' },
+      { keys: ['⌘', 'K'], descriptionKey: 'desc_search' },
+      { keys: ['?'], descriptionKey: 'desc_help' },
+      { keys: ['K'], descriptionKey: 'desc_scratchpad' },
     ],
   },
   {
     titleKey: 'list',
     scope: 'list',
     shortcuts: [
-      { keys: ['J', '↓'], description: 'Next question in list' },
-      { keys: ['K', '↑'], description: 'Previous question in list' },
-      { keys: ['O', 'Enter'], description: 'Open selected question' },
+      { keys: ['J', '↓'], descriptionKey: 'desc_nextList' },
+      { keys: ['K', '↑'], descriptionKey: 'desc_prevList' },
+      { keys: ['O', 'Enter'], descriptionKey: 'desc_openList' },
     ],
   },
   {
     titleKey: 'detail',
     scope: 'detail',
     shortcuts: [
-      { keys: ['A', 'B', 'C', 'D'], description: 'Select answer option' },
-      { keys: ['1', '2', '3', '4'], description: 'Select answer option (alternative)' },
-      { keys: ['Space'], description: 'Reveal/Hide explanation' },
-      { keys: ['R'], description: 'Run code' },
-      { keys: ['←'], description: 'Previous question' },
-      { keys: ['→'], description: 'Next question' },
+      { keys: ['A', 'B', 'C', 'D'], descriptionKey: 'desc_selectOption' },
+      { keys: ['1', '2', '3', '4'], descriptionKey: 'desc_selectOptionAlt' },
+      { keys: ['Space'], descriptionKey: 'desc_toggleExp' },
+      { keys: ['R'], descriptionKey: 'desc_runCode' },
+      { keys: ['←'], descriptionKey: 'desc_prevDet' },
+      { keys: ['→'], descriptionKey: 'desc_nextDet' },
     ],
   },
 ];
@@ -145,10 +145,12 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
               <div className="space-y-2">
                 {group.shortcuts.map((shortcut) => (
                   <div
-                    key={shortcut.description}
+                    key={shortcut.descriptionKey}
                     className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface/50 hover:bg-surface transition-colors"
                   >
-                    <span className="text-sm text-foreground">{shortcut.description}</span>
+                    <span className="text-sm text-foreground">
+                      {t(shortcut.descriptionKey as any)}
+                    </span>
                     <div className="flex items-center gap-1.5">
                       {shortcut.keys.map((key) => (
                         <kbd
@@ -171,9 +173,9 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
           <div className="pt-4 border-t border-border-subtle">
             <p className="text-xs text-muted-foreground text-center">
               {t.rich('toggleHint', {
-                key: () => (
+                key: (chunks) => (
                   <kbd className="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded border border-border-subtle bg-muted/50 text-[10px] font-mono">
-                    ?
+                    {chunks}
                   </kbd>
                 ),
               })}

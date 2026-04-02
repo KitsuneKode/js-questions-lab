@@ -279,7 +279,9 @@ export function FiltersBar({
             onClick={() => setShowAllTags(!showAllTags)}
             className="px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full border border-dashed border-border-subtle text-tertiary hover:border-primary/50 hover:text-primary transition-all active:scale-[0.95]"
           >
-            {showAllTags ? 'Show Less' : `+${allTags.length - 11} More`}
+            {showAllTags
+              ? t('filters.showLess')
+              : t('filters.more', { count: allTags.length - 11 })}
           </button>
         )}
         {activeTags.length > 0 && (

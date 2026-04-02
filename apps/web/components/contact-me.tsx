@@ -76,7 +76,7 @@ export default function Contact() {
           </div>
           <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
             {t.rich('headline', {
-              something: (children) => <span className="text-primary">{children}</span>,
+              something: (chunks) => <span className="text-primary">{chunks}</span>,
             })}
           </h1>
           <p className="max-w-2xl text-lg leading-relaxed text-secondary">{t('subheadline')}</p>

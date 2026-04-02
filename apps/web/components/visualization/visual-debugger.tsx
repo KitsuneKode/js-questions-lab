@@ -2,6 +2,7 @@
 
 import { IconActivity as Activity, IconTerminal2 as Terminal } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +35,7 @@ export function VisualDebugger({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const t = useTranslations('debugger');
 
   // Build replay steps from timeline
   const steps = useMemo(
@@ -127,11 +129,8 @@ export function VisualDebugger({
     return (
       <div className={cn('flex flex-col items-center justify-center p-12 text-center', className)}>
         <Activity className="h-12 w-12 text-muted-foreground/30 mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-2">No Execution Data</h3>
-        <p className="text-sm text-muted-foreground max-w-md">
-          Run your code to see a step-by-step visualization of the event loop, call stack, and task
-          queues.
-        </p>
+        <h3 className="text-lg font-semibold text-foreground mb-2">{t('noData')}</h3>
+        <p className="text-sm text-muted-foreground max-w-md">{t('noDataDesc')}</p>
       </div>
     );
   }
@@ -154,9 +153,9 @@ export function VisualDebugger({
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               <Activity className="h-3 w-3" />
-              Visual Debugger
+              {t('visualizer')}
             </div>
-            <h3 className="text-sm font-medium text-foreground">JavaScript Execution Visualizer</h3>
+            <h3 className="text-sm font-medium text-foreground">{t('visualizer')}</h3>
           </div>
 
           <div className="flex items-center gap-2">
@@ -164,7 +163,7 @@ export function VisualDebugger({
               variant="outline"
               className="border-border/60 bg-transparent px-2 py-0.5 text-[10px] font-mono tracking-wider text-muted-foreground"
             >
-              {steps.length} STEPS
+              {t('stepsCount', { count: steps.length })}
             </Badge>
           </div>
         </div>
