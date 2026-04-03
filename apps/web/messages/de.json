@@ -108,6 +108,7 @@
   },
   "dashboard": {
     "title": "Übungszentrum",
+    "loading": "Lade deinen Fortschritt...",
     "continueLearning": "Weiterlernen",
     "nextRecommended": "Nächste Empfehlung",
     "reviewQueue": "Wiederholungswarteschlange",
@@ -228,6 +229,8 @@
     "labelEmail": "E-Mail",
     "labelSubject": "Betreff",
     "labelMessage": "Nachricht",
+    "placeholderName": "Max Mustermann",
+    "placeholderEmail": "max@example.com",
     "placeholderSubject": "Sponsoring-Anfrage für JSQL",
     "placeholderMessage": "Hallo, ich würde gerne über ... sprechen",
     "submitIdle": "Nachricht senden",

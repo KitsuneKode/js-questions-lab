@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import type { TimelineEvent } from '@/lib/run/types';
 import { cn } from '@/lib/utils';
 
+type TFunction = ReturnType<typeof useTranslations>;
+
 interface TimelineChartProps {
   events: TimelineEvent[];
 }
@@ -235,7 +237,7 @@ function trimConsole(chips: LaneChip[]) {
 
 function describeEvent(
   event: TimelineEvent,
-  t: any,
+  t: TFunction,
 ): Pick<ReplayStep, 'lane' | 'title' | 'caption' | 'badge' | 'durationMs'> {
   const prettyLabel = normalizeLabel(event.label);
 
@@ -329,7 +331,7 @@ function describeEvent(
   };
 }
 
-function buildReplaySteps(events: TimelineEvent[], t: any): ReplayStep[] {
+function buildReplaySteps(events: TimelineEvent[], t: TFunction): ReplayStep[] {
   if (events.length === 0) {
     return [];
   }

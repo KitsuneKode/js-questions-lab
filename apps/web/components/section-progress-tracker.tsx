@@ -16,6 +16,8 @@ import type { MasteryLevel } from '@/lib/progress/section-progress-store';
 import { useAllSectionStats, useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { cn } from '@/lib/utils';
 
+const DEFAULT_TOTAL_QUESTIONS = 155;
+
 interface SectionProgressTrackerProps {
   availableTags: string[];
   questionCounts: Record<string, number>;
@@ -72,7 +74,7 @@ export function SectionProgressTracker({
   availableTags,
   questionCounts,
   onSectionClick,
-  totalQuestions: totalUniqueQuestions = 155,
+  totalQuestions: totalUniqueQuestions = DEFAULT_TOTAL_QUESTIONS,
 }: SectionProgressTrackerProps) {
   const allStats = useAllSectionStats();
   const resetSection = useSectionProgressStore((state) => state.resetSection);

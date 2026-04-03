@@ -108,6 +108,7 @@
   },
   "dashboard": {
     "title": "Centro de práctica",
+    "loading": "Cargando tu progreso...",
     "continueLearning": "Continuar aprendiendo",
     "nextRecommended": "Siguiente recomendada",
     "reviewQueue": "Cola de repaso",
@@ -228,6 +229,8 @@
     "labelEmail": "Correo electrónico",
     "labelSubject": "Asunto",
     "labelMessage": "Mensaje",
+    "placeholderName": "Juan Pérez",
+    "placeholderEmail": "juan@example.com",
     "placeholderSubject": "Consulta de patrocinio para JSQL",
     "placeholderMessage": "Hola, me gustaría discutir...",
     "submitIdle": "Enviar Mensaje",

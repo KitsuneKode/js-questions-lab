@@ -12,6 +12,8 @@ import type { QuestionRecord } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
 import type { AttemptRecord } from '@/lib/progress/storage';
 
+type TFunction = ReturnType<typeof useTranslations>;
+
 interface RecentActivityProps {
   questions: QuestionRecord[];
 }
@@ -111,7 +113,7 @@ export function RecentActivity({ questions }: RecentActivityProps) {
   );
 }
 
-function formatRelativeTime(date: Date, t: any, locale: string): string {
+function formatRelativeTime(date: Date, t: TFunction, locale: string): string {
   const now = Date.now();
   const diff = now - date.getTime();
   const minutes = Math.floor(diff / 60000);

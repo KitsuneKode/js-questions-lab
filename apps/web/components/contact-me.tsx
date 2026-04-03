@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  IconAlertCircle,
   IconBrandGithub,
   IconBrandX,
   IconCheck,
@@ -180,7 +181,7 @@ export default function Contact() {
                       type="text"
                       id="name"
                       name="name"
-                      placeholder="Manash Pratim Bhuyan"
+                      placeholder={t('placeholderName')}
                       required
                       className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                     />
@@ -196,7 +197,7 @@ export default function Contact() {
                       type="email"
                       id="email"
                       name="email"
-                      placeholder="bhuyanmanash2002@gmail.com"
+                      placeholder={t('placeholderEmail')}
                       required
                       className="h-11 bg-background/50 border-border-subtle hover:border-primary/40 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 transition-all shadow-inner rounded-xl px-4"
                     />
@@ -270,14 +271,8 @@ export default function Contact() {
 
                 {status === 'error' && (
                   <div className="p-3 mt-4 rounded-lg bg-danger/10 border border-danger/20 text-danger text-xs flex items-start gap-2">
-                    <IconBrandX className="h-4 w-4 shrink-0 mt-0.5" />
-                    <p>
-                      Failed to send message. Please ensure you have set the{' '}
-                      <code className="bg-danger/20 px-1 py-0.5 rounded font-mono">
-                        NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY
-                      </code>{' '}
-                      in your environment variables, or email me directly instead.
-                    </p>
+                    <IconAlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p>{t('submitError')}</p>
                   </div>
                 )}
               </form>

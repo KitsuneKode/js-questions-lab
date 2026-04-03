@@ -108,6 +108,7 @@
   },
   "dashboard": {
     "title": "練習ハブ",
+    "loading": "進捗を読み込み中...",
     "continueLearning": "学習を続ける",
     "nextRecommended": "次のおすすめ",
     "reviewQueue": "復習キュー",
@@ -228,6 +229,8 @@
     "labelEmail": "メールアドレス",
     "labelSubject": "件名",
     "labelMessage": "メッセージ",
+    "placeholderName": "山田 太郎",
+    "placeholderEmail": "yamada@example.com",
     "placeholderSubject": "JSQLのスポンサーシップに関するお問い合わせ",
     "placeholderMessage": "こんにちは、お話ししたいことがありまして...",
     "submitIdle": "メッセージを送信",

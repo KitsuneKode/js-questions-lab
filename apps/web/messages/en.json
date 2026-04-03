@@ -108,6 +108,7 @@
   },
   "dashboard": {
     "title": "Practice Hub",
+    "loading": "Loading your progress...",
     "continueLearning": "Continue Learning",
     "nextRecommended": "Next Recommended",
     "reviewQueue": "Review Queue",
@@ -228,6 +229,8 @@
     "labelEmail": "Email",
     "labelSubject": "Subject",
     "labelMessage": "Message",
+    "placeholderName": "John Doe",
+    "placeholderEmail": "john@example.com",
     "placeholderSubject": "Sponsorship inquiry for JSQL",
     "placeholderMessage": "Hello, I'd like to discuss...",
     "submitIdle": "Send Message",

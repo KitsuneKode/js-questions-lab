@@ -46,9 +46,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
           <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           <Sparkles className="h-5 w-5 text-primary animate-pulse" />
         </div>
-        <p className="font-mono text-xs uppercase tracking-widest text-secondary">
-          Loading your progress...
-        </p>
+        <p className="font-mono text-xs uppercase tracking-widest text-secondary">{t('loading')}</p>
       </div>
     );
   }
@@ -60,8 +58,8 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const secondarySuggestion =
     reviewQueue.length > 0
       ? {
-          label: 'Reviews Due',
-          description: `You have ${reviewQueue.length} question(s) due for spaced repetition review. Master your concepts.`,
+          label: t('reviewsDue'),
+          description: t('reviewsDueDesc', { count: reviewQueue.length }),
           question: reviewQueue[0],
           icon: Brain,
           isUrgent: true,

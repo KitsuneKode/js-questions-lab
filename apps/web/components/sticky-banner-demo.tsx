@@ -1,5 +1,6 @@
 import { IconExternalLink } from '@tabler/icons-react';
 import { StickyBanner } from '@/components/ui/sticky-banner';
+import { siteConfig } from '@/lib/site-config';
 
 export default function StickyBannerDemo() {
   return (
@@ -9,7 +10,7 @@ export default function StickyBannerDemo() {
           <span>🚀 We are open for advertisement!</span>
           <span className="hidden sm:inline">•</span>
           <a
-            href="https://x.com/kitsunekode"
+            href={siteConfig.creator.xUrl}
             target="_blank"
             rel="noreferrer"
             className="group flex items-center gap-1 rounded-full bg-black/10 px-3 py-0.5 text-sm transition-all hover:bg-black/20 font-bold"

@@ -108,6 +108,7 @@
   },
   "dashboard": {
     "title": "Centre de pratique",
+    "loading": "Chargement de votre progression...",
     "continueLearning": "Continuer à apprendre",
     "nextRecommended": "Prochaine recommandée",
     "reviewQueue": "File de révision",
@@ -228,6 +229,8 @@
     "labelEmail": "E-mail",
     "labelSubject": "Sujet",
     "labelMessage": "Message",
+    "placeholderName": "Jean Dupont",
+    "placeholderEmail": "jean@example.com",
     "placeholderSubject": "Demande de parrainage pour JSQL",
     "placeholderMessage": "Bonjour, j'aimerais discuter de...",
     "submitIdle": "Envoyer le Message",
