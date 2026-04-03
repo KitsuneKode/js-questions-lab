@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "Fragen",
+    "progress": "Fortschritt",
     "dashboard": "Dashboard",
+    "account": "Konto",
     "about": "Über uns",
     "credits": "Mitwirkende",
     "scratchpad": "Notizblock",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "Übung fortsetzen",
     "continue": "Weiter",
+    "progress": "Fortschritt",
     "dashboard": "Dashboard",
     "ticker": {
       "free": "100% Kostenlos",
@@ -141,6 +144,8 @@
     "reviewNow": "Jetzt wiederholen",
     "labelActivity": "Aktivität",
     "activitySub": "Beständigkeit ist der Schlüssel zur Beherrschung.",
+    "sharePng": "PNG teilen",
+    "preparingPng": "PNG wird vorbereitet...",
     "labelLess": "Weniger",
     "labelMore": "Mehr",
     "activityTitle": "{date} — {count} Fragen, {accuracy}% Genauigkeit",
@@ -156,11 +161,24 @@
     "notEnoughData": "Nicht genügend Daten",
     "radarUnlock": "Üben Sie mindestens 3 Themen, um Ihr Meisterschaftsradar freizuschalten.",
     "radarLabel": "Meisterschaft",
+    "practice": "Üben",
     "correctRatio": "{correct}/{total} richtig ({accuracy}%)",
     "labelSaved": "Gespeicherte Fragen",
     "savedSub": "Fragen, die Sie für eine spätere Wiederholung beiseite gelegt haben.",
     "savedCount": "{count} gespeichert",
     "viewAllSaved": "Alle {count} gespeicherten ansehen"
+  },
+  "accountDashboard": {
+    "eyebrow": "Konto",
+    "title": "Kontodashboard",
+    "description": "Halte synchronisierte Identität und Kontozugriff getrennt von der öffentlichen Fortschrittsansicht. Deine tägliche Übungsanalyse lebt im Fortschrittshub.",
+    "progressTitle": "Übungsfortschritt",
+    "progressBody": "Öffne den statischen Fortschrittshub, um Serien, Genauigkeit, Merkliste und die nächsten empfohlenen Fragen aus lokalen Übungsdaten zu prüfen.",
+    "openProgress": "Fortschrittshub öffnen",
+    "syncTitle": "Synchronisierte Identität",
+    "syncBody": "Dieser private Bereich ist für kontobezogene Abläufe wie Sync-Status und angemeldeten Zugriff reserviert. Dein Lernfluss funktioniert weiterhin ohne Anmeldung.",
+    "memberIdLabel": "Mitglieds-ID",
+    "memberIdUnavailable": "Nicht verfügbar"
   },
   "credits": {
     "label": "Credits & Mitwirkende",
@@ -213,7 +231,9 @@
     "product": "Produkt",
     "resources": "Ressourcen",
     "projectRepo": "Projekt-Repository",
-    "lydiaRepo": "Lydias Original-Repo"
+    "lydiaRepo": "Lydias Original-Repo",
+    "contentNote": "Die Fragen basieren auf Lydia Hallies ursprünglichem Repository von 2019, daher werden neuere JavaScript-Sprachfeatures nicht überall abgedeckt.",
+    "learnMore": "Mehr erfahren"
   },
   "contact": {
     "title": "Kontaktiere uns",

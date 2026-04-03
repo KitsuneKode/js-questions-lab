@@ -18,7 +18,7 @@ export function SiteFooter() {
   const footerLinks = {
     product: [
       { href: withLocale(locale, siteLinks.questions), label: tNav('questions') },
-      { href: withLocale(locale, siteLinks.dashboard), label: tNav('dashboard') },
+      { href: withLocale(locale, siteLinks.progress), label: tNav('progress') },
       { href: withLocale(locale, siteLinks.credits), label: tNav('credits') },
     ],
     resources: [
@@ -136,6 +136,18 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
+        </div>
+
+        <div className="mt-8 border-t border-border/40 pt-4">
+          <p className="max-w-3xl text-xs leading-6 text-tertiary">
+            {tFooter('contentNote')}{' '}
+            <Link
+              href={withLocale(locale, siteLinks.credits)}
+              className="font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              {tFooter('learnMore')}
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

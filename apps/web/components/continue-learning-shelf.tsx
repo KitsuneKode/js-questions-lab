@@ -1,15 +1,15 @@
 'use client';
 
 import { IconArrowRight as ArrowRight, IconPlayerPlay as Play } from '@tabler/icons-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface ContinueLearningShelfProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
   locale: string;
 }
 
@@ -47,15 +47,18 @@ export function ContinueLearningShelf({ questions, locale }: ContinueLearningShe
           </div>
 
           <div className="flex w-full shrink-0 items-center gap-2 md:w-auto">
-            <Link href={`/${locale}/questions/${q.id}`} className="flex-1 md:flex-none">
+            <IntentPrefetchLink
+              href={`/${locale}/questions/${q.id}`}
+              className="flex-1 md:flex-none"
+            >
               <Button className="w-full gap-2">
                 {t('continue')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-            </Link>
-            <Link href={`/${locale}/dashboard`} className="hidden md:block">
-              <Button variant="secondary">{t('dashboard')}</Button>
-            </Link>
+            </IntentPrefetchLink>
+            <IntentPrefetchLink href={`/${locale}/progress`} className="hidden md:block">
+              <Button variant="secondary">{t('progress')}</Button>
+            </IntentPrefetchLink>
           </div>
         </div>
       </div>

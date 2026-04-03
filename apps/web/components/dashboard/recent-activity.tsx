@@ -6,16 +6,17 @@ import {
   IconClock as Clock,
   IconCircleX as XCircle,
 } from '@tabler/icons-react';
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import type { QuestionRecord } from '@/lib/content/types';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
+import type { QuestionSummary } from '@/lib/content/types';
+import { withLocale } from '@/lib/locale-paths';
 import { useProgress } from '@/lib/progress/progress-context';
 import type { AttemptRecord } from '@/lib/progress/storage';
 
 type TFunction = ReturnType<typeof useTranslations>;
 
 interface RecentActivityProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
 }
 
 interface RecentAttempt {
@@ -75,8 +76,8 @@ export function RecentActivity({ questions }: RecentActivityProps) {
 
           return (
             <li key={`${entry.questionId}-${entry.attempt.attemptedAt}-${entry.attempt.status}`}>
-              <Link
-                href={`/questions/${entry.questionId}`}
+              <IntentPrefetchLink
+                href={withLocale(locale, `/questions/${entry.questionId}`)}
                 className="group/item flex items-center justify-between rounded-xl border border-border-subtle bg-background p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/5 hover:shadow-glow"
               >
                 <div className="flex items-center gap-4 min-w-0">
@@ -104,7 +105,7 @@ export function RecentActivity({ questions }: RecentActivityProps) {
                 <div className="h-8 w-8 shrink-0 rounded-full border border-border-subtle bg-surface flex items-center justify-center group-hover/item:border-primary/30 group-hover/item:bg-primary/10 transition-colors ml-4">
                   <ArrowRight className="h-3.5 w-3.5 text-tertiary group-hover/item:text-primary transition-transform group-hover/item:translate-x-0.5" />
                 </div>
-              </Link>
+              </IntentPrefetchLink>
             </li>
           );
         })}

@@ -1,7 +1,9 @@
 import { SignUp } from '@clerk/nextjs';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
+import { withLocale } from '@/lib/locale-paths';
 
 export const metadata: Metadata = {
   robots: {
@@ -10,12 +12,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SignUpPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const fallbackRedirectUrl = withLocale(locale, '/');
+
   return (
     <main className="bg-void py-12">
       <Container>
         <div className="flex items-center justify-center min-h-[calc(100vh-350px)]">
-          <SignUp />
+          <SignUp
+            fallbackRedirectUrl={fallbackRedirectUrl}
+            signInFallbackRedirectUrl={fallbackRedirectUrl}
+          />
         </div>
       </Container>
     </main>

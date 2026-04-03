@@ -13,12 +13,27 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
+type ShortcutTitleKey = 'global' | 'list' | 'detail';
+type ShortcutDescriptionKey =
+  | 'desc_search'
+  | 'desc_help'
+  | 'desc_scratchpad'
+  | 'desc_nextList'
+  | 'desc_prevList'
+  | 'desc_openList'
+  | 'desc_selectOption'
+  | 'desc_selectOptionAlt'
+  | 'desc_toggleExp'
+  | 'desc_runCode'
+  | 'desc_prevDet'
+  | 'desc_nextDet';
+
 interface ShortcutGroup {
-  titleKey: string;
+  titleKey: ShortcutTitleKey;
   scope: 'global' | 'list' | 'detail';
   shortcuts: {
     keys: string[];
-    descriptionKey: string;
+    descriptionKey: ShortcutDescriptionKey;
   }[];
 }
 
@@ -124,7 +139,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
             <div key={group.titleKey}>
               <div className="flex items-center gap-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  {t(group.titleKey as any)}
+                  {t(group.titleKey)}
                 </h3>
                 {group.scope === 'global' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
@@ -148,9 +163,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
                     key={shortcut.descriptionKey}
                     className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface/50 hover:bg-surface transition-colors"
                   >
-                    <span className="text-sm text-foreground">
-                      {t(shortcut.descriptionKey as any)}
-                    </span>
+                    <span className="text-sm text-foreground">{t(shortcut.descriptionKey)}</span>
                     <div className="flex items-center gap-1.5">
                       {shortcut.keys.map((key) => (
                         <kbd

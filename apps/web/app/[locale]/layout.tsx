@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Provider } from '@/app/provider';
 import { SiteJsonLd } from '@/components/seo/site-json-ld';
-import { isValidLocale, LOCALE_DIRS, type LocaleCode } from '@/lib/i18n/config';
+import { isValidLocale, LOCALE_DIRS, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
@@ -22,6 +22,10 @@ const notoSansJP = Noto_Sans_JP({
 interface LocaleLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
+}
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({
@@ -66,6 +70,7 @@ export async function generateMetadata({
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   if (!isValidLocale(locale)) {
     notFound();

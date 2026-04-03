@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "Perguntas",
+    "progress": "Progresso",
     "dashboard": "Painel",
+    "account": "Conta",
     "about": "Sobre",
     "credits": "Créditos",
     "scratchpad": "Rascunho",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "Retomar prática",
     "continue": "Continuar",
+    "progress": "Progresso",
     "dashboard": "Painel",
     "ticker": {
       "free": "100% Grátis",
@@ -141,6 +144,8 @@
     "reviewNow": "Revisar agora",
     "labelActivity": "Atividade",
     "activitySub": "Consistência é a chave para o domínio.",
+    "sharePng": "Compartilhar PNG",
+    "preparingPng": "Preparando PNG...",
     "labelLess": "Menos",
     "labelMore": "Mais",
     "activityTitle": "{date} — {count} perguntas, {accuracy}% de precisão",
@@ -156,11 +161,24 @@
     "notEnoughData": "Dados insuficientes",
     "radarUnlock": "Pratique pelo menos 3 tópicos para desbloquear seu radar de maestria.",
     "radarLabel": "Maestria",
+    "practice": "Praticar",
     "correctRatio": "{correct}/{total} corretas ({accuracy}%)",
     "labelSaved": "Questões Salvas",
     "savedSub": "Questões que você reservou para revisão posterior.",
     "savedCount": "{count} salvas",
     "viewAllSaved": "Ver todas as {count} salvas"
+  },
+  "accountDashboard": {
+    "eyebrow": "Conta",
+    "title": "Painel da conta",
+    "description": "Mantenha a identidade sincronizada e o acesso da conta separados da visão pública de progresso. Suas análises diárias de prática ficam no hub de progresso.",
+    "progressTitle": "Progresso da prática",
+    "progressBody": "Abra o hub de progresso estático para revisar sequências, precisão, itens salvos e as próximas perguntas recomendadas a partir de dados locais de prática.",
+    "openProgress": "Abrir hub de progresso",
+    "syncTitle": "Identidade sincronizada",
+    "syncBody": "Esta área privada é reservada para fluxos ligados à conta, como status de sincronização e acesso autenticado. Seu fluxo de aprendizado continua funcionando sem login.",
+    "memberIdLabel": "ID do membro",
+    "memberIdUnavailable": "Indisponível"
   },
   "credits": {
     "label": "Créditos e Atribuição",
@@ -213,7 +231,9 @@
     "product": "Produto",
     "resources": "Recursos",
     "projectRepo": "Repositório do projeto",
-    "lydiaRepo": "Repo original da Lydia"
+    "lydiaRepo": "Repo original da Lydia",
+    "contentNote": "O conteúdo das questões é baseado no repositório original da Lydia Hallie de 2019, então recursos mais novos da linguagem JavaScript podem não aparecer em todos os lugares.",
+    "learnMore": "Saiba mais"
   },
   "contact": {
     "title": "Contate-nos",

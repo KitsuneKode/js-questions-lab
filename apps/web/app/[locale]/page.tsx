@@ -1,21 +1,23 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { ContinueLearningShelf } from '@/components/continue-learning-shelf';
 import { LandingHero } from '@/components/landing-hero';
 import { LandingSections } from '@/components/landing-sections';
 import { QuestionCard } from '@/components/question-card';
-import { getManifest, getQuestions } from '@/lib/content/loaders';
-import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import {
+  getManifest,
+  getQuestionDiscoveryIndex,
+  getQuestionSummaries,
+} from '@/lib/content/loaders';
+import type { LocaleCode } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
+export const dynamic = 'force-static';
 
 interface HomePageProps {
   params: Promise<{ locale: LocaleCode }>;
@@ -47,12 +49,12 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'landing' });
 
   const manifest = getManifest(locale);
-  const questions = getQuestions(locale);
-
-  const featured = questions.slice(0, 6);
+  const questions = getQuestionSummaries(locale);
+  const featured = getQuestionDiscoveryIndex(locale).slice(0, 6);
 
   const tagCounts = Object.entries(
     questions

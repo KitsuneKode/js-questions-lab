@@ -1,7 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { cache } from 'react';
-import type { LocaleIndex, QuestionRecord, QuestionsManifest } from '@/lib/content/types';
+import type {
+  LocaleIndex,
+  QuestionDiscoveryItem,
+  QuestionRecord,
+  QuestionSummary,
+  QuestionsManifest,
+} from '@/lib/content/types';
 import { DEFAULT_LOCALE, type LocaleCode } from '@/lib/i18n/config';
 
 // ---------------------------------------------------------------------------
@@ -29,6 +35,53 @@ function readJson<T>(relativePath: string): T | null {
   const resolved = resolveGeneratedFile(relativePath);
   if (!resolved) return null;
   return JSON.parse(fs.readFileSync(resolved, 'utf8')) as T;
+}
+
+function toQuestionSummary(question: QuestionRecord): QuestionSummary {
+  return {
+    id: question.id,
+    slug: question.slug,
+    locale: question.locale,
+    isFallback: question.isFallback,
+    title: question.title,
+    tags: question.tags,
+    difficulty: question.difficulty,
+    runnable: question.runnable,
+  };
+}
+
+function stripMarkdownToText(markdown: string): string {
+  return markdown
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
+    .replace(/[*_>#-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getPreviewCode(question: QuestionRecord): string {
+  return question.codeBlocks[0]?.code.split('\n').slice(0, 3).join('\n') ?? '';
+}
+
+function toQuestionDiscoveryItem(question: QuestionRecord): QuestionDiscoveryItem {
+  const summary = toQuestionSummary(question);
+  const textParts = [
+    question.title,
+    question.tags.join(' '),
+    stripMarkdownToText(question.promptMarkdown),
+    stripMarkdownToText(question.explanationMarkdown),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return {
+    ...summary,
+    searchText: textParts,
+    previewCode: getPreviewCode(question),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -84,6 +137,18 @@ export const getQuestionById = cache(
   (locale: LocaleCode = DEFAULT_LOCALE, id: number): QuestionRecord | null => {
     const question = getQuestions(locale).find((item) => item.id === id);
     return question ?? null;
+  },
+);
+
+export const getQuestionSummaries = cache(
+  (locale: LocaleCode = DEFAULT_LOCALE): QuestionSummary[] => {
+    return getQuestions(locale).map(toQuestionSummary);
+  },
+);
+
+export const getQuestionDiscoveryIndex = cache(
+  (locale: LocaleCode = DEFAULT_LOCALE): QuestionDiscoveryItem[] => {
+    return getQuestions(locale).map(toQuestionDiscoveryItem);
   },
 );
 

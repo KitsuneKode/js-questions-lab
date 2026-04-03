@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 
-import { getQuestionById } from '@/lib/content/loaders';
+import { getManifest, getQuestionById, getQuestions } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
+}
+
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getQuestions(DEFAULT_LOCALE).map((question) => ({ id: String(question.id) }));
 }
 
 /**
@@ -41,6 +48,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
   }
 
   const baseUrl = getBaseUrl();
+  const manifest = getManifest(DEFAULT_LOCALE);
 
   const data = {
     meta: {
@@ -48,7 +56,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
         author: siteConfig.source.creatorName,
         repository: siteConfig.source.repoUrl,
       },
-      generatedAt: new Date().toISOString(),
+      generatedAt: manifest.generatedAt,
     },
     question: {
       id: question.id,
@@ -85,22 +93,6 @@ export async function GET(_request: Request, { params }: RouteParams) {
   return NextResponse.json(data, {
     headers: {
       'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-}
-
-/**
- * OPTIONS /api/questions/[id]
- *
- * CORS preflight handler.
- */
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',

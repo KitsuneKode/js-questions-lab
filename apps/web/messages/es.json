@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "Preguntas",
+    "progress": "Progreso",
     "dashboard": "Panel",
+    "account": "Cuenta",
     "about": "Acerca de",
     "credits": "Créditos",
     "scratchpad": "Bloc de notas",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "Continuar práctica",
     "continue": "Continuar",
+    "progress": "Progreso",
     "dashboard": "Panel",
     "ticker": {
       "free": "100% Gratis",
@@ -141,6 +144,8 @@
     "reviewNow": "Revisar ahora",
     "labelActivity": "Actividad",
     "activitySub": "La constancia es la clave del dominio.",
+    "sharePng": "Compartir PNG",
+    "preparingPng": "Preparando PNG...",
     "labelLess": "Menos",
     "labelMore": "Más",
     "activityTitle": "{date} — {count} preguntas, {accuracy}% de precisión",
@@ -156,11 +161,24 @@
     "notEnoughData": "No hay suficientes datos",
     "radarUnlock": "Practica al menos 3 temas para desbloquear tu radar de dominio.",
     "radarLabel": "Dominio",
+    "practice": "Practicar",
     "correctRatio": "{correct}/{total} correctas ({accuracy}%)",
     "labelSaved": "Preguntas guardadas",
     "savedSub": "Preguntas que has reservado para revisar más tarde.",
     "savedCount": "{count} guardadas",
     "viewAllSaved": "Ver las {count} guardadas"
+  },
+  "accountDashboard": {
+    "eyebrow": "Cuenta",
+    "title": "Panel de cuenta",
+    "description": "Mantén la identidad sincronizada y el acceso de la cuenta separados de la vista pública de progreso. Tus analíticas diarias viven en el centro de progreso.",
+    "progressTitle": "Progreso de práctica",
+    "progressBody": "Abre el centro de progreso estático para revisar rachas, precisión, guardados y las siguientes preguntas recomendadas a partir de datos de práctica locales.",
+    "openProgress": "Abrir centro de progreso",
+    "syncTitle": "Identidad sincronizada",
+    "syncBody": "Esta área privada está reservada para flujos ligados a la cuenta, como el estado de sincronización y el acceso autenticado. Tu aprendizaje sigue funcionando sin iniciar sesión.",
+    "memberIdLabel": "ID de miembro",
+    "memberIdUnavailable": "No disponible"
   },
   "credits": {
     "label": "Créditos y atribución",
@@ -213,7 +231,9 @@
     "product": "Producto",
     "resources": "Recursos",
     "projectRepo": "Repositorio del proyecto",
-    "lydiaRepo": "Repo original de Lydia"
+    "lydiaRepo": "Repo original de Lydia",
+    "contentNote": "El contenido de las preguntas se basa en el repositorio original de Lydia Hallie de 2019, por lo que es posible que las funciones más nuevas de JavaScript no estén cubiertas en todos los casos.",
+    "learnMore": "Más información"
   },
   "contact": {
     "title": "Contáctanos",
