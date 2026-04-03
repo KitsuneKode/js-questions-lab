@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import { Container } from '@/components/container';
 import { NextRecommendedBanner } from '@/components/next-recommended-banner';
 import { QuestionsClientWrapper } from '@/components/questions-client-wrapper';
+import { QuestionsLibrarySectionSkeleton } from '@/components/questions-library-section-skeleton';
 import {
   getManifest,
   getQuestionDiscoveryIndex,
@@ -78,7 +79,7 @@ export default async function QuestionsPage({
 
           {/* Filters and Results */}
           <section className="space-y-6">
-            <Suspense fallback={null}>
+            <Suspense fallback={<QuestionsLibrarySectionSkeleton />}>
               <QuestionsClientWrapper
                 allQuestions={allQuestions}
                 manifest={manifest}
