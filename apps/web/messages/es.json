@@ -231,7 +231,9 @@
     "product": "Producto",
     "resources": "Recursos",
     "projectRepo": "Repositorio del proyecto",
-    "lydiaRepo": "Repo original de Lydia"
+    "lydiaRepo": "Repo original de Lydia",
+    "contentNote": "El contenido de las preguntas se basa en el repositorio original de Lydia Hallie de 2019, por lo que es posible que las funciones más nuevas de JavaScript no estén cubiertas en todos los casos.",
+    "learnMore": "Más información"
   },
   "contact": {
     "title": "Contáctanos",

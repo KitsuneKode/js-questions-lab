@@ -231,7 +231,9 @@
     "product": "プロダクト",
     "resources": "リソース",
     "projectRepo": "プロジェクトリポジトリ",
-    "lydiaRepo": "Lydiaのオリジナルリポジトリ"
+    "lydiaRepo": "Lydiaのオリジナルリポジトリ",
+    "contentNote": "問題コンテンツは Lydia Hallie の 2019 年のオリジナルリポジトリを元にしているため、新しい JavaScript の言語機能がすべてを通して扱われているわけではありません。",
+    "learnMore": "詳しく見る"
   },
   "contact": {
     "title": "お問い合わせ",

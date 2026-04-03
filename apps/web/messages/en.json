@@ -231,7 +231,9 @@
     "product": "Product",
     "resources": "Resources",
     "projectRepo": "Project Repository",
-    "lydiaRepo": "Lydia's Original Repo"
+    "lydiaRepo": "Lydia's Original Repo",
+    "contentNote": "Question content is based on Lydia Hallie's original 2019 repository, so newer JavaScript language features may not be covered everywhere.",
+    "learnMore": "Learn more"
   },
   "contact": {
     "title": "Contact Us",

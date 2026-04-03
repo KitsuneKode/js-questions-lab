@@ -137,6 +137,18 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
+
+        <div className="mt-8 border-t border-border/40 pt-4">
+          <p className="max-w-3xl text-xs leading-6 text-tertiary">
+            {tFooter('contentNote')}{' '}
+            <Link
+              href={withLocale(locale, siteLinks.credits)}
+              className="font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              {tFooter('learnMore')}
+            </Link>
+          </p>
+        </div>
       </div>
     </footer>
   );
