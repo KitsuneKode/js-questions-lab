@@ -50,5 +50,8 @@ If you are working on specific domains, **you must read the relevant guide first
 ## Branching & CI/CD Workflow
 
 - All new work goes on a feature branch (`feat/`, `fix/`, `chore/` prefix).
-- Open PRs targeting the `dev` branch first. CI runs typecheck, lint, and build.
+- **All upstream changes and PRs must target the `dev` branch.**
+- We use `dev` as our staging environment and primary source of work.
+- After changes are made, reviewed, and validated in `dev`, they are merged into `main`.
+- The main website is deployed directly from the `main` branch.
 - Never commit directly to `main` for feature or fix work.
