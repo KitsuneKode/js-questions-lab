@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { getQuestions } from '@/lib/content/loaders';
+import { getManifest, getQuestions } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
@@ -15,6 +15,7 @@ export const dynamic = 'force-static';
  */
 export async function GET() {
   const questions = getQuestions(DEFAULT_LOCALE);
+  const manifest = getManifest(DEFAULT_LOCALE);
   const baseUrl = getBaseUrl();
 
   const data = {
@@ -32,7 +33,7 @@ export async function GET() {
         author: siteConfig.creator.name,
         authorUrl: siteConfig.creator.githubUrl,
       },
-      generatedAt: new Date().toISOString(),
+      generatedAt: manifest.generatedAt,
       endpoints: {
         allQuestions: `${baseUrl}/api/questions`,
         singleQuestion: `${baseUrl}/api/questions/{id}`,
@@ -62,22 +63,6 @@ export async function GET() {
   return NextResponse.json(data, {
     headers: {
       'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-}
-
-/**
- * OPTIONS /api/questions
- *
- * CORS preflight handler.
- */
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',

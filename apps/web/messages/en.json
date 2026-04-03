@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "Questions",
+    "progress": "Progress",
     "dashboard": "Dashboard",
+    "account": "Account",
     "about": "About",
     "credits": "Credits",
     "scratchpad": "Scratchpad",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "Resume Practice",
     "continue": "Continue",
+    "progress": "Progress",
     "dashboard": "Dashboard",
     "ticker": {
       "free": "100% Free",
@@ -141,6 +144,8 @@
     "reviewNow": "Review Now",
     "labelActivity": "Activity",
     "activitySub": "Consistency is the key to mastery.",
+    "sharePng": "Share PNG",
+    "preparingPng": "Preparing PNG...",
     "labelLess": "Less",
     "labelMore": "More",
     "activityTitle": "{date} — {count} questions, {accuracy}% accuracy",
@@ -156,11 +161,24 @@
     "notEnoughData": "Not enough data",
     "radarUnlock": "Practice at least 3 topics to unlock your mastery radar.",
     "radarLabel": "Mastery",
+    "practice": "Practice",
     "correctRatio": "{correct}/{total} correct ({accuracy}%)",
     "labelSaved": "Saved Questions",
     "savedSub": "Questions you've set aside for later review.",
     "savedCount": "{count} saved",
     "viewAllSaved": "View all {count} saved"
+  },
+  "accountDashboard": {
+    "eyebrow": "Account",
+    "title": "Account Dashboard",
+    "description": "Keep synced identity and account access separate from the public progress view. Your day-to-day practice analytics live in the progress hub.",
+    "progressTitle": "Practice Progress",
+    "progressBody": "Open the static progress hub to review streaks, accuracy, bookmarks, and your next recommended questions from local-first practice data.",
+    "openProgress": "Open progress hub",
+    "syncTitle": "Sync Identity",
+    "syncBody": "This private area is reserved for account-aware flows like sync status and signed-in access. Your learning flow still works without auth.",
+    "memberIdLabel": "Member ID",
+    "memberIdUnavailable": "Unavailable"
   },
   "credits": {
     "label": "Credits & Attribution",

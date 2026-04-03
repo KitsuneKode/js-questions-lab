@@ -6,7 +6,6 @@ import {
   IconLibrary as Library,
   IconSparkles as Sparkles,
 } from '@tabler/icons-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
 import { BookmarkedList } from '@/components/dashboard/bookmarked-list';
@@ -15,13 +14,14 @@ import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { ReviewQueue } from '@/components/dashboard/review-queue';
 import { TopicAccuracyChart } from '@/components/dashboard/topic-accuracy-chart';
 import { WeakestTopics } from '@/components/dashboard/weakest-topics';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
 import { withLocale } from '@/lib/locale-paths';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface DashboardShellProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
   locale: string;
 }
 
@@ -138,7 +138,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
-                      <Link
+                      <IntentPrefetchLink
                         href={
                           suggestion.question
                             ? withLocale(locale, `/questions/${suggestion.question.id}`)
@@ -152,8 +152,8 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                           {suggestion.isUrgent ? 'Review Now' : index === 0 ? 'Resume' : 'Try this'}
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Button>
-                      </Link>
-                      <Link href={questionsHref}>
+                      </IntentPrefetchLink>
+                      <IntentPrefetchLink href={questionsHref}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -161,7 +161,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                         >
                           Browse all
                         </Button>
-                      </Link>
+                      </IntentPrefetchLink>
                     </div>
                   </div>
                 </div>

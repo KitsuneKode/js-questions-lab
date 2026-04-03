@@ -1,4 +1,4 @@
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionDiscoveryItem, QuestionRecord, QuestionSummary } from '@/lib/content/types';
 import type { ProgressState } from '@/lib/progress/storage';
 
 export type ListingStatus = 'all' | 'answered' | 'unanswered' | 'bookmarked';
@@ -25,6 +25,10 @@ export interface QuestionScope {
   status: ListingStatus;
   page: number;
 }
+
+type SearchableQuestion = QuestionSummary &
+  Partial<Pick<QuestionDiscoveryItem, 'searchText'>> &
+  Partial<Pick<QuestionRecord, 'promptMarkdown' | 'explanationMarkdown'>>;
 
 const DEFAULT_SCOPE: QuestionScope = {
   q: '',
@@ -140,16 +144,18 @@ export function buildQuestionScopeQuery(
   return params.toString();
 }
 
-export function applyServerFilters(
-  questions: QuestionRecord[],
+export function applyServerFilters<T extends SearchableQuestion>(
+  questions: T[],
   filters: ListingFilters,
-): QuestionRecord[] {
+): T[] {
   const q = filters.q?.trim().toLowerCase();
 
   return questions.filter((question) => {
     if (q) {
-      const haystack =
-        `${question.title} ${question.promptMarkdown} ${question.explanationMarkdown}`.toLowerCase();
+      const haystack = (
+        question.searchText ??
+        `${question.title} ${question.promptMarkdown ?? ''} ${question.explanationMarkdown ?? ''}`
+      ).toLowerCase();
       if (!haystack.includes(q)) {
         return false;
       }
@@ -181,11 +187,11 @@ export function applyServerFilters(
   });
 }
 
-export function applyStatusFilter(
-  questions: QuestionRecord[],
+export function applyStatusFilter<T extends Pick<QuestionSummary, 'id'>>(
+  questions: T[],
   status: ListingStatus,
   progressQuestions: ProgressState['questions'],
-): QuestionRecord[] {
+): T[] {
   if (status === 'all') {
     return questions;
   }

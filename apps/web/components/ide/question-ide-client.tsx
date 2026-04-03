@@ -15,7 +15,6 @@ import {
   IconBolt as Zap,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -23,6 +22,7 @@ import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { DomEventSimulator } from '@/components/ide/dom-event-simulator';
 import { KeyboardHintBar } from '@/components/ide/keyboard-hint-bar';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Badge } from '@/components/ui/badge';
@@ -64,9 +64,8 @@ import {
   applyStatusFilter,
   buildQuestionScopeQuery,
   parseQuestionScope,
-  type QuestionScope,
 } from '@/lib/content/query';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionDiscoveryItem, QuestionRecord } from '@/lib/content/types';
 import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
 import { useProgress } from '@/lib/progress/progress-context';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
@@ -87,19 +86,9 @@ type RuntimeAwareQuestion = QuestionRecord & {
 interface QuestionIDEClientProps {
   question: RuntimeAwareQuestion;
   locale?: string;
-  allQuestions?: QuestionRecord[];
-  scope?: QuestionScope;
+  questionIndex?: QuestionDiscoveryItem[];
   breadcrumbs?: React.ReactNode;
 }
-
-const DEFAULT_SCOPE: QuestionScope = {
-  q: '',
-  tags: [],
-  runnable: undefined,
-  difficulties: [],
-  status: 'all',
-  page: 1,
-};
 
 const EDITOR_DEFAULT_CODE = `// Write your code here
 // Press Ctrl/Cmd + Enter to run
@@ -110,6 +99,12 @@ const arr = [1, 2, 3, 4, 5];
 const sum = arr.reduce((a, b) => a + b, 0);
 console.log("Sum:", sum);
 `;
+
+const selfGradeLabelKeys = {
+  hard: 'gradeHard',
+  good: 'gradeGood',
+  easy: 'gradeEasy',
+} as const;
 
 function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
   if (question.runtime?.kind) {
@@ -138,7 +133,7 @@ function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
 export function QuestionIDEClient({
   question,
   locale,
-  allQuestions = [],
+  questionIndex = [],
   breadcrumbs,
 }: QuestionIDEClientProps) {
   const router = useRouter();
@@ -226,16 +221,16 @@ export function QuestionIDEClient({
     );
   }, [isJavascriptRuntime, timeline]);
 
-  // Compute question counts per tag from allQuestions for progress tracking
+  // Compute question counts per tag from questionIndex for progress tracking
   const tagQuestionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    allQuestions.forEach((q) => {
+    questionIndex.forEach((q) => {
       (q.tags || []).forEach((tag) => {
         counts[tag] = (counts[tag] || 0) + 1;
       });
     });
     return counts;
-  }, [allQuestions]);
+  }, [questionIndex]);
 
   const runCode = useCallback(async () => {
     if (!isJavascriptRuntime || !javascriptCodeBlock?.code.trim()) {
@@ -357,8 +352,8 @@ export function QuestionIDEClient({
     [scope],
   );
   const staticScopedQuestions = useMemo(
-    () => applyServerFilters(allQuestions, scope),
-    [allQuestions, scope],
+    () => applyServerFilters(questionIndex, scope),
+    [questionIndex, scope],
   );
   const staticScopedIds = useMemo(
     () => staticScopedQuestions.map((scopedQuestion) => scopedQuestion.id),
@@ -372,8 +367,8 @@ export function QuestionIDEClient({
     [progress.questions, scope.status, staticScopedQuestions],
   );
   const allQuestionIds = useMemo(
-    () => allQuestions.map((availableQuestion) => availableQuestion.id),
-    [allQuestions],
+    () => questionIndex.map((availableQuestion) => availableQuestion.id),
+    [questionIndex],
   );
 
   useEffect(() => {
@@ -457,6 +452,16 @@ export function QuestionIDEClient({
     ? `${linkPrefix}/questions/${nextId}${filterQuery ? `?${filterQuery}` : ''}`
     : null;
 
+  useEffect(() => {
+    if (prevHref) {
+      router.prefetch(prevHref);
+    }
+
+    if (nextHref) {
+      router.prefetch(nextHref);
+    }
+  }, [nextHref, prevHref, router]);
+
   useQuestionKeyboard({
     isAnswered,
     options: question.options,
@@ -465,7 +470,7 @@ export function QuestionIDEClient({
     onSelectOption: handleOptionSelect,
     onRevealToggle: () => setExplanationVisible((v) => !v),
     onRunCode: isJavascriptRuntime ? runCode : undefined,
-    onOpenSearch: allQuestions.length > 0 ? () => setSearchOpen(true) : undefined,
+    onOpenSearch: questionIndex.length > 0 ? () => setSearchOpen(true) : undefined,
   });
 
   return (
@@ -508,7 +513,7 @@ export function QuestionIDEClient({
 
         <div className="flex items-center gap-3">
           {prevId && (
-            <Link href={prevHref ?? '#'}>
+            <IntentPrefetchLink href={prevHref ?? '#'}>
               <Button
                 variant="secondary"
                 size="sm"
@@ -517,7 +522,7 @@ export function QuestionIDEClient({
                 <ChevronLeft className="h-4 w-4" />
                 {tQuestion('prev')}
               </Button>
-            </Link>
+            </IntentPrefetchLink>
           )}
           <Button
             variant={item.bookmarked ? 'default' : 'secondary'}
@@ -529,7 +534,7 @@ export function QuestionIDEClient({
             {item.bookmarked ? tQuestion('saved') : tQuestion('save')}
           </Button>
           {nextId && (
-            <Link href={nextHref ?? '#'}>
+            <IntentPrefetchLink href={nextHref ?? '#'}>
               <Button
                 variant="secondary"
                 size="sm"
@@ -538,7 +543,7 @@ export function QuestionIDEClient({
                 {tQuestion('next')}
                 <ChevronRight className="h-4 w-4" />
               </Button>
-            </Link>
+            </IntentPrefetchLink>
           )}
         </div>
       </div>
@@ -550,7 +555,10 @@ export function QuestionIDEClient({
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {breadcrumbs && <div className="-mt-2 mb-4">{breadcrumbs}</div>}
             <div className="space-y-4">
-              <h2 className="font-display text-2xl font-medium tracking-tight text-foreground">
+              <h2
+                className="font-display text-2xl font-medium tracking-tight text-foreground"
+                style={{ viewTransitionName: `question-title-${question.id}` }}
+              >
                 {question.title}
               </h2>
               {cleanPromptMarkdown && (
@@ -944,7 +952,7 @@ export function QuestionIDEClient({
                                 : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
                           }`}
                         >
-                          {t(`grade${grade.charAt(0).toUpperCase() + grade.slice(1)}` as any)}
+                          {t(selfGradeLabelKeys[grade])}
                         </button>
                       ))}
                     </div>
@@ -974,11 +982,11 @@ export function QuestionIDEClient({
           <CommandList className="h-[400px]">
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Questions">
-              {allQuestions
+              {questionIndex
                 .filter(
                   (q) =>
-                    q.title.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
-                    q.tags.some((t) => t.toLowerCase().includes((searchQuery || '').toLowerCase())),
+                    q.searchText.includes((searchQuery || '').toLowerCase()) ||
+                    q.id === Number(searchQuery),
                 )
                 .slice(0, 10)
                 .map((q) => (

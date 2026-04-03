@@ -4,16 +4,16 @@ import { Suspense } from 'react';
 import { Container } from '@/components/container';
 import { NextRecommendedBanner } from '@/components/next-recommended-banner';
 import { QuestionsClientWrapper } from '@/components/questions-client-wrapper';
-import { getManifest, getQuestions } from '@/lib/content/loaders';
-import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import {
+  getManifest,
+  getQuestionDiscoveryIndex,
+  getQuestionSummaries,
+} from '@/lib/content/loaders';
+import type { LocaleCode } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
 export const dynamic = 'force-static';
-
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
 
 export async function generateMetadata({
   params,
@@ -52,7 +52,8 @@ export default async function QuestionsPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'questions' });
 
-  const allQuestions = getQuestions(locale);
+  const allQuestions = getQuestionDiscoveryIndex(locale);
+  const questionSummaries = getQuestionSummaries(locale);
   const manifest = getManifest(locale);
 
   return (
@@ -63,7 +64,7 @@ export default async function QuestionsPage({
           <header className="space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)]">
               <span className="uppercase tracking-widest font-bold">
-                {t('count', { count: allQuestions.length })}
+                {t('count', { count: questionSummaries.length })}
               </span>
             </div>
             <h1 className="font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[clamp(3rem,2rem+3vw,4.5rem)]">
@@ -73,7 +74,7 @@ export default async function QuestionsPage({
           </header>
 
           {/* Recommended Banner */}
-          <NextRecommendedBanner questions={allQuestions} locale={locale} />
+          <NextRecommendedBanner questions={questionSummaries} locale={locale} />
 
           {/* Filters and Results */}
           <section className="space-y-6">

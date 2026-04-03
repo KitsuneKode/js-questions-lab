@@ -1,11 +1,12 @@
 'use client';
 
 import { IconArrowRight as ArrowRight, IconChartPie as PieChart } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from 'recharts';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
+import { withLocale } from '@/lib/locale-paths';
 import type { TagStats } from '@/lib/progress/analytics';
 
 interface TopicAccuracyChartProps {
@@ -16,6 +17,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
   const t = useTranslations('dashboard');
+  const locale = useLocale();
 
   useEffect(() => {
     const element = chartRef.current;
@@ -142,7 +144,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
         {sortedByWeakness.map((tag) => (
           <div key={tag.tag} className="flex items-center justify-between">
             <span className="text-sm text-foreground capitalize">{tag.tag}</span>
-            <Link href={`/questions?tag=${tag.tag}`}>
+            <IntentPrefetchLink href={withLocale(locale, `/questions?tag=${tag.tag}`)}>
               <Button
                 size="sm"
                 variant="ghost"
@@ -150,7 +152,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
               >
                 {t('practice')} <ArrowRight className="h-3 w-3 ml-1" />
               </Button>
-            </Link>
+            </IntentPrefetchLink>
           </div>
         ))}
       </div>

@@ -9,6 +9,20 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/**': ['../../content/generated/**/*'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/en',
+        permanent: true,
+      },
+      {
+        source: '/:locale/about',
+        destination: '/:locale/credits',
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     viewTransition: true,
   },

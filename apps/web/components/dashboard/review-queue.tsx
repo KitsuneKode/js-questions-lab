@@ -4,16 +4,18 @@ import {
   IconArrowRight as ArrowRight,
   IconRotateClockwise2 as RotateCcw,
 } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import type { QuestionRecord } from '@/lib/content/types';
+import { useLocale, useTranslations } from 'next-intl';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
+import type { QuestionSummary } from '@/lib/content/types';
+import { withLocale } from '@/lib/locale-paths';
 
 interface ReviewQueueProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
 }
 
 export function ReviewQueue({ questions }: ReviewQueueProps) {
   const t = useTranslations('dashboard');
+  const locale = useLocale();
   if (questions.length === 0) return null;
 
   return (
@@ -31,9 +33,9 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
 
       <div className="grid gap-3 sm:grid-cols-2 relative z-10">
         {questions.slice(0, 6).map((q) => (
-          <Link
+          <IntentPrefetchLink
             key={q.id}
-            href={`/questions/${q.id}`}
+            href={withLocale(locale, `/questions/${q.id}`)}
             className="group/item flex flex-col justify-between rounded-xl border border-border-subtle bg-background p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-glow min-h-[110px]"
           >
             <div>
@@ -54,7 +56,7 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
                 {t('labelReviewAction')} <ArrowRight className="h-3 w-3" />
               </span>
             </div>
-          </Link>
+          </IntentPrefetchLink>
         ))}
       </div>
     </div>

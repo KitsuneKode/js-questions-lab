@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
 import {
   computeDailyActivity,
   computeOverallStats,
@@ -17,7 +17,7 @@ import {
 } from '@/lib/progress/analytics';
 import { useProgress } from '@/lib/progress/progress-context';
 
-export function useAnalytics(questions: QuestionRecord[]) {
+export function useAnalytics(questions: QuestionSummary[]) {
   const { state, ready } = useProgress();
 
   const overall = useMemo<OverallStats>(() => computeOverallStats(state), [state]);
@@ -28,7 +28,7 @@ export function useAnalytics(questions: QuestionRecord[]) {
 
   const weakestTopics = useMemo<TagStats[]>(() => getWeakestTopics(tagStats), [tagStats]);
 
-  const reviewQueue = useMemo<QuestionRecord[]>(
+  const reviewQueue = useMemo<QuestionSummary[]>(
     () => getReviewQueue(state, questions),
     [state, questions],
   );

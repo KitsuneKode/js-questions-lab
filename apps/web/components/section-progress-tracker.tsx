@@ -25,15 +25,18 @@ interface SectionProgressTrackerProps {
   totalQuestions?: number;
 }
 
+type ProgressTranslationKey = 'notStarted' | 'learning' | 'practicing' | 'mastered';
+type ProgressDescriptionKey = 'descNotStarted' | 'descLearning' | 'descPracticing' | 'descMastered';
+
 const masteryConfig: Record<
   MasteryLevel,
   {
-    translationKey: string;
+    translationKey: ProgressTranslationKey;
     color: string;
     bgColor: string;
     borderColor: string;
     icon: React.ReactNode;
-    descKey: string;
+    descKey: ProgressDescriptionKey;
   }
 > = {
   not_started: {
@@ -241,7 +244,7 @@ export function SectionProgressTracker({
                   <div className="flex items-center gap-2.5">
                     <div
                       className={cn('flex items-center justify-center', config.color)}
-                      title={t(config.descKey as any)}
+                      title={t(config.descKey)}
                     >
                       {config.icon}
                     </div>
@@ -255,7 +258,7 @@ export function SectionProgressTracker({
                       config.borderColor,
                     )}
                   >
-                    {t(config.translationKey as any)}
+                    {t(config.translationKey)}
                   </Badge>
                 </div>
 

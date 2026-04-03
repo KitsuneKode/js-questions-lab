@@ -37,10 +37,6 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
-
 export const dynamic = 'force-static';
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -51,10 +51,6 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
-
 export const dynamic = 'force-static';
 
 interface CreditsPageProps {

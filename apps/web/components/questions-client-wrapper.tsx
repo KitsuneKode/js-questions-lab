@@ -7,14 +7,14 @@ import { FilterLoadingOverlay } from '@/components/filter-loading-overlay';
 import { FiltersBar } from '@/components/filters-bar';
 import { QuestionsResults } from '@/components/questions-results';
 import { applyServerFilters, parseQuestionScope } from '@/lib/content/query';
-import type { QuestionRecord, QuestionsManifest } from '@/lib/content/types';
+import type { QuestionDiscoveryItem, QuestionsManifest } from '@/lib/content/types';
 import { FilterPendingProvider } from '@/lib/filters/filter-pending-context';
 import type { LocaleCode } from '@/lib/i18n/config';
 
 const PAGE_SIZE = 18;
 
 interface QuestionsClientWrapperProps {
-  allQuestions: QuestionRecord[];
+  allQuestions: QuestionDiscoveryItem[];
   manifest: QuestionsManifest;
   locale: LocaleCode;
 }

@@ -1,4 +1,4 @@
-import { getQuestions } from '@/lib/content/loaders';
+import { getManifest, getQuestions } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 
@@ -11,8 +11,9 @@ export const dynamic = 'force-static';
  */
 export async function GET() {
   const questions = getQuestions(DEFAULT_LOCALE);
+  const manifest = getManifest(DEFAULT_LOCALE);
   const baseUrl = getBaseUrl();
-  const generatedAt = new Date().toISOString();
+  const generatedAt = manifest.generatedAt;
 
   const header = `# JS Questions Lab - Complete Question Database
 # Generated: ${generatedAt}

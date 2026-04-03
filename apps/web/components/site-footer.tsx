@@ -18,7 +18,7 @@ export function SiteFooter() {
   const footerLinks = {
     product: [
       { href: withLocale(locale, siteLinks.questions), label: tNav('questions') },
-      { href: withLocale(locale, siteLinks.dashboard), label: tNav('dashboard') },
+      { href: withLocale(locale, siteLinks.progress), label: tNav('progress') },
       { href: withLocale(locale, siteLinks.credits), label: tNav('credits') },
     ],
     resources: [

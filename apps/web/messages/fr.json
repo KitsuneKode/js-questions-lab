@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "Questions",
+    "progress": "Progression",
     "dashboard": "Tableau de bord",
+    "account": "Compte",
     "about": "À propos",
     "credits": "Crédits",
     "scratchpad": "Bloc-notes",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "Reprendre la pratique",
     "continue": "Continuer",
+    "progress": "Progression",
     "dashboard": "Tableau de bord",
     "ticker": {
       "free": "100% Gratuit",
@@ -141,6 +144,8 @@
     "reviewNow": "Réviser maintenant",
     "labelActivity": "Activité",
     "activitySub": "La régularité est la clé de la maîtrise.",
+    "sharePng": "Partager PNG",
+    "preparingPng": "Préparation du PNG...",
     "labelLess": "Moins",
     "labelMore": "Plus",
     "activityTitle": "{date} — {count} questions, {accuracy}% de précision",
@@ -156,11 +161,24 @@
     "notEnoughData": "Pas assez de données",
     "radarUnlock": "Pratiquez au moins 3 sujets pour débloquer votre radar de maîtrise.",
     "radarLabel": "Maîtrise",
+    "practice": "Pratiquer",
     "correctRatio": "{correct}/{total} correctes ({accuracy}%)",
     "labelSaved": "Questions enregistrées",
     "savedSub": "Questions que vous avez mises de côté pour une révision ultérieure.",
     "savedCount": "{count} enregistrées",
     "viewAllSaved": "Voir les {count} enregistrées"
+  },
+  "accountDashboard": {
+    "eyebrow": "Compte",
+    "title": "Tableau de bord du compte",
+    "description": "Gardez l'identité synchronisée et l'accès au compte séparés de la vue publique de progression. Vos analyses de pratique quotidiennes vivent dans le hub de progression.",
+    "progressTitle": "Progression de pratique",
+    "progressBody": "Ouvrez le hub de progression statique pour consulter vos séries, votre précision, vos favoris et les prochaines questions recommandées à partir de données locales.",
+    "openProgress": "Ouvrir le hub de progression",
+    "syncTitle": "Identité synchronisée",
+    "syncBody": "Cette zone privée est réservée aux flux liés au compte, comme l'état de synchronisation et l'accès authentifié. Votre apprentissage fonctionne toujours sans connexion.",
+    "memberIdLabel": "Identifiant membre",
+    "memberIdUnavailable": "Indisponible"
   },
   "credits": {
     "label": "Crédits et attribution",

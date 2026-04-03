@@ -6,18 +6,20 @@ import {
   IconCircleCheck as CheckCircle2,
   IconCircleX as XCircle,
 } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
+import { withLocale } from '@/lib/locale-paths';
 import { useProgress } from '@/lib/progress/progress-context';
 
 interface BookmarkedListProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
 }
 
 export function BookmarkedList({ questions }: BookmarkedListProps) {
   const t = useTranslations('dashboard');
+  const locale = useLocale();
   const { state } = useProgress();
 
   const bookmarked = questions.filter((q) => state.questions[String(q.id)]?.bookmarked);
@@ -48,9 +50,9 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
           const lastStatus = item?.attempts[item.attempts.length - 1]?.status;
 
           return (
-            <Link
+            <IntentPrefetchLink
               key={q.id}
-              href={`/questions/${q.id}`}
+              href={withLocale(locale, `/questions/${q.id}`)}
               className="group/item flex flex-col justify-between rounded-xl border border-border-subtle bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow min-h-[120px]"
             >
               <div className="flex items-start justify-between gap-3">
@@ -80,14 +82,14 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
                 </div>
                 <ArrowRight className="h-4 w-4 text-tertiary group-hover/item:text-primary transition-colors group-hover/item:translate-x-0.5" />
               </div>
-            </Link>
+            </IntentPrefetchLink>
           );
         })}
       </div>
 
       {bookmarked.length > 6 && (
         <div className="mt-8 flex justify-center relative z-10">
-          <Link href="/questions?status=bookmarked">
+          <IntentPrefetchLink href={withLocale(locale, '/questions?status=bookmarked')}>
             <Button
               variant="outline"
               className="gap-2 h-10 px-6 rounded-full border-border-subtle bg-background hover:bg-elevated hover:text-primary transition-all group/btn"
@@ -95,7 +97,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
               {t('viewAllSaved', { count: bookmarked.length })}
               <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
             </Button>
-          </Link>
+          </IntentPrefetchLink>
         </div>
       )}
     </div>

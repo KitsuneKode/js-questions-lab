@@ -8,14 +8,14 @@ import { ContinueLearningShelf } from '@/components/continue-learning-shelf';
 import { LandingHero } from '@/components/landing-hero';
 import { LandingSections } from '@/components/landing-sections';
 import { QuestionCard } from '@/components/question-card';
-import { getManifest, getQuestions } from '@/lib/content/loaders';
-import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import {
+  getManifest,
+  getQuestionDiscoveryIndex,
+  getQuestionSummaries,
+} from '@/lib/content/loaders';
+import type { LocaleCode } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
-
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
 
 export const dynamic = 'force-static';
 
@@ -53,9 +53,8 @@ export default async function HomePage({ params }: HomePageProps) {
   const t = await getTranslations({ locale, namespace: 'landing' });
 
   const manifest = getManifest(locale);
-  const questions = getQuestions(locale);
-
-  const featured = questions.slice(0, 6);
+  const questions = getQuestionSummaries(locale);
+  const featured = getQuestionDiscoveryIndex(locale).slice(0, 6);
 
   const tagCounts = Object.entries(
     questions

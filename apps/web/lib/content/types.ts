@@ -45,6 +45,22 @@ export interface QuestionRecord {
   };
 }
 
+export interface QuestionSummary {
+  id: number;
+  slug: string;
+  locale: string;
+  isFallback?: boolean;
+  title: string;
+  tags: string[];
+  difficulty: Difficulty;
+  runnable: boolean;
+}
+
+export interface QuestionDiscoveryItem extends QuestionSummary {
+  searchText: string;
+  previewCode: string;
+}
+
 export interface TranslationEntry {
   label: string;
   href: string;
