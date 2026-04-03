@@ -5,14 +5,16 @@ import {
   IconBookmark as Bookmark,
   IconTerminal2 as Terminal,
 } from '@tabler/icons-react';
-import Link from 'next/link';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Badge } from '@/components/ui/badge';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionDiscoveryItem, QuestionRecord, QuestionSummary } from '@/lib/content/types';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { cn } from '@/lib/utils';
 
+type QuestionCardQuestion = QuestionRecord | QuestionSummary | QuestionDiscoveryItem;
+
 interface QuestionCardProps {
-  question: QuestionRecord;
+  question: QuestionCardQuestion;
   locale: string;
   isHovered?: boolean;
   href?: string;
@@ -34,13 +36,17 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
   const difficulty = (question.difficulty?.toLowerCase() ||
     'medium') as keyof typeof difficultyStyles;
 
-  // Extract first 3 lines of code for preview
-  const firstCodeBlock = question.codeBlocks[0]?.code || '';
-  const codeLines = firstCodeBlock.split('\n').slice(0, 3);
-  const showEllipsis = firstCodeBlock.split('\n').length > 3;
+  const previewCode =
+    'previewCode' in question
+      ? question.previewCode
+      : 'codeBlocks' in question
+        ? (question.codeBlocks[0]?.code ?? '')
+        : '';
+  const codeLines = previewCode.split('\n').slice(0, 3);
+  const showEllipsis = previewCode.split('\n').length > 3;
 
   return (
-    <Link
+    <IntentPrefetchLink
       href={href ?? `/${locale}/questions/${question.id}`}
       className={cn(
         'group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface p-5 transition-all duration-500',
@@ -88,11 +94,13 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
 
       {/* Title */}
       <h3 className="mb-4 font-display text-xl font-medium leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
-        {question.title}
+        <span style={{ viewTransitionName: `question-title-${question.id}` }}>
+          {question.title}
+        </span>
       </h3>
 
       {/* Mini Code Preview */}
-      {firstCodeBlock && (
+      {previewCode && (
         <div className="mb-5 min-w-0 w-full rounded-lg border border-border-subtle bg-code p-3 transition-colors group-hover:border-primary/20 group-hover:bg-code/80">
           <pre className="min-w-0 w-full overflow-hidden font-mono text-[11px] leading-relaxed text-secondary/80">
             <code className="block min-w-0 w-full">
@@ -135,6 +143,6 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
           <ArrowRight className="h-3 w-3" />
         </span>
       </div>
-    </Link>
+    </IntentPrefetchLink>
   );
 }

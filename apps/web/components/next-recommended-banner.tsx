@@ -1,13 +1,13 @@
 'use client';
 
 import { IconArrowRight as ArrowRight, IconSparkles as Sparkles } from '@tabler/icons-react';
-import Link from 'next/link';
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface NextRecommendedBannerProps {
-  questions: QuestionRecord[];
+  questions: QuestionSummary[];
   locale: string;
 }
 
@@ -41,12 +41,15 @@ export function NextRecommendedBanner({ questions, locale }: NextRecommendedBann
               </h2>
             </div>
           </div>
-          <Link href={`/${locale}/questions/${q.id}`} className="w-full shrink-0 sm:w-auto">
+          <IntentPrefetchLink
+            href={`/${locale}/questions/${q.id}`}
+            className="w-full shrink-0 sm:w-auto"
+          >
             <Button size="sm" className="w-full gap-2 sm:w-auto">
               Practice
               <ArrowRight className="h-3.5 w-3.5" />
             </Button>
-          </Link>
+          </IntentPrefetchLink>
         </div>
       </div>
     </section>

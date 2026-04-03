@@ -1,87 +1,156 @@
 # JS Questions Lab
 
-> Practice JavaScript interview questions like a product, not a static README.
+> A productized practice experience built on Lydia Hallie's JavaScript questions.
 
-JS Questions Lab turns Lydia Hallie's `javascript-questions` dataset into an interactive study
-experience with runnable code, explanation-first learning, event-loop visualization, and progress
-tracking.
+JS Questions Lab turns the well-known `javascript-questions` repository into an interactive
+learning product with active recall, runnable snippets, event-loop visualization, local-first
+progress tracking, and optional cloud sync.
 
-> [!NOTE]
-> This repository is both a product app and a content pipeline.
-> The app lives in `apps/web`, while the canonical source content lives in
-> `content/source/README.upstream.md`.
+This repository is not just a website and it is not just a content mirror. It is both:
 
-## ✨ At A Glance
+- a Next.js application in `apps/web`
+- a content pipeline rooted in the synced upstream source
+
+## What This Repo Is
+
+JS Questions Lab is designed for several audiences at once:
+
+- Site users: people practicing JavaScript interview questions in a faster feedback loop
+- Product and design collaborators: people shaping UX, learning flow, onboarding, and retention
+- Contributors: engineers improving the app, docs, tooling, and pipeline
+- Upstream-aware maintainers: people who need a clear boundary between original source material and
+  product-specific layers
+
+## What Problem It Solves
+
+Lydia Hallie's original repository is one of the best JavaScript learning resources on the internet.
+But reading a long README is a different activity than practicing under interview conditions.
+
+This project turns that source into a product flow:
+
+1. Browse a curated library of questions
+2. Commit to an answer before seeing the explanation
+3. Run the snippet when relevant
+4. Inspect runtime behavior and event-loop details
+5. Track progress and come back through review loops
+
+## At A Glance
 
 | Topic | Details |
 | --- | --- |
-| 🎯 Goal | Make JavaScript interview practice feel focused, interactive, and repeatable |
-| 🧠 Core loop | Browse -> answer -> reveal -> run -> inspect -> review |
-| ⚙️ Runtime | Worker-based client-side sandbox for runnable snippets |
-| 🧾 Source | Lydia Hallie's `javascript-questions` synced into `content/source/README.upstream.md` |
-| 💾 Progress | Local-first by default, with optional auth and sync layers |
+| Product goal | Make JavaScript interview practice feel focused, fast, and repeatable |
+| Core loop | Browse -> answer -> reveal -> run -> inspect -> review |
+| Rendering model | Static-first for content, dynamic only where auth or sync truly needs it |
+| Runtime model | Worker-based client-side execution for runnable snippets |
+| Persistence | Local-first progress with optional Clerk + Supabase sync |
+| i18n | Locale-prefixed routes with `next-intl` |
+| Source content | Synced from Lydia Hallie's original repository |
 
-## Why This Exists
+## Source Of Truth
 
-The original Lydia Hallie repo is an incredible knowledge source, but reading a long markdown file
-is a very different experience from practicing for interviews. This project is about turning that
-source material into something you can actively use:
+The canonical source content in this repository is:
 
-- 🔍 find questions quickly
-- 📝 commit to an answer before seeing the explanation
-- ▶️ run the snippet in a browser-friendly sandbox
-- 🧭 inspect async behavior with visual feedback
-- 🔁 come back later through progress and review loops
+- `content/source/README.upstream.md`
 
-## 🧩 What You Can Do
+This file is a synced snapshot of Lydia Hallie's upstream repository and is treated as the source of
+truth for the question corpus.
 
-- Browse a focused question library instead of scrolling through one giant document
-- Read explanations in a cleaner product surface
-- Run JavaScript snippets in a client-side worker sandbox
-- Use the event-loop visualizer for runtime-heavy questions
-- Track progress locally and keep guest mode fully usable
+Generated artifacts are derived from it:
 
-## 🛠️ Stack
+- `content/generated/questions.v1.json`
+- `content/generated/manifest.v1.json`
+- `content/generated/locales/*`
+
+> [!IMPORTANT]
+> Do not manually edit generated content files.
+>
+> If you need to change source material, prefer:
+>
+> - an upstream fix
+> - a documented local overlay strategy
+> - or a parser/content-pipeline update
+
+## Important Upstream Note
+
+Because this project builds on the original source, the historical context of that source still
+matters:
+
+> [!NOTE]
+> This repo was created in 2019 and the questions provided here are therefore based on the
+> JavaScript syntax and behavior at that time. Since JavaScript is a constantly evolving language,
+> there are newer language features that are not covered by the questions here.
+
+That note is relevant here too. JS Questions Lab modernizes the learning experience, but it does not
+pretend the original question set was authored against today's full JavaScript surface area.
+
+## What Users Get
+
+- A cleaner question library instead of one giant markdown scroll
+- Answer-first practice instead of passive reading
+- Runnable snippets in a browser-friendly worker sandbox
+- Event-loop and runtime visualization where it adds learning value
+- Local-first progress that works without account creation
+- Optional authentication and sync for persistence across devices
+- Multi-locale support for six pilot locales
+
+## What Contributors Should Know
+
+- The app lives in `apps/web`
+- The upstream source snapshot lives in `content/source`
+- Generated content lives in `content/generated`
+- The parser and sync scripts live in `scripts`
+- Local-first guest usability is a deliberate product choice
+- Worker-based snippet execution is a deliberate architectural choice
+
+## Architecture Summary
+
+### App
 
 - Next.js 16 App Router
 - React 19
 - Tailwind CSS v4
-- Bun workspaces and root scripts
-- `streamdown` for safe client-side markdown rendering
-- Clerk and Supabase as optional identity and sync layers
+- Static-first rendering for content-heavy routes
+- Dynamic rendering only where auth or personalized server behavior needs it
 
-## 📁 Repo Map
+### Content Pipeline
+
+- Sync upstream source into `content/source/README.upstream.md`
+- Parse the source into structured JSON
+- Load generated JSON at build time
+- Render localized question experiences without requiring a content backend
+
+### Persistence
+
+- Local browser storage is the primary persistence layer
+- Clerk provides optional identity
+- Supabase provides optional sync storage
+
+## Repo Map
 
 ```text
-apps/web            Next.js app for the product experience
-content/source      Synced upstream source snapshot
-content/generated   Parsed JSON consumed by the app
-scripts             Sync and parsing scripts
-docs                Handoff notes, roadmaps, and supporting references
+apps/web                 Product app (Next.js)
+content/source           Canonical synced upstream source snapshot
+content/generated        Parsed/generated question data and manifests
+scripts                  Upstream sync + parsing pipeline
+supabase                 Migrations and sync-related backend setup
+CONTRIBUTING.md          Contribution workflow and expectations
+AGENTS.md                Current engineering context for coding agents
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Prerequisites
+### Prerequisites
 
 - Bun `1.3.9`
 - Node.js `18+`
 
-### 2. Install Dependencies
+### Install
 
 ```bash
 bun install
 ```
 
-### 3. Optional Environment Setup
-
-Guest mode is the default experience. If you want to test auth or sync features, copy
-`apps/web/.env.example` to `apps/web/.env.local` and provide the Clerk and Supabase values.
-You can leave the placeholders in place if you want to stay in guest mode locally.
-
-For Supabase + Clerk integration details, see `docs/supabase-clerk-setup.md`.
-
-### 4. Run The App
+### Run The App
 
 ```bash
 bun run dev
@@ -89,80 +158,110 @@ bun run dev
 
 Then open `http://localhost:3000`.
 
-## 🧪 Core Commands
+### Optional Auth / Sync Setup
 
-| Command | What it does |
+Guest mode works by default.
+
+If you want to test authentication or progress sync:
+
+1. Copy `apps/web/.env.example` to `apps/web/.env.local`
+2. Fill in Clerk and Supabase values
+3. Review `.context/docs/auth-sync.md`
+
+## Core Commands
+
+| Command | Purpose |
 | --- | --- |
-| `bun run dev` | Start the app in development mode |
-| `bun run build` | Create a production build |
-| `bun run start` | Run the production build |
-| `bun run lint` | Run the repo lint checks |
+| `bun run dev` | Start local development |
+| `bun run build` | Build the app for production |
+| `bun run start` | Start the production build |
+| `bun run lint` | Run repo lint checks |
 | `bun run typecheck` | Run TypeScript checks |
-| `bun run parse:questions` | Parse the synced upstream source into generated JSON |
-| `bun run sync:upstream` | Refresh the upstream Lydia source snapshot |
-| `bun run content:refresh` | Sync upstream content and regenerate JSON in one step |
+| `bun run sync:upstream` | Refresh the upstream source snapshot |
+| `bun run parse:questions` | Parse source content into generated JSON |
+| `bun run content:refresh` | Sync upstream and regenerate content |
 
-### Database Setup (Optional)
+## CI And Remote Caching
 
-If using Supabase for progress sync:
+GitHub Actions is the source of truth for validation. Local hooks like Husky are helpful for faster
+feedback, but they are not relied on for correctness.
 
-```bash
-# Link to your Supabase project
-bunx supabase link --project-ref your-project-id
+The CI workflow currently:
 
-# Apply migrations
-bunx supabase db push
-```
+- caches Bun's global package download cache
+- installs dependencies with `--ignore-scripts` so local-only hooks do not slow down CI
+- runs lint, typecheck, and build as independent checks
+- supports optional Turborepo Remote Cache when GitHub Actions is configured with:
+  - repository variable `TURBO_TEAM`
+  - repository secret `TURBO_TOKEN`
 
-Migrations are located in `supabase/migrations/` and include:
+If those cache credentials are present, Turbo can reuse work across CI runs instead of rebuilding
+from scratch each time.
 
-- `user_progress` table with Row Level Security
-- `user_srs_progress` table for optimized SRS queries
-- RLS policies enforced via Clerk JWT tokens
+## Product Direction
 
-## 📚 Documentation Map
+The product aims for:
 
-| Doc | Why you would read it |
+- a LeetCode-like JavaScript interview practice feel
+- premium but restrained design
+- a fast answer -> feedback -> retry loop
+- excellent mobile ergonomics
+- strong explanation + visualization pairing
+
+The product avoids:
+
+- auth-first UX
+- runtime-model sprawl
+- generic dashboard bloat
+- turning the upstream source into an untraceable fork
+
+## For Product Managers And Designers
+
+This repo is especially useful if you want to reason about:
+
+- onboarding and activation for learners
+- retention loops through review, streaks, and recommendations
+- static-first content delivery with selective personalization
+- how learning UX can become more interactive without losing source fidelity
+
+## For Lydia / Upstream-Aware Reviewers
+
+This project is built with explicit attribution and source integrity in mind.
+
+- Original questions and explanations come from Lydia Hallie's work
+- The source snapshot remains traceable in this repository
+- Product-specific UX, runtime tooling, and progress systems are layered on top
+- Generated files are derived artifacts, not a new canonical source
+
+## Docs To Read Next
+
+| File | Why it matters |
 | --- | --- |
-| `CONTRIBUTING.md` | Setup, workflow, validation, and PR expectations |
-| `docs/content-pipeline.md` | Source-of-truth, sync flow, parser flow, and generated artifact rules |
-| `docs/agent-handoff.md` | Current repo state, guardrails, and engineering context |
-| `docs/v2-roadmap-mastery.md` | The next major product direction |
-| `docs/supabase-clerk-setup.md` | Auth and sync integration setup |
+| `CONTRIBUTING.md` | Setup, validation, workflow, and PR guidance |
+| `AGENTS.md` | Current repo guardrails and architecture context |
+| `.context/docs/learning-roadmap.md` | Current product direction and learning-platform priorities |
+| `.context/docs/question-discovery.md` | Filter, progress, and discovery architecture decisions |
+| `.context/docs/auth-sync.md` | Auth + sync integration details |
+| `.context/docs/content-pipeline.md` | Upstream sync and generated-content contract |
 
-## 🎯 Current Focus
+## Contributing
 
-- Active recall modes that move beyond passive multiple choice
-- Stronger review loops and spaced repetition
-- Curated paths and better recommendation flows
-- Deeper visual explanations for runtime-heavy concepts
+Contributions are welcome across:
 
-## 🌱 Future Improvements
+- product UX
+- frontend implementation
+- content pipeline improvements
+- auth and sync flows
+- docs and onboarding
+- performance and rendering strategy
 
-- Richer explanation context and related-reference linking
-- Offline or PWA-friendly workflows
-- Multi-source content ingestion beyond the Lydia dataset
+Start with `CONTRIBUTING.md`.
 
-## 🙏 Source Content And Attribution
+## Attribution
 
-This project is built on top of
+JS Questions Lab is built on top of
 [Lydia Hallie's `javascript-questions`](https://github.com/lydiahallie/javascript-questions).
 
-The canonical source snapshot in this repo lives at `content/source/README.upstream.md`, and the
-app reads generated data from `content/generated/`.
-
-> [!IMPORTANT]
-> Do not edit generated files directly.
-> If the source material itself needs correction, prefer the upstream repository or a documented
-> local overlay strategy instead of hand-editing the synced snapshot.
-
-## 🤝 Contributing
-
-Contributions are welcome across the app, docs, tooling, and product polish.
-
-Start with `CONTRIBUTING.md` for:
-
-- local setup
-- validation commands
-- content-pipeline rules
-- PR expectations
+The educational source material belongs to that original work and its contributors. This repository
+adds the product layer around it: interface design, practice flow, visualization, runtime tooling,
+progress systems, and localization infrastructure.

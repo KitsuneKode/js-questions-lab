@@ -1,4 +1,4 @@
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionSummary } from '@/lib/content/types';
 import type { ProgressItem, ProgressState } from '@/lib/progress/storage';
 
 // ---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ export interface DailyActivity {
 }
 
 export interface PracticeSuggestion {
-  question: QuestionRecord | null;
+  question: QuestionSummary | null;
   label: string;
   description: string;
 }
@@ -63,7 +63,7 @@ export function computeQuestionStats(item: ProgressItem): QuestionStats {
   };
 }
 
-export function computeTagStats(progress: ProgressState, questions: QuestionRecord[]): TagStats[] {
+export function computeTagStats(progress: ProgressState, questions: QuestionSummary[]): TagStats[] {
   const tagMap = new Map<string, { attempts: number; correct: number; questions: Set<number> }>();
 
   const questionTagMap = new Map<number, string[]>();
@@ -206,13 +206,13 @@ export function getWeakestTopics(tagStats: TagStats[], limit = 5): TagStats[] {
 
 export function getReviewQueue(
   progress: ProgressState,
-  questions: QuestionRecord[],
+  questions: QuestionSummary[],
   limit = 10,
-): QuestionRecord[] {
+): QuestionSummary[] {
   const now = new Date();
 
   interface ScoredQuestion {
-    question: QuestionRecord;
+    question: QuestionSummary;
     overdueDays: number;
     priority: number; // For fallback
   }
@@ -260,7 +260,7 @@ export function getReviewQueue(
 
 export function getContinueLearningSuggestion(
   progress: ProgressState,
-  questions: QuestionRecord[],
+  questions: QuestionSummary[],
 ): PracticeSuggestion {
   const attempted = Object.values(progress.questions)
     .filter((item) => item.attempts.length > 0)
@@ -290,7 +290,7 @@ export function getContinueLearningSuggestion(
 
 export function getRecommendedSuggestion(
   progress: ProgressState,
-  questions: QuestionRecord[],
+  questions: QuestionSummary[],
   weakestTopics: TagStats[],
 ): PracticeSuggestion {
   const attemptedIds = new Set(

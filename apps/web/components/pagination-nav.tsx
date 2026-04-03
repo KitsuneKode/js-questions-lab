@@ -2,8 +2,8 @@ import {
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
 } from '@tabler/icons-react';
-import Link from 'next/link';
 
+import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +18,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
 
   return (
     <nav className="flex items-center justify-center gap-2 py-8" aria-label="Pagination">
-      <Link
+      <IntentPrefetchLink
         href={createHref(Math.max(1, page - 1))}
         className={cn(page <= 1 && 'pointer-events-none')}
         aria-disabled={page <= 1}
@@ -32,7 +32,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
           <ChevronLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Previous</span>
         </Button>
-      </Link>
+      </IntentPrefetchLink>
 
       {/* Page indicator pills */}
       <div className="flex items-center gap-1 px-2">
@@ -69,7 +69,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
           }
 
           return (
-            <Link key={pageNum} href={createHref(pageNum)}>
+            <IntentPrefetchLink key={pageNum} href={createHref(pageNum)}>
               <button
                 type="button"
                 className={cn(
@@ -81,12 +81,12 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
               >
                 {pageNum}
               </button>
-            </Link>
+            </IntentPrefetchLink>
           );
         })}
       </div>
 
-      <Link
+      <IntentPrefetchLink
         href={createHref(Math.min(pageCount, page + 1))}
         className={cn(page >= pageCount && 'pointer-events-none')}
         aria-disabled={page >= pageCount}
@@ -100,7 +100,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
           <span className="hidden sm:inline">Next</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
-      </Link>
+      </IntentPrefetchLink>
     </nav>
   );
 }

@@ -23,6 +23,7 @@ node_modules
 docs/superpowers/
 
 # AI tool configs (personal, not project-specific)
+.junie/
 .agents/
 .forge/
 .kiro/

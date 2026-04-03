@@ -28,9 +28,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { buildQuestionScopeQuery, type ListingStatus } from '@/lib/content/query';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionDiscoveryItem } from '@/lib/content/types';
 import { useFilterPending } from '@/lib/filters/filter-pending-context';
 import { cn } from '@/lib/utils';
+
+const difficultyLabelKeys = {
+  beginner: 'filters.beginner',
+  intermediate: 'filters.intermediate',
+  advanced: 'filters.advanced',
+} as const;
 
 interface FiltersBarProps {
   tags: string[];
@@ -41,7 +47,7 @@ interface FiltersBarProps {
   status: string;
   difficulties?: string[];
   difficulty?: string;
-  allQuestions: QuestionRecord[];
+  allQuestions: QuestionDiscoveryItem[];
   locale: string;
 }
 
@@ -327,10 +333,8 @@ export function FiltersBar({
                   {allQuestions
                     .filter(
                       (q) =>
-                        q.title.toLowerCase().includes((inputValue || '').toLowerCase()) ||
-                        q.tags.some((t) =>
-                          t.toLowerCase().includes((inputValue || '').toLowerCase()),
-                        ),
+                        q.searchText.includes((inputValue || '').toLowerCase()) ||
+                        q.id === Number(inputValue),
                     )
                     .slice(0, 10)
                     .map((q) => (
@@ -381,7 +385,7 @@ export function FiltersBar({
                       : 'text-secondary hover:text-foreground hover:bg-elevated border-2 border-transparent hover:border-border-subtle',
                   )}
                 >
-                  {t(`filters.${diff}` as any)}
+                  {t(difficultyLabelKeys[diff])}
                 </button>
               );
             })}

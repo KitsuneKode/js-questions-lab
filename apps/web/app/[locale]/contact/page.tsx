@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ContactMe from '@/components/contact-me';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getCanonicalUrl } from '@/lib/seo/config';
@@ -37,11 +37,11 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
+export const dynamic = 'force-static';
 
-export default async function ContactPage() {
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <main className="min-h-screen bg-void pt-32 pb-16 md:pt-40">
       <ContactMe />

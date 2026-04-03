@@ -10,11 +10,11 @@ import {
   paginate,
   type QuestionScope,
 } from '@/lib/content/query';
-import type { QuestionRecord } from '@/lib/content/types';
+import type { QuestionDiscoveryItem } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
 
 interface QuestionsResultsProps {
-  questions: QuestionRecord[];
+  questions: QuestionDiscoveryItem[];
   scope: QuestionScope;
   locale: string;
   pageSize?: number;

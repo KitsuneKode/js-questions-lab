@@ -1,7 +1,9 @@
 {
   "nav": {
     "questions": "問題",
+    "progress": "進捗",
     "dashboard": "ダッシュボード",
+    "account": "アカウント",
     "about": "について",
     "credits": "クレジット",
     "scratchpad": "スクラッチパッド",
@@ -97,6 +99,7 @@
     },
     "resumePractice": "練習を再開する",
     "continue": "続ける",
+    "progress": "進捗",
     "dashboard": "ダッシュボード",
     "ticker": {
       "free": "100% 無料",
@@ -141,6 +144,8 @@
     "reviewNow": "今すぐ復習する",
     "labelActivity": "アクティビティ",
     "activitySub": "継続は力なり。",
+    "sharePng": "PNGを共有",
+    "preparingPng": "PNGを準備中...",
     "labelLess": "少",
     "labelMore": "多",
     "activityTitle": "{date} — {count}問、正解率{accuracy}%",
@@ -156,11 +161,24 @@
     "notEnoughData": "データが不足しています",
     "radarUnlock": "マスタリーレーダーをアンロックするには、少なくとも3つのトピックを練習してください。",
     "radarLabel": "習熟度",
+    "practice": "練習する",
     "correctRatio": "{total}問中{correct}問正解 ({accuracy}%)",
     "labelSaved": "保存された問題",
     "savedSub": "後で復習するために取っておいた問題。",
     "savedCount": "{count}件保存済み",
     "viewAllSaved": "保存された{count}件をすべて見る"
+  },
+  "accountDashboard": {
+    "eyebrow": "アカウント",
+    "title": "アカウントダッシュボード",
+    "description": "同期された認証情報とアカウントアクセスを、公開される進捗ビューから分離します。日々の練習分析は進捗ハブにあります。",
+    "progressTitle": "学習の進捗",
+    "progressBody": "静的な進捗ハブを開いて、ストリーク、正解率、保存済み問題、次に取り組むおすすめ問題をローカル主体の練習データから確認しましょう。",
+    "openProgress": "進捗ハブを開く",
+    "syncTitle": "同期されたアカウント情報",
+    "syncBody": "この非公開エリアは、同期状態やサインイン済みアクセスのようなアカウント連携フロー専用です。学習体験そのものは認証なしでも使えます。",
+    "memberIdLabel": "メンバーID",
+    "memberIdUnavailable": "利用できません"
   },
   "credits": {
     "label": "クレジットと帰属",
@@ -213,7 +231,9 @@
     "product": "プロダクト",
     "resources": "リソース",
     "projectRepo": "プロジェクトリポジトリ",
-    "lydiaRepo": "Lydiaのオリジナルリポジトリ"
+    "lydiaRepo": "Lydiaのオリジナルリポジトリ",
+    "contentNote": "問題コンテンツは Lydia Hallie の 2019 年のオリジナルリポジトリを元にしているため、新しい JavaScript の言語機能がすべてを通して扱われているわけではありません。",
+    "learnMore": "詳しく見る"
   },
   "contact": {
     "title": "お問い合わせ",

@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { getLocaleIndex, getManifest } from '@/lib/content/loaders';
@@ -51,9 +51,7 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
+export const dynamic = 'force-static';
 
 interface CreditsPageProps {
   params: Promise<{ locale: LocaleCode }>;
@@ -70,6 +68,7 @@ const LOCALE_FLAGS: Record<LocaleCode, string> = {
 
 export default async function CreditsPage({ params }: CreditsPageProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const manifest = getManifest(locale);
   const enManifest = getManifest('en'); // always load EN for upstream translations list
   const localeIndex = getLocaleIndex();
