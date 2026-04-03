@@ -1,12 +1,37 @@
 import { ImageResponse } from 'next/og';
-import { getTranslations } from 'next-intl/server';
 
-export const runtime = 'edge';
+import { isValidLocale, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
+import deMessages from '@/messages/de.json';
+import enMessages from '@/messages/en.json';
+import esMessages from '@/messages/es.json';
+import frMessages from '@/messages/fr.json';
+import jaMessages from '@/messages/ja.json';
+import ptBrMessages from '@/messages/pt-BR.json';
+
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default async function LocaleOpenGraphImage({ params }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale: params.locale, namespace: 'meta' });
+const META_COPY: Record<LocaleCode, { title: string; description: string }> = {
+  de: deMessages.meta,
+  en: enMessages.meta,
+  es: esMessages.meta,
+  fr: frMessages.meta,
+  ja: jaMessages.meta,
+  'pt-BR': ptBrMessages.meta,
+};
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+export default async function LocaleOpenGraphImage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const activeLocale = isValidLocale(locale) ? locale : 'en';
+  const meta = META_COPY[activeLocale];
 
   return new ImageResponse(
     <div
@@ -21,7 +46,7 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
         justifyContent: 'center',
         padding: '60px',
       }}
-      {...(params.locale === 'ja'
+      {...(activeLocale === 'ja'
         ? { fontFamily: '"Noto Sans JP", sans-serif' }
         : { fontFamily: 'sans-serif' })}
     >
@@ -63,7 +88,7 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
           letterSpacing: '-0.02em',
         }}
       >
-        {t('title')}
+        {meta.title}
       </h1>
       <p
         style={{
@@ -74,7 +99,7 @@ export default async function LocaleOpenGraphImage({ params }: { params: { local
           lineHeight: 1.5,
         }}
       >
-        {t('description')}
+        {meta.description}
       </p>
     </div>,
     { ...size },

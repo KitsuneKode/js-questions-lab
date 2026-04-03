@@ -35,6 +35,8 @@ If you are working on specific domains, **you must read the relevant guide first
 
 - **Authentication & Database Sync**: Read `.context/docs/auth-sync.md`
 - **Content Generation Pipeline**: Read `.context/docs/content-pipeline.md`
+- **Question Discovery, Filters & Progress**: Read `.context/docs/question-discovery.md`
+- **Product Direction & Learning Roadmap**: Read `.context/docs/learning-roadmap.md`
 - **Visual Debugger / AST Execution**: Read `.context/docs/visual-debugger.md`
 - **SEO & Structured Data**: Read `.context/docs/seo-llm.md`
 - **UI/UX & Styling Guidelines**: Read `.context/docs/design-system.md`
