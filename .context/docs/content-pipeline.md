@@ -8,8 +8,11 @@ This project uses Lydia Hallie's `javascript-questions` repository as the canoni
 - Parser: `scripts/parse-readme.mjs`
 - Sync script: `scripts/sync-upstream.mjs`
 - Generated outputs:
-  - `content/generated/questions.v1.json`
-  - `content/generated/manifest.v1.json`
+  - Primary output: `content/generated/locales/{locale}/questions.v1.json`
+  - Primary output: `content/generated/locales/{locale}/manifest.v1.json`
+  - Locale index: `content/generated/locales/index.json`
+  - Legacy compatibility outputs: `content/generated/questions.v1.json` and
+    `content/generated/manifest.v1.json`
 
 The app contract is the generated JSON, but the canonical input is the synced upstream README snapshot.
 
@@ -22,5 +25,6 @@ The app contract is the generated JSON, but the canonical input is the synced up
 
 ## What Not To Edit
 
-- Do not manually edit `content/generated/questions.v1.json` or `manifest.v1.json`.
+- Do not manually edit anything inside `content/generated/`, including locale-aware outputs under
+  `content/generated/locales/`.
 - Do not treat `content/source/README.upstream.md` as product copy or a normal editable markdown file. If the upstream content needs correction, prefer contributing to Lydia Hallie's repository.
