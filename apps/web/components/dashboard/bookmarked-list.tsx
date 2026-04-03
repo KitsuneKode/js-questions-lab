@@ -7,6 +7,7 @@ import {
   IconCircleX as XCircle,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
@@ -16,6 +17,7 @@ interface BookmarkedListProps {
 }
 
 export function BookmarkedList({ questions }: BookmarkedListProps) {
+  const t = useTranslations('dashboard');
   const { state } = useProgress();
 
   const bookmarked = questions.filter((q) => state.questions[String(q.id)]?.bookmarked);
@@ -30,14 +32,13 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
         <div>
           <h3 className="font-display text-2xl text-foreground flex items-center gap-2">
             <Bookmark className="h-5 w-5 text-primary fill-primary/20" />
-            Saved Questions
+            {t('labelSaved')}
           </h3>
-          <p className="text-sm text-secondary mt-1">
-            Questions you've set aside for later review.
-          </p>
+          <p className="text-sm text-secondary mt-1">{t('savedSub')}</p>
         </div>
         <span className="font-mono text-sm text-tertiary bg-background px-4 py-1.5 rounded-lg border border-border-subtle shadow-sm">
-          <span className="text-foreground font-medium">{bookmarked.length}</span> saved
+          <span className="text-foreground font-medium">{bookmarked.length}</span>{' '}
+          {t('savedCount', { count: '' }).replace('()', '').trim()}
         </span>
       </div>
 
@@ -91,7 +92,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
               variant="outline"
               className="gap-2 h-10 px-6 rounded-full border-border-subtle bg-background hover:bg-elevated hover:text-primary transition-all group/btn"
             >
-              View all {bookmarked.length} saved
+              {t('viewAllSaved', { count: bookmarked.length })}
               <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
             </Button>
           </Link>

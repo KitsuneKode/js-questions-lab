@@ -75,7 +75,7 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
   };
 
   return (
-    <section className="relative flex min-h-[90vh] flex-col justify-center overflow-hidden px-4 py-20 sm:px-6 lg:px-8 md:py-32">
+    <section className="relative flex flex-col overflow-hidden px-4 pt-32 pb-20 sm:px-6 lg:px-8 md:pt-40 md:pb-32">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -294,15 +294,15 @@ export function LandingHero({ total, runnable, tagCount, locale }: LandingHeroPr
               key={tickerId}
               className="flex items-center gap-12 px-6 text-[13px] font-medium text-tertiary"
             >
-              <span className="text-primary">{total} Questions</span>
+              <span className="text-primary">{t('ticker.questions', { count: total })}</span>
               <span>•</span>
-              <span className="text-foreground">{tagCount} Topics</span>
+              <span className="text-foreground">{t('ticker.topics', { count: tagCount })}</span>
               <span>•</span>
-              <span>100% Free</span>
+              <span>{t('ticker.free')}</span>
               <span>•</span>
-              <span>Open Source</span>
+              <span>{t('ticker.openSource')}</span>
               <span>•</span>
-              <span className="text-foreground">{runnable} Runnable Snippets</span>
+              <span className="text-foreground">{t('ticker.runnable', { count: runnable })}</span>
               <span>•</span>
             </div>
           ))}

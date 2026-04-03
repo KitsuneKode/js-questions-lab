@@ -6,61 +6,67 @@ import {
   IconTrophy as Trophy,
 } from '@tabler/icons-react';
 import { motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { computeOverallStats } from '@/lib/progress/analytics';
+import { useProgress } from '@/lib/progress/progress-context';
 import type { MasteryLevel } from '@/lib/progress/section-progress-store';
 import { useAllSectionStats, useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { cn } from '@/lib/utils';
+
+const DEFAULT_TOTAL_QUESTIONS = 155;
 
 interface SectionProgressTrackerProps {
   availableTags: string[];
   questionCounts: Record<string, number>;
   onSectionClick?: (tag: string) => void;
+  totalQuestions?: number;
 }
 
 const masteryConfig: Record<
   MasteryLevel,
   {
-    label: string;
+    translationKey: string;
     color: string;
     bgColor: string;
     borderColor: string;
     icon: React.ReactNode;
-    description: string;
+    descKey: string;
   }
 > = {
   not_started: {
-    label: 'Not Started',
+    translationKey: 'notStarted',
     color: 'text-muted-foreground',
     bgColor: 'bg-muted/20',
     borderColor: 'border-border-subtle',
     icon: <Circle className="h-4 w-4" />,
-    description: 'No attempts yet',
+    descKey: 'descNotStarted',
   },
   learning: {
-    label: 'Learning',
+    translationKey: 'learning',
     color: 'text-orange-400',
     bgColor: 'bg-orange-500/10',
     borderColor: 'border-orange-500/30',
     icon: <Circle className="h-4 w-4" />,
-    description: 'Getting familiar',
+    descKey: 'descLearning',
   },
   practicing: {
-    label: 'Practicing',
+    translationKey: 'practicing',
     color: 'text-blue-400',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
     icon: <Check className="h-4 w-4" />,
-    description: 'Making progress',
+    descKey: 'descPracticing',
   },
   mastered: {
-    label: 'Mastered',
+    translationKey: 'mastered',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
     borderColor: 'border-emerald-500/30',
     icon: <Trophy className="h-4 w-4" />,
-    description: 'Excellent!',
+    descKey: 'descMastered',
   },
 };
 
@@ -68,9 +74,12 @@ export function SectionProgressTracker({
   availableTags,
   questionCounts,
   onSectionClick,
+  totalQuestions: totalUniqueQuestions = DEFAULT_TOTAL_QUESTIONS,
 }: SectionProgressTrackerProps) {
   const allStats = useAllSectionStats();
   const resetSection = useSectionProgressStore((state) => state.resetSection);
+  const t = useTranslations('progress');
+  const { state: progressState } = useProgress();
 
   const statsByTag = useMemo(() => {
     const map = new Map<string, (typeof allStats)[number]>();
@@ -79,18 +88,19 @@ export function SectionProgressTracker({
   }, [allStats]);
 
   const overallProgress = useMemo(() => {
-    const totalQuestions = availableTags.reduce((sum, tag) => sum + (questionCounts[tag] || 0), 0);
-    const totalAnswered = allStats.reduce((sum, stat) => sum + stat.answeredQuestions, 0);
-    const totalCorrect = allStats.reduce((sum, stat) => sum + stat.correctAnswers, 0);
+    const overall = computeOverallStats(progressState);
+    const totalQuestions = totalUniqueQuestions;
+    const totalAnswered = overall.totalAnswered;
+    const totalCorrect = overall.totalCorrect;
 
     return {
       totalQuestions,
       totalAnswered,
       totalCorrect,
-      overallAccuracy: totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0,
+      overallAccuracy: overall.overallAccuracy * 100,
       overallCompletion: totalQuestions > 0 ? (totalAnswered / totalQuestions) * 100 : 0,
     };
-  }, [availableTags, questionCounts, allStats]);
+  }, [progressState, totalUniqueQuestions]);
 
   const masteredCount = allStats.filter((stat) => stat.masteryLevel === 'mastered').length;
   const inProgressCount = allStats.filter(
@@ -103,7 +113,7 @@ export function SectionProgressTracker({
       <div className="rounded-xl border border-border-subtle bg-surface/50 p-5 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Overall Progress
+            {t('overall')}
           </h3>
           <Badge
             variant="secondary"
@@ -114,13 +124,13 @@ export function SectionProgressTracker({
                 : 'bg-primary/10 text-primary',
             )}
           >
-            {masteredCount}/{availableTags.length} Mastered
+            {masteredCount}/{availableTags.length} {t('mastered')}
           </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground font-medium">Completed</p>
+            <p className="text-xs text-muted-foreground font-medium">{t('completed')}</p>
             <p className="text-2xl font-semibold text-foreground tabular-nums">
               {overallProgress.totalAnswered}
               <span className="text-base text-muted-foreground font-normal">
@@ -136,12 +146,12 @@ export function SectionProgressTracker({
               />
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {overallProgress.overallCompletion.toFixed(0)}% complete
+              {t('complete', { percent: overallProgress.overallCompletion.toFixed(0) })}
             </p>
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground font-medium">Accuracy</p>
+            <p className="text-xs text-muted-foreground font-medium">{t('accuracy')}</p>
             <p className="text-2xl font-semibold text-foreground tabular-nums">
               {overallProgress.overallAccuracy.toFixed(0)}%
             </p>
@@ -154,26 +164,30 @@ export function SectionProgressTracker({
               />
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {overallProgress.totalCorrect} correct answers
+              {t('correctAnswers', { count: overallProgress.totalCorrect })}
             </p>
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground font-medium">Mastery Status</p>
+            <p className="text-xs text-muted-foreground font-medium">{t('masteryStatus')}</p>
             <div className="flex items-center gap-4 mt-2">
               <div className="flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                <span className="text-xs text-muted-foreground">{masteredCount} mastered</span>
+                <span className="text-xs text-muted-foreground">
+                  {masteredCount} {t('mastered')}
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                <span className="text-xs text-muted-foreground">{inProgressCount} in progress</span>
+                <span className="text-xs text-muted-foreground">
+                  {inProgressCount} {t('inProgress')}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
               <span className="text-xs text-muted-foreground">
-                {availableTags.length - masteredCount - inProgressCount} not started
+                {availableTags.length - masteredCount - inProgressCount} {t('notStarted')}
               </span>
             </div>
           </div>
@@ -183,7 +197,7 @@ export function SectionProgressTracker({
       {/* Individual Section Progress */}
       <div className="space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Topic Breakdown
+          {t('topicBreakdown')}
         </h3>
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {availableTags.map((tag) => {
@@ -227,7 +241,7 @@ export function SectionProgressTracker({
                   <div className="flex items-center gap-2.5">
                     <div
                       className={cn('flex items-center justify-center', config.color)}
-                      title={config.description}
+                      title={t(config.descKey as any)}
                     >
                       {config.icon}
                     </div>
@@ -241,32 +255,23 @@ export function SectionProgressTracker({
                       config.borderColor,
                     )}
                   >
-                    {config.label}
+                    {t(config.translationKey as any)}
                   </Badge>
                 </div>
 
                 <div className="w-full space-y-2.5">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="tabular-nums">
-                      {stats.answeredQuestions}/{stats.totalQuestions} completed
+                      {stats.answeredQuestions}/{stats.totalQuestions} {t('completed')}
                     </span>
-                    <span className="tabular-nums">{stats.accuracy.toFixed(0)}% accuracy</span>
+                    <span className="font-bold">{Math.round(stats.accuracy * 100)}%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-muted/50 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-black/20 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${stats.completionPercentage}%` }}
-                      transition={{ duration: 0.3 }}
-                      className={cn(
-                        'h-full rounded-full',
-                        stats.masteryLevel === 'mastered'
-                          ? 'bg-emerald-500'
-                          : stats.masteryLevel === 'practicing'
-                            ? 'bg-blue-500'
-                            : stats.masteryLevel === 'learning'
-                              ? 'bg-orange-500'
-                              : 'bg-muted-foreground/20',
-                      )}
+                      transition={{ duration: 0.8, ease: 'easeOut' }}
+                      className={cn('h-full rounded-full', config.color.replace('text-', 'bg-'))}
                     />
                   </div>
                 </div>

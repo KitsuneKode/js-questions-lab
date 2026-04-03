@@ -39,7 +39,16 @@ interface SectionProgressState {
   resetAll: () => void;
 }
 
-const initialState: Omit<SectionProgressData, 'updatedAt'> = {
+const initialState: Omit<
+  SectionProgressState,
+  | 'updatedAt'
+  | 'updateSection'
+  | 'markQuestionAnswered'
+  | 'getSectionProgress'
+  | 'getAllSections'
+  | 'resetSection'
+  | 'resetAll'
+> = {
   sections: {},
 };
 

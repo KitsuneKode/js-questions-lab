@@ -13,12 +13,15 @@ import {
   IconTerminal2 as Terminal,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TimelineEvent } from '@/lib/run/types';
 import { cn } from '@/lib/utils';
+
+type TFunction = ReturnType<typeof useTranslations>;
 
 interface TimelineChartProps {
   events: TimelineEvent[];
@@ -234,15 +237,16 @@ function trimConsole(chips: LaneChip[]) {
 
 function describeEvent(
   event: TimelineEvent,
+  t: TFunction,
 ): Pick<ReplayStep, 'lane' | 'title' | 'caption' | 'badge' | 'durationMs'> {
   const prettyLabel = normalizeLabel(event.label);
 
   if (event.kind === 'sync' && event.phase === 'start') {
     return {
       lane: 'call-stack',
-      title: 'Script execution begins',
-      caption: 'Main thread evaluates synchronous code, pushing frames onto the Call Stack.',
-      badge: 'Synchronous',
+      title: t('titleBegins'),
+      caption: t('captionBegins'),
+      badge: t('badgeSync'),
       durationMs: 950,
     };
   }
@@ -250,9 +254,9 @@ function describeEvent(
   if (event.kind === 'sync' && event.phase === 'end') {
     return {
       lane: 'call-stack',
-      title: 'Call stack empties',
-      caption: 'Synchronous execution completes. Event loop will now check for queued microtasks.',
-      badge: 'Synchronous',
+      title: t('titleEmpty'),
+      caption: t('captionEmpty'),
+      badge: t('badgeSync'),
       durationMs: 900,
     };
   }
@@ -262,7 +266,7 @@ function describeEvent(
       lane: 'microtask-queue',
       title: `${prettyLabel} enqueued (Microtask)`,
       caption: 'Added to Microtask Queue. Will execute immediately after current stack clears.',
-      badge: 'Microtask',
+      badge: t('badgeMicro'),
       durationMs: 1050,
     };
   }
@@ -272,7 +276,7 @@ function describeEvent(
       lane: 'microtask-queue',
       title: `${prettyLabel} pulled from queue`,
       caption: 'Event loop drains the Microtask Queue, pushing callbacks to the Call Stack.',
-      badge: 'Microtask',
+      badge: t('badgeMicro'),
       durationMs: 1150,
     };
   }
@@ -282,7 +286,7 @@ function describeEvent(
       lane: 'call-stack',
       title: `${prettyLabel} resolved`,
       caption: 'Microtask finishes execution and pops off the Call Stack.',
-      badge: 'Microtask',
+      badge: t('badgeMicro'),
       durationMs: 900,
     };
   }
@@ -292,7 +296,7 @@ function describeEvent(
       lane: 'web-apis',
       title: `${prettyLabel} registered in Web APIs`,
       caption: 'Timer or external API is handed off to the browser environment.',
-      badge: 'Task',
+      badge: t('badgeTask'),
       durationMs: 1150,
     };
   }
@@ -303,7 +307,7 @@ function describeEvent(
       title: `${prettyLabel} dispatched (Macrotask)`,
       caption:
         'Moved from Task Queue to Call Stack. Happens only when stack and microtasks are clear.',
-      badge: 'Task',
+      badge: t('badgeTask'),
       durationMs: 1250,
     };
   }
@@ -313,7 +317,7 @@ function describeEvent(
       lane: 'call-stack',
       title: `${prettyLabel} completes`,
       caption: 'Macrotask finishes execution and pops off the Call Stack.',
-      badge: 'Task',
+      badge: t('badgeTask'),
       durationMs: 950,
     };
   }
@@ -322,12 +326,12 @@ function describeEvent(
     lane: 'console',
     title: 'Console output emitted',
     caption: 'Process hit a log statement, flushing to standard output.',
-    badge: 'Console',
+    badge: t('badgeConsole'),
     durationMs: 820,
   };
 }
 
-function buildReplaySteps(events: TimelineEvent[]): ReplayStep[] {
+function buildReplaySteps(events: TimelineEvent[], t: TFunction): ReplayStep[] {
   if (events.length === 0) {
     return [];
   }
@@ -345,7 +349,7 @@ function buildReplaySteps(events: TimelineEvent[]): ReplayStep[] {
     snapshot = cloneSnapshot(snapshot);
     snapshot.taskQueue = [];
 
-    const meta = describeEvent(event);
+    const meta = describeEvent(event, t);
     const prettyLabel = normalizeLabel(event.label);
 
     if (event.kind === 'sync' && event.phase === 'start') {
@@ -447,7 +451,8 @@ function getLaneChips(snapshot: ReplaySnapshot, lane: ReplayLaneId) {
 }
 
 export function TimelineChart({ events }: TimelineChartProps) {
-  const steps = useMemo(() => buildReplaySteps(events), [events]);
+  const t = useTranslations('debugger');
+  const steps = useMemo(() => buildReplaySteps(events, t), [events, t]);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -476,7 +481,7 @@ export function TimelineChart({ events }: TimelineChartProps) {
   }, []);
 
   if (steps.length === 0) {
-    return <p className="text-sm text-muted-foreground">Run code to generate an event replay.</p>;
+    return <p className="text-sm text-muted-foreground">{t('noData')}</p>;
   }
 
   const replayKey = `${steps.length}-${steps[0]?.key ?? 'start'}-${steps[steps.length - 1]?.key ?? 'end'}-${prefersReducedMotion ? 'reduce' : 'motion'}`;

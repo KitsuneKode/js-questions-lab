@@ -7,6 +7,7 @@ import {
   IconX as X,
 } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SectionProgressTracker } from '@/components/section-progress-tracker';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,8 @@ export function FiltersBar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { startTransition } = useFilterPending();
+  const t = useTranslations('questions');
+  const tProgress = useTranslations('progress');
 
   // Local state gives immediate visual feedback on click; useEffect syncs when
   // navigation settles and new props arrive from the server component.
@@ -86,6 +89,7 @@ export function FiltersBar({
 
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(search);
+  const [showAllTags, setShowAllTags] = useState(false);
 
   // Open command dialog with Ctrl/Cmd + K
   useEffect(() => {
@@ -103,6 +107,12 @@ export function FiltersBar({
     status === 'answered' || status === 'unanswered' || status === 'bookmarked' ? status : 'all';
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
+  const displayedTags = useMemo(
+    () => (showAllTags ? allTags : allTags.slice(0, 11)),
+    [allTags, showAllTags],
+  );
+  const hasMoreTags = allTags.length > 11;
+
   const normalizedSelectedTags = useMemo(
     () =>
       selectedTags?.length
@@ -244,8 +254,8 @@ export function FiltersBar({
   return (
     <section className="space-y-6">
       {/* Horizontal Pill Filter Bar for Topics with Multi-Select */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide w-full max-w-full">
-        {allTags.map((tag) => {
+      <div className="flex flex-wrap items-center gap-2 pb-2 w-full transition-all duration-500">
+        {displayedTags.map((tag) => {
           const isActive = tag === 'all' ? activeTags.length === 0 : activeTags.includes(tag);
           return (
             <button
@@ -259,10 +269,21 @@ export function FiltersBar({
                   : 'text-secondary hover:text-foreground hover:bg-surface border-2 border-transparent',
               )}
             >
-              {tag === 'all' ? 'All Questions' : tag.charAt(0).toUpperCase() + tag.slice(1)}
+              {tag === 'all' ? t('filters.all') : tag.charAt(0).toUpperCase() + tag.slice(1)}
             </button>
           );
         })}
+        {hasMoreTags && (
+          <button
+            type="button"
+            onClick={() => setShowAllTags(!showAllTags)}
+            className="px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full border border-dashed border-border-subtle text-tertiary hover:border-primary/50 hover:text-primary transition-all active:scale-[0.95]"
+          >
+            {showAllTags
+              ? t('filters.showLess')
+              : t('filters.more', { count: allTags.length - 11 })}
+          </button>
+        )}
         {activeTags.length > 0 && (
           <Button
             variant="ghost"
@@ -271,7 +292,7 @@ export function FiltersBar({
             className="h-8 px-3 text-xs text-tertiary hover:text-foreground ml-2 active:scale-[0.95] transition-all border-2 border-transparent"
           >
             <X className="h-3.5 w-3.5 mr-1" />
-            Reset Tags ({activeTags.length})
+            {t('filters.resetTags', { count: activeTags.length })}
           </Button>
         )}
       </div>
@@ -286,7 +307,7 @@ export function FiltersBar({
           >
             <span className="flex items-center gap-2">
               <Search className="h-4 w-4 text-tertiary group-hover:text-primary transition-colors" />
-              {search ? `Search: "${search}"` : 'Search questions...'}
+              {search ? `${t('filters.searchLabel')}: "${search}"` : t('filters.search')}
             </span>
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border-subtle bg-muted/50 px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
               <span className="text-xs">⌘</span>K
@@ -296,13 +317,13 @@ export function FiltersBar({
           <CommandDialog open={open} onOpenChange={setOpen}>
             <Command className="flex h-full flex-col overflow-hidden rounded-xl border border-border-subtle bg-popover shadow-2xl">
               <CommandInput
-                placeholder="Type a keyword, concept, or question number..."
+                placeholder={t('filters.searchPlaceholder')}
                 value={inputValue}
                 onValueChange={setInputValue}
               />
               <CommandList className="h-[400px]">
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Questions">
+                <CommandEmpty>{t('filters.noResults')}</CommandEmpty>
+                <CommandGroup heading={t('filters.groupQuestions')}>
                   {allQuestions
                     .filter(
                       (q) =>
@@ -360,7 +381,7 @@ export function FiltersBar({
                       : 'text-secondary hover:text-foreground hover:bg-elevated border-2 border-transparent hover:border-border-subtle',
                   )}
                 >
-                  {diff}
+                  {t(`filters.${diff}` as any)}
                 </button>
               );
             })}
@@ -386,7 +407,7 @@ export function FiltersBar({
             className="h-9 gap-2 text-xs font-medium border-border-subtle hover:border-primary/40 transition-all active:scale-[0.95]"
           >
             <Progress className="h-4 w-4" />
-            Progress
+            {tProgress('title')}
           </Button>
 
           <button
@@ -405,7 +426,7 @@ export function FiltersBar({
                 runnable === 'true' ? 'fill-current scale-110' : 'group-hover:scale-110',
               )}
             />
-            Hard Mode Only
+            {t('filters.runnable')}
           </button>
 
           {(search ||
@@ -426,7 +447,7 @@ export function FiltersBar({
               }}
             >
               <X className="h-3.5 w-3.5 mr-1" />
-              Clear All
+              {t('filters.clear')}
             </Button>
           )}
         </div>
@@ -437,16 +458,17 @@ export function FiltersBar({
         <DialogContent className="!max-w-4xl w-[95vw] !p-0 !gap-0 max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader className="px-6 pt-6 pb-4 border-b border-border-subtle/50 flex-shrink-0">
             <DialogTitle className="text-lg font-semibold tracking-tight">
-              Your Progress
+              {tProgress('title')}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground mt-1">
-              Track mastery by topic and continue where you left off.
+              {tProgress('subtitle')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-5">
             <SectionProgressTracker
               availableTags={tags}
               questionCounts={questionCounts}
+              totalQuestions={allQuestions.length}
               onSectionClick={(tag) => {
                 toggleTag(tag);
                 setProgressOpen(false);

@@ -7,9 +7,12 @@ import {
   IconCircleX as XCircle,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import type { QuestionRecord } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
 import type { AttemptRecord } from '@/lib/progress/storage';
+
+type TFunction = ReturnType<typeof useTranslations>;
 
 interface RecentActivityProps {
   questions: QuestionRecord[];
@@ -24,6 +27,8 @@ interface RecentAttempt {
 
 export function RecentActivity({ questions }: RecentActivityProps) {
   const { state } = useProgress();
+  const t = useTranslations('dashboard');
+  const locale = useLocale();
 
   const questionMap = new Map(questions.map((q) => [q.id, q]));
 
@@ -58,15 +63,15 @@ export function RecentActivity({ questions }: RecentActivityProps) {
       </div>
 
       <div className="mb-6 relative z-10">
-        <h3 className="font-display text-xl text-foreground">Recent Activity</h3>
-        <p className="text-xs text-secondary mt-1">Your latest practice attempts.</p>
+        <h3 className="font-display text-xl text-foreground">{t('labelRecent')}</h3>
+        <p className="text-xs text-secondary mt-1">{t('recentSub')}</p>
       </div>
 
       <ul className="space-y-3 relative z-10 flex-1">
         {last10.map((entry) => {
           const isCorrect = entry.attempt.status === 'correct';
           const time = new Date(entry.attempt.attemptedAt);
-          const relTime = formatRelativeTime(time);
+          const relTime = formatRelativeTime(time, t, locale);
 
           return (
             <li key={`${entry.questionId}-${entry.attempt.attemptedAt}-${entry.attempt.status}`}>
@@ -108,15 +113,15 @@ export function RecentActivity({ questions }: RecentActivityProps) {
   );
 }
 
-function formatRelativeTime(date: Date): string {
+function formatRelativeTime(date: Date, t: TFunction, locale: string): string {
   const now = Date.now();
   const diff = now - date.getTime();
   const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1) return t('timeJustNow');
+  if (minutes < 60) return t('timeMinutesAgo', { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('timeHoursAgo', { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return date.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+  if (days < 7) return t('timeDaysAgo', { count: days });
+  return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
 }

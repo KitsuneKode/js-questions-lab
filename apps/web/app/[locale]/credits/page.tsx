@@ -87,7 +87,7 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
   }));
 
   return (
-    <main className="bg-void min-h-screen pt-24 pb-16 md:pt-32 md:pb-24">
+    <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40 md:pb-24">
       <Container>
         {/* ── Hero card ─────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden rounded-2xl border border-border-subtle bg-surface/50 px-6 py-10 md:px-10 md:py-12">

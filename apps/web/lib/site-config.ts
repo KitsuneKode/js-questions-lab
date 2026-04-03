@@ -28,4 +28,5 @@ export const siteLinks = {
   credits: '/credits',
   questions: '/questions',
   dashboard: '/dashboard',
+  contact: '/contact',
 } as const;

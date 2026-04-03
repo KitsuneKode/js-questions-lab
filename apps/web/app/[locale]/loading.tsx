@@ -6,14 +6,15 @@ export default function Loading() {
     <main className="bg-void min-h-screen">
       <Container>
         {/* Hero section skeleton */}
-        <section className="py-24 max-w-6xl mx-auto px-4">
-          <Skeleton className="h-16 w-80 mb-4" />
-          <Skeleton className="h-6 w-64 mb-12" />
-          <Skeleton className="h-12 w-96 mb-4" />
-          <Skeleton className="h-6 w-72 mb-8" />
-          <div className="flex gap-3 mb-16">
-            <Skeleton className="h-10 w-32" />
-            <Skeleton className="h-10 w-32" />
+        <section className="relative flex flex-col overflow-hidden px-4 pt-32 pb-20 sm:px-6 lg:px-8 md:pt-40 md:pb-32">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-[0_0_15px_rgba(245,158,11,0.1)] w-max mb-8">
+            <Skeleton className="h-4 w-24 rounded-sm" />
+          </div>
+          <Skeleton className="h-16 w-[80%] max-w-2xl mb-8" />
+          <Skeleton className="h-6 w-full max-w-xl mb-12" />
+          <div className="flex flex-wrap items-center gap-4">
+            <Skeleton className="h-12 w-40 rounded-md" />
+            <Skeleton className="h-12 w-40 rounded-md" />
           </div>
         </section>
 

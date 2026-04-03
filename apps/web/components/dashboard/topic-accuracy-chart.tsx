@@ -2,6 +2,7 @@
 
 import { IconArrowRight as ArrowRight, IconChartPie as PieChart } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from 'recharts';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ interface TopicAccuracyChartProps {
 export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
+  const t = useTranslations('dashboard');
 
   useEffect(() => {
     const element = chartRef.current;
@@ -46,10 +48,8 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
     return (
       <div className="rounded-2xl border border-border-subtle bg-surface p-6 flex flex-col items-center justify-center min-h-[300px] text-center">
         <PieChart className="h-8 w-8 text-tertiary mb-3" />
-        <p className="font-display text-lg text-foreground">Not enough data</p>
-        <p className="text-sm text-secondary mt-1">
-          Practice at least 3 topics to unlock your mastery radar.
-        </p>
+        <p className="font-display text-lg text-foreground">{t('notEnoughData')}</p>
+        <p className="text-sm text-secondary mt-1">{t('radarUnlock')}</p>
       </div>
     );
   }
@@ -85,7 +85,11 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
         <div className="bg-elevated border border-border-subtle p-3 rounded-xl shadow-lg backdrop-blur-xl">
           <p className="font-medium text-foreground text-sm mb-1">{data.subject}</p>
           <p className="text-xs text-secondary">
-            {data.raw.correctAttempts}/{data.raw.totalAttempts} correct ({data.A}%)
+            {t('correctRatio', {
+              correct: data.raw.correctAttempts,
+              total: data.raw.totalAttempts,
+              accuracy: data.A,
+            })}
           </p>
         </div>
       );
@@ -96,8 +100,8 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
   return (
     <div className="col-span-2 flex min-w-0 flex-col rounded-2xl border border-border-subtle bg-surface p-6 lg:col-span-1">
       <div className="mb-2">
-        <h3 className="font-display text-xl text-foreground">Topic Mastery</h3>
-        <p className="text-xs text-secondary">Your accuracy across core concepts.</p>
+        <h3 className="font-display text-xl text-foreground">{t('topicMastery')}</h3>
+        <p className="text-xs text-secondary">{t('topicMasteryDesc')}</p>
       </div>
 
       <div ref={chartRef} className="relative mt-4 h-[280px] min-h-[280px] min-w-0 w-full">
@@ -118,7 +122,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
             <Radar
-              name="Mastery"
+              name={t('radarLabel')}
               dataKey="A"
               stroke="var(--accent-primary)"
               fill="var(--accent-primary)"
@@ -133,7 +137,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
 
       <div className="mt-auto pt-6 border-t border-border-subtle space-y-3">
         <h4 className="text-xs font-semibold text-tertiary uppercase tracking-widest mb-2">
-          Needs Practice
+          {t('needsPractice')}
         </h4>
         {sortedByWeakness.map((tag) => (
           <div key={tag.tag} className="flex items-center justify-between">
@@ -144,7 +148,7 @@ export function TopicAccuracyChart({ tagStats }: TopicAccuracyChartProps) {
                 variant="ghost"
                 className="h-7 text-[10px] uppercase tracking-wider text-primary hover:bg-primary/10"
               >
-                Practice <ArrowRight className="h-3 w-3 ml-1" />
+                {t('practice')} <ArrowRight className="h-3 w-3 ml-1" />
               </Button>
             </Link>
           </div>

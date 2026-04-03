@@ -227,7 +227,8 @@ describe('section-progress-store', () => {
       // Check localStorage was updated
       const stored = localStorage.getItem('section-progress-storage');
       expect(stored).toBeTruthy();
-      const parsed = JSON.parse(stored!);
+      if (!stored) throw new Error('stored is null');
+      const parsed = JSON.parse(stored);
       expect(parsed.state.sections.scope).toBeDefined();
     });
 

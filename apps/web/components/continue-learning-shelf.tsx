@@ -2,6 +2,7 @@
 
 import { IconArrowRight as ArrowRight, IconPlayerPlay as Play } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { QuestionRecord } from '@/lib/content/types';
@@ -13,6 +14,7 @@ interface ContinueLearningShelfProps {
 }
 
 export function ContinueLearningShelf({ questions, locale }: ContinueLearningShelfProps) {
+  const t = useTranslations('landing');
   const { ready, continueLearning, overall } = useAnalytics(questions);
 
   if (!ready || overall.totalAnswered === 0 || !continueLearning.question) {
@@ -32,7 +34,7 @@ export function ContinueLearningShelf({ questions, locale }: ContinueLearningShe
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  Resume Practice
+                  {t('resumePractice')}
                 </span>
                 <Badge variant="secondary" className="text-[10px]">
                   #{q.id}
@@ -47,12 +49,12 @@ export function ContinueLearningShelf({ questions, locale }: ContinueLearningShe
           <div className="flex w-full shrink-0 items-center gap-2 md:w-auto">
             <Link href={`/${locale}/questions/${q.id}`} className="flex-1 md:flex-none">
               <Button className="w-full gap-2">
-                Continue
+                {t('continue')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href={`/${locale}/dashboard`} className="hidden md:block">
-              <Button variant="secondary">Dashboard</Button>
+              <Button variant="secondary">{t('dashboard')}</Button>
             </Link>
           </div>
         </div>

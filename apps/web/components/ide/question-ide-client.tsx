@@ -17,6 +17,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
@@ -87,6 +88,7 @@ interface QuestionIDEClientProps {
   locale?: string;
   allQuestions?: QuestionRecord[];
   scope?: QuestionScope;
+  breadcrumbs?: React.ReactNode;
 }
 
 const DEFAULT_SCOPE: QuestionScope = {
@@ -137,24 +139,17 @@ export function QuestionIDEClient({
   locale,
   allQuestions = [],
   scope = DEFAULT_SCOPE,
+  breadcrumbs,
 }: QuestionIDEClientProps) {
   const router = useRouter();
   const { state: progress, ready: progressReady } = useProgress();
-
-  const defaultRecallMode = useMemo(() => {
-    const correctCount = Object.values(progress.questions).filter((q) =>
-      q.attempts.some((a) => a.status === 'correct'),
-    ).length;
-    return correctCount >= 10;
-  }, [progress]);
-
-  const [userRecallMode, setUserRecallMode] = useState<boolean | null>(null);
-  const isRecallMode = userRecallMode ?? defaultRecallMode;
-  const setIsRecallMode = setUserRecallMode;
+  const [preferredMode, setPreferredMode] = useState<'quiz' | 'hard'>('quiz');
+  const isRecallMode = preferredMode === 'hard';
 
   const [selected, setSelected] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const [recallAnswer, setRecallAnswer] = useState('');
   const [hasSubmittedRecall, setHasSubmittedRecall] = useState(false);
+  const [isRecallCorrect, setIsRecallCorrect] = useState<boolean | null>(null);
   const [selfGrade, setSelfGrade] = useState<'hard' | 'good' | 'easy' | null>(null);
   const [explanationVisible, setExplanationVisible] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -164,6 +159,10 @@ export function QuestionIDEClient({
   const updateSection = useSectionProgressStore((state) => state.updateSection);
   const markQuestionAnswered = useSectionProgressStore((state) => state.markQuestionAnswered);
   const primaryTag = question.tags[0];
+  const t = useTranslations('ide');
+  const tCommon = useTranslations('common');
+  const tQuestion = useTranslations('question');
+  const tScratchpad = useTranslations('scratchpad');
 
   const cleanPromptMarkdown = question.promptMarkdown
     .replace(/```[a-z]*\n[\s\S]*?\n```/g, '')
@@ -207,7 +206,8 @@ export function QuestionIDEClient({
   } | null>(null);
 
   const isAnswered = selected !== null || hasSubmittedRecall;
-  const isCorrect = selected !== null ? selected === question.correctOption : hasSubmittedRecall;
+  const isCorrect =
+    selected !== null ? selected === question.correctOption : isRecallCorrect === true;
 
   const hasAsyncEvents = useMemo(() => {
     return (
@@ -271,21 +271,33 @@ export function QuestionIDEClient({
       setHasSubmittedRecall(true);
       return;
     }
+
+    const correctKey = question.correctOption.toLowerCase();
+    const correctOpt = question.options.find((o) => o.key === question.correctOption);
+    const recallStr = recallAnswer.trim().toLowerCase();
+
+    // Check if what they typed exactly matches the key or the text
+    const isStrictMatch =
+      recallStr === correctKey ||
+      recallStr === `option ${correctKey}` ||
+      (correctOpt !== undefined && recallStr === correctOpt.text.toLowerCase().trim());
+
     setHasSubmittedRecall(true);
-    saveAttempt(question.correctOption, 'correct');
-    // Update section progress using markQuestionAnswered for proper incrementing
+    setIsRecallCorrect(isStrictMatch);
+    saveAttempt(question.correctOption, isStrictMatch ? 'correct' : 'incorrect');
+
+    // Update section progress
     if (primaryTag) {
-      // Initialize totalQuestions if first answer in this tag
       const existing = useSectionProgressStore.getState().sections[primaryTag];
       if (!existing || existing.totalQuestions === 0) {
         updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
       }
-      // Increment answered/correct counts
-      markQuestionAnswered(primaryTag, true);
+      markQuestionAnswered(primaryTag, isStrictMatch);
     }
   }, [
     recallAnswer,
     question.correctOption,
+    question.options,
     saveAttempt,
     primaryTag,
     updateSection,
@@ -454,7 +466,7 @@ export function QuestionIDEClient({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <h1 className="font-display text-lg font-semibold tracking-tight text-foreground uppercase">
-                {question.tags[0] || 'JavaScript'} Practice
+                {question.tags[0] || 'JavaScript'} {t('practice')}
               </h1>
               <Badge
                 variant="secondary"
@@ -493,7 +505,7 @@ export function QuestionIDEClient({
                 className="h-9 gap-2 px-4 text-xs font-medium active:scale-[0.97] transition-all"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Prev
+                {tQuestion('prev')}
               </Button>
             </Link>
           )}
@@ -504,7 +516,7 @@ export function QuestionIDEClient({
             className="h-9 gap-2 px-4 text-xs font-medium active:scale-[0.97] transition-all"
           >
             <Bookmark className={`h-4 w-4 ${item.bookmarked ? 'fill-current' : ''}`} />
-            {item.bookmarked ? 'Saved' : 'Save'}
+            {item.bookmarked ? tQuestion('saved') : tQuestion('save')}
           </Button>
           {nextId && (
             <Link href={nextHref ?? '#'}>
@@ -513,7 +525,7 @@ export function QuestionIDEClient({
                 size="sm"
                 className="h-9 gap-2 px-4 text-xs font-medium active:scale-[0.97] transition-all"
               >
-                Next
+                {tQuestion('next')}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -526,6 +538,7 @@ export function QuestionIDEClient({
         {/* Left: Question & Context */}
         <ResizablePanel defaultSize={40} minSize={25} className="flex flex-col">
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {breadcrumbs && <div className="-mt-2 mb-4">{breadcrumbs}</div>}
             <div className="space-y-4">
               <h2 className="font-display text-2xl font-medium tracking-tight text-foreground">
                 {question.title}
@@ -561,14 +574,14 @@ export function QuestionIDEClient({
                               onClick={() => openScratchpad(questionCode, 'replace')}
                             >
                               <Terminal className="h-4 w-4 mr-2" />
-                              Open Scratchpad
+                              {tScratchpad('open')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => openScratchpad(questionCode, 'append')}
                             >
                               <Terminal className="h-4 w-4 mr-2" />
-                              Append to Scratchpad
+                              {tScratchpad('append')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -616,15 +629,15 @@ export function QuestionIDEClient({
               <p className="mt-2 text-[11px] text-muted-foreground/65">
                 {isJavascriptRuntime
                   ? !isAnswered
-                    ? 'Submit an answer first to unlock the isolated worker runtime and event-loop tools.'
+                    ? t('unlockRuntime')
                     : runnerError
                       ? `Last run failed: ${runnerError}`
                       : 'Run the snippet here or send it to Scratchpad to experiment without losing the original.'
                   : isDomEventRuntime
                     ? !isAnswered
-                      ? 'Submit an answer first to unlock the DOM event replay for this snippet.'
-                      : 'Use the replay panel below to inspect event.target, currentTarget, and bubbling order.'
-                    : 'This snippet is shown for context only. No interactive runtime is attached to this question.'}
+                      ? t('unlockDom')
+                      : t('domHint')
+                    : t('staticNotice')}
               </p>
             )}
 
@@ -635,10 +648,10 @@ export function QuestionIDEClient({
                   isRunning={isRunning}
                   emptyMessage={
                     !isAnswered
-                      ? 'Answer first to unlock the isolated worker runtime.'
+                      ? t('unlockRuntime')
                       : runnerError
                         ? runnerError
-                        : 'Run code to inspect the output.'
+                        : tCommon('loading')
                   }
                 />
               </div>
@@ -734,16 +747,16 @@ export function QuestionIDEClient({
             <div className="border-b border-border/40 bg-muted/10 py-4 px-6 shrink-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  {isRecallMode ? 'Active Recall' : 'Select Answer'}
+                  {isRecallMode ? t('activeRecall') : t('selectAnswer')}
                 </h3>
                 {!isAnswered && (
                   <button
                     type="button"
-                    onClick={() => setIsRecallMode(!isRecallMode)}
+                    onClick={() => setPreferredMode(isRecallMode ? 'quiz' : 'hard')}
                     className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary/80 hover:text-primary transition-colors"
                   >
                     <Zap className="h-3 w-3" />
-                    {isRecallMode ? 'Quiz Mode' : 'Hard Mode'}
+                    {isRecallMode ? t('quizMode') : t('hardMode')}
                   </button>
                 )}
               </div>
@@ -809,12 +822,12 @@ export function QuestionIDEClient({
                     value={recallAnswer}
                     onChange={(e) => setRecallAnswer(e.target.value)}
                     disabled={isAnswered}
-                    placeholder="Type the exact output..."
+                    placeholder={t('typeOutput')}
                     className="w-full min-h-[100px] resize-none rounded-lg border border-border/50 bg-[#0a0a0c] p-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/30 focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
                   />
                   {!isAnswered && (
                     <Button onClick={handleRecallSubmit} className="w-full" size="sm">
-                      Submit Answer
+                      {t('submitAnswer')}
                     </Button>
                   )}
                 </div>
@@ -833,7 +846,9 @@ export function QuestionIDEClient({
                       onClick={() => setExplanationVisible((v) => !v)}
                       className="flex w-full items-center justify-between rounded-lg border border-border/30 bg-muted/10 px-3 py-2 text-[11px] font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <span>{explanationVisible ? 'Hide Explanation' : 'Show Explanation'}</span>
+                      <span>
+                        {explanationVisible ? t('hideExplanation') : t('showExplanation')}
+                      </span>
                       <span className="font-mono text-[9px] opacity-50">Space</span>
                     </button>
                     <div
@@ -867,7 +882,7 @@ export function QuestionIDEClient({
                             </div>
                             <h3 className="mb-4 font-display text-lg font-medium tracking-tight text-foreground flex items-center gap-2">
                               <CheckCircle2 className="h-5 w-5 text-primary" />
-                              Explanation
+                              {t('explanationHeader')}
                             </h3>
                             <div className="markdown text-sm leading-relaxed text-muted-foreground/80">
                               <Streamdown>{question.explanationMarkdown}</Streamdown>
@@ -883,19 +898,19 @@ export function QuestionIDEClient({
                           className="text-sm font-medium text-foreground"
                           htmlFor="error-type-select"
                         >
-                          What went wrong?
+                          {t('whatWrong')}
                         </label>
                         <select
                           id="error-type-select"
-                          className="w-full rounded-lg border border-border/50 bg-background p-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50"
+                          className="w-full rounded-lg border border-border-subtle bg-background p-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all shadow-sm"
                           onChange={(e) => setErrorType(e.target.value)}
                           value={errorType}
                         >
-                          <option value="">Select...</option>
-                          <option value="misread">Misread the question</option>
-                          <option value="forgot">Forgot the rule</option>
-                          <option value="wrong_concept">Applied wrong concept</option>
-                          <option value="guess">Guessed without reasoning</option>
+                          <option value="">{t('selectError')}</option>
+                          <option value="misread">{t('errorMisread')}</option>
+                          <option value="forgot">{t('errorForgot')}</option>
+                          <option value="wrong_concept">{t('errorConcept')}</option>
+                          <option value="guess">{t('errorGuess')}</option>
                         </select>
                       </div>
                     )}
@@ -919,7 +934,7 @@ export function QuestionIDEClient({
                                 : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
                           }`}
                         >
-                          {grade}
+                          {t(`grade${grade.charAt(0).toUpperCase() + grade.slice(1)}` as any)}
                         </button>
                       ))}
                     </div>

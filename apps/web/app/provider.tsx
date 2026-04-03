@@ -1,3 +1,8 @@
+'use client';
+
+import { IconArrowRight } from '@tabler/icons-react';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/components/auth-provider';
 import { NotificationManager } from '@/components/notification-manager';
@@ -5,15 +10,40 @@ import { FloatingScratchpadGate } from '@/components/scratchpad/floating-scratch
 import { ScratchpadProvider } from '@/components/scratchpad/scratchpad-context';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { StickyBanner } from '@/components/ui/sticky-banner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ProgressProvider } from '@/lib/progress/progress-context';
 
 export function Provider({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('banner');
+
   return (
     <AuthProvider>
       <TooltipProvider>
         <ProgressProvider>
           <ScratchpadProvider>
+            <StickyBanner
+              className="bg-primary text-primary-foreground font-mono tracking-tight z-[60] fixed rounded-none border-b-0"
+              hideOnScroll={true}
+            >
+              <div className="flex flex-wrap items-center justify-center gap-2 max-w-[90%] text-[11px] sm:text-xs font-semibold uppercase">
+                <span>
+                  {t('sponsor')}{' '}
+                  <strong className="font-extrabold bg-black/10 px-1 py-0.5 rounded">
+                    JS Questions Lab
+                  </strong>
+                  ?
+                </span>
+                <span className="hidden sm:inline opacity-50">|</span>
+                <Link
+                  href="/contact"
+                  className="group flex items-center gap-1 hover:underline underline-offset-2 transition-all"
+                >
+                  {t('contact')}
+                  <IconArrowRight className="h-3 w-3 opacity-70 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </StickyBanner>
             <SiteHeader />
             {children}
             <SiteFooter />
