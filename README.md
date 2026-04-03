@@ -166,7 +166,7 @@ If you want to test authentication or progress sync:
 
 1. Copy `apps/web/.env.example` to `apps/web/.env.local`
 2. Fill in Clerk and Supabase values
-3. Review `docs/supabase-clerk-setup.md`
+3. Review `.context/docs/auth-sync.md`
 
 ## Core Commands
 
@@ -180,6 +180,23 @@ If you want to test authentication or progress sync:
 | `bun run sync:upstream` | Refresh the upstream source snapshot |
 | `bun run parse:questions` | Parse source content into generated JSON |
 | `bun run content:refresh` | Sync upstream and regenerate content |
+
+## CI And Remote Caching
+
+GitHub Actions is the source of truth for validation. Local hooks like Husky are helpful for faster
+feedback, but they are not relied on for correctness.
+
+The CI workflow currently:
+
+- caches Bun's global package download cache
+- installs dependencies with `--ignore-scripts` so local-only hooks do not slow down CI
+- runs lint, typecheck, and build as independent checks
+- supports optional Turborepo Remote Cache when GitHub Actions is configured with:
+  - repository variable `TURBO_TEAM`
+  - repository secret `TURBO_TOKEN`
+
+If those cache credentials are present, Turbo can reuse work across CI runs instead of rebuilding
+from scratch each time.
 
 ## Product Direction
 
@@ -222,9 +239,10 @@ This project is built with explicit attribution and source integrity in mind.
 | --- | --- |
 | `CONTRIBUTING.md` | Setup, validation, workflow, and PR guidance |
 | `AGENTS.md` | Current repo guardrails and architecture context |
-| `docs/agent-handoff.md` | Current implementation state |
-| `docs/v2-roadmap-mastery.md` | Active product direction |
-| `docs/supabase-clerk-setup.md` | Auth + sync integration details |
+| `.context/docs/learning-roadmap.md` | Current product direction and learning-platform priorities |
+| `.context/docs/question-discovery.md` | Filter, progress, and discovery architecture decisions |
+| `.context/docs/auth-sync.md` | Auth + sync integration details |
+| `.context/docs/content-pipeline.md` | Upstream sync and generated-content contract |
 
 ## Contributing
 
