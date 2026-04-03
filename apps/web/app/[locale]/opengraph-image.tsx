@@ -45,10 +45,8 @@ export default async function LocaleOpenGraphImage({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '60px',
+        fontFamily: activeLocale === 'ja' ? '"Noto Sans JP", sans-serif' : 'sans-serif',
       }}
-      {...(activeLocale === 'ja'
-        ? { fontFamily: '"Noto Sans JP", sans-serif' }
-        : { fontFamily: 'sans-serif' })}
     >
       <div
         style={{

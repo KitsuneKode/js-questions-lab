@@ -39,7 +39,7 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Enable Turborepo remote cache
-        if: ${{ vars.TURBO_TEAM != '' && secrets.TURBO_TOKEN != '' }}
+        if: ${{ vars.TURBO_TEAM != '' }}
         run: |
           echo "TURBO_TEAM=${{ vars.TURBO_TEAM }}" >> "$GITHUB_ENV"
           echo "TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}" >> "$GITHUB_ENV"
@@ -100,7 +100,7 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Enable Turborepo remote cache
-        if: ${{ vars.TURBO_TEAM != '' && secrets.TURBO_TOKEN != '' }}
+        if: ${{ vars.TURBO_TEAM != '' }}
         run: |
           echo "TURBO_TEAM=${{ vars.TURBO_TEAM }}" >> "$GITHUB_ENV"
           echo "TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}" >> "$GITHUB_ENV"
