@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 
 import type { LocaleCode } from '@/lib/i18n/config';
 

@@ -1,21 +1,15 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { Suspense } from 'react';
 import { Container } from '@/components/container';
-import { FilterLoadingOverlay } from '@/components/filter-loading-overlay';
-import { FiltersBar } from '@/components/filters-bar';
 import { NextRecommendedBanner } from '@/components/next-recommended-banner';
-import { QuestionsResults } from '@/components/questions-results';
+import { QuestionsClientWrapper } from '@/components/questions-client-wrapper';
 import { getManifest, getQuestions } from '@/lib/content/loaders';
-import { applyServerFilters, parseQuestionScope } from '@/lib/content/query';
-import { FilterPendingProvider } from '@/lib/filters/filter-pending-context';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
-const PAGE_SIZE = 18;
-
-type SearchParams = Record<string, string | string[] | undefined>;
+export const dynamic = 'force-static';
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
@@ -51,19 +45,15 @@ export async function generateMetadata({
 
 export default async function QuestionsPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: LocaleCode }>;
-  searchParams: Promise<SearchParams>;
 }) {
   const { locale } = await params;
-  const resolvedSearchParams = await searchParams;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'questions' });
 
   const allQuestions = getQuestions(locale);
   const manifest = getManifest(locale);
-  const scope = parseQuestionScope(resolvedSearchParams);
-  const filtered = applyServerFilters(allQuestions, scope);
 
   return (
     <main className="pt-32 pb-16 md:pt-40">
@@ -87,27 +77,13 @@ export default async function QuestionsPage({
 
           {/* Filters and Results */}
           <section className="space-y-6">
-            <FilterPendingProvider>
-              <FiltersBar
-                tags={manifest.tags}
-                selectedTags={scope.tags}
-                search={scope.q}
-                runnable={scope.runnable ? 'true' : ''}
-                status={scope.status}
-                difficulties={scope.difficulties}
+            <Suspense fallback={null}>
+              <QuestionsClientWrapper
                 allQuestions={allQuestions}
+                manifest={manifest}
                 locale={locale}
               />
-
-              <FilterLoadingOverlay>
-                <QuestionsResults
-                  questions={filtered}
-                  scope={scope}
-                  locale={locale}
-                  pageSize={PAGE_SIZE}
-                />
-              </FilterLoadingOverlay>
-            </FilterPendingProvider>
+            </Suspense>
           </section>
         </div>
       </Container>

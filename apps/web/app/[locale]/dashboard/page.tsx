@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { DashboardShell } from '@/components/dashboard/dashboard-shell';
@@ -23,6 +23,10 @@ export async function generateMetadata({
   return {
     title: `${t('title')} — ${siteConfig.name}`,
     description,
+    robots: {
+      index: false,
+      follow: false,
+    },
     alternates: {
       canonical: canonicalUrl,
       languages: Object.fromEntries(
@@ -44,12 +48,15 @@ export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage({
   params,
 }: {
   params: Promise<{ locale: LocaleCode }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const questions = getQuestions(locale);
 
   return (

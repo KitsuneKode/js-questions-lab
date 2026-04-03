@@ -5,6 +5,8 @@ import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
+export const dynamic = 'force-static';
+
 /**
  * GET /api/questions
  *

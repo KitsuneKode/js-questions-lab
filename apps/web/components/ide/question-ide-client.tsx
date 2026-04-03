@@ -16,7 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Streamdown } from 'streamdown';
@@ -63,6 +63,7 @@ import {
   applyServerFilters,
   applyStatusFilter,
   buildQuestionScopeQuery,
+  parseQuestionScope,
   type QuestionScope,
 } from '@/lib/content/query';
 import type { QuestionRecord } from '@/lib/content/types';
@@ -138,10 +139,19 @@ export function QuestionIDEClient({
   question,
   locale,
   allQuestions = [],
-  scope = DEFAULT_SCOPE,
   breadcrumbs,
 }: QuestionIDEClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const scope = useMemo(() => {
+    const params: Record<string, string | string[]> = {};
+    for (const key of searchParams.keys()) {
+      const values = searchParams.getAll(key);
+      params[key] = values.length > 1 ? values : (values[0] ?? '');
+    }
+    return parseQuestionScope(params);
+  }, [searchParams]);
+
   const { state: progress, ready: progressReady } = useProgress();
   const [preferredMode, setPreferredMode] = useState<'quiz' | 'hard'>('quiz');
   const isRecallMode = preferredMode === 'hard';

@@ -2,6 +2,8 @@ import { getQuestions } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 
+export const dynamic = 'force-static';
+
 /**
  * Generates a comprehensive plain-text dump of all questions for LLM consumption.
  * This endpoint provides the full content in a Markdown-like format that's

@@ -2,7 +2,7 @@ import { IconArrowRight as ArrowRight, IconSparkles as Sparkles } from '@tabler/
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { QuestionIDEDynamic as QuestionIDEClient } from '@/components/ide/question-ide-dynamic';
@@ -11,12 +11,9 @@ import { RelatedTopics } from '@/components/related-topics';
 import { BreadcrumbJsonLd } from '@/components/seo/breadcrumb-json-ld';
 import { QuestionJsonLd } from '@/components/seo/question-json-ld';
 import { getQuestionById, getQuestions, getRelatedQuestions } from '@/lib/content/loaders';
-import { parseQuestionScope } from '@/lib/content/query';
 import { DEFAULT_LOCALE, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl, truncateDescription } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
-
-type SearchParams = Record<string, string | string[] | undefined>;
 
 /**
  * Pre-generate all locale × question-id combinations at build time.
@@ -34,8 +31,10 @@ interface QuestionDetailPageProps {
     locale: string;
     id: string;
   }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
+
+export const dynamic = 'force-static';
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: QuestionDetailPageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -87,14 +86,11 @@ export async function generateMetadata({ params }: QuestionDetailPageProps): Pro
   };
 }
 
-export default async function QuestionDetailPage({
-  params,
-  searchParams,
-}: QuestionDetailPageProps) {
+export default async function QuestionDetailPage({ params }: QuestionDetailPageProps) {
   const resolvedParams = await params;
   const locale = resolvedParams.locale as LocaleCode;
+  setRequestLocale(locale);
   const id = Number.parseInt(resolvedParams.id, 10);
-  const resolvedSearchParams = await (searchParams ?? Promise.resolve({}));
 
   if (!Number.isFinite(id)) {
     notFound();
@@ -106,8 +102,6 @@ export default async function QuestionDetailPage({
   if (!question) {
     notFound();
   }
-
-  const scope = parseQuestionScope(resolvedSearchParams as SearchParams);
 
   const all = getQuestions(locale);
   const related = getRelatedQuestions(locale, question, 3);
@@ -149,7 +143,6 @@ export default async function QuestionDetailPage({
           question={question}
           locale={locale}
           allQuestions={all}
-          scope={scope}
           breadcrumbs={
             <Breadcrumbs
               items={[

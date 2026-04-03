@@ -1,7 +1,7 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { ContinueLearningShelf } from '@/components/continue-learning-shelf';
@@ -16,6 +16,8 @@ import { siteConfig } from '@/lib/site-config';
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
+
+export const dynamic = 'force-static';
 
 interface HomePageProps {
   params: Promise<{ locale: LocaleCode }>;
@@ -47,6 +49,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'landing' });
 
   const manifest = getManifest(locale);

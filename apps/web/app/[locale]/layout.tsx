@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Provider } from '@/app/provider';
 import { SiteJsonLd } from '@/components/seo/site-json-ld';
@@ -66,6 +66,7 @@ export async function generateMetadata({
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   if (!isValidLocale(locale)) {
     notFound();

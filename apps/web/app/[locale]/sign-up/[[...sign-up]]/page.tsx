@@ -1,7 +1,9 @@
 import { SignUp } from '@clerk/nextjs';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
+import { SUPPORTED_LOCALES } from '@/lib/i18n/config';
 
 export const metadata: Metadata = {
   robots: {
@@ -10,7 +12,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SignUpPage() {
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+export default async function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <main className="bg-void py-12">
       <Container>

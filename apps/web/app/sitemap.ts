@@ -4,6 +4,8 @@ import { getQuestions } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getBaseUrl } from '@/lib/seo/config';
 
+export const revalidate = false;
+
 /**
  * Dynamic sitemap generation for all locales and questions.
  * Generates URLs for:
@@ -31,6 +33,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/${locale}/contact`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/${locale}/credits`,
