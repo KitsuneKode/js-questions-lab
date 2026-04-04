@@ -16,6 +16,17 @@
     "title": "Biblioteca de preguntas",
     "description": "Explora y practica preguntas de entrevistas de JavaScript. Comprométete con una respuesta, luego explora la explicación y ejecuta el código.",
     "count": "{count} Preguntas",
+    "recommended": "Recomendado",
+    "practice": "Practicar",
+    "sharpen": "Mejorar {topic}",
+    "nextBest": "Siguiente mejor pregunta",
+    "startFirst": "Comienza tu primer intento",
+    "continueLeft": "Continúa donde lo dejaste",
+    "difficulty": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado"
+    },
     "results": {
       "showing": "{shown} / {total} preguntas",
       "page": "{page} / {pageCount}"
@@ -341,7 +352,28 @@
     "gradeHard": "Difícil",
     "gradeGood": "Bien",
     "gradeEasy": "Fácil",
-    "practice": "Practicar"
+    "practice": "Practicar",
+    "domEventSimulator": "Simulador de eventos DOM",
+    "domReplayTitle": "Repetir objetivo y bubbling sin tiempo de ejecución falso de navegador",
+    "domReplayDesc": "Haz clic en un nodo destacado para simular la ruta del evento. El simulador mantiene",
+    "domWhile": "fijado en el elemento más profundo cliqueado mientras",
+    "domMovesOutward": "se mueve hacia afuera durante el bubbling.",
+    "resetReplay": "Reiniciar repetición",
+    "submitFirst": "Envía una respuesta primero para desbloquear la repetición de eventos DOM para esta pregunta.",
+    "domParseError": "No se puede analizar este fragmento HTML en un árbol de eventos DOM.",
+    "domLimitedHandlers": "Este simulador solo ejecuta inline",
+    "domAnd": "y",
+    "domOtherShown": "llamadas. Otra lógica de handler se muestra pero no se ejecuta.",
+    "clickPath": "Ruta del clic",
+    "clickPathDesc": "Elige el nodo que recibe el clic.",
+    "noTarget": "Sin objetivo",
+    "eventTarget": "Objetivo del evento",
+    "replaySteps": "Pasos de repetición",
+    "consoleLines": "Líneas de consola",
+    "propagationReplay": "Repetición de propagación",
+    "propagationReplayDesc": "Cada fila muestra el nodo actual manejando el clic mientras el bubbling se mueve hacia afuera.",
+    "clickToInspect": "Haz clic en un nodo para inspeccionar la salida de consola propagada.",
+    "clickable": "Clicable"
   },
   "scratchpad": {
     "title": "Borrador",
@@ -352,7 +384,11 @@
     "close": "Cerrar",
     "emptyTerminal": "> Ejecuta código para ver la salida...",
     "open": "Abrir borrador",
-    "append": "Añadir al borrador"
+    "append": "Añadir al borrador",
+    "editor": "Editor",
+    "javaScript": "JavaScript",
+    "output": "Salida",
+    "keyboardShortcut": "Cmd/Ctrl + Enter"
   },
   "debugger": {
     "visualizer": "Visualizador de ejecución de JavaScript",

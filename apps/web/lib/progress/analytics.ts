@@ -40,7 +40,8 @@ export interface DailyActivity {
 
 export interface PracticeSuggestion {
   question: QuestionSummary | null;
-  label: string;
+  labelKey: string;
+  labelParams?: Record<string, string>;
   description: string;
 }
 
@@ -274,7 +275,7 @@ export function getContinueLearningSuggestion(
   if (!latest) {
     return {
       question: questions[0] ?? null,
-      label: 'Start your first run',
+      labelKey: 'questions.startFirst',
       description: 'Pick an early question and get one answer on the board.',
     };
   }
@@ -283,7 +284,7 @@ export function getContinueLearningSuggestion(
 
   return {
     question: target,
-    label: 'Continue where you left off',
+    labelKey: 'questions.continueLeft',
     description: 'Jump back into your most recently touched question and finish the loop.',
   };
 }
@@ -309,7 +310,8 @@ export function getRecommendedSuggestion(
   if (topicCandidate) {
     return {
       question: topicCandidate,
-      label: `Sharpen ${weakestTag}`,
+      labelKey: 'questions.sharpen',
+      labelParams: { topic: weakestTag },
       description: 'Target your weakest topic with a fresh question before moving on.',
     };
   }
@@ -318,7 +320,7 @@ export function getRecommendedSuggestion(
 
   return {
     question: nextFresh,
-    label: 'Next best question',
+    labelKey: 'questions.nextBest',
     description: 'Keep forward momentum with the next unanswered problem.',
   };
 }

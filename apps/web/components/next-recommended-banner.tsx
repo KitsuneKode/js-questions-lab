@@ -1,6 +1,7 @@
 'use client';
 
 import { IconArrowRight as ArrowRight, IconSparkles as Sparkles } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
@@ -13,10 +14,14 @@ interface NextRecommendedBannerProps {
 
 export function NextRecommendedBanner({ questions, locale }: NextRecommendedBannerProps) {
   const { ready, recommended } = useAnalytics(questions);
+  const t = useTranslations();
 
   if (!ready || !recommended.question) return null;
 
   const q = recommended.question;
+  const label = recommended.labelParams
+    ? t(recommended.labelKey, recommended.labelParams)
+    : t(recommended.labelKey);
 
   return (
     <section className="animate-in fade-in slide-in-from-top-2 duration-500">
@@ -32,9 +37,9 @@ export function NextRecommendedBanner({ questions, locale }: NextRecommendedBann
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
                 <p className="text-[10px] font-medium uppercase tracking-widest text-primary">
-                  Recommended
+                  {t('questions.recommended')}
                 </p>
-                <span className="text-[9px] text-muted-foreground/50">{recommended.label}</span>
+                <span className="text-[9px] text-muted-foreground/50">{label}</span>
               </div>
               <h2 className="font-display text-base font-medium text-foreground transition-colors group-hover:text-primary sm:text-lg">
                 {q.title}
@@ -46,7 +51,7 @@ export function NextRecommendedBanner({ questions, locale }: NextRecommendedBann
             className="w-full shrink-0 sm:w-auto"
           >
             <Button size="sm" className="w-full gap-2 sm:w-auto">
-              Practice
+              {t('questions.practice')}
               <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </IntentPrefetchLink>

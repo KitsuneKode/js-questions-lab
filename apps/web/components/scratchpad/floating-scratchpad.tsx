@@ -91,7 +91,7 @@ export function FloatingScratchpad() {
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
               <div className="hidden xl:flex rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-[10px] uppercase tracking-wider text-tertiary font-mono">
-                Cmd/Ctrl + Enter
+                {t('keyboardShortcut')}
               </div>
 
               <Dialog>
@@ -157,8 +157,8 @@ export function FloatingScratchpad() {
           {/* Editor Section */}
           <section className="flex flex-col flex-1 min-h-[40vh]">
             <div className="flex items-center justify-between border-b border-border-subtle px-4 py-2 text-[10px] uppercase tracking-widest text-tertiary bg-surface/50 font-mono shrink-0">
-              <span>Editor</span>
-              <span>JavaScript</span>
+              <span>{t('editor')}</span>
+              <span>{t('javaScript')}</span>
             </div>
             <div className="relative flex-1 overflow-hidden bg-code">
               <MonacoCodeEditor
@@ -173,7 +173,7 @@ export function FloatingScratchpad() {
           {/* Results Area */}
           <section className="flex flex-col flex-1 overflow-hidden bg-surface max-h-[40vh]">
             <div className="border-b border-border-subtle px-4 py-2 text-[10px] uppercase tracking-widest text-tertiary bg-surface/50 font-mono flex items-center justify-between shrink-0">
-              <span>Output</span>
+              <span>{t('output')}</span>
             </div>
             <div className="flex-1 p-4 bg-void overflow-auto">
               <TerminalOutput logs={logs} isRunning={isRunning} emptyMessage={t('emptyTerminal')} />

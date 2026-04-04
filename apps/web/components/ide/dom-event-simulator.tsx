@@ -7,6 +7,7 @@ import {
   IconTarget as Target,
   IconRoute2 as Waypoints,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import { TerminalOutput } from '@/components/terminal/terminal-output';
@@ -33,6 +34,7 @@ interface DomNodeCardProps {
 }
 
 function DomNodeCard({ node, activeNodeId, unlocked, onSelect }: DomNodeCardProps) {
+  const t = useTranslations('ide');
   const isActive = node.id === activeNodeId;
   const isInteractive =
     node.handlerSource !== null || node.actions.length > 0 || node.unsupportedHandler;
@@ -60,7 +62,7 @@ function DomNodeCard({ node, activeNodeId, unlocked, onSelect }: DomNodeCardProp
                   variant="secondary"
                   className="bg-primary/10 text-[10px] uppercase tracking-widest text-primary"
                 >
-                  Clickable
+                  {t('clickable')}
                 </Badge>
               )}
             </div>
@@ -108,6 +110,7 @@ function DomNodeCard({ node, activeNodeId, unlocked, onSelect }: DomNodeCardProp
 }
 
 export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
+  const t = useTranslations('ide');
   const model = useMemo(() => buildDomEventModel(html), [html]);
   const [selectedTargetId, setSelectedTargetId] = useState<string | null>(model.defaultTargetId);
   const activeTargetId =
@@ -131,7 +134,7 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
   if (model.roots.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border/40 bg-card/20 p-6 text-sm text-muted-foreground">
-        Unable to parse this HTML snippet into a DOM event tree.
+        {t('domParseError')}
       </div>
     );
   }
@@ -143,21 +146,21 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.24em] text-primary/80">
               <Waypoints className="h-3.5 w-3.5" />
-              DOM Event Simulator
+              {t('domEventSimulator')}
             </div>
             <h3 className="font-display text-xl tracking-tight text-foreground">
-              Replay target and bubbling without a fake browser runtime
+              {t('domReplayTitle')}
             </h3>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground/80">
-              Click a highlighted node to simulate the event path. The simulator keeps
+              {t('domReplayDesc')}
               <code className="mx-1 rounded bg-black/30 px-1.5 py-0.5 font-mono text-[11px] text-foreground/90">
                 event.target
               </code>
-              fixed on the deepest clicked element while
+              {t('domWhile')}
               <code className="mx-1 rounded bg-black/30 px-1.5 py-0.5 font-mono text-[11px] text-foreground/90">
                 currentTarget
               </code>
-              moves outward during bubbling.
+              {t('domMovesOutward')}
             </p>
           </div>
 
@@ -169,14 +172,14 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
             className="gap-2"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Reset Replay
+            {t('resetReplay')}
           </Button>
         </div>
       </div>
 
       {!unlocked ? (
         <div className="rounded-2xl border border-dashed border-border/40 bg-card/20 p-6 text-sm text-muted-foreground">
-          Submit an answer first to unlock the DOM event replay for this question.
+          {t('submitFirst')}
         </div>
       ) : (
         <>
@@ -184,15 +187,15 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
             <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-200/80">
               <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
               <span>
-                This simulator only executes inline
+                {t('domLimitedHandlers')}
                 <code className="mx-1 rounded bg-black/20 px-1.5 py-0.5 font-mono text-[11px]">
                   console.log(...)
                 </code>
-                and
+                {t('domAnd')}
                 <code className="mx-1 rounded bg-black/20 px-1.5 py-0.5 font-mono text-[11px]">
                   event.stopPropagation()
                 </code>
-                calls. Other handler logic is shown but not executed.
+                {t('domOtherShown')}
               </span>
             </div>
           )}
@@ -202,14 +205,12 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground/60">
-                    Click Path
+                    {t('clickPath')}
                   </p>
-                  <p className="mt-1 text-sm text-muted-foreground/75">
-                    Choose the node that receives the click.
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground/75">{t('clickPathDesc')}</p>
                 </div>
                 <Badge variant="outline" className="border-border/60 font-mono text-[10px]">
-                  {simulation?.target.label ?? 'No target'}
+                  {simulation?.target.label ?? t('noTarget')}
                 </Badge>
               </div>
 
@@ -231,7 +232,7 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
                 <div className="rounded-2xl border border-border/40 bg-card/30 p-4">
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
                     <Target className="h-3.5 w-3.5 text-primary" />
-                    Event Target
+                    {t('eventTarget')}
                   </div>
                   <p className="mt-3 font-mono text-lg text-foreground">
                     {simulation?.target.tagName ?? '—'}
@@ -239,7 +240,7 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
                 </div>
                 <div className="rounded-2xl border border-border/40 bg-card/30 p-4">
                   <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
-                    Replay Steps
+                    {t('replaySteps')}
                   </div>
                   <p className="mt-3 font-mono text-lg text-foreground">
                     {simulation?.steps.length ?? 0}
@@ -247,7 +248,7 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
                 </div>
                 <div className="rounded-2xl border border-border/40 bg-card/30 p-4">
                   <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
-                    Console Lines
+                    {t('consoleLines')}
                   </div>
                   <p className="mt-3 font-mono text-lg text-foreground">
                     {simulation?.logs.length ?? 0}
@@ -258,10 +259,10 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
               <div className="rounded-2xl border border-border/40 bg-card/25 p-4">
                 <div className="mb-4">
                   <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground/60">
-                    Propagation Replay
+                    {t('propagationReplay')}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground/75">
-                    Each row shows the current node handling the click as bubbling moves outward.
+                    {t('propagationReplayDesc')}
                   </p>
                 </div>
 
@@ -327,10 +328,7 @@ export function DomEventSimulator({ html, unlocked }: DomEventSimulatorProps) {
               </div>
 
               <div className="h-52 overflow-hidden rounded-2xl border border-border/40 bg-black/30">
-                <TerminalOutput
-                  logs={terminalLogs}
-                  emptyMessage="Click a node to inspect the propagated console output."
-                />
+                <TerminalOutput logs={terminalLogs} emptyMessage={t('clickToInspect')} />
               </div>
             </div>
           </div>

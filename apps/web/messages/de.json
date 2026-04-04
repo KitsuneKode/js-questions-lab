@@ -16,6 +16,17 @@
     "title": "Fragenbibliothek",
     "description": "Stöbere und übe JavaScript-Interviewfragen. Entscheide dich für eine Antwort, dann erkunde die Erklärung und führe den Code aus.",
     "count": "{count} Fragen",
+    "recommended": "Empfohlen",
+    "practice": "Üben",
+    "sharpen": "Verbessere {topic}",
+    "nextBest": "Nächste beste Frage",
+    "startFirst": "Starte deinen ersten Versuch",
+    "continueLeft": "Setze dort fort, wo du aufgehört hast",
+    "difficulty": {
+      "beginner": "Anfänger",
+      "intermediate": "Mittelstufe",
+      "advanced": "Fortgeschritten"
+    },
     "results": {
       "showing": "{shown} / {total} Fragen",
       "page": "{page} / {pageCount}"
@@ -341,7 +352,28 @@
     "gradeHard": "Schwer",
     "gradeGood": "Gut",
     "gradeEasy": "Einfach",
-    "practice": "Üben"
+    "practice": "Üben",
+    "domEventSimulator": "DOM-Ereignissimulator",
+    "domReplayTitle": "Ziel und Bubbling ohne gefälschten Browser-Laufzeit wiedergeben",
+    "domReplayDesc": "Klicken Sie auf einen hervorgehobenen Knoten, um den Ereignispfad zu simulieren. Der Simulator behält",
+    "domWhile": "auf dem tiefsten geklickten Element fixiert während",
+    "domMovesOutward": "sich während des Bubblings nach außen bewegt.",
+    "resetReplay": "Wiedergabe zurücksetzen",
+    "submitFirst": "Senden Sie zuerst eine Antwort ab, um die DOM-Ereigniswiedergabe für diese Frage freizuschalten.",
+    "domParseError": "Dieses HTML-Snippet kann nicht in einen DOM-Ereignisbaum geparst werden.",
+    "domLimitedHandlers": "Dieser Simulator führt nur inline aus",
+    "domAnd": "und",
+    "domOtherShown": "Aufrufe. Andere Handler-Logik wird angezeigt aber nicht ausgeführt.",
+    "clickPath": "Klickpfad",
+    "clickPathDesc": "Wählen Sie den Knoten, der den Klick empfängt.",
+    "noTarget": "Kein Ziel",
+    "eventTarget": "Ereignisziel",
+    "replaySteps": "Wiedergabeschritte",
+    "consoleLines": "Konsolenzeilen",
+    "propagationReplay": "Propagationswiedergabe",
+    "propagationReplayDesc": "Jede Zeile zeigt den aktuellen Knoten, der den Klick behandelt, während sich das Bubbling nach außen bewegt.",
+    "clickToInspect": "Klicken Sie auf einen Knoten, um die propagierte Konsolenausgabe zu untersuchen.",
+    "clickable": "Klickbar"
   },
   "scratchpad": {
     "title": "Notizblock",
@@ -352,7 +384,11 @@
     "close": "Schließen",
     "emptyTerminal": "> Code ausführen, um die Ausgabe zu sehen...",
     "open": "Notizblock öffnen",
-    "append": "An Notizblock anhängen"
+    "append": "An Notizblock anhängen",
+    "editor": "Editor",
+    "javaScript": "JavaScript",
+    "output": "Ausgabe",
+    "keyboardShortcut": "Cmd/Ctrl + Enter"
   },
   "debugger": {
     "visualizer": "JavaScript-Ausführungs-Visualisierer",

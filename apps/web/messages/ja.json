@@ -14,8 +14,19 @@
   },
   "questions": {
     "title": "問題ライブラリ",
-    "description": "JavaScriptのインタビュー問題を閲覧・練習しましょう。答えを決めてから、解説を確認してコードを実行してください。",
+    "description": "JavaScriptのインタビュー問題を閲覧・練習しましょう。答えを決定してから、解説を確認してコードを実行してください。",
     "count": "{count}問",
+    "recommended": "おすすめ",
+    "practice": "練習",
+    "sharpen": "{topic}を身につける",
+    "nextBest": "次のベストな問題",
+    "startFirst": "最初にチャレンジ",
+    "continueLeft": "前回の続きから",
+    "difficulty": {
+      "beginner": "初級",
+      "intermediate": "中級",
+      "advanced": "上級"
+    },
     "results": {
       "showing": "{shown} / {total}問",
       "page": "{page} / {pageCount}"
@@ -341,7 +352,28 @@
     "gradeHard": "難しい",
     "gradeGood": "普通",
     "gradeEasy": "簡単",
-    "practice": "練習する"
+    "practice": "練習する",
+    "domEventSimulator": "DOMイベントシミュレーター",
+    "domReplayTitle": "偽のブラウザランタイムなしでターゲットとバブリングをリプレイ",
+    "domReplayDesc": "強調表示されたノードをクリックしてイベントパスをシミュレートします。シミュレーターは",
+    "domWhile": "クリックされた最深要素に固定しながら",
+    "domMovesOutward": "バブリング時に外側へ移動します。",
+    "resetReplay": "リプレイをリセット",
+    "submitFirst": "この問題のDOMイベントリプレイをアンロックするには、まず回答を送信してください。",
+    "domParseError": "このHTMLスニペットをDOMイベントツリーに解析できません。",
+    "domLimitedHandlers": "このシミュレーターはインラインのみ実行します",
+    "domAnd": "と",
+    "domOtherShown": "呼び出し。其他のハンドラーロジックは表示但し実行されません。",
+    "clickPath": "クリックパス",
+    "clickPathDesc": "クリックを受け取るノードを選択してください。",
+    "noTarget": "ターゲットなし",
+    "eventTarget": "イベントターゲット",
+    "replaySteps": "リプレイステップ",
+    "consoleLines": "コンソール行",
+    "propagationReplay": "プロパゲーションリプレイ",
+    "propagationReplayDesc": "各行は、バブリングが外側へ移動するにつれてクリックを処理する現在のノードを示します。",
+    "clickToInspect": "ノードをクリックして伝播コンソール出力を検査します。",
+    "clickable": "クリック可能"
   },
   "scratchpad": {
     "title": "スクラッチパッド",
@@ -352,7 +384,11 @@
     "close": "閉じる",
     "emptyTerminal": "> 出力を表示するにはコードを実行してください...",
     "open": "スクラッチパッドを開く",
-    "append": "スクラッチパッドに追加"
+    "append": "スクラッチパッドに追加",
+    "editor": "エディター",
+    "javaScript": "JavaScript",
+    "output": "出力",
+    "keyboardShortcut": "Cmd/Ctrl + Enter"
   },
   "debugger": {
     "visualizer": "JavaScript実行ビジュアライザー",
