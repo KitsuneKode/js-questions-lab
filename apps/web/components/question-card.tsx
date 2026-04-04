@@ -5,6 +5,7 @@ import {
   IconBookmark as Bookmark,
   IconTerminal2 as Terminal,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Badge } from '@/components/ui/badge';
 import type { QuestionDiscoveryItem, QuestionRecord, QuestionSummary } from '@/lib/content/types';
@@ -28,6 +29,7 @@ const difficultyStyles = {
 
 export function QuestionCard({ question, locale, isHovered, href }: QuestionCardProps) {
   const { ready, item } = useQuestionProgress(question.id);
+  const t = useTranslations('questions');
 
   const hasAttempts = item.attempts.length > 0;
   const isCorrect = item.attempts.some((a) => a.status === 'correct');
@@ -70,7 +72,7 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
               difficultyStyles[difficulty],
             )}
           >
-            {question.difficulty}
+            {t(`difficulty.${difficulty}`)}
           </span>
         </div>
 
@@ -139,7 +141,7 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
 
         <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-primary opacity-0 transition-all group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0">
           {question.runnable && <Terminal className="h-3 w-3" />}
-          Practice
+          {t('practice')}
           <ArrowRight className="h-3 w-3" />
         </span>
       </div>

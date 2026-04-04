@@ -159,6 +159,7 @@ describe('progress analytics', () => {
     ]);
 
     expect(suggestion.question?.id).toBe(3);
-    expect(suggestion.label).toContain('scope');
+    expect(suggestion.labelKey).toBe('questions.sharpen');
+    expect(suggestion.labelParams?.topic).toBe('scope');
   });
 });

@@ -16,6 +16,17 @@
     "title": "Bibliothèque de questions",
     "description": "Parcourez et pratiquez des questions d'entretien JavaScript. Engagez-vous sur une réponse, puis explorez l'explication et exécutez le code.",
     "count": "{count} Questions",
+    "recommended": "Recommandé",
+    "practice": "Pratiquer",
+    "sharpen": "Affiner {topic}",
+    "nextBest": "Meilleure question suivante",
+    "startFirst": "Commencez votre première tentative",
+    "continueLeft": "Continuez là où vous vous êtes arrêté",
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
     "results": {
       "showing": "{shown} / {total} questions",
       "page": "{page} / {pageCount}"
@@ -142,6 +153,9 @@
     "reviewsDue": "Révisions prévues",
     "reviewsDueDesc": "Vous avez {count} question(s) à réviser par répétition espacée. Maîtrisez vos concepts.",
     "reviewNow": "Réviser maintenant",
+    "resume": "Reprendre",
+    "tryThis": "Essayer",
+    "startFirst": "Commencez votre première question",
     "labelActivity": "Activité",
     "activitySub": "La régularité est la clé de la maîtrise.",
     "sharePng": "Partager PNG",
@@ -341,7 +355,28 @@
     "gradeHard": "Difficile",
     "gradeGood": "Bien",
     "gradeEasy": "Facile",
-    "practice": "Pratiquer"
+    "practice": "Pratiquer",
+    "domEventSimulator": "Simulateur d'événements DOM",
+    "domReplayTitle": "Reproduire la cible et le bubbling sans faux runtime de navigateur",
+    "domReplayDesc": "Cliquez sur un nœud mis en évidence pour simuler le chemin de l'événement. Le simulateur garde",
+    "domWhile": "fixé sur l'élément le plus profond cliqué tandis que",
+    "domMovesOutward": "se déplace vers l'extérieur pendant le bubbling.",
+    "resetReplay": "Réinitialiser la relecture",
+    "submitFirst": "Soumettez d'abord une réponse pour déverrouiller la relecture des événements DOM pour cette question.",
+    "domParseError": "Impossible d'analyser cet extrait HTML en un arbre d'événements DOM.",
+    "domLimitedHandlers": "Ce simulateur n'exécute que inline",
+    "domAnd": "et",
+    "domOtherShown": "appels. Autre logique de handler est affichée mais non exécutée.",
+    "clickPath": "Chemin du clic",
+    "clickPathDesc": "Choisissez le nœud qui reçoit le clic.",
+    "noTarget": "Pas de cible",
+    "eventTarget": "Cible de l'événement",
+    "replaySteps": "Étapes de relecture",
+    "consoleLines": "Lignes de console",
+    "propagationReplay": "Relecture de propagation",
+    "propagationReplayDesc": "Chaque ligne montre le nœud actuel gérant le clic alors que le bubbling se déplace vers l'extérieur.",
+    "clickToInspect": "Cliquez sur un nœud pour inspecter la sortie console propagée.",
+    "clickable": "Cliquable"
   },
   "scratchpad": {
     "title": "Brouillon",
@@ -352,7 +387,11 @@
     "close": "Fermer",
     "emptyTerminal": "> Exécutez le code pour voir la sortie...",
     "open": "Ouvrir le brouillon",
-    "append": "Ajouter au brouillon"
+    "append": "Ajouter au brouillon",
+    "editor": "Éditeur",
+    "javaScript": "JavaScript",
+    "output": "Sortie",
+    "keyboardShortcut": "Cmd/Ctrl + Entrée"
   },
   "debugger": {
     "visualizer": "Visualiseur d'exécution JavaScript",

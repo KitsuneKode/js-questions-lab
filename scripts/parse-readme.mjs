@@ -225,7 +225,9 @@ function classifyRuntime(id, codeBlocks) {
 }
 
 function parseQuestions(readme, localeCode) {
-  const headingRe = /^######\s+(\d+)\.\s+(.+)$/gm;
+  // Handle anchors like <a name=20190629></a> in some locales
+  // Also handle cases where there's no space after the period (e.g., Japanese questions)
+  const headingRe = /^######\s*(?:<a[^>]*><\/a>)?(\d+)\.\s*(.+)$/gm;
   const headings = [...readme.matchAll(headingRe)];
   const total = headings.length;
 

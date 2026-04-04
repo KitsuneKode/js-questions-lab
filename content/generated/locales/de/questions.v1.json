@@ -1985,7 +1985,7 @@
     "tags": [
       "async"
     ],
-    "difficulty": "intermediate",
+    "difficulty": "beginner",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -2033,7 +2033,7 @@
     "tags": [
       "objects"
     ],
-    "difficulty": "intermediate",
+    "difficulty": "beginner",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -3010,14 +3010,7 @@
         "code": "let num = 10;\n\nconst increaseNumber = () => num++;\nconst increasePassedNumber = number => number++;\n\nconst num1 = increaseNumber();\nconst num2 = increasePassedNumber(num1);\n\nconsole.log(num1);\nconsole.log(num2);"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const value = { number: 10 };\n\nconst multiply = (x = { ...value }) => {\n  console.log((x.number *= 2));\n};\n\nmultiply();\nmultiply();\nmultiply(value);\nmultiply(value);"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -3041,6 +3034,54 @@
     "images": [],
     "tags": [
       "operators"
+    ],
+    "difficulty": "intermediate",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 64,
+    "slug": "question-64",
+    "locale": "de",
+    "title": "Was wird ausgegeben?",
+    "promptMarkdown": "###### <a name=20190707></a>64. Was wird ausgegeben?\n\n```javascript\nconst value = { number: 10 };\n\nconst multiply = (x = { ...value }) => {\n  console.log((x.number *= 2));\n};\n\nmultiply();\nmultiply();\nmultiply(value);\nmultiply(value);\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const value = { number: 10 };\n\nconst multiply = (x = { ...value }) => {\n  console.log((x.number *= 2));\n};\n\nmultiply();\nmultiply();\nmultiply(value);\nmultiply(value);"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`20`, `40`, `80`, `160`"
+      },
+      {
+        "key": "B",
+        "text": "`20`, `40`, `20`, `40`"
+      },
+      {
+        "key": "C",
+        "text": "`20`, `20`, `20`, `40`"
+      },
+      {
+        "key": "D",
+        "text": "`NaN`, `NaN`, `20`, `40`"
+      }
+    ],
+    "correctOption": "C",
+    "explanationMarkdown": "In ES6 können wir Parameter mit einem Standardwert initialisieren. Der Wert des Parameters wird als Standard gesetzt, wenn kein anderer Wert übergeben wird oder der Wert des Parameters `\"undefined\"` ist. In diesem Fall verteilen wir die Properties von `value` in einem neuen Objekt, sodass `x` den Standardwert `{ number: 10 }` bekommt.\n\nDas Standard Argument wird beim _Aufruf_ evaluiert. Jedes Mal, wenn wir die Funktion aufrufen, wird ein _neues_ Objekt erstellt. Wir rufen die `multiply` Funktion die ersten beiden Male auf ohne einen Wert zu übergeben: `x` hat daher den Standardwert `{ number: 10 }`. Wir loggen dann den multiplizierten Wert davon, sodass wir `20` bekommen.\n\nBeim dritten Mal wird die `multiply` Funktion mit einem Argument für `value` aufgerufen. Der `*=` Operator ist kurz für `x.number = x.number * 2`: wir ändern den Wert von `x.number` und loggen den multiplizierten Wert `20`.\n\nBeim vierten Mal übergeben wir wieder eine `value`. `x.number` wurde zuvor in `20` geändert, sodass `x.number *= 2` jetzt `40` loggt.",
+    "images": [],
+    "tags": [
+      "types"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3688,14 +3729,7 @@
         "code": "const add = () => {\n  const cache = {};\n  return num => {\n    if (num in cache) {\n      return `From cache! ${cache[num]}`;\n    } else {\n      const result = num + 10;\n      cache[num] = result;\n      return `Calculated! ${result}`;\n    }\n  };\n};\n\nconst addFunction = add();\nconsole.log(addFunction(10));\nconsole.log(addFunction(10));\nconsole.log(addFunction(5 * 2));"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -3719,6 +3753,54 @@
     "images": [],
     "tags": [
       "fundamentals"
+    ],
+    "difficulty": "intermediate",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 79,
+    "slug": "question-79",
+    "locale": "de",
+    "title": "Was wird ausgegeben?",
+    "promptMarkdown": "###### <a name=20190726></a>79. Was wird ausgegeben?\n\n```javascript\nconst myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`0` `1` `2` `3` und `\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"`"
+      },
+      {
+        "key": "B",
+        "text": "`\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"` und `\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"`"
+      },
+      {
+        "key": "C",
+        "text": "`\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"` und `0` `1` `2` `3`"
+      },
+      {
+        "key": "D",
+        "text": "`0` `1` `2` `3` und `{0: \"☕\", 1: \"💻\", 2: \"🍷\", 3: \"🍫\"}`"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "Mit einer _for-in_ Schleife können wir über **zählbare** Properties iterieren. In einem Array sind die zählbaren Properties die \"Keys\" des Array Elements, sprich deren Indexe. Ein Array könnte man also wiefolgt sehen:\n\n`{0: \"☕\", 1: \"💻\", 2: \"🍷\", 3: \"🍫\"}`\n\nDaher werden die zählbaren Properties `0` `1` `2` `3` geloggt.\n\nMit einer _for-of_ Schleife können wir über **wiederholbare** Elemente iterieren. Ein Array ist wiederholbar. Wenn wir also über das Array iterieren, ist die Variable \"item\" gleich dem Element, welches momentan iteriert wird: `\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"` wird geloggt.",
+    "images": [],
+    "tags": [
+      "arrays"
     ],
     "difficulty": "intermediate",
     "runnable": true,
@@ -3962,7 +4044,7 @@
       "scope",
       "objects"
     ],
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -4010,7 +4092,7 @@
     "tags": [
       "types"
     ],
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -4033,14 +4115,7 @@
         "code": "function getName(name) {\n  const hasName = //\n}"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "console.log(\"I want pizza\"[0])"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -4065,7 +4140,55 @@
     "tags": [
       "types"
     ],
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 87,
+    "slug": "question-87",
+    "locale": "de",
+    "title": "Was wird ausgegeben?",
+    "promptMarkdown": "###### <a name=20190805></a>87. Was wird ausgegeben?\n\n```javascript\nconsole.log(\"I want pizza\"[0])\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "console.log(\"I want pizza\"[0])"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`\"\"\"`"
+      },
+      {
+        "key": "B",
+        "text": "`\"I\"`"
+      },
+      {
+        "key": "C",
+        "text": "`SyntaxError`"
+      },
+      {
+        "key": "D",
+        "text": "`undefined`"
+      }
+    ],
+    "correctOption": "B",
+    "explanationMarkdown": "Um ein Zeichen an einer bestimmten Stelle eines Strings zu bekommen kann man Bracket Notation verwenden. Das erste Zeichen in einem String hat den Index 0, usw. In diesem Fall möchten wir das Zeichen mit dem Index 0, was das Zeichen `\"I\"` loggt.\n\nDiese Methode funktioniert nicht in IE7 und davor. Hier muss `.charAt()` verwendet werden.",
+    "images": [],
+    "tags": [
+      "fundamentals"
+    ],
+    "difficulty": "intermediate",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -4396,18 +4519,6 @@
         "order": 0,
         "language": "javascript",
         "code": "function getItems(fruitList, favoriteFruit, ...args) {\n  return [...fruitList, ...args, favoriteFruit]\n}\n\ngetItems([\"banana\", \"apple\"], \"pear\", \"orange\")"
-      },
-      {
-        "id": "code-2",
-        "order": 1,
-        "language": "javascript",
-        "code": "function nums(a, b) {\n  if\n  (a > b)\n  console.log('a is bigger')\n  else\n  console.log('b is bigger')\n  return\n  a + b\n}\n\nconsole.log(nums(4, 2))\nconsole.log(nums(1, 2))"
-      },
-      {
-        "id": "code-3",
-        "order": 2,
-        "language": "javascript",
-        "code": "  return;\n  a + b"
       }
     ],
     "options": [
@@ -4433,6 +4544,61 @@
     "images": [],
     "tags": [
       "arrays",
+      "types"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 95,
+    "slug": "question-95",
+    "locale": "de",
+    "title": "Was wird ausgegeben?",
+    "promptMarkdown": "###### <a name=20190817></a>95. Was wird ausgegeben?\n\n```javascript\nfunction nums(a, b) {\n  if\n  (a > b)\n  console.log('a is bigger')\n  else\n  console.log('b is bigger')\n  return\n  a + b\n}\n\nconsole.log(nums(4, 2))\nconsole.log(nums(1, 2))\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "function nums(a, b) {\n  if\n  (a > b)\n  console.log('a is bigger')\n  else\n  console.log('b is bigger')\n  return\n  a + b\n}\n\nconsole.log(nums(4, 2))\nconsole.log(nums(1, 2))"
+      }
+    ],
+    "explanationCodeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "  return;\n  a + b"
+      }
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "`a is bigger`, `6` und `b is bigger`, `3`"
+      },
+      {
+        "key": "B",
+        "text": "`a is bigger`, `undefined` und `b is bigger`, `undefined`"
+      },
+      {
+        "key": "C",
+        "text": "`undefined` und `undefined`"
+      },
+      {
+        "key": "D",
+        "text": "`SyntaxError`"
+      }
+    ],
+    "correctOption": "B",
+    "explanationMarkdown": "In JavaScript muss das Semikolon _nicht_ explizit gesetzt werden, allerdings setzt die JavaScript Engine Semikolons nach Statements. Diesen Vorgang nennt man **automatische Semikolonsetzung**. Ein Statement ist zum Beispiel eine Variable oder ein Keyword wie `throw`, `return`, `break`, usw.\n\nIn unserem Beispiel haben wir ein `return` Statement gefolgt von einem anderen Wert `a + b` auf der _nächsten Zeile_. Da es eine neue Zeile ist, weiß JavaScript nicht, dass das der Wert ist, den wir eigentlich ausgeben wollten. Stattdessen wird automatisch ein Semikolon nach `return` gesetzt, was man wiefolgt lesen kann:\n\n```javascript\n  return;\n  a + b\n```\n\nDas bedeutet, dass `a + b` nie erreicht wird, da die Funktion auf der Zeile davor mit dem `return` Keyword endet. Wenn wie hier kein Wert ausgegeben wird, gibt die Funktion `undefined` aus.\nBedenke: Semikolons werden **nicht** automatisch nach `if/else` Statements gesetzt!",
+    "images": [],
+    "tags": [
       "types"
     ],
     "difficulty": "advanced",
@@ -5031,14 +5197,7 @@
         "code": "const emojis = ['✨', '🥑', '😍']\n\nemojis.map(x => x + '✨')\nemojis.filter(x => x !== '🥑')\nemojis.find(x => x !== '🥑')\nemojis.reduce((acc, cur) => acc + '✨')\nemojis.slice(1, 2, '✨')\nemojis.splice(1, 2, '✨')"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -5061,6 +5220,55 @@
     "explanationMarkdown": "Mit der `splice` Methode ändern wir das ursprüngliche Array durch löschen, ersetzen oder ergänzen von Elementen. In diesem Fall haben wir 2 Elemente vom Index 1 (`'🥑'` und `'😍'`) entfernt und ✨ stattdessen eingefügt.\n\n`map`, `filter` und `slice` geben ein neues Array aus, `find` gibt ein Element aus und `reduce` gibt einen neuen Wert aus.",
     "images": [],
     "tags": [
+      "arrays"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 109,
+    "slug": "question-109",
+    "locale": "de",
+    "title": "Was wird ausgegeben?",
+    "promptMarkdown": "###### <a name=20191009></a>109. Was wird ausgegeben?\n\n```javascript\nconst food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`['🍕', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "B",
+        "text": "`['🍝', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "C",
+        "text": "`['🍝', '🍕', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "D",
+        "text": "`ReferenceError`"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "In JavaScript interagieren primitive Datentypen (alles außer Objekte) anhand des _Wertes_. In diesem Beispiel setzen wir den Wert von `favoriteFood` am `info` Objekt gleich dem Wert des ersten Elements im `food` Array, in dem Fall ein String mit dem Pizza Emoji (`'🍕'`). Ein String ist ein primitiver Datentyp und agiert daher in JavaScript nach Referenz. (Siehe mein [Blogpost](https://www.theavocoder.com/complete-javascript/2018/12/21/by-value-vs-by-reference) für mehr Informationen)\n\nDann ändern wir den Wert von `favoriteFood` am `info` Objekt. Das `food` Array hat sich nicht verändert, da der Wert von `favoriteFood` nur eine _Kopie_ des Wertes des ersten Elements im Array war und keine Referenz zum Element `food[0]` im Speicher finden kann. Wenn wir also das Essen loggen ist es immernoch das ursprüngliche Array `['🍕', '🍫', '🥑', '🍔']`.",
+    "images": [],
+    "tags": [
+      "objects",
       "arrays"
     ],
     "difficulty": "advanced",
@@ -5407,14 +5615,7 @@
         "code": "const person = {\n  name: \"Lydia\",\n  age: 21\n}\n\nconst changeAge = (x = { ...person }) => x.age += 1\nconst changeAgeAndName = (x = { ...person }) => {\n  x.age += 1\n  x.name = \"Sarah\"\n}\n\nchangeAge(person)\nchangeAgeAndName()\n\nconsole.log(person)"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "function sumValues(x, y, z) {\n\treturn x + y + z;\n}"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -5438,6 +5639,54 @@
     "images": [],
     "tags": [
       "fundamentals"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 117,
+    "slug": "question-117",
+    "locale": "de",
+    "title": "Welche der beiden Optionen wird `6` ausgeben?",
+    "promptMarkdown": "###### <a name=20191118></a>117. Welche der beiden Optionen wird `6` ausgeben?\n\n```javascript\nfunction sumValues(x, y, z) {\n\treturn x + y + z;\n}\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "function sumValues(x, y, z) {\n\treturn x + y + z;\n}"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`sumValues([...1, 2, 3])`"
+      },
+      {
+        "key": "B",
+        "text": "`sumValues([...[1, 2, 3]])`"
+      },
+      {
+        "key": "C",
+        "text": "`sumValues(...[1, 2, 3])`"
+      },
+      {
+        "key": "D",
+        "text": "`sumValues([1, 2, 3])`"
+      }
+    ],
+    "correctOption": "C",
+    "explanationMarkdown": "Mit dem Spread-Operator `...` können wir Werte _spreaden_ (\"verstreichen\"). Die `sumValues` Funktion erhält drei Argumente: `x`, `y` und `z`. `...[1, 2, 3]` ergibt `1, 2, 3`, was wir an `sumValues` übergeben.",
+    "images": [],
+    "tags": [
+      "objects"
     ],
     "difficulty": "advanced",
     "runnable": true,

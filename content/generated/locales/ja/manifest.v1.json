@@ -14,13 +14,14 @@
     "upstreamCommit": "a8b427b9f7f94f1a2965144ba544b475c5f65829"
   },
   "totals": {
-    "questions": 82,
-    "runnable": 77,
+    "questions": 86,
+    "runnable": 80,
     "withImages": 5
   },
   "tags": [
     "arrays",
     "async",
+    "dom-events",
     "fundamentals",
     "generators",
     "modules",

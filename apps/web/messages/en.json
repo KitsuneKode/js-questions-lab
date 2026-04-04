@@ -16,6 +16,17 @@
     "title": "Question Library",
     "description": "Browse and practice JavaScript interview questions. Commit to an answer, then explore the explanation and run the code.",
     "count": "{count} Questions",
+    "recommended": "Recommended",
+    "practice": "Practice",
+    "sharpen": "Sharpen {topic}",
+    "nextBest": "Next best question",
+    "startFirst": "Start your first run",
+    "continueLeft": "Continue where you left off",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
     "results": {
       "showing": "{shown} / {total} questions",
       "page": "{page} / {pageCount}"
@@ -142,6 +153,9 @@
     "reviewsDue": "Reviews Due",
     "reviewsDueDesc": "You have {count} question(s) due for spaced repetition review. Master your concepts.",
     "reviewNow": "Review Now",
+    "resume": "Resume",
+    "tryThis": "Try this",
+    "startFirst": "Start your first question",
     "labelActivity": "Activity",
     "activitySub": "Consistency is the key to mastery.",
     "sharePng": "Share PNG",
@@ -341,7 +355,28 @@
     "gradeHard": "Hard",
     "gradeGood": "Good",
     "gradeEasy": "Easy",
-    "practice": "Practice"
+    "practice": "Practice",
+    "domEventSimulator": "DOM Event Simulator",
+    "domReplayTitle": "Replay target and bubbling without a fake browser runtime",
+    "domReplayDesc": "Click a highlighted node to simulate the event path. The simulator keeps",
+    "domWhile": "fixed on the deepest clicked element while",
+    "domMovesOutward": "moves outward during bubbling.",
+    "resetReplay": "Reset Replay",
+    "submitFirst": "Submit an answer first to unlock the DOM event replay for this question.",
+    "domParseError": "Unable to parse this HTML snippet into a DOM event tree.",
+    "domLimitedHandlers": "This simulator only executes inline",
+    "domAnd": "and",
+    "domOtherShown": "calls. Other handler logic is shown but not executed.",
+    "clickPath": "Click Path",
+    "clickPathDesc": "Choose the node that receives the click.",
+    "noTarget": "No target",
+    "eventTarget": "Event Target",
+    "replaySteps": "Replay Steps",
+    "consoleLines": "Console Lines",
+    "propagationReplay": "Propagation Replay",
+    "propagationReplayDesc": "Each row shows the current node handling the click as bubbling moves outward.",
+    "clickToInspect": "Click a node to inspect the propagated console output.",
+    "clickable": "Clickable"
   },
   "scratchpad": {
     "title": "Scratchpad",
@@ -352,7 +387,11 @@
     "close": "Close",
     "emptyTerminal": "> Run code to see output...",
     "open": "Open Scratchpad",
-    "append": "Append to Scratchpad"
+    "append": "Append to Scratchpad",
+    "editor": "Editor",
+    "javaScript": "JavaScript",
+    "output": "Output",
+    "keyboardShortcut": "Cmd/Ctrl + Enter"
   },
   "debugger": {
     "visualizer": "JavaScript Execution Visualizer",

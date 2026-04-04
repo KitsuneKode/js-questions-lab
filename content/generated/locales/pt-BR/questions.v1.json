@@ -3581,14 +3581,7 @@
         "code": "const box = { x: 10, y: 20 };\n\nObject.freeze(box);\n\nconst shape = box;\nshape.x = 100;\n\nconsole.log(shape);"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const { name: myName } = { name: 'Lydia' };\n\nconsole.log(name);"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -3611,6 +3604,55 @@
     "explanationMarkdown": "`Object.freeze` torna impossível adicionar, remover ou modificar propriedades de um objeto (a menos que o valor da propriedade seja outro objeto).\n\nQuando criamos a variável `shape` e a definimos igual ao objeto congelado `box`, `shape` também se refere a um objeto congelado. Você pode verificar se um objeto está congelado usando `Object.isFrozen`. Neste caso, `Object.isFrozen(shape)` retorna true, pois a variável `shape` tem uma referência a um objeto congelado.\n\nComo `shape` está congelado, e como o valor de `x` não é um objeto, não podemos modificar a propriedade `x`. `x` ainda é igual a `10`, e `{ x: 10, y: 20 }` é registrado.",
     "images": [],
     "tags": [
+      "objects"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 76,
+    "slug": "question-76",
+    "locale": "pt-BR",
+    "title": "Qual o resultado?",
+    "promptMarkdown": "###### 76.Qual o resultado?\n\n```javascript\nconst { name: myName } = { name: 'Lydia' };\n\nconsole.log(name);\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const { name: myName } = { name: 'Lydia' };\n\nconsole.log(name);"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`\"Lydia\"`"
+      },
+      {
+        "key": "B",
+        "text": "`\"myName\"`"
+      },
+      {
+        "key": "C",
+        "text": "`undefined`"
+      },
+      {
+        "key": "D",
+        "text": "`ReferenceError`"
+      }
+    ],
+    "correctOption": "D",
+    "explanationMarkdown": "Quando descompactamos a propriedade `name` do objeto do lado direito, atribuímos seu valor `\"Lydia\"` a uma variável com o nome `myName`.\n\nCom `{ name: myName }`, informamos ao JavaScript que queremos criar uma nova variável chamada `myName` com o valor da propriedade `name` no lado direito.\n\nQuando tentamos mostrar o conteúdo de `name`, uma variável que não está definida, recebemos o erro `ReferenceError`.",
+    "images": [],
+    "tags": [
+      "scope",
       "objects"
     ],
     "difficulty": "advanced",

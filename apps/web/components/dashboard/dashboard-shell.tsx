@@ -27,6 +27,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
+  const tQuestions = useTranslations('questions');
   const {
     ready,
     overall,
@@ -58,7 +59,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const secondarySuggestion =
     reviewQueue.length > 0
       ? {
-          label: t('reviewsDue'),
+          labelKey: 'dashboard.reviewsDue',
           description: t('reviewsDueDesc', { count: reviewQueue.length }),
           question: reviewQueue[0],
           icon: Brain,
@@ -73,7 +74,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const topSuggestions = [
     { ...continueLearning, icon: Library, isUrgent: false },
     secondarySuggestion,
-  ];
+  ] as const;
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
@@ -114,7 +115,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
               const Icon = suggestion.icon;
               return (
                 <div
-                  key={suggestion.label}
+                  key={suggestion.question?.id ?? suggestion.labelKey}
                   className={`group relative overflow-hidden rounded-2xl border border-border-subtle bg-surface p-6 transition-all hover:border-border-focus hover:shadow-glow ${suggestion.isUrgent ? 'ring-1 ring-primary/30 bg-primary/5' : ''}`}
                 >
                   <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
@@ -127,12 +128,17 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                         <Icon
                           className={`h-3.5 w-3.5 ${suggestion.isUrgent ? 'animate-pulse' : ''}`}
                         />
-                        {suggestion.label}
+                        {suggestion.labelKey.startsWith('dashboard.')
+                          ? t(suggestion.labelKey.replace('dashboard.', ''))
+                          : suggestion.labelKey.startsWith('questions.')
+                            ? tQuestions(
+                                suggestion.labelKey.replace('questions.', ''),
+                                suggestion.labelParams,
+                              )
+                            : t(suggestion.labelKey)}
                       </div>
                       <h2 className="font-display text-2xl text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                        {suggestion.question
-                          ? suggestion.question.title
-                          : 'Start your first question'}
+                        {suggestion.question ? suggestion.question.title : t('startFirst')}
                       </h2>
                       <p className="text-sm text-secondary">{suggestion.description}</p>
                     </div>
@@ -149,7 +155,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                           size="sm"
                           className="h-9 gap-2 text-xs font-semibold px-4 bg-primary text-background hover:bg-primary/90"
                         >
-                          {suggestion.isUrgent ? 'Review Now' : index === 0 ? 'Resume' : 'Try this'}
+                          {suggestion.isUrgent
+                            ? t('reviewNow')
+                            : index === 0
+                              ? t('resume')
+                              : t('tryThis')}
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Button>
                       </IntentPrefetchLink>

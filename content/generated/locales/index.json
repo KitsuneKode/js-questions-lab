@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-04-02T16:25:31.076Z",
+  "generatedAt": "2026-04-04T12:51:00.347Z",
   "supported": [
     "en",
     "es",
@@ -21,7 +21,7 @@
     {
       "code": "es",
       "label": "Español",
-      "questionCount": 115,
+      "questionCount": 116,
       "sourceHash": "60a3ace8f6b4297bd7e885b699cc8978dc3f61b3133c4099910a0310234443e0",
       "generatedAt": "2026-03-29T02:22:01.815Z"
     },
@@ -35,21 +35,21 @@
     {
       "code": "de",
       "label": "Deutsch",
-      "questionCount": 127,
+      "questionCount": 133,
       "sourceHash": "0c3839e20bd7d79cda2959cab8e1397ecf61a88015d4d960509c0f62921c3a3a",
       "generatedAt": "2026-03-29T02:22:01.813Z"
     },
     {
       "code": "ja",
       "label": "日本語",
-      "questionCount": 82,
+      "questionCount": 86,
       "sourceHash": "1d6ecfc9a8f45a0e1fb04465c85ccb176bd5338a7a814ef2b6ab840aed93bc5b",
       "generatedAt": "2026-03-29T02:22:01.815Z"
     },
     {
       "code": "pt-BR",
       "label": "Português (BR)",
-      "questionCount": 79,
+      "questionCount": 80,
       "sourceHash": "453306c6b2f3332e4983842eadbdbbdec028d83d4bb78c8f0092e17b7328c38a",
       "generatedAt": "2026-03-29T02:22:01.816Z"
     }

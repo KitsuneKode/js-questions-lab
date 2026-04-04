@@ -1298,7 +1298,7 @@
     "tags": [
       "fundamentals"
     ],
-    "difficulty": "intermediate",
+    "difficulty": "beginner",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -1369,14 +1369,7 @@
         "code": "const foo = () => console.log(\"First\");\nconst bar = () => setTimeout(() => console.log(\"Second\"));\nconst baz = () => console.log(\"Third\");\n\nbar();\nfoo();\nbaz();"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "html",
-        "code": "<div onclick=\"console.log('first div')\">\n  <div onclick=\"console.log('second div')\">\n    <button onclick=\"console.log('button')\">\n      Click!\n    </button>\n  </div>\n</div>"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -1411,6 +1404,54 @@
     "runnable": true,
     "runtime": {
       "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 31,
+    "slug": "question-31",
+    "locale": "ja",
+    "title": "ボタンをクリックしたときのevent.targetは何ですか？",
+    "promptMarkdown": "###### 31.ボタンをクリックしたときのevent.targetは何ですか？\n\n```html\n<div onclick=\"console.log('first div')\">\n  <div onclick=\"console.log('second div')\">\n    <button onclick=\"console.log('button')\">\n      Click!\n    </button>\n  </div>\n</div>\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "html",
+        "code": "<div onclick=\"console.log('first div')\">\n  <div onclick=\"console.log('second div')\">\n    <button onclick=\"console.log('button')\">\n      Click!\n    </button>\n  </div>\n</div>"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "外側 `div`"
+      },
+      {
+        "key": "B",
+        "text": "内側 `div`"
+      },
+      {
+        "key": "C",
+        "text": "`button`"
+      },
+      {
+        "key": "D",
+        "text": "ネストしたすべての要素の配列"
+      }
+    ],
+    "correctOption": "C",
+    "explanationMarkdown": "イベントを引き起こした最も深くネストした要素がイベントのターゲットとなります。`event.stopPropagation`でバブリングを止めることができます",
+    "images": [],
+    "tags": [
+      "dom-events"
+    ],
+    "difficulty": "intermediate",
+    "runnable": false,
+    "runtime": {
+      "kind": "dom-click-propagation"
     },
     "source": {
       "startLineHint": null
@@ -2492,12 +2533,6 @@
         "order": 0,
         "language": "javascript",
         "code": "y = 10;\nlet x = y;"
-      },
-      {
-        "id": "code-2",
-        "order": 1,
-        "language": "javascript",
-        "code": "class Dog {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nDog.prototype.bark = function() {\n  console.log(`Woof I am ${this.name}`);\n};\n\nconst pet = new Dog(\"Mara\");\n\npet.bark();\n\ndelete Dog.prototype.bark;\n\npet.bark();"
       }
     ],
     "options": [
@@ -2523,6 +2558,56 @@
     "images": [],
     "tags": [
       "scope",
+      "types",
+      "operators"
+    ],
+    "difficulty": "intermediate",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 55,
+    "slug": "question-55",
+    "locale": "ja",
+    "title": "何が出力されるでしょうか？",
+    "promptMarkdown": "###### <a name=20190629></a>55. 何が出力されるでしょうか？\n\n```javascript\nclass Dog {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nDog.prototype.bark = function() {\n  console.log(`Woof I am ${this.name}`);\n};\n\nconst pet = new Dog(\"Mara\");\n\npet.bark();\n\ndelete Dog.prototype.bark;\n\npet.bark();\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "class Dog {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nDog.prototype.bark = function() {\n  console.log(`Woof I am ${this.name}`);\n};\n\nconst pet = new Dog(\"Mara\");\n\npet.bark();\n\ndelete Dog.prototype.bark;\n\npet.bark();"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`\"Woof I am Mara\"`, `TypeError`"
+      },
+      {
+        "key": "B",
+        "text": "`\"Woof I am Mara\"`,`\"Woof I am Mara\"`"
+      },
+      {
+        "key": "C",
+        "text": "`\"Woof I am Mara\"`, `undefined`"
+      },
+      {
+        "key": "D",
+        "text": "`TypeError`, `TypeError`"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "プロトタイプでも、`delete`キーワードを使ってオブジェクトからプロパティを削除できます。プロトタイプのプロパティを削除すると、プロトタイプチェーンでは使用できなくなります。\n\nこの場合、`bark`関数は `delete Dog.prototype.bark`の後のプロトタイプでは、もう利用できず、それでもアクセスし、関数ではない何かを呼び出そうとすると、`TypeError`がスローされます。\n\n関数ではない何かを呼び出そうとすると、`pet.bark`は`undefined`なので、`TypeError`がスローされ、`TypeError: pet.bark is not a function`となります。",
+    "images": [],
+    "tags": [
+      "prototypes",
       "types",
       "operators"
     ],
@@ -2574,7 +2659,7 @@
     "tags": [
       "fundamentals"
     ],
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -3198,14 +3283,7 @@
         "code": "const name = \"Lydia Hallie\"\nconsole.log(name.padStart(13))\nconsole.log(name.padStart(2))"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "console.log(\"🥑\" + \"💻\");"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -3226,6 +3304,54 @@
     ],
     "correctOption": "C",
     "explanationMarkdown": "`padStart`メソッドを使うと、文字列の先頭にパディングを追加できます。このメソッドに渡される値は、パディングとともに文字列の長さの _合計_ です。文字列`\"Lydia Hallie\"`の長さは`12`です。 `name.padStart(13)`は、12 + 1が13であるため、文字列の先頭に1スペースを挿入されます。\n\n`padStart`メソッドに渡された引数が、配列の長さよりも小さい場合、パディングは追加されません。",
+    "images": [],
+    "tags": [
+      "fundamentals"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 70,
+    "slug": "question-70",
+    "locale": "ja",
+    "title": "何が出力されるでしょうか？",
+    "promptMarkdown": "###### <a name=20190714></a>70. 何が出力されるでしょうか？\n\n```javascript\nconsole.log(\"🥑\" + \"💻\");\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "console.log(\"🥑\" + \"💻\");"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`\"🥑💻\"`"
+      },
+      {
+        "key": "B",
+        "text": "`257548`"
+      },
+      {
+        "key": "C",
+        "text": "A string containing their code points"
+      },
+      {
+        "key": "D",
+        "text": "Error"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "`+`演算子を使うと、文字列を連結することができます。この場合、文字列`\"🥑\"`を文字列`\"💻\"`と連結して、結果として`\"🥑💻\"`となります。",
     "images": [],
     "tags": [
       "fundamentals"
@@ -3584,14 +3710,7 @@
         "code": "const add = () => {\n  const cache = {};\n  return num => {\n    if (num in cache) {\n      return `From cache! ${cache[num]}`;\n    } else {\n      const result = num + 10;\n      cache[num] = result;\n      return `Calculated! ${result}`;\n    }\n  };\n};\n\nconst addFunction = add();\nconsole.log(addFunction(10));\nconsole.log(addFunction(10));\nconsole.log(addFunction(5 * 2));"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -3612,6 +3731,54 @@
     ],
     "correctOption": "C",
     "explanationMarkdown": "`add`関数は _memoized_ 関数です。メモ化により、実行速度を上げるために関数の結果をキャッシュすることができます。上記の場合、以前に返された値を格納する`cache`オブジェクトを作成します。\n\n同じ引数を指定してもう一度`addFunction`関数を呼び出すと、最初にキャッシュ内でその値がすでに取得されているかどうかを調べます。\n\nこの場合、cachesの値が返され、実行時間が短縮されます。そうでなくキャッシュされていなければ、値を計算した後にそれを格納します。\n\n同じ値で3回`addFunction`関数を呼び出します: 最初の呼び出しでは、`num`に`10`を代入した時、関数の値はまだキャッシュされていません。 \n\nifステートメントの`num in cache`の条件は`false`を返し、elseブロックが実行されます: `Calculated! 20`が出力され、結果の値がキャッシュオブジェクトに追加されます。 `cache`は現在 `{ 10: 20 }`となります。\n\n2回目は、`cache`オブジェクトは`10`に対して返される値を含みます。 ifステートメントの`num in cache`の条件は`true`となり、`'From cache! 20'`を返します。 よって`'From cache! 20'`が出力されます。\n\n3回目は、`10`に評価される関数に`5 * 2`を渡します。`cache`オブジェクトは`10`に対して返される値を含みます。ifステートメントの`num in cache`の条件は`true`となり、`'From cache! 20'`を返します。 よって`'From cache! 20'`が出力されます。",
+    "images": [],
+    "tags": [
+      "fundamentals"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 79,
+    "slug": "question-79",
+    "locale": "ja",
+    "title": "何が出力されるでしょうか？",
+    "promptMarkdown": "###### <a name=20190726></a>79. 何が出力されるでしょうか？\n\n```javascript\nconst myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const myLifeSummedUp = [\"☕\", \"💻\", \"🍷\", \"🍫\"]\n\nfor (let item in myLifeSummedUp) {\n  console.log(item)\n}\n\nfor (let item of myLifeSummedUp) {\n  console.log(item)\n}"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`0` `1` `2` `3` and `\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"`"
+      },
+      {
+        "key": "B",
+        "text": "`\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"` and `\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"`"
+      },
+      {
+        "key": "C",
+        "text": "`\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"` and `0` `1` `2` `3`"
+      },
+      {
+        "key": "D",
+        "text": "`0` `1` `2` `3` and `{0: \"☕\", 1: \"💻\", 2: \"🍷\", 3: \"🍫\"}`"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "_for-in_ ループを使うと、**列挙可能な**プロパティを繰り返し処理できます。配列では、列挙可能なプロパティは配列要素の「キー」です。これはそれらのインデックスとなり、配列は次のようになります:\n\n`{0: \"☕\", 1: \"💻\", 2: \"🍷\", 3: \"🍫\"}`\n\nキーが列挙可能なプロパティであるので、`0` `1` `2` `3`が出力されます。\n\n_for-of_ ループを使うと、**反復可能オブジェクト**を繰り返し処理できます。\n\n配列はイテラブルです。配列を反復処理するとき、変数 \"item\"は、現在反復処理している要素となるので、`\"☕\"` ` \"💻\"` `\"🍷\"` `\"🍫\"`が出力されます。",
     "images": [],
     "tags": [
       "fundamentals"
