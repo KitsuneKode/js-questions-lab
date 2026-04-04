@@ -27,6 +27,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
+  const tQuestions = useTranslations('questions');
   const {
     ready,
     overall,
@@ -129,7 +130,12 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                         />
                         {suggestion.labelKey.startsWith('dashboard.')
                           ? t(suggestion.labelKey.replace('dashboard.', ''))
-                          : t(suggestion.labelKey)}
+                          : suggestion.labelKey.startsWith('questions.')
+                            ? tQuestions(
+                                suggestion.labelKey.replace('questions.', ''),
+                                suggestion.labelParams,
+                              )
+                            : t(suggestion.labelKey)}
                       </div>
                       <h2 className="font-display text-2xl text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
                         {suggestion.question ? suggestion.question.title : t('startFirst')}

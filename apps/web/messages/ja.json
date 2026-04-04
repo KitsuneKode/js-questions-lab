@@ -366,7 +366,7 @@
     "domParseError": "このHTMLスニペットをDOMイベントツリーに解析できません。",
     "domLimitedHandlers": "このシミュレーターはインラインのみ実行します",
     "domAnd": "と",
-    "domOtherShown": "呼び出し。其他のハンドラーロジックは表示但し実行されません。",
+    "domOtherShown": "呼び出し。他のハンドラーロジックは表示されますが、実行されません。",
     "clickPath": "クリックパス",
     "clickPathDesc": "クリックを受け取るノードを選択してください。",
     "noTarget": "ターゲットなし",
