@@ -1791,7 +1791,7 @@
     "tags": [
       "types"
     ],
-    "difficulty": "intermediate",
+    "difficulty": "beginner",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -3656,7 +3656,7 @@
       "scope",
       "objects"
     ],
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "runnable": true,
     "runtime": {
       "kind": "javascript"
@@ -5191,14 +5191,7 @@
         "code": "const emojis = ['✨', '🥑', '😍']\n\nemojis.map(x => x + '✨')\nemojis.filter(x => x !== '🥑')\nemojis.find(x => x !== '🥑')\nemojis.reduce((acc, cur) => acc + '✨')\nemojis.slice(1, 2, '✨') \nemojis.splice(1, 2, '✨')"
       }
     ],
-    "explanationCodeBlocks": [
-      {
-        "id": "code-1",
-        "order": 0,
-        "language": "javascript",
-        "code": "const food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)"
-      }
-    ],
+    "explanationCodeBlocks": [],
     "options": [
       {
         "key": "A",
@@ -5223,6 +5216,55 @@
     "tags": [
       "arrays",
       "types"
+    ],
+    "difficulty": "advanced",
+    "runnable": true,
+    "runtime": {
+      "kind": "javascript"
+    },
+    "source": {
+      "startLineHint": null
+    }
+  },
+  {
+    "id": 109,
+    "slug": "question-109",
+    "locale": "es",
+    "title": "¿Cuál es el resultado?",
+    "promptMarkdown": "###### <a name=20191009></a>109. ¿Cuál es el resultado?\n\n```javascript\nconst food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)\n```",
+    "codeBlocks": [
+      {
+        "id": "code-1",
+        "order": 0,
+        "language": "javascript",
+        "code": "const food = ['🍕', '🍫', '🥑', '🍔']\nconst info = { favoriteFood: food[0] }\n\ninfo.favoriteFood = '🍝'\n\nconsole.log(food)"
+      }
+    ],
+    "explanationCodeBlocks": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "`['🍕', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "B",
+        "text": "`['🍝', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "C",
+        "text": "`['🍝', '🍕', '🍫', '🥑', '🍔']`"
+      },
+      {
+        "key": "D",
+        "text": "`ReferenceError`"
+      }
+    ],
+    "correctOption": "A",
+    "explanationMarkdown": "Establecemos el valor de la propiedad `favoriteFood` en el objeto` info` igual a la cadena con el emoji de la pizza, `'🍕'`. Una cadena es un tipo de dato primitivo. En JavaScript, los tipos de datos primitivos actúan por referencia \n\nEn JavaScript, los tipos de datos primitivos (todo aquello que no es un objeto) interactúan por _valor_. En este caso, establecemos el valor de la propiedad `favoriteFood` en el objeto` info` igual al valor del primer elemento en el array `food`, la cadena del emoji de la pizza en este caso (`'🍕'`). Una cadena es un tipo de datos primitivo e interactúa por valor (consulte mi [artículo](https://www.theavocoder.com/complete-javascript/2018/12/21/by-value-vs-by-reference) si estás interesado en aprender más)\n\nLuego, cambiamos el valor de la propiedad `favoriteFood` en el objeto` info`. El array `food` no cambia, ya que el valor de `favoriteFood` era simplemente una _copia_ del valor del primer elemento del array, y no tiene una referencia al mismo punto en la memoria que el elemento en `food[0]`. Cuando imprimimos food, éste sigue siendo el array original, `['🍕', '🍫', '🥑', '🍔']`.",
+    "images": [],
+    "tags": [
+      "objects",
+      "arrays"
     ],
     "difficulty": "advanced",
     "runnable": true,
