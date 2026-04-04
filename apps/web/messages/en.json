@@ -80,7 +80,7 @@
   },
   "landing": {
     "headline": "Master JavaScript. One question at a time.",
-    "subline": "Execute code in-browser, visualize the event loop, and commit the mechanics to memory. A precision instrument for interview prep.",
+    "subline": "Master JavaScript with interactive interview questions. Execute code in-browser, visualize the event loop, and commit the mechanics to memory. A precision instrument for interview prep.",
     "cta": "Start Practicing",
     "ctaGithub": "View on GitHub",
     "builtBy": "Built by",
@@ -236,7 +236,7 @@
     "retry": "Try again"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - Master JavaScript Interview Prep",
     "description": "Interactive JavaScript interview practice built on Lydia Hallie's questions, with runnable snippets and event-loop visualizations."
   },
   "footer": {

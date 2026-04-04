@@ -4,6 +4,17 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  // Enable gzip/Brotli compression for better performance and SEO
+  compress: true,
+  // Add explicit charset header for SEO compliance
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [{ key: 'Content-Type', value: 'text/html; charset=utf-8' }],
+      },
+    ];
+  },
   // Explicitly declare the external content files used by loaders.ts so
   // Turbopack can build a precise file-trace instead of sweeping the project.
   outputFileTracingIncludes: {
