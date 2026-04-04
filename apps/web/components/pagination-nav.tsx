@@ -2,6 +2,7 @@ import {
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,8 @@ interface PaginationNavProps {
 }
 
 export function PaginationNav({ page, pageCount, createHref }: PaginationNavProps) {
+  const t = useTranslations('questions.pagination');
+
   if (pageCount <= 1) return null;
 
   return (
@@ -30,7 +33,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
           disabled={page <= 1}
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
+          <span className="hidden sm:inline">{t('prev')}</span>
         </Button>
       </IntentPrefetchLink>
 
@@ -97,7 +100,7 @@ export function PaginationNav({ page, pageCount, createHref }: PaginationNavProp
           className={cn('h-9 gap-1.5 px-3 text-xs font-medium', page >= pageCount && 'opacity-40')}
           disabled={page >= pageCount}
         >
-          <span className="hidden sm:inline">Next</span>
+          <span className="hidden sm:inline">{t('next')}</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </IntentPrefetchLink>
