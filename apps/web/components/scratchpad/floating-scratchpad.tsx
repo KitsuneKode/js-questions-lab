@@ -1,5 +1,6 @@
 'use client';
 
+import type { OnMount } from '@monaco-editor/react';
 import {
   IconActivity as Activity,
   IconPlayerPlay as Play,
@@ -7,7 +8,7 @@ import {
   IconSparkles as Sparkles,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
@@ -33,12 +34,38 @@ import { toTerminalLogEntries } from '@/lib/run/terminal';
 import type { TimelineEvent } from '@/lib/run/types';
 import { useScratchpad } from './scratchpad-context';
 
+function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="flex items-center gap-0.5">
+        {keys.map((k) => (
+          <kbd
+            key={k}
+            className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
+          >
+            {k}
+          </kbd>
+        ))}
+      </span>
+      <span className="text-[10px] text-muted-foreground/60">{label}</span>
+    </div>
+  );
+}
+
 export function FloatingScratchpad() {
   const { isOpen, closeScratchpad, code, setCode } = useScratchpad();
   const t = useTranslations('scratchpad');
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+
+  // Re-focus editor whenever the sheet opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => editorRef.current?.focus(), 50);
+    }
+  }, [isOpen]);
 
   const hasAsyncEvents = timeline.some((event) => event.kind === 'macro' || event.kind === 'micro');
 
@@ -90,8 +117,9 @@ export function FloatingScratchpad() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-              <div className="hidden xl:flex rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-[10px] uppercase tracking-wider text-tertiary font-mono">
-                {t('keyboardShortcut')}
+              <div className="hidden lg:flex items-center gap-3">
+                <ShortcutHint keys={['⌘', '↵']} label={t('run')} />
+                <ShortcutHint keys={['⌘', '⇧', '⌫']} label={t('reset')} />
               </div>
 
               <Dialog>
@@ -110,7 +138,10 @@ export function FloatingScratchpad() {
                     <span className="hidden xs:inline">{t('eventLoop')}</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]">
+                <DialogContent
+                  showCloseButton={false}
+                  className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]"
+                >
                   <DialogHeader>
                     <DialogTitle>
                       {t('eventLoop')} ({t('title')})
@@ -127,6 +158,7 @@ export function FloatingScratchpad() {
                 variant="ghost"
                 size="sm"
                 onClick={resetCode}
+                title={t('resetTooltip')}
                 className="h-8 text-[11px] text-secondary hover:text-primary transition-colors px-2 sm:px-3"
               >
                 <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
@@ -166,6 +198,11 @@ export function FloatingScratchpad() {
                 value={code}
                 onChange={setCode}
                 onRun={runCode}
+                onReset={resetCode}
+                autoFocus
+                onEditorMount={(editor) => {
+                  editorRef.current = editor;
+                }}
               />
             </div>
           </section>

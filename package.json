@@ -26,14 +26,6 @@
     "test": "turbo run test",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,mjs,cjs,css,json,jsonc}": [
-      "bunx biome check --write --no-errors-on-unmatched"
-    ],
-    "*.md": [
-      "bunx markdownlint-cli2"
-    ]
-  },
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",
     "@commitlint/cli": "^20.5.0",

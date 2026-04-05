@@ -27,6 +27,8 @@
   --color-success: var(--status-correct);
   --color-warning: #f59e0b;
   --color-danger: var(--status-wrong);
+  --color-status-correct: #22c55e;
+  --color-status-wrong: #ef4444;
   --color-surface: var(--bg-surface);
   --color-surface-elevated: var(--bg-elevated);
 

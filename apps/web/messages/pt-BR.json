@@ -236,7 +236,7 @@
     "retry": "Tentar novamente"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - Domine Entrevistas JavaScript",
     "description": "Prática interativa de entrevistas JavaScript com perguntas da Lydia Hallie, trechos executáveis e visualizações de event loop."
   },
   "footer": {
@@ -295,7 +295,11 @@
     "desc_toggleExp": "Revelar/Ocultar explicação",
     "desc_runCode": "Ejecutar código",
     "desc_prevDet": "Pergunta anterior",
-    "desc_nextDet": "Próxima pergunta"
+    "desc_nextDet": "Próxima pergunta",
+    "scratchpad": "Rascunho",
+    "scratchpadTag": "Apenas no rascunho",
+    "desc_scratchpadRun": "Executar código no rascunho",
+    "desc_scratchpadReset": "Limpar rascunho"
   },
   "progress": {
     "title": "Seu Progresso",
@@ -391,7 +395,8 @@
     "editor": "Editor",
     "javaScript": "JavaScript",
     "output": "Saída",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "Limpar (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "Visualizador de execução JavaScript",

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-type ShortcutTitleKey = 'global' | 'list' | 'detail';
+type ShortcutTitleKey = 'global' | 'list' | 'detail' | 'scratchpad';
 type ShortcutDescriptionKey =
   | 'desc_search'
   | 'desc_help'
@@ -26,11 +26,13 @@ type ShortcutDescriptionKey =
   | 'desc_toggleExp'
   | 'desc_runCode'
   | 'desc_prevDet'
-  | 'desc_nextDet';
+  | 'desc_nextDet'
+  | 'desc_scratchpadRun'
+  | 'desc_scratchpadReset';
 
 interface ShortcutGroup {
   titleKey: ShortcutTitleKey;
-  scope: 'global' | 'list' | 'detail';
+  scope: 'global' | 'list' | 'detail' | 'scratchpad';
   shortcuts: {
     keys: string[];
     descriptionKey: ShortcutDescriptionKey;
@@ -54,6 +56,14 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ['J', '↓'], descriptionKey: 'desc_nextList' },
       { keys: ['K', '↑'], descriptionKey: 'desc_prevList' },
       { keys: ['O', 'Enter'], descriptionKey: 'desc_openList' },
+    ],
+  },
+  {
+    titleKey: 'scratchpad',
+    scope: 'scratchpad',
+    shortcuts: [
+      { keys: ['⌘', '↵'], descriptionKey: 'desc_scratchpadRun' },
+      { keys: ['⌘', '⇧', '⌫'], descriptionKey: 'desc_scratchpadReset' },
     ],
   },
   {
@@ -115,7 +125,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent showCloseButton={false} className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
@@ -154,6 +164,11 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
                 {group.scope === 'detail' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
                     {t('detailTag')}
+                  </span>
+                )}
+                {group.scope === 'scratchpad' && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
+                    {t('scratchpadTag')}
                   </span>
                 )}
               </div>

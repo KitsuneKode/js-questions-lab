@@ -236,7 +236,7 @@
     "retry": "Intentar de nuevo"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - Domina Entrevistas de JavaScript",
     "description": "Práctica interactiva de entrevistas de JavaScript con fragmentos ejecutables y visualizaciones del bucle de eventos."
   },
   "footer": {
@@ -295,7 +295,11 @@
     "desc_toggleExp": "Mostrar/Ocultar explicación",
     "desc_runCode": "Ejecutar código",
     "desc_prevDet": "Pregunta anterior",
-    "desc_nextDet": "Siguiente pregunta"
+    "desc_nextDet": "Siguiente pregunta",
+    "scratchpad": "Bloc de notas",
+    "scratchpadTag": "Solo en bloc de notas",
+    "desc_scratchpadRun": "Ejecutar código en el bloc de notas",
+    "desc_scratchpadReset": "Restablecer bloc de notas"
   },
   "progress": {
     "title": "Tu Progreso",
@@ -391,7 +395,8 @@
     "editor": "Editor",
     "javaScript": "JavaScript",
     "output": "Salida",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "Restablecer (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "Visualizador de ejecución de JavaScript",

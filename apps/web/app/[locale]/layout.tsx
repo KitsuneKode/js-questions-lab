@@ -7,7 +7,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { Provider } from '@/app/provider';
 import { SiteJsonLd } from '@/components/seo/site-json-ld';
 import { isValidLocale, LOCALE_DIRS, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
-import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
+import { getAlternateLanguages, getBaseUrl, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 
@@ -63,7 +63,7 @@ export async function generateMetadata({
     other: {
       // next-intl reads lang from here; root layout sets the html tag
       'x-locale': locale,
-      'og:logo': `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz'}/icon`,
+      'og:logo': `${getBaseUrl()}/icon`,
     },
   };
 }

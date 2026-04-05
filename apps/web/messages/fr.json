@@ -236,7 +236,7 @@
     "retry": "Réessayer"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - Maîtrisez les Entretiens JavaScript",
     "description": "Pratique interactive d'entretiens JavaScript avec des extraits de code exécutables et des visualisations de la boucle d'événements."
   },
   "footer": {
@@ -295,7 +295,11 @@
     "desc_toggleExp": "Afficher/Masquer l'explication",
     "desc_runCode": "Exécuter le code",
     "desc_prevDet": "Question précédente",
-    "desc_nextDet": "Question suivante"
+    "desc_nextDet": "Question suivante",
+    "scratchpad": "Bloc-notes",
+    "scratchpadTag": "Bloc-notes uniquement",
+    "desc_scratchpadRun": "Exécuter le code dans le bloc-notes",
+    "desc_scratchpadReset": "Réinitialiser le bloc-notes"
   },
   "progress": {
     "title": "Votre Progression",
@@ -391,7 +395,8 @@
     "editor": "Éditeur",
     "javaScript": "JavaScript",
     "output": "Sortie",
-    "keyboardShortcut": "Cmd/Ctrl + Entrée"
+    "keyboardShortcut": "Cmd/Ctrl + Entrée",
+    "resetTooltip": "Réinitialiser (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "Visualiseur d'exécution JavaScript",

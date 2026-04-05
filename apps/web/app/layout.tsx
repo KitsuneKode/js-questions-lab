@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Geist, Roboto_Mono } from 'next/font/google';
 import '@/app/globals.css';
 import { Analytics } from '@vercel/analytics/next';
+import { getBaseUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 
@@ -29,9 +30,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
  * Providers live in [locale]/layout.tsx as well.
  */
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz',
-  ),
+  metadataBase: new URL(getBaseUrl()),
   applicationName: siteConfig.name,
   title: siteConfig.name,
   description: siteConfig.description,
@@ -62,7 +61,7 @@ export const metadata: Metadata = {
     'content-license': 'MIT',
     'original-source': 'https://github.com/lydiahallie/javascript-questions',
     'original-author': 'Lydia Hallie',
-    'og:logo': `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz'}/icon`,
+    'og:logo': `${getBaseUrl()}/icon`,
   },
   openGraph: {
     title: siteConfig.name,

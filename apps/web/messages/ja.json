@@ -236,7 +236,7 @@
     "retry": "再試行"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - JavaScript面接対策をマスター",
     "description": "Lydia Hallieの問題集を基にした、実行可能なスニペットとイベントループ可視化を備えたインタラクティブなJavaScript面接練習。"
   },
   "footer": {
@@ -295,7 +295,11 @@
     "desc_toggleExp": "解説を表示/非表示",
     "desc_runCode": "コードを実行",
     "desc_prevDet": "前の質問",
-    "desc_nextDet": "次の質問"
+    "desc_nextDet": "次の質問",
+    "scratchpad": "スクラッチパッド",
+    "scratchpadTag": "スクラッチパッドのみ",
+    "desc_scratchpadRun": "スクラッチパッドでコードを実行",
+    "desc_scratchpadReset": "スクラッチパッドをリセット"
   },
   "progress": {
     "title": "あなたの進捗",
@@ -391,7 +395,8 @@
     "editor": "エディター",
     "javaScript": "JavaScript",
     "output": "出力",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "リセット (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "JavaScript実行ビジュアライザー",
