@@ -297,6 +297,7 @@
     "desc_prevDet": "Previous question",
     "desc_nextDet": "Next question",
     "scratchpad": "Scratchpad",
+    "scratchpadTag": "Scratchpad only",
     "desc_scratchpadRun": "Run code in scratchpad",
     "desc_scratchpadReset": "Reset scratchpad"
   },
@@ -394,7 +395,8 @@
     "editor": "Editor",
     "javaScript": "JavaScript",
     "output": "Output",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "Reset (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "JavaScript Execution Visualizer",

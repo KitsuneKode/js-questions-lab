@@ -158,7 +158,7 @@ export function FloatingScratchpad() {
                 variant="ghost"
                 size="sm"
                 onClick={resetCode}
-                title="Reset (⌘⇧⌫)"
+                title={t('resetTooltip')}
                 className="h-8 text-[11px] text-secondary hover:text-primary transition-colors px-2 sm:px-3"
               >
                 <RotateCcw className="mr-1.5 h-3.5 w-3.5" />

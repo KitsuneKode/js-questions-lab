@@ -17,8 +17,11 @@ export const proxy = clerkMiddleware(async (auth, request: NextRequest) => {
 
 export const config = {
   matcher: [
-    // Match all paths except static assets, API routes, _next internals, and metadata routes
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)|icon|apple-icon|twitter-image|opengraph-image).*)',
+    // Match all paths except:
+    // - Next.js internals and static assets
+    // - SEO/crawl files: robots.txt, sitemap.xml, llms-full.txt
+    // - Next.js metadata image routes
+    '/((?!_next|robots\\.txt|sitemap\\.xml|llms-full\\.txt|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)|icon|apple-icon|twitter-image|opengraph-image).*)',
     '/(api|trpc)(.*)',
   ],
 };

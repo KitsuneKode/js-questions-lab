@@ -32,7 +32,7 @@ type ShortcutDescriptionKey =
 
 interface ShortcutGroup {
   titleKey: ShortcutTitleKey;
-  scope: 'global' | 'list' | 'detail';
+  scope: 'global' | 'list' | 'detail' | 'scratchpad';
   shortcuts: {
     keys: string[];
     descriptionKey: ShortcutDescriptionKey;
@@ -60,7 +60,7 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
   },
   {
     titleKey: 'scratchpad',
-    scope: 'global',
+    scope: 'scratchpad',
     shortcuts: [
       { keys: ['⌘', '↵'], descriptionKey: 'desc_scratchpadRun' },
       { keys: ['⌘', '⇧', '⌫'], descriptionKey: 'desc_scratchpadReset' },
@@ -164,6 +164,11 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
                 {group.scope === 'detail' && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
                     {t('detailTag')}
+                  </span>
+                )}
+                {group.scope === 'scratchpad' && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface/40 text-tertiary font-medium border border-border/50">
+                    {t('scratchpadTag')}
                   </span>
                 )}
               </div>

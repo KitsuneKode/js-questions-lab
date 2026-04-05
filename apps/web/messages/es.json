@@ -296,9 +296,10 @@
     "desc_runCode": "Ejecutar código",
     "desc_prevDet": "Pregunta anterior",
     "desc_nextDet": "Siguiente pregunta",
-    "scratchpad": "Scratchpad",
-    "desc_scratchpadRun": "Run code in scratchpad",
-    "desc_scratchpadReset": "Reset scratchpad"
+    "scratchpad": "Bloc de notas",
+    "scratchpadTag": "Solo en bloc de notas",
+    "desc_scratchpadRun": "Ejecutar código en el bloc de notas",
+    "desc_scratchpadReset": "Restablecer bloc de notas"
   },
   "progress": {
     "title": "Tu Progreso",
@@ -394,7 +395,8 @@
     "editor": "Editor",
     "javaScript": "JavaScript",
     "output": "Salida",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "Restablecer (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "Visualizador de ejecución de JavaScript",

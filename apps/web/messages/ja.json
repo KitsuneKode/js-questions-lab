@@ -296,9 +296,10 @@
     "desc_runCode": "コードを実行",
     "desc_prevDet": "前の質問",
     "desc_nextDet": "次の質問",
-    "scratchpad": "Scratchpad",
-    "desc_scratchpadRun": "Run code in scratchpad",
-    "desc_scratchpadReset": "Reset scratchpad"
+    "scratchpad": "スクラッチパッド",
+    "scratchpadTag": "スクラッチパッドのみ",
+    "desc_scratchpadRun": "スクラッチパッドでコードを実行",
+    "desc_scratchpadReset": "スクラッチパッドをリセット"
   },
   "progress": {
     "title": "あなたの進捗",
@@ -394,7 +395,8 @@
     "editor": "エディター",
     "javaScript": "JavaScript",
     "output": "出力",
-    "keyboardShortcut": "Cmd/Ctrl + Enter"
+    "keyboardShortcut": "Cmd/Ctrl + Enter",
+    "resetTooltip": "リセット (⌘⇧⌫)"
   },
   "debugger": {
     "visualizer": "JavaScript実行ビジュアライザー",
