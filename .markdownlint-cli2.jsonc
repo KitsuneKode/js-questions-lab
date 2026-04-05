@@ -5,5 +5,5 @@
     "no-inline-html": false,
     "single-title": false
   },
-  "ignores": ["node_modules", ".next", "content/generated", "docs/superpowers"]
+  "ignores": ["node_modules", ".next", "content/generated", "docs/superpowers", ".context"]
 }

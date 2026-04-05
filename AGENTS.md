@@ -39,6 +39,8 @@ If you are working on specific domains, **you must read the relevant guide first
 - **Product Direction & Learning Roadmap**: Read `.context/docs/learning-roadmap.md`
 - **Visual Debugger / AST Execution**: Read `.context/docs/visual-debugger.md`
 - **SEO & Structured Data**: Read `.context/docs/seo-llm.md`
+- **Engagement Engine, XP, Leaderboard, Pro Tier & AI Interview**: Read `.context/docs/prd-engagement-pro.md`
+- **React Practice Platform, Resources, Bookmarks Filter & Landing Upgrade**: Read `.context/docs/prd-react-platform.md`
 - **UI/UX & Styling Guidelines**: Read `.context/docs/design-system.md`
 
 ## Architectural Decisions Already Made
