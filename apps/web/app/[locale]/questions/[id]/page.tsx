@@ -18,7 +18,12 @@ import {
   getRelatedQuestions,
 } from '@/lib/content/loaders';
 import { DEFAULT_LOCALE, type LocaleCode } from '@/lib/i18n/config';
-import { getAlternateLanguages, getCanonicalUrl, truncateDescription } from '@/lib/seo/config';
+import {
+  getAlternateLanguages,
+  getBaseUrl,
+  getCanonicalUrl,
+  truncateDescription,
+} from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
 /**
@@ -53,7 +58,7 @@ export async function generateMetadata({ params }: QuestionDetailPageProps): Pro
   const canonicalUrl = getCanonicalUrl(locale, questionPath);
   const alternateLanguages = getAlternateLanguages(questionPath);
   const description = truncateDescription(question.promptMarkdown ?? question.title);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz';
+  const baseUrl = getBaseUrl();
 
   return {
     title: `${question.title} | ${siteConfig.name}`,
