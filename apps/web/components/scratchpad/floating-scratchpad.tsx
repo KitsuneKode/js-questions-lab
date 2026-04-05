@@ -1,5 +1,6 @@
 'use client';
 
+import type { OnMount } from '@monaco-editor/react';
 import {
   IconActivity as Activity,
   IconPlayerPlay as Play,
@@ -7,7 +8,7 @@ import {
   IconSparkles as Sparkles,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,14 @@ export function FloatingScratchpad() {
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+
+  // Re-focus editor whenever the sheet opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => editorRef.current?.focus(), 50);
+    }
+  }, [isOpen]);
 
   const hasAsyncEvents = timeline.some((event) => event.kind === 'macro' || event.kind === 'micro');
 
@@ -127,6 +136,7 @@ export function FloatingScratchpad() {
                 variant="ghost"
                 size="sm"
                 onClick={resetCode}
+                title="Reset (⌘⇧⌫)"
                 className="h-8 text-[11px] text-secondary hover:text-primary transition-colors px-2 sm:px-3"
               >
                 <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
@@ -166,6 +176,11 @@ export function FloatingScratchpad() {
                 value={code}
                 onChange={setCode}
                 onRun={runCode}
+                onReset={resetCode}
+                autoFocus
+                onEditorMount={(editor) => {
+                  editorRef.current = editor;
+                }}
               />
             </div>
           </section>

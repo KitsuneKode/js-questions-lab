@@ -3,12 +3,15 @@
 import type { OnMount } from '@monaco-editor/react';
 import { Editor } from '@monaco-editor/react';
 import { IconLoader2 as Loader2 } from '@tabler/icons-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface MonacoEditorProps {
   value: string;
   onChange: (value: string) => void;
   onRun?: () => void;
+  onReset?: () => void;
+  onEditorMount?: (editor: Parameters<OnMount>[0]) => void;
+  autoFocus?: boolean;
   language?: 'html' | 'javascript' | 'typescript';
   readOnly?: boolean;
   path?: string;
@@ -46,19 +49,40 @@ export function MonacoCodeEditor({
   value,
   onChange,
   onRun,
+  onReset,
+  onEditorMount,
+  autoFocus = false,
   language = 'javascript',
   readOnly = false,
   path,
 }: MonacoEditorProps) {
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  // Refs keep commands up-to-date without re-registering on every render
+  const onRunRef = useRef(onRun);
+  const onResetRef = useRef(onReset);
+  useEffect(() => {
+    onRunRef.current = onRun;
+  }, [onRun]);
+  useEffect(() => {
+    onResetRef.current = onReset;
+  }, [onReset]);
 
   const handleMount = useCallback<OnMount>(
     (editor, monaco) => {
       editorRef.current = editor;
 
+      // Use refs so commands always call the latest callback, not the stale closure
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-        onRun?.();
+        onRunRef.current?.();
       });
+
+      // Ctrl+Shift+Backspace → reset scratchpad
+      editor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Backspace,
+        () => {
+          onResetRef.current?.();
+        },
+      );
 
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {});
 
@@ -67,8 +91,16 @@ export function MonacoCodeEditor({
         readOnly,
         domReadOnly: readOnly,
       });
+
+      if (autoFocus) {
+        // Defer one tick so the Sheet/Dialog animation doesn't steal focus back
+        setTimeout(() => editor.focus(), 50);
+      }
+
+      onEditorMount?.(editor);
     },
-    [onRun, readOnly],
+    // readOnly and autoFocus are layout-time values; refs handle the rest
+    [readOnly, autoFocus, onEditorMount],
   );
 
   return (
