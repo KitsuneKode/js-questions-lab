@@ -59,4 +59,3 @@ If you are working on specific domains, **you must read the relevant guide first
 - After changes are made, reviewed, and validated in `dev`, they are merged into `main`.
 - The main website is deployed directly from the `main` branch.
 - Never commit directly to `main` for feature or fix work.
-- **After every dev→main promotion PR**, run `git checkout dev && git merge origin/main && git push origin dev` to re-sync `dev`. GitHub merge commits land only on `main`, so `dev` drifts behind in commit graph history after each merge — this step is mandatory.
