@@ -236,7 +236,7 @@
     "retry": "再試行"
   },
   "meta": {
-    "title": "JS Questions Lab",
+    "title": "JS Questions Lab - JavaScript面接対策をマスター",
     "description": "Lydia Hallieの問題集を基にした、実行可能なスニペットとイベントループ可視化を備えたインタラクティブなJavaScript面接練習。"
   },
   "footer": {
