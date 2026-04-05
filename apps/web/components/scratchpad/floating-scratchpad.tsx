@@ -34,6 +34,24 @@ import { toTerminalLogEntries } from '@/lib/run/terminal';
 import type { TimelineEvent } from '@/lib/run/types';
 import { useScratchpad } from './scratchpad-context';
 
+function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="flex items-center gap-0.5">
+        {keys.map((k) => (
+          <kbd
+            key={k}
+            className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
+          >
+            {k}
+          </kbd>
+        ))}
+      </span>
+      <span className="text-[10px] text-muted-foreground/60">{label}</span>
+    </div>
+  );
+}
+
 export function FloatingScratchpad() {
   const { isOpen, closeScratchpad, code, setCode } = useScratchpad();
   const t = useTranslations('scratchpad');
@@ -99,8 +117,9 @@ export function FloatingScratchpad() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-              <div className="hidden xl:flex rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-[10px] uppercase tracking-wider text-tertiary font-mono">
-                {t('keyboardShortcut')}
+              <div className="hidden lg:flex items-center gap-3">
+                <ShortcutHint keys={['⌘', '↵']} label={t('run')} />
+                <ShortcutHint keys={['⌘', '⇧', '⌫']} label={t('reset')} />
               </div>
 
               <Dialog>
