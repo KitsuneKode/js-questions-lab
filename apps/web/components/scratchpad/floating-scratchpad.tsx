@@ -138,7 +138,10 @@ export function FloatingScratchpad() {
                     <span className="hidden xs:inline">{t('eventLoop')}</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]">
+                <DialogContent
+                  showCloseButton={false}
+                  className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow z-[100]"
+                >
                   <DialogHeader>
                     <DialogTitle>
                       {t('eventLoop')} ({t('title')})

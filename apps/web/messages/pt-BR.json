@@ -295,7 +295,10 @@
     "desc_toggleExp": "Revelar/Ocultar explicação",
     "desc_runCode": "Ejecutar código",
     "desc_prevDet": "Pergunta anterior",
-    "desc_nextDet": "Próxima pergunta"
+    "desc_nextDet": "Próxima pergunta",
+    "scratchpad": "Scratchpad",
+    "desc_scratchpadRun": "Run code in scratchpad",
+    "desc_scratchpadReset": "Reset scratchpad"
   },
   "progress": {
     "title": "Seu Progresso",

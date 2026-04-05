@@ -295,7 +295,10 @@
     "desc_toggleExp": "Erklärung ein-/ausblenden",
     "desc_runCode": "Code ausführen",
     "desc_prevDet": "Vorherige Frage",
-    "desc_nextDet": "Nächste Frage"
+    "desc_nextDet": "Nächste Frage",
+    "scratchpad": "Scratchpad",
+    "desc_scratchpadRun": "Run code in scratchpad",
+    "desc_scratchpadReset": "Reset scratchpad"
   },
   "progress": {
     "title": "Dein Fortschritt",

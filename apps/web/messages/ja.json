@@ -295,7 +295,10 @@
     "desc_toggleExp": "解説を表示/非表示",
     "desc_runCode": "コードを実行",
     "desc_prevDet": "前の質問",
-    "desc_nextDet": "次の質問"
+    "desc_nextDet": "次の質問",
+    "scratchpad": "Scratchpad",
+    "desc_scratchpadRun": "Run code in scratchpad",
+    "desc_scratchpadReset": "Reset scratchpad"
   },
   "progress": {
     "title": "あなたの進捗",
