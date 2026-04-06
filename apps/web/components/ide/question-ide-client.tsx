@@ -290,11 +290,11 @@ export function QuestionIDEClient({
 
     setHasSubmittedRecall(true);
     setIsRecallCorrect(isStrictMatch);
-    saveAttempt(
-      question.correctOption,
-      isStrictMatch ? 'correct' : 'incorrect',
-      question.difficulty,
-    );
+    saveAttempt(null, isStrictMatch ? 'correct' : 'incorrect', {
+      difficulty: question.difficulty,
+      recallAnswer,
+      locale,
+    });
 
     // Update section progress
     if (primaryTag) {
@@ -314,6 +314,7 @@ export function QuestionIDEClient({
     updateSection,
     markQuestionAnswered,
     tagQuestionCounts,
+    locale,
   ]);
 
   const handleSelfGrade = useCallback(
@@ -330,7 +331,10 @@ export function QuestionIDEClient({
       const optionKey = key as 'A' | 'B' | 'C' | 'D';
       setSelected(optionKey);
       const isCorrect = key === question.correctOption;
-      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect', question.difficulty);
+      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect', {
+        difficulty: question.difficulty,
+        locale,
+      });
       // Update section progress using markQuestionAnswered for proper incrementing
       if (primaryTag) {
         // Initialize totalQuestions if first answer in this tag
@@ -351,6 +355,7 @@ export function QuestionIDEClient({
       updateSection,
       markQuestionAnswered,
       tagQuestionCounts,
+      locale,
     ],
   );
 

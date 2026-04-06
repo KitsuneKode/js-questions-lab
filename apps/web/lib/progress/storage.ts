@@ -3,7 +3,7 @@ import type { SRSData } from '@/lib/progress/srs';
 export type AnswerStatus = 'correct' | 'incorrect';
 
 export interface AttemptRecord {
-  selected: 'A' | 'B' | 'C' | 'D';
+  selected: 'A' | 'B' | 'C' | 'D' | null;
   status: AnswerStatus;
   attemptedAt: string;
 }

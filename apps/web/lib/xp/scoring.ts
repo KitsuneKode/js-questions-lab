@@ -2,6 +2,8 @@ import type { Difficulty } from '@/lib/content/types';
 import type { SRSData } from '@/lib/progress/srs';
 import type { AnswerStatus, AttemptRecord } from '@/lib/progress/storage';
 
+export type AttemptSummary = Pick<AttemptRecord, 'status' | 'attemptedAt'>;
+
 export interface XPEvent {
   questionId: number;
   xpDelta: number;
@@ -25,7 +27,7 @@ export interface ComputeXPParams {
    * All prior attempts for this question (unfiltered).
    * Used for cooldown detection (time-based) and precision bonus (date-based).
    */
-  todayAttempts: AttemptRecord[];
+  todayAttempts: AttemptSummary[];
   /** Whether this is the first answer of the day across ALL questions. */
   isFirstAnswerToday: boolean;
 }
@@ -42,7 +44,7 @@ const STREAK_BONUS = 15;
 const MASTERY_CAP_XP = 2;
 const COOLDOWN_MINUTES = 10;
 
-function isWithinCooldown(attempts: AttemptRecord[]): boolean {
+function isWithinCooldown(attempts: AttemptSummary[]): boolean {
   if (attempts.length === 0) return false;
   const last = attempts[attempts.length - 1];
   const elapsed = Date.now() - new Date(last.attemptedAt).getTime();

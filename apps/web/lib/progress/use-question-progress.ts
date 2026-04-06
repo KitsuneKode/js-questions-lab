@@ -25,8 +25,11 @@ export function useQuestionProgress(questionId: number) {
   return {
     ready,
     item,
-    saveAttempt: (selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus, difficulty?: Difficulty) =>
-      saveAttempt(questionId, selected, status, difficulty),
+    saveAttempt: (
+      selected: 'A' | 'B' | 'C' | 'D' | null,
+      status: AnswerStatus,
+      options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+    ) => saveAttempt(questionId, selected, status, options),
     saveSelfGrade: (grade: Grade) => saveSelfGrade(questionId, grade),
     toggleBookmark: () => toggleBookmark(questionId),
   };
