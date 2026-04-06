@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 import { useSafeAuth } from '@/lib/auth-utils';
+import type { Difficulty } from '@/lib/content/types';
 import {
   fetchServerProgress,
   syncProgressToServer,
@@ -27,6 +28,12 @@ import {
   writeProgress,
 } from '@/lib/progress/storage';
 import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
+import type { StreakState } from '@/lib/streaks/calculator';
+import { updateStreak } from '@/lib/streaks/calculator';
+import { readStreak, writeStreak } from '@/lib/streaks/storage';
+import { computeXP } from '@/lib/xp/scoring';
+import type { XPState } from '@/lib/xp/storage';
+import { applyXPEvents, defaultXPState, readXP, writeXP } from '@/lib/xp/storage';
 
 // ---------------------------------------------------------------------------
 // Actions
@@ -135,9 +142,16 @@ interface ProgressContextValue {
   state: ProgressState;
   ready: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
-  saveAttempt: (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => void;
+  saveAttempt: (
+    questionId: number,
+    selected: 'A' | 'B' | 'C' | 'D',
+    status: AnswerStatus,
+    difficulty?: Difficulty,
+  ) => void;
   saveSelfGrade: (questionId: number, grade: Grade) => void;
   toggleBookmark: (questionId: number) => void;
+  xpState: XPState;
+  streakState: StreakState;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -146,6 +160,17 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(progressReducer, defaultProgressState);
   const [ready, setReady] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle');
+  const [xpState, setXPState] = useState<XPState>(defaultXPState);
+  const [streakState, setStreakState] = useState<StreakState>({
+    version: 1,
+    currentStreak: 0,
+    longestStreak: 0,
+    lastActivityDate: null,
+  });
+  const xpStateRef = useRef(xpState);
+  xpStateRef.current = xpState;
+  const streakStateRef = useRef(streakState);
+  streakStateRef.current = streakState;
   const prevStateRef = useRef(state);
   // Always-fresh state reference — assigned at render time so callbacks
   // can read current state without needing state in their dependency arrays.
@@ -157,6 +182,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loaded = readProgress();
     dispatch({ type: 'init', state: loaded });
+    setXPState(readXP());
+    setStreakState(readStreak());
     setReady(true);
   }, []);
 
@@ -215,7 +242,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
 
   const saveAttempt = useCallback(
-    (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => {
+    (
+      questionId: number,
+      selected: 'A' | 'B' | 'C' | 'D',
+      status: AnswerStatus,
+      difficulty: Difficulty = 'beginner',
+    ) => {
       const now = new Date().toISOString();
       const prev = ensureItem(stateRef.current, questionId);
       const updated: ProgressItem = {
@@ -246,6 +278,30 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         }
         store.markQuestionAnswered(tag, status === 'correct');
       }
+
+      // XP computation
+      const today = new Date().toISOString().slice(0, 10);
+      const allQuestions = stateRef.current.questions;
+      const isFirstAnswerToday = !Object.values(allQuestions).some((item) =>
+        item.attempts.some((a) => a.attemptedAt.slice(0, 10) === today),
+      );
+      const todayAttempts = prev.attempts.filter((a) => a.attemptedAt.slice(0, 10) === today);
+      const xpEvents = computeXP({
+        questionId,
+        status,
+        difficulty,
+        srsData: prev.srsData,
+        todayAttempts,
+        isFirstAnswerToday,
+      });
+      const newXPState = applyXPEvents(xpStateRef.current, xpEvents);
+      setXPState(newXPState);
+      writeXP(newXPState);
+
+      // Streak update
+      const { state: newStreakState } = updateStreak(streakStateRef.current, today);
+      setStreakState(newStreakState);
+      writeStreak(newStreakState);
     },
     [isSignedIn],
   );
@@ -304,6 +360,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     saveAttempt,
     saveSelfGrade,
     toggleBookmark,
+    xpState,
+    streakState,
   };
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

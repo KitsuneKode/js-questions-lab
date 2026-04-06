@@ -290,7 +290,11 @@ export function QuestionIDEClient({
 
     setHasSubmittedRecall(true);
     setIsRecallCorrect(isStrictMatch);
-    saveAttempt(question.correctOption, isStrictMatch ? 'correct' : 'incorrect');
+    saveAttempt(
+      question.correctOption,
+      isStrictMatch ? 'correct' : 'incorrect',
+      question.difficulty,
+    );
 
     // Update section progress
     if (primaryTag) {
@@ -304,6 +308,7 @@ export function QuestionIDEClient({
     recallAnswer,
     question.correctOption,
     question.options,
+    question.difficulty,
     saveAttempt,
     primaryTag,
     updateSection,
@@ -325,7 +330,7 @@ export function QuestionIDEClient({
       const optionKey = key as 'A' | 'B' | 'C' | 'D';
       setSelected(optionKey);
       const isCorrect = key === question.correctOption;
-      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect');
+      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect', question.difficulty);
       // Update section progress using markQuestionAnswered for proper incrementing
       if (primaryTag) {
         // Initialize totalQuestions if first answer in this tag
@@ -340,6 +345,7 @@ export function QuestionIDEClient({
     [
       isAnswered,
       question.correctOption,
+      question.difficulty,
       saveAttempt,
       primaryTag,
       updateSection,
