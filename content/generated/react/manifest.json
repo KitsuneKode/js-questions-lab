@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-04-07T00:00:00.000Z",
+  "totalQuestions": 10,
+  "questions": [
+    { "id": "react-counter", "title": "Build a Counter Component", "difficulty": "beginner", "category": "component", "tags": ["state", "events", "components"] },
+    { "id": "react-toggle", "title": "Build a useToggle Hook", "difficulty": "beginner", "category": "hook", "tags": ["hooks", "state", "boolean"] },
+    { "id": "react-use-debounce", "title": "Build a useDebounce Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "timers", "performance", "closures"] },
+    { "id": "react-use-local-storage", "title": "Build a useLocalStorage Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "localStorage", "state", "persistence"] },
+    { "id": "react-use-previous", "title": "Build a usePrevious Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "refs", "state"] },
+    { "id": "react-use-fetch", "title": "Build a useFetch Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "async", "data-fetching", "effects"] },
+    { "id": "react-hoc-with-logger", "title": "Build a withLogger Higher-Order Component", "difficulty": "intermediate", "category": "pattern", "tags": ["hoc", "patterns", "props", "logging"] },
+    { "id": "react-render-props-mouse", "title": "Build a Mouse Tracker with Render Props", "difficulty": "intermediate", "category": "pattern", "tags": ["render-props", "patterns", "events"] },
+    { "id": "react-compound-modal", "title": "Build a Compound Modal Component", "difficulty": "advanced", "category": "pattern", "tags": ["compound-components", "context", "patterns", "accessibility"] },
+    { "id": "react-error-boundary", "title": "Build an ErrorBoundary Component", "difficulty": "advanced", "category": "component", "tags": ["error-handling", "class-components", "lifecycle", "patterns"] }
+  ]
+}

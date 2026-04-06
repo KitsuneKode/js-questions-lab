@@ -1,0 +1,27 @@
+{
+  "id": "react-use-fetch",
+  "title": "Build a useFetch Hook",
+  "difficulty": "intermediate",
+  "tags": ["hooks", "async", "data-fetching", "effects"],
+  "category": "hook",
+  "prompt": "Build a `useFetch<T>(url: string)` hook that returns `{ data: T | null, loading: boolean, error: string | null }`. It should re-fetch whenever the URL changes and clean up in-flight requests on unmount.",
+  "context": "Data fetching in hooks follows a standard pattern: set loading, trigger the fetch, update state on completion, handle errors, and cancel stale requests on cleanup. The AbortController API lets you cancel a fetch when a component unmounts or the URL changes.",
+  "starterCode": {
+    "App.tsx": "import { useFetch } from './useFetch';\n\ninterface Post { id: number; title: string; body: string; }\n\nexport default function App() {\n  const { data, loading, error } = useFetch<Post>(\n    'https://jsonplaceholder.typicode.com/posts/1'\n  );\n\n  if (loading) return <p className=\"p-8\">Loading...</p>;\n  if (error) return <p className=\"p-8 text-red-500\">{error}</p>;\n\n  return (\n    <div className=\"p-8\">\n      <h2 className=\"font-bold\">{data?.title}</h2>\n      <p>{data?.body}</p>\n    </div>\n  );\n}\n",
+    "useFetch.ts": "import { useEffect, useState } from 'react';\n\ninterface FetchState<T> {\n  data: T | null;\n  loading: boolean;\n  error: string | null;\n}\n\nexport function useFetch<T>(url: string): FetchState<T> {\n  const [state, setState] = useState<FetchState<T>>({\n    data: null,\n    loading: true,\n    error: null,\n  });\n\n  useEffect(() => {\n    // TODO: fetch url, handle abort on cleanup\n  }, [url]);\n\n  return state;\n}\n"
+  },
+  "entryFile": "useFetch.ts",
+  "solutionCode": {
+    "App.tsx": "import { useFetch } from './useFetch';\n\ninterface Post { id: number; title: string; body: string; }\n\nexport default function App() {\n  const { data, loading, error } = useFetch<Post>(\n    'https://jsonplaceholder.typicode.com/posts/1'\n  );\n\n  if (loading) return <p className=\"p-8\">Loading...</p>;\n  if (error) return <p className=\"p-8 text-red-500\">{error}</p>;\n\n  return (\n    <div className=\"p-8\">\n      <h2 className=\"font-bold\">{data?.title}</h2>\n      <p>{data?.body}</p>\n    </div>\n  );\n}\n",
+    "useFetch.ts": "import { useEffect, useState } from 'react';\n\ninterface FetchState<T> {\n  data: T | null;\n  loading: boolean;\n  error: string | null;\n}\n\nexport function useFetch<T>(url: string): FetchState<T> {\n  const [state, setState] = useState<FetchState<T>>({\n    data: null,\n    loading: true,\n    error: null,\n  });\n\n  useEffect(() => {\n    const controller = new AbortController();\n    setState({ data: null, loading: true, error: null });\n\n    fetch(url, { signal: controller.signal })\n      .then(res => res.json() as Promise<T>)\n      .then(data => setState({ data, loading: false, error: null }))\n      .catch(err => {\n        if (err.name !== 'AbortError') {\n          setState({ data: null, loading: false, error: err.message });\n        }\n      });\n\n    return () => controller.abort();\n  }, [url]);\n\n  return state;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

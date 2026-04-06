@@ -1,0 +1,27 @@
+{
+  "id": "react-use-previous",
+  "title": "Build a usePrevious Hook",
+  "difficulty": "intermediate",
+  "tags": ["hooks", "refs", "state"],
+  "category": "hook",
+  "prompt": "Build a `usePrevious<T>(value: T): T | undefined` hook that returns the value from the *previous* render. On the first render it should return `undefined`.",
+  "context": "`useRef` creates a mutable object that persists across renders without causing re-renders when updated. The trick here: update the ref *after* render (inside `useEffect`) so it always holds the previous value, not the current one.",
+  "starterCode": {
+    "App.tsx": "import { useState } from 'react';\nimport { usePrevious } from './usePrevious';\n\nexport default function App() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <p>Current: <strong>{count}</strong></p>\n      <p>Previous: <strong>{prevCount ?? 'none'}</strong></p>\n      <button onClick={() => setCount(c => c + 1)}>Increment</button>\n    </div>\n  );\n}\n",
+    "usePrevious.ts": "import { useEffect, useRef } from 'react';\n\nexport function usePrevious<T>(value: T): T | undefined {\n  const ref = useRef<T | undefined>(undefined);\n\n  // TODO: update ref after render\n\n  return ref.current;\n}\n"
+  },
+  "entryFile": "usePrevious.ts",
+  "solutionCode": {
+    "App.tsx": "import { useState } from 'react';\nimport { usePrevious } from './usePrevious';\n\nexport default function App() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <p>Current: <strong>{count}</strong></p>\n      <p>Previous: <strong>{prevCount ?? 'none'}</strong></p>\n      <button onClick={() => setCount(c => c + 1)}>Increment</button>\n    </div>\n  );\n}\n",
+    "usePrevious.ts": "import { useEffect, useRef } from 'react';\n\nexport function usePrevious<T>(value: T): T | undefined {\n  const ref = useRef<T | undefined>(undefined);\n\n  useEffect(() => {\n    ref.current = value;\n  });\n\n  return ref.current;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

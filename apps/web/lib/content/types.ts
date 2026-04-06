@@ -7,6 +7,55 @@ export interface QuestionResource {
   author?: string;
 }
 
+// ---------------------------------------------------------------------------
+// React Practice Platform types
+// ---------------------------------------------------------------------------
+
+export type ReactQuestionCategory = 'component' | 'hook' | 'pattern' | 'debug' | 'styling';
+
+export interface ReactQuestion {
+  id: string;
+  title: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  tags: string[];
+  category: ReactQuestionCategory;
+  prompt: string;
+  context?: string;
+  starterCode: Record<string, string>;
+  entryFile: string;
+  solutionCode: Record<string, string>;
+  previewVisible: boolean;
+  sandpackTemplate: 'react' | 'react-ts';
+  resources?: QuestionResource[];
+  source?: {
+    repo: string;
+    path: string;
+    author: string;
+    license: string;
+  };
+}
+
+export interface ReactQuestionsManifest {
+  schemaVersion: number;
+  generatedAt: string;
+  totalQuestions: number;
+  questions: Array<{
+    id: string;
+    title: string;
+    difficulty: ReactQuestion['difficulty'];
+    category: ReactQuestionCategory;
+    tags: string[];
+  }>;
+}
+
+export interface ReactDiscoveryItem {
+  id: string;
+  title: string;
+  difficulty: ReactQuestion['difficulty'];
+  category: ReactQuestionCategory;
+  tags: string[];
+}
+
 export interface QuestionOption {
   key: 'A' | 'B' | 'C' | 'D';
   text: string;
