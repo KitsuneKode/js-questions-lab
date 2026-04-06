@@ -118,6 +118,25 @@
       "runnable": "{count} ausführbare Snippets",
       "questions": "{count} Fragen",
       "topics": "{count} Themen"
+    },
+    "reactSection": {
+      "eyebrow": "Demnächst",
+      "sectionTitle": "React-Praxis",
+      "sectionSubline": "Baue echte Komponenten, erkunde Patterns und meistere React, mit einer Live-Sandpack-IDE in jeder Challenge.",
+      "comingSoon": "Demnächst",
+      "heroTitle": "React-Praxis",
+      "heroSubtitle": "Baue echte Komponenten mit einer Live-Sandpack-IDE. Keine Konfiguration, kein Boilerplate, nur React und du.",
+      "heroTagIde": "Sandpack-IDE",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Live-Vorschau",
+      "flowLabel": "Die Übungsschleife",
+      "flowStep1": "Lesen",
+      "flowStep2": "Bauen",
+      "flowStep3": "Prüfen",
+      "patternsLabel": "Patterns",
+      "patternsTitle": "30+ React-Patterns",
+      "patternsSubtitle": "Aus Lydia Hallies javascript-react-patterns, verdichtet zu interaktiven Challenges.",
+      "patternsMore": "+20 mehr"
     }
   },
   "dashboard": {
