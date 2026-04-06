@@ -7,8 +7,8 @@ DROP VIEW IF EXISTS public.leaderboard_alltime;
 
 CREATE OR REPLACE FUNCTION public.get_weekly_leaderboard(p_limit integer DEFAULT 50)
 RETURNS TABLE (
-  position bigint,
-  rank bigint,
+  "position" bigint,
+  "rank" bigint,
   display_name text,
   total_xp bigint
 )
@@ -44,8 +44,8 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.get_alltime_leaderboard(p_limit integer DEFAULT 50)
 RETURNS TABLE (
-  position bigint,
-  rank bigint,
+  "position" bigint,
+  "rank" bigint,
   display_name text,
   total_xp bigint
 )
@@ -80,8 +80,8 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.get_my_weekly_leaderboard_position()
 RETURNS TABLE (
-  position bigint,
-  rank bigint,
+  "position" bigint,
+  "rank" bigint,
   total_xp bigint
 )
 LANGUAGE sql
@@ -118,8 +118,8 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.get_my_alltime_leaderboard_position()
 RETURNS TABLE (
-  position bigint,
-  rank bigint,
+  "position" bigint,
+  "rank" bigint,
   total_xp bigint
 )
 LANGUAGE sql
