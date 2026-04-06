@@ -12,6 +12,12 @@ During the leaderboard optimization work, we verified that:
 
 That means a true Cache Components migration should be done as an intentional performance PR, not piggybacked onto feature work.
 
+## Current status
+
+- This document is a planning artifact only.
+- No Cache Components migration has been implemented by this PRD merge itself.
+- Any runtime changes must ship in a dedicated implementation PR with full CI + staging validation.
+
 ## Goals
 
 - adopt Next 16 Cache Components where they create real wins
@@ -110,6 +116,7 @@ After this PR:
 ## Acceptance criteria
 
 - `bun run typecheck` passes
+- `bun run test` passes
 - `bun run build` passes with Cache Components enabled
 - no incompatible route segment config exports remain on migrated routes
 - shared read models use explicit cache boundaries
@@ -125,6 +132,12 @@ After this PR:
 
 ## Testing plan
 
+- CI gate order:
+  - `bun run typecheck`
+  - `bun run test`
+  - `bun run build`
+- route inventory check:
+  - `rg -n "export const (dynamic|dynamicParams|revalidate|fetchCache)" apps/web/app`
 - route-by-route `bun run build`
 - verify locale prerender output remains intact
 - verify signed-in dashboard/progress/leaderboard behavior manually
