@@ -17,7 +17,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { DomEventSimulator } from '@/components/ide/dom-event-simulator';
@@ -166,7 +166,6 @@ export function QuestionIDEClient({
   const markQuestionAnswered = useSectionProgressStore((state) => state.markQuestionAnswered);
   const primaryTag = question.tags[0];
   const t = useTranslations('ide');
-  const tCommon = useTranslations('common');
   const tQuestion = useTranslations('question');
   const tScratchpad = useTranslations('scratchpad');
 
@@ -202,8 +201,10 @@ export function QuestionIDEClient({
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [enhancedTimeline, setEnhancedTimeline] = useState<EnhancedTimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const [hasRunOnce, setHasRunOnce] = useState(false);
   const [runnerError, setRunnerError] = useState<string | null>(null);
   const [_debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual'>('timeline');
+  const wasAnsweredRef = useRef(false);
 
   const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
   const [frozenStatusScope, setFrozenStatusScope] = useState<{
@@ -234,6 +235,10 @@ export function QuestionIDEClient({
   }, [questionIndex]);
 
   const runCode = useCallback(async () => {
+    if (isRunning) {
+      return;
+    }
+
     if (!isJavascriptRuntime || !javascriptCodeBlock?.code.trim()) {
       return;
     }
@@ -267,9 +272,10 @@ export function QuestionIDEClient({
       setRunnerError(message);
       setLogs([{ type: 'error', content: message, timestamp: Date.now() }]);
     } finally {
+      setHasRunOnce(true);
       setIsRunning(false);
     }
-  }, [isAnswered, isJavascriptRuntime, javascriptCodeBlock]);
+  }, [isAnswered, isJavascriptRuntime, javascriptCodeBlock, isRunning]);
 
   const handleRecallSubmit = useCallback(() => {
     if (!recallAnswer.trim()) return;
@@ -473,6 +479,17 @@ export function QuestionIDEClient({
       router.prefetch(nextHref);
     }
   }, [nextHref, prevHref, router]);
+
+  useEffect(() => {
+    const justAnswered = !wasAnsweredRef.current && isAnswered;
+    wasAnsweredRef.current = isAnswered;
+
+    if (!justAnswered) return;
+    if (!isJavascriptRuntime) return;
+    if (!javascriptCodeBlock?.code.trim()) return;
+
+    void runCode();
+  }, [isAnswered, isJavascriptRuntime, javascriptCodeBlock, runCode]);
 
   useQuestionKeyboard({
     isAnswered,
@@ -681,7 +698,9 @@ export function QuestionIDEClient({
                       ? t('unlockRuntime')
                       : runnerError
                         ? runnerError
-                        : tCommon('loading')
+                        : hasRunOnce
+                          ? 'No console output.'
+                          : 'Run code to see output...'
                   }
                 />
               </div>

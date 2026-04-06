@@ -1,57 +1,56 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
-context_pressure: low
+updated: 2026-04-07T00:00:00Z
+branch: feat/react-platform
+session_name: React Practice Platform — Phase B/C/D/F implementation
+context_pressure: high
 ---
-
-# Session Handoff
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+- Merged PR #25: guest session ID fix (fix/guest-session-isolation → dev)
+- Audited both PRDs against codebase — full status table established
+- Created branch `feat/react-platform` off `dev`
+- Wrote full implementation plan: `docs/superpowers/plans/2026-04-07-react-platform.md`
 
 ## In Progress
 
-- None - all work complete
+- Nothing committed to `feat/react-platform` yet — plan written, execution not started
 
 ## Blocked
 
-- None
+- Session limit hit before parallel agents could be dispatched
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+- [ ] Read plan first: `docs/superpowers/plans/2026-04-07-react-platform.md` (has every file path, exact code, commit messages)
+- [ ] Task 1 (independent): Credits page `apps/web/app/[locale]/credits/page.tsx` — add 4 entries (Sandpack, react-patterns, Stream, ElevenLabs)
+- [ ] Task 2 (independent): ReactQuestion type in `apps/web/lib/content/types.ts` + 10 seed JSONs in `content/generated/react/en/` + `content/generated/react/manifest.json`
+- [ ] Task 3 (after Task 2): `apps/web/lib/content/react-loaders.ts` + tests + `scripts/parse-react-patterns.mjs` + `parse:react` script in root `package.json`
+- [ ] Task 4 (after Task 2 types): Install `@codesandbox/sandpack-react`, create all files in `apps/web/components/react-ide/`
+- [ ] Task 5 (after Tasks 3+4): React routes — `apps/web/app/[locale]/react/page.tsx` + `apps/web/app/[locale]/react/[id]/page.tsx` + loading.tsx
+- [ ] Task 6 (after Task 5): Add React nav link to site header, remove Coming Soon from landing bento
+- [ ] Open PR: feat/react-platform → dev
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
+- Seed content over submodule: 10 handcrafted questions, not git submodule — avoids CI complexity
+- React IDs are strings: "react-counter" etc — no collision with numeric JS question IDs
+- No new ProgressItem schema: React IDs slot into existing store as-is (PRD section 6.6)
+- SSG-only: force-static on all React routes, same as JS questions
+- Sandpack lazy-loaded: next/dynamic ssr:false, same pattern as question-ide-dynamic.tsx
+- i18n: React content English-only, no new locale files needed for phases B-D
 
 ## Key Files
 
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
-
-## Test Summary
-
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- Plan (read first): `docs/superpowers/plans/2026-04-07-react-platform.md`
+- Loader pattern to mirror: `apps/web/lib/content/loaders.ts`
+- Dynamic IDE pattern: `apps/web/components/ide/question-ide-dynamic.tsx`
+- IDE client structure ref: `apps/web/components/ide/question-ide-client.tsx`
+- Types to extend: `apps/web/lib/content/types.ts`
+- Credits page: `apps/web/app/[locale]/credits/page.tsx`
+- Landing bento: `apps/web/components/landing/react-bento-section.tsx`
+- Site header: `apps/web/components/site-header.tsx`
+- Content output dir: `content/generated/` (create react/en/ subdir)
+- Root scripts file: `package.json`
+- Test runner: cd apps/web && npx vitest run
+- TS check: cd apps/web && node_modules/.bin/tsc --noEmit
