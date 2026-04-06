@@ -55,7 +55,7 @@ export function updateStreak(
 
   const newLongest = Math.max(longestStreak, newStreak);
 
-  const prevStreak = lastActivityDate === today ? currentStreak : currentStreak;
+  const prevStreak = currentStreak;
   const milestoneHit = STREAK_MILESTONES.find((m) => newStreak === m && prevStreak < m) ?? null;
 
   return {

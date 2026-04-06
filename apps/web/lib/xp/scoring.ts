@@ -21,7 +21,10 @@ export interface ComputeXPParams {
   status: AnswerStatus;
   difficulty: Difficulty;
   srsData: SRSData | undefined;
-  /** All prior attempts for this question today (not including this new one). */
+  /**
+   * All prior attempts for this question (unfiltered).
+   * Used for cooldown detection (time-based) and precision bonus (date-based).
+   */
   todayAttempts: AttemptRecord[];
   /** Whether this is the first answer of the day across ALL questions. */
   isFirstAnswerToday: boolean;
@@ -53,13 +56,14 @@ function isMastered(srsData: SRSData | undefined): boolean {
 /**
  * Compute XP events for a single answer submission.
  * Returns an array of events (base + any bonuses) to be recorded.
- * Returns empty array if the attempt is within cooldown.
+ * When within cooldown, returns a single cooldown event with xpDelta: 0.
  */
 export function computeXP(params: ComputeXPParams): XPEvent[] {
   const { questionId, status, difficulty, srsData, todayAttempts, isFirstAnswerToday } = params;
   const now = new Date().toISOString();
+  const todayStr = now.slice(0, 10);
 
-  // Cooldown: same question answered within 10 minutes → 0 XP
+  // Cooldown: same question answered within 10 minutes → 0 XP (time-based, not date-based)
   if (isWithinCooldown(todayAttempts)) {
     return [{ questionId, xpDelta: 0, eventType: 'cooldown', timestamp: now }];
   }
@@ -68,6 +72,10 @@ export function computeXP(params: ComputeXPParams): XPEvent[] {
 
   if (status === 'incorrect') {
     events.push({ questionId, xpDelta: WRONG_XP, eventType: 'wrong', timestamp: now });
+    // Still apply the first-answer streak bonus even on a wrong answer
+    if (isFirstAnswerToday) {
+      events.push({ questionId, xpDelta: STREAK_BONUS, eventType: 'streak_bonus', timestamp: now });
+    }
     return events;
   }
 
@@ -82,8 +90,9 @@ export function computeXP(params: ComputeXPParams): XPEvent[] {
   });
 
   // Precision bonus: first attempt correct with no prior wrongs today on this question
-  const hadWrongToday = todayAttempts.some((a) => a.status === 'incorrect');
-  if (!mastered && !hadWrongToday && todayAttempts.length === 0) {
+  const attemptsToday = todayAttempts.filter((a) => a.attemptedAt.slice(0, 10) === todayStr);
+  const hadWrongToday = attemptsToday.some((a) => a.status === 'incorrect');
+  if (!mastered && !hadWrongToday && attemptsToday.length === 0) {
     events.push({
       questionId,
       xpDelta: PRECISION_BONUS,

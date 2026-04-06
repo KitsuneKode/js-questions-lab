@@ -3,11 +3,13 @@ import { defaultStreakState, type StreakState } from '@/lib/streaks/calculator';
 const KEY = 'jsq_streak_v1';
 
 function isValid(value: unknown): value is StreakState {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as StreakState;
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    (value as StreakState).version === 1 &&
-    typeof (value as StreakState).currentStreak === 'number'
+    v.version === 1 &&
+    typeof v.currentStreak === 'number' &&
+    typeof v.longestStreak === 'number' &&
+    (v.lastActivityDate === null || typeof v.lastActivityDate === 'string')
   );
 }
 

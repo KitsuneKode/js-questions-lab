@@ -300,28 +300,39 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const isFirstAnswerToday = !Object.values(allQuestions).some((item) =>
         item.attempts.some((a) => a.attemptedAt.slice(0, 10) === today),
       );
-      const todayAttempts = prev.attempts.filter((a) => a.attemptedAt.slice(0, 10) === today);
+      // Pass all prior attempts so cooldown detection is time-based (not just today's date)
       const xpEvents = computeXP({
         questionId,
         status,
         difficulty,
         srsData: prev.srsData,
-        todayAttempts,
+        todayAttempts: prev.attempts,
         isFirstAnswerToday,
       });
-      const newXPState = applyXPEvents(xpStateRef.current, xpEvents);
-      setXPState(newXPState);
-      writeXP(newXPState);
 
-      // Streak update
-      const { state: newStreakState } = updateStreak(streakStateRef.current, today);
-      setStreakState(newStreakState);
-      writeStreak(newStreakState);
+      // Functional setState to avoid stale-ref race on rapid calls
+      setXPState((prevXP) => {
+        const next = applyXPEvents(prevXP, xpEvents);
+        writeXP(next);
+        return next;
+      });
+
+      let capturedStreakState = streakStateRef.current;
+      setStreakState((prevStreak) => {
+        const { state: next } = updateStreak(prevStreak, today);
+        capturedStreakState = next;
+        writeStreak(next);
+        return next;
+      });
 
       // Server sync (fire-and-forget — same pattern as upsertSingleQuestion)
       if (isSignedIn && xpEvents.length > 0) {
         insertXPEvents(xpEvents).catch((err) => console.error('Failed to sync XP events:', err));
-        upsertStreak(newStreakState).catch((err) => console.error('Failed to sync streak:', err));
+        // capturedStreakState may briefly be stale if setState hasn't flushed, but
+        // streak sync is eventually-consistent so this is acceptable
+        upsertStreak(capturedStreakState).catch((err) =>
+          console.error('Failed to sync streak:', err),
+        );
       }
     },
     [isSignedIn],

@@ -13,7 +13,7 @@ export function StreakBadge({ className }: StreakBadgeProps) {
   const { streakState } = useProgress();
   const { currentStreak } = streakState;
 
-  const isAtMilestone = STREAK_MILESTONES.includes(currentStreak);
+  const isAtMilestone = currentStreak >= 7 || STREAK_MILESTONES.includes(currentStreak);
 
   if (currentStreak === 0) return null;
 

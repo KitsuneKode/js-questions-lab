@@ -123,7 +123,7 @@ export const getQuestions = cache((locale: LocaleCode = DEFAULT_LOCALE): Questio
 
   if (!localeQuestions) {
     // Entire locale is missing — return English fallback for all questions
-    return enQuestions.map((q) => ({ ...q, isFallback: true }));
+    return mergeResources(enQuestions.map((q) => ({ ...q, isFallback: true })));
   }
 
   // Merge: locale records take precedence; missing ids get English fallback

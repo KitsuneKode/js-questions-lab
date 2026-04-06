@@ -19,11 +19,13 @@ export const defaultXPState: XPState = {
 };
 
 function isValid(value: unknown): value is XPState {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as XPState;
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    (value as XPState).version === 1 &&
-    typeof (value as XPState).totalXP === 'number'
+    v.version === 1 &&
+    typeof v.totalXP === 'number' &&
+    Array.isArray(v.events) &&
+    (v.lastEarnedDate === null || typeof v.lastEarnedDate === 'string')
   );
 }
 
@@ -41,7 +43,11 @@ export function readXP(): XPState {
 
 export function writeXP(state: XPState) {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(KEY, JSON.stringify(state));
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(state));
+  } catch (err) {
+    console.warn('Failed to persist XP state:', err);
+  }
 }
 
 /** XP earned since the most recent Monday 00:00 UTC. */

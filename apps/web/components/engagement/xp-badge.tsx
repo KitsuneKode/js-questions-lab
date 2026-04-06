@@ -7,7 +7,7 @@ import { getWeeklyXP } from '@/lib/xp/storage';
 
 interface XPBadgeProps {
   className?: string;
-  /** 'full' shows level name + XP bar, 'compact' shows level + total XP only */
+  /** 'full' shows level name + XP progress bar, 'compact' shows level + weekly XP */
   variant?: 'full' | 'compact';
 }
 
@@ -49,8 +49,7 @@ export function XPBadge({ className, variant = 'compact' }: XPBadgeProps) {
       </div>
       {level.level < 6 && (
         <p className="text-[10px] text-tertiary text-right">
-          {level.currentBandXP.toLocaleString()} / {level.bandWidth.toLocaleString()} XP to next
-          level
+          {Math.max(0, level.bandWidth - level.currentBandXP).toLocaleString()} XP to next level
         </p>
       )}
     </div>
