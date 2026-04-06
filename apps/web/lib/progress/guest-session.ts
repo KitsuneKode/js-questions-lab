@@ -10,8 +10,13 @@ const DATA_KEYS = {
  * Returns the current guest session ID, creating and persisting a new UUID
  * if none exists yet. This is the stable identity for the current guest
  * session — consumed (cleared + rotated) when the user signs in.
+ *
+ * Must only be called on the client (e.g. inside useEffect).
  */
 export function getOrCreateGuestSid(): string {
+  if (typeof window === 'undefined') {
+    throw new Error('getOrCreateGuestSid must be called on the client');
+  }
   const existing = window.localStorage.getItem(SID_KEY);
   if (existing) return existing;
   const sid = crypto.randomUUID();
@@ -23,8 +28,13 @@ export function getOrCreateGuestSid(): string {
  * Generates a new guest session ID, replacing the old one. Call this on
  * sign-out (or session expiry) so the next visitor starts with a clean slate.
  * Returns the new SID.
+ *
+ * Must only be called on the client (e.g. inside useEffect).
  */
 export function rotateGuestSid(): string {
+  if (typeof window === 'undefined') {
+    throw new Error('rotateGuestSid must be called on the client');
+  }
   const sid = crypto.randomUUID();
   window.localStorage.setItem(SID_KEY, sid);
   return sid;
@@ -36,6 +46,7 @@ export function rotateGuestSid(): string {
  * does not persist.
  */
 export function clearGuestData(sid: string): void {
+  if (typeof window === 'undefined') return;
   window.localStorage.removeItem(DATA_KEYS.progress(sid));
   window.localStorage.removeItem(DATA_KEYS.xp(sid));
   window.localStorage.removeItem(DATA_KEYS.streak(sid));

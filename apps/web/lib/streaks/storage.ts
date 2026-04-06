@@ -28,5 +28,9 @@ export function readStreak(sid: string): StreakState {
 
 export function writeStreak(sid: string, state: StreakState) {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(key(sid), JSON.stringify(state));
+  try {
+    window.localStorage.setItem(key(sid), JSON.stringify(state));
+  } catch (err) {
+    console.warn('Failed to persist streak state:', err);
+  }
 }

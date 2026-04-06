@@ -65,5 +65,9 @@ export function writeProgress(sid: string, state: ProgressState) {
     return;
   }
 
-  window.localStorage.setItem(key(sid), JSON.stringify(state));
+  try {
+    window.localStorage.setItem(key(sid), JSON.stringify(state));
+  } catch (err) {
+    console.warn('Failed to persist progress state:', err);
+  }
 }

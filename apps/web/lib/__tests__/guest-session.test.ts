@@ -38,9 +38,21 @@ describe('guest session', () => {
       const sid = getOrCreateGuestSid();
       expect(sid).toBe('test-uuid-1234');
     });
+
+    it('throws when called outside the browser (SSR guard)', () => {
+      vi.stubGlobal('window', undefined);
+      expect(() => getOrCreateGuestSid()).toThrow(
+        'getOrCreateGuestSid must be called on the client',
+      );
+    });
   });
 
   describe('rotateGuestSid', () => {
+    it('throws when called outside the browser (SSR guard)', () => {
+      vi.stubGlobal('window', undefined);
+      expect(() => rotateGuestSid()).toThrow('rotateGuestSid must be called on the client');
+    });
+
     it('replaces the old SID with a new UUID', () => {
       window.localStorage.setItem(SID_KEY, 'old-sid');
       vi.mocked(crypto.randomUUID).mockReturnValueOnce(
@@ -91,6 +103,11 @@ describe('guest session', () => {
 
     it('does not throw when the keys do not exist', () => {
       expect(() => clearGuestData('nonexistent-sid')).not.toThrow();
+    });
+
+    it('is a no-op when called outside the browser (SSR guard)', () => {
+      vi.stubGlobal('window', undefined);
+      expect(() => clearGuestData('any-sid')).not.toThrow();
     });
   });
 });
