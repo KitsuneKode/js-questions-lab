@@ -6,11 +6,11 @@ import { clerkEnabled, useSafeAuth } from '@/lib/auth-utils';
 import { useProgress } from '@/lib/progress/progress-context';
 
 const DISMISS_KEY = 'jsq_signup_dismissed';
-const THRESHOLD = 3;
+const SESSION_KEY = 'jsq_signup_prompt_seen_session';
 
 export function useGuestPrompt() {
   const { isLoaded, isSignedIn } = useSafeAuth();
-  const { state, ready } = useProgress();
+  const { ready } = useProgress();
   const shownRef = useRef(false);
 
   useEffect(() => {
@@ -18,12 +18,11 @@ export function useGuestPrompt() {
 
     const dismissed = localStorage.getItem(DISMISS_KEY);
     if (dismissed) return;
-
-    const answered = Object.values(state.questions).filter((q) => q.attempts.length > 0).length;
-
-    if (answered < THRESHOLD) return;
+    const seenThisSession = sessionStorage.getItem(SESSION_KEY);
+    if (seenThisSession) return;
 
     shownRef.current = true;
+    sessionStorage.setItem(SESSION_KEY, '1');
 
     toast('Sign up to sync your progress across devices', {
       duration: 10000,
@@ -40,5 +39,5 @@ export function useGuestPrompt() {
         },
       },
     });
-  }, [isLoaded, isSignedIn, ready, state]);
+  }, [isLoaded, isSignedIn, ready]);
 }
