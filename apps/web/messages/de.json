@@ -49,7 +49,9 @@
       "clear": "Alles löschen",
       "showLess": "Weniger anzeigen",
       "more": "+{count} mehr",
-      "resetTags": "Themen zurücksetzen ({count})"
+      "resetTags": "Themen zurücksetzen ({count})",
+      "saved": "Gespeichert",
+      "savedEmpty": "Fragen mit Lesezeichen versehen, um sie hier zu filtern"
     }
   },
   "question": {
@@ -380,7 +382,8 @@
     "propagationReplay": "Propagationswiedergabe",
     "propagationReplayDesc": "Jede Zeile zeigt den aktuellen Knoten, der den Klick behandelt, während sich das Bubbling nach außen bewegt.",
     "clickToInspect": "Klicken Sie auf einen Knoten, um die propagierte Konsolenausgabe zu untersuchen.",
-    "clickable": "Klickbar"
+    "clickable": "Klickbar",
+    "resourcesHeader": "Referenzen"
   },
   "scratchpad": {
     "title": "Notizblock",

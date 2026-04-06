@@ -49,7 +49,9 @@
       "clear": "Limpar tudo",
       "showLess": "Mostrar menos",
       "more": "+{count} mais",
-      "resetTags": "Resetar tags ({count})"
+      "resetTags": "Resetar tags ({count})",
+      "saved": "Salvos",
+      "savedEmpty": "Salve questões para filtrá-las aqui"
     }
   },
   "question": {
@@ -380,7 +382,8 @@
     "propagationReplay": "Reprodução de Propagação",
     "propagationReplayDesc": "Cada linha mostra o nó atual tratando o clique conforme o bubbling se move outward.",
     "clickToInspect": "Clique em um nó para inspecionar a saída do console propagado.",
-    "clickable": "Clicável"
+    "clickable": "Clicável",
+    "resourcesHeader": "Referências"
   },
   "scratchpad": {
     "title": "Rascunho",

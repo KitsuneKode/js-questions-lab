@@ -49,7 +49,9 @@
       "clear": "すべてクリア",
       "showLess": "表示を減らす",
       "more": "+{count}件をさらに表示",
-      "resetTags": "タグをリセット ({count})"
+      "resetTags": "タグをリセット ({count})",
+      "saved": "保存済み",
+      "savedEmpty": "ここでフィルタリングするには質問をブックマークしてください"
     }
   },
   "question": {
@@ -380,7 +382,8 @@
     "propagationReplay": "プロパゲーションリプレイ",
     "propagationReplayDesc": "各行は、バブリングが外側へ移動するにつれてクリックを処理する現在のノードを示します。",
     "clickToInspect": "ノードをクリックして伝播コンソール出力を検査します。",
-    "clickable": "クリック可能"
+    "clickable": "クリック可能",
+    "resourcesHeader": "参考資料"
   },
   "scratchpad": {
     "title": "スクラッチパッド",

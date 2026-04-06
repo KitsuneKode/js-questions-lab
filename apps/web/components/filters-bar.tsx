@@ -2,6 +2,7 @@
 
 import {
   IconFlame as Flame,
+  IconBookmark,
   IconProgress as Progress,
   IconSearch as Search,
   IconX as X,
@@ -30,6 +31,7 @@ import {
 import { buildQuestionScopeQuery, type ListingStatus } from '@/lib/content/query';
 import type { QuestionDiscoveryItem } from '@/lib/content/types';
 import { useFilterPending } from '@/lib/filters/filter-pending-context';
+import { useProgress } from '@/lib/progress/progress-context';
 import { cn } from '@/lib/utils';
 
 const difficultyLabelKeys = {
@@ -111,6 +113,25 @@ export function FiltersBar({
   const [progressOpen, setProgressOpen] = useState(false);
   const normalizedStatus: ListingStatus =
     status === 'answered' || status === 'unanswered' || status === 'bookmarked' ? status : 'all';
+
+  const { state: progressState } = useProgress();
+  const bookmarkedCount = useMemo(
+    () => Object.values(progressState.questions).filter((item) => item.bookmarked).length,
+    [progressState.questions],
+  );
+
+  const toggleBookmarkFilter = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', '1');
+    if (normalizedStatus === 'bookmarked') {
+      params.delete('status');
+    } else {
+      params.set('status', 'bookmarked');
+    }
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
+  }, [normalizedStatus, pathname, router, searchParams, startTransition]);
 
   const allTags = useMemo(() => ['all', ...tags], [tags]);
   const displayedTags = useMemo(
@@ -413,6 +434,37 @@ export function FiltersBar({
             <Progress className="h-4 w-4" />
             {tProgress('title')}
           </Button>
+
+          {/* Saved / Bookmarks Filter */}
+          <button
+            type="button"
+            onClick={bookmarkedCount > 0 ? toggleBookmarkFilter : undefined}
+            disabled={bookmarkedCount === 0}
+            title={bookmarkedCount === 0 ? t('filters.savedEmpty') : undefined}
+            className={cn(
+              'flex items-center gap-2 text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-lg border transition-all duration-300 active:scale-[0.95]',
+              normalizedStatus === 'bookmarked'
+                ? 'bg-primary text-background border-primary shadow-[0_0_25px_rgba(245,158,11,0.4)]'
+                : bookmarkedCount === 0
+                  ? 'bg-surface border-border-subtle text-tertiary cursor-not-allowed opacity-50'
+                  : 'bg-surface border-border-subtle text-secondary hover:bg-elevated hover:border-border-focus',
+            )}
+          >
+            <IconBookmark
+              className={cn('h-3.5 w-3.5', normalizedStatus === 'bookmarked' && 'fill-current')}
+            />
+            {t('filters.saved')}
+            {bookmarkedCount > 0 && (
+              <span
+                className={cn(
+                  'text-[10px] font-mono',
+                  normalizedStatus === 'bookmarked' ? 'text-background/80' : 'text-tertiary',
+                )}
+              >
+                {bookmarkedCount}
+              </span>
+            )}
+          </button>
 
           <button
             type="button"
