@@ -26,7 +26,7 @@ export function useGuestPrompt() {
     if (!clerkEnabled || !isLoaded || !ready || isSignedIn || shownRef.current) return;
 
     // Migrate old permanent-dismiss behavior to snooze-based behavior.
-    if (localStorage.getItem(LEGACY_DISMISS_KEY)) {
+    if (localStorage.getItem(LEGACY_DISMISS_KEY) !== null) {
       localStorage.removeItem(LEGACY_DISMISS_KEY);
       localStorage.setItem(SNOOZE_UNTIL_KEY, String(Date.now() + SNOOZE_DURATION_MS));
     }
