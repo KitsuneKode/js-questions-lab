@@ -11,6 +11,13 @@ import {
   useState,
 } from 'react';
 import { useSafeAuth } from '@/lib/auth-utils';
+import type { Difficulty } from '@/lib/content/types';
+import {
+  applyServerSelfGrade,
+  fetchStreak,
+  fetchXPState,
+  recordAttempt,
+} from '@/lib/engagement/actions';
 import {
   fetchServerProgress,
   syncProgressToServer,
@@ -27,6 +34,11 @@ import {
   writeProgress,
 } from '@/lib/progress/storage';
 import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
+import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
+import { readStreak, writeStreak } from '@/lib/streaks/storage';
+import { computeXP } from '@/lib/xp/scoring';
+import type { XPState } from '@/lib/xp/storage';
+import { applyXPEvents, defaultXPState, readXP, writeXP } from '@/lib/xp/storage';
 
 // ---------------------------------------------------------------------------
 // Actions
@@ -34,9 +46,15 @@ import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metada
 
 type ProgressAction =
   | { type: 'init'; state: ProgressState }
-  | { type: 'attempt'; questionId: number; selected: 'A' | 'B' | 'C' | 'D'; status: AnswerStatus }
+  | {
+      type: 'attempt';
+      questionId: number;
+      selected: 'A' | 'B' | 'C' | 'D' | null;
+      status: AnswerStatus;
+    }
   | { type: 'bookmark'; questionId: number }
   | { type: 'grade'; questionId: number; grade: Grade }
+  | { type: 'replace'; item: ProgressItem }
   | { type: 'merge'; serverItems: ProgressItem[] };
 
 function ensureItem(state: ProgressState, questionId: number): ProgressItem {
@@ -116,6 +134,16 @@ function progressReducer(state: ProgressState, action: ProgressAction): Progress
       };
     }
 
+    case 'replace': {
+      return {
+        ...state,
+        questions: {
+          ...state.questions,
+          [String(action.item.questionId)]: action.item,
+        },
+      };
+    }
+
     case 'merge': {
       const merged = { ...state.questions };
       for (const serverItem of action.serverItems) {
@@ -135,9 +163,16 @@ interface ProgressContextValue {
   state: ProgressState;
   ready: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
-  saveAttempt: (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => void;
+  saveAttempt: (
+    questionId: number,
+    selected: 'A' | 'B' | 'C' | 'D' | null,
+    status: AnswerStatus,
+    options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+  ) => void;
   saveSelfGrade: (questionId: number, grade: Grade) => void;
   toggleBookmark: (questionId: number) => void;
+  xpState: XPState;
+  streakState: StreakState;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -146,6 +181,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(progressReducer, defaultProgressState);
   const [ready, setReady] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle');
+  const [xpState, setXPState] = useState<XPState>(defaultXPState);
+  const [streakState, setStreakState] = useState<StreakState>(defaultStreakState);
   const prevStateRef = useRef(state);
   // Always-fresh state reference — assigned at render time so callbacks
   // can read current state without needing state in their dependency arrays.
@@ -157,6 +194,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loaded = readProgress();
     dispatch({ type: 'init', state: loaded });
+    setXPState(readXP());
+    setStreakState(readStreak());
     setReady(true);
   }, []);
 
@@ -169,11 +208,22 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
     (async () => {
       try {
-        const serverItems = await fetchServerProgress();
+        const [serverItems, serverXP, serverStreak] = await Promise.all([
+          fetchServerProgress(),
+          fetchXPState(),
+          fetchStreak(),
+        ]);
         const localState = readProgress();
 
         if (!cancelled) {
           dispatch({ type: 'merge', serverItems });
+          setXPState(serverXP);
+          writeXP(serverXP);
+
+          // Merge streak: server wins if its last_activity_date is newer
+          const authoritativeStreak = serverStreak ?? defaultStreakState;
+          setStreakState(authoritativeStreak);
+          writeStreak(authoritativeStreak);
 
           const localNewer: ProgressItem[] = [];
           for (const localItem of Object.values(localState.questions)) {
@@ -215,24 +265,20 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
 
   const saveAttempt = useCallback(
-    (questionId: number, selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) => {
+    (
+      questionId: number,
+      selected: 'A' | 'B' | 'C' | 'D' | null,
+      status: AnswerStatus,
+      options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+    ) => {
       const now = new Date().toISOString();
+      const submissionId =
+        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${questionId}:${now}:${selected ?? 'recall'}`;
+      const difficulty = options?.difficulty ?? 'beginner';
       const prev = ensureItem(stateRef.current, questionId);
-      const updated: ProgressItem = {
-        ...prev,
-        attempts: [...prev.attempts, { selected, status, attemptedAt: now }],
-        updatedAt: now,
-      };
       dispatch({ type: 'attempt', questionId, selected, status });
-      if (isSignedIn) {
-        setSyncStatus('syncing');
-        upsertSingleQuestion(updated)
-          .then(() => setSyncStatus('idle'))
-          .catch((err) => {
-            console.error('Failed to sync attempt:', err);
-            setSyncStatus('error');
-          });
-      }
 
       // Auto-sync section progress
       const questionTags = getQuestionTags(questionId);
@@ -246,29 +292,80 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         }
         store.markQuestionAnswered(tag, status === 'correct');
       }
+
+      if (isSignedIn) {
+        setSyncStatus('syncing');
+        recordAttempt({
+          questionId,
+          selected,
+          submissionId,
+          recallAnswer: options?.recallAnswer,
+          locale: options?.locale,
+        })
+          .then((result) => {
+            if (!result) return;
+            dispatch({ type: 'replace', item: result.progressItem });
+            setXPState(result.xpState);
+            writeXP(result.xpState);
+            setStreakState(result.streakState);
+            writeStreak(result.streakState);
+            setSyncStatus('idle');
+          })
+          .catch((err) => {
+            console.error('Failed to sync authoritative attempt:', err);
+            setSyncStatus('error');
+          });
+        return;
+      }
+
+      // XP computation — derived inside functional updater so rapid calls can't
+      // both see isFirstAnswerToday=true (React applies updaters sequentially,
+      // each receiving the previous one's result, making this race-free).
+      const today = new Date().toISOString().slice(0, 10);
+
+      setXPState((prevXP) => {
+        // isFirstAnswerToday from XP state: if XP was already earned today,
+        // lastEarnedDate will equal today after the first successful answer.
+        const isFirstAnswerToday = prevXP.lastEarnedDate !== today;
+        const computedXPEvents = computeXP({
+          questionId,
+          status,
+          difficulty,
+          srsData: prev.srsData,
+          priorAttempts: prev.attempts,
+          isFirstAnswerToday,
+        });
+        const next = applyXPEvents(prevXP, computedXPEvents);
+        writeXP(next);
+        return next;
+      });
+
+      setStreakState((prevStreak) => {
+        const { state: next } = updateStreak(prevStreak, today);
+        writeStreak(next);
+        return next;
+      });
     },
     [isSignedIn],
   );
 
   const saveSelfGrade = useCallback(
     (questionId: number, grade: Grade) => {
-      const now = new Date().toISOString();
-      const prev = ensureItem(stateRef.current, questionId);
-      const newSrsData = calculateNextReview(grade, prev.srsData);
-      const updated: ProgressItem = {
-        ...prev,
-        srsData: newSrsData,
-        updatedAt: now,
-      };
       dispatch({ type: 'grade', questionId, grade });
       if (isSignedIn) {
         setSyncStatus('syncing');
-        upsertSingleQuestion(updated)
-          .then(() => setSyncStatus('idle'))
+        applyServerSelfGrade(questionId, grade)
+          .then((serverItem) => {
+            if (serverItem) {
+              dispatch({ type: 'replace', item: serverItem });
+            }
+            setSyncStatus('idle');
+          })
           .catch((err) => {
             console.error('Failed to sync grade:', err);
             setSyncStatus('error');
           });
+        return;
       }
     },
     [isSignedIn],
@@ -304,6 +401,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     saveAttempt,
     saveSelfGrade,
     toggleBookmark,
+    xpState,
+    streakState,
   };
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

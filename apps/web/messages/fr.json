@@ -10,7 +10,8 @@
     "language": "Langue",
     "contact": "Contact",
     "shortcuts": "Raccourcis",
-    "signIn": "Connexion"
+    "signIn": "Connexion",
+    "leaderboard": "Classement"
   },
   "questions": {
     "title": "Bibliothèque de questions",
@@ -449,5 +450,16 @@
     "badgeMicro": "Microtâche",
     "badgeTask": "Tâche",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "description": "Découvrez qui gagne le plus d'XP et grimpe dans les rangs.",
+    "eyebrow": "Classements",
+    "subtitle": "Rivalisez, apprenez et progressez avec la communauté.",
+    "weeklyTitle": "Cette semaine",
+    "allTimeTitle": "Tous les temps",
+    "resetsMonday": "Remis à zéro le lundi",
+    "empty": "Aucune entrée pour le moment. Soyez le premier à gagner des XP !",
+    "you": "Vous"
   }
 }

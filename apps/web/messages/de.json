@@ -10,7 +10,8 @@
     "language": "Sprache",
     "contact": "Kontakt",
     "shortcuts": "Tastenkürzel",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "leaderboard": "Rangliste"
   },
   "questions": {
     "title": "Fragenbibliothek",
@@ -449,5 +450,16 @@
     "badgeMicro": "Microtask",
     "badgeTask": "Task",
     "badgeConsole": "Konsole"
+  },
+  "leaderboard": {
+    "title": "Rangliste",
+    "description": "Sieh, wer die meisten XP verdient und die Rangliste erklimmt.",
+    "eyebrow": "Rangliste",
+    "subtitle": "Konkurriere, lerne und steige mit der Community auf.",
+    "weeklyTitle": "Diese Woche",
+    "allTimeTitle": "Alle Zeiten",
+    "resetsMonday": "Zurückgesetzt montags",
+    "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
+    "you": "Du"
   }
 }

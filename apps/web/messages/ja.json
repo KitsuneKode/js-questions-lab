@@ -10,7 +10,8 @@
     "language": "言語",
     "contact": "お問い合わせ",
     "shortcuts": "ショートカット",
-    "signIn": "サインイン"
+    "signIn": "サインイン",
+    "leaderboard": "ランキング"
   },
   "questions": {
     "title": "問題ライブラリ",
@@ -449,5 +450,16 @@
     "badgeMicro": "マイクロタスク",
     "badgeTask": "タスク",
     "badgeConsole": "コンソール"
+  },
+  "leaderboard": {
+    "title": "ランキング",
+    "description": "最もXPを獲得してランクを上げているユーザーを確認しよう。",
+    "eyebrow": "順位",
+    "subtitle": "コミュニティとともに競い、学び、レベルアップしよう。",
+    "weeklyTitle": "今週",
+    "allTimeTitle": "全期間",
+    "resetsMonday": "毎週月曜日にリセット",
+    "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
+    "you": "あなた"
   }
 }

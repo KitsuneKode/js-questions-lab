@@ -10,7 +10,8 @@
     "language": "Idioma",
     "contact": "Contato",
     "shortcuts": "Atalhos",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "leaderboard": "Classificação"
   },
   "questions": {
     "title": "Biblioteca de perguntas",
@@ -449,5 +450,16 @@
     "badgeMicro": "Microtarefa",
     "badgeTask": "Tarefa",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Classificação",
+    "description": "Veja quem está ganhando mais XP e subindo nos ranks.",
+    "eyebrow": "Rankings",
+    "subtitle": "Compita, aprenda e evolua junto com a comunidade.",
+    "weeklyTitle": "Esta Semana",
+    "allTimeTitle": "Todos os Tempos",
+    "resetsMonday": "Reseta às segundas",
+    "empty": "Nenhuma entrada ainda. Seja o primeiro a ganhar XP!",
+    "you": "Você"
   }
 }

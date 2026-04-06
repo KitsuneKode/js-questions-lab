@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import type { Difficulty } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
 import type { Grade } from '@/lib/progress/srs';
 import type { AnswerStatus, ProgressItem } from '@/lib/progress/storage';
@@ -24,8 +25,11 @@ export function useQuestionProgress(questionId: number) {
   return {
     ready,
     item,
-    saveAttempt: (selected: 'A' | 'B' | 'C' | 'D', status: AnswerStatus) =>
-      saveAttempt(questionId, selected, status),
+    saveAttempt: (
+      selected: 'A' | 'B' | 'C' | 'D' | null,
+      status: AnswerStatus,
+      options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+    ) => saveAttempt(questionId, selected, status, options),
     saveSelfGrade: (grade: Grade) => saveSelfGrade(questionId, grade),
     toggleBookmark: () => toggleBookmark(questionId),
   };
