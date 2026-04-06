@@ -19,10 +19,16 @@ const locales: Record<string, typeof enUS> = {
 };
 
 function ClerkAuthBridge({ children }: { children: ReactNode }) {
-  const { isSignedIn, userId } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useAuth();
 
   return (
-    <SafeAuthProvider value={{ isSignedIn: Boolean(isSignedIn), userId: userId ?? null }}>
+    <SafeAuthProvider
+      value={{
+        isLoaded,
+        isSignedIn: Boolean(isSignedIn),
+        userId: userId ?? null,
+      }}
+    >
       {children}
     </SafeAuthProvider>
   );

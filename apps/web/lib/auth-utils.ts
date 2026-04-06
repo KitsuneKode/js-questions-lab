@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { createContext, createElement, useContext } from 'react';
 
 export interface SafeAuthState {
+  isLoaded: boolean;
   isSignedIn: boolean;
   userId: string | null;
 }
@@ -13,7 +14,7 @@ export const clerkEnabled =
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith('pk_') &&
   !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('REPLACE');
 
-export const guestAuth: SafeAuthState = { isSignedIn: false, userId: null };
+export const guestAuth: SafeAuthState = { isLoaded: true, isSignedIn: false, userId: null };
 
 const SafeAuthContext = createContext<SafeAuthState>(guestAuth);
 
