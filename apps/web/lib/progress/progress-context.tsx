@@ -23,6 +23,7 @@ import {
   syncProgressToServer,
   upsertSingleQuestion,
 } from '@/lib/progress/actions';
+import { clearGuestData, getOrCreateGuestSid, rotateGuestSid } from '@/lib/progress/guest-session';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
 import {
@@ -184,22 +185,49 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [xpState, setXPState] = useState<XPState>(defaultXPState);
   const [streakState, setStreakState] = useState<StreakState>(defaultStreakState);
   const prevStateRef = useRef(state);
-  // Always-fresh state reference — assigned at render time so callbacks
-  // can read current state without needing state in their dependency arrays.
   const stateRef = useRef(state);
   stateRef.current = state;
-  const { isSignedIn } = useSafeAuth();
 
-  // Init: load from localStorage on mount
+  // Holds the guest session ID for the lifetime of this session.
+  // Created on mount, consumed (cleared + rotated) on sign-in,
+  // rotated on sign-out / session expiry.
+  const guestSidRef = useRef<string | null>(null);
+
+  const { isSignedIn } = useSafeAuth();
+  // Track the previous isSignedIn value to detect sign-out transitions.
+  const prevSignedInRef = useRef(isSignedIn);
+
+  // ---------------------------------------------------------------------------
+  // Init: load guest data from session-keyed localStorage on mount
+  // ---------------------------------------------------------------------------
   useEffect(() => {
-    const loaded = readProgress();
-    dispatch({ type: 'init', state: loaded });
-    setXPState(readXP());
-    setStreakState(readStreak());
+    const sid = getOrCreateGuestSid();
+    guestSidRef.current = sid;
+    dispatch({ type: 'init', state: readProgress(sid) });
+    setXPState(readXP(sid));
+    setStreakState(readStreak(sid));
     setReady(true);
   }, []);
 
-  // Merge server progress on sign-in
+  // ---------------------------------------------------------------------------
+  // Sign-out / session expiry detection
+  // Reset in-memory state and rotate the guest SID so the next session
+  // starts completely clean.
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (prevSignedInRef.current && !isSignedIn) {
+      const newSid = rotateGuestSid();
+      guestSidRef.current = newSid;
+      dispatch({ type: 'init', state: defaultProgressState });
+      setXPState(defaultXPState);
+      setStreakState(defaultStreakState);
+    }
+    prevSignedInRef.current = isSignedIn;
+  }, [isSignedIn]);
+
+  // ---------------------------------------------------------------------------
+  // Sign-in: merge guest session into server, then consume the guest session
+  // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isSignedIn || !ready) return;
 
@@ -208,25 +236,27 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
     (async () => {
       try {
+        const guestSid = guestSidRef.current;
+        // Read guest progress before fetching server data so we capture
+        // exactly what was accumulated in this guest session.
+        const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
+
         const [serverItems, serverXP, serverStreak] = await Promise.all([
           fetchServerProgress(),
           fetchXPState(),
           fetchStreak(),
         ]);
-        const localState = readProgress();
 
         if (!cancelled) {
           dispatch({ type: 'merge', serverItems });
           setXPState(serverXP);
-          writeXP(serverXP);
-
-          // Merge streak: server wins if its last_activity_date is newer
+          // Streak: server is authoritative for authenticated state
           const authoritativeStreak = serverStreak ?? defaultStreakState;
           setStreakState(authoritativeStreak);
-          writeStreak(authoritativeStreak);
 
+          // Push any guest progress that is newer than what's on the server
           const localNewer: ProgressItem[] = [];
-          for (const localItem of Object.values(localState.questions)) {
+          for (const localItem of Object.values(guestProgress.questions)) {
             const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
             if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
               localNewer.push(localItem);
@@ -235,6 +265,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
           if (localNewer.length > 0) {
             await syncProgressToServer(localNewer);
+          }
+
+          // Consume the guest session: delete its data and rotate to a fresh SID.
+          // Any future sign-out will start with a clean guest session.
+          if (guestSid) {
+            clearGuestData(guestSid);
+            const newSid = rotateGuestSid();
+            guestSidRef.current = newSid;
           }
 
           setSyncStatus('idle');
@@ -252,13 +290,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     };
   }, [isSignedIn, ready]);
 
-  // Persist to localStorage on every state change
+  // ---------------------------------------------------------------------------
+  // Persist guest progress to session-keyed localStorage on state changes.
+  // Authenticated users are skipped — server is the source of truth for them.
+  // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!ready) return;
+    if (isSignedIn) return;
     if (state === prevStateRef.current) return;
     prevStateRef.current = state;
-    writeProgress(state);
-  }, [ready, state]);
+    if (guestSidRef.current) {
+      writeProgress(guestSidRef.current, state);
+    }
+  }, [ready, state, isSignedIn]);
 
   // ---------------------------------------------------------------------------
   // Mutations — dispatch to reducer + immediate server sync if signed in
@@ -280,13 +324,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const prev = ensureItem(stateRef.current, questionId);
       dispatch({ type: 'attempt', questionId, selected, status });
 
-      // Auto-sync section progress
       const questionTags = getQuestionTags(questionId);
       const tagCounts = getTagQuestionCounts();
 
       for (const tag of questionTags) {
         const store = useSectionProgressStore.getState();
-        // Initialize if first time
         if (!store.sections[tag]) {
           store.updateSection(tag, { totalQuestions: tagCounts[tag] || 1 });
         }
@@ -305,10 +347,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           .then((result) => {
             if (!result) return;
             dispatch({ type: 'replace', item: result.progressItem });
+            // Server is authoritative for authenticated users — update in-memory
+            // state only, no localStorage write.
             setXPState(result.xpState);
-            writeXP(result.xpState);
             setStreakState(result.streakState);
-            writeStreak(result.streakState);
             setSyncStatus('idle');
           })
           .catch((err) => {
@@ -318,14 +360,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // XP computation — derived inside functional updater so rapid calls can't
-      // both see isFirstAnswerToday=true (React applies updaters sequentially,
-      // each receiving the previous one's result, making this race-free).
+      // Guest path: compute XP and streak locally and persist to session storage.
       const today = new Date().toISOString().slice(0, 10);
+      const sid = guestSidRef.current;
 
       setXPState((prevXP) => {
-        // isFirstAnswerToday from XP state: if XP was already earned today,
-        // lastEarnedDate will equal today after the first successful answer.
         const isFirstAnswerToday = prevXP.lastEarnedDate !== today;
         const computedXPEvents = computeXP({
           questionId,
@@ -336,13 +375,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           isFirstAnswerToday,
         });
         const next = applyXPEvents(prevXP, computedXPEvents);
-        writeXP(next);
+        if (sid) writeXP(sid, next);
         return next;
       });
 
       setStreakState((prevStreak) => {
         const { state: next } = updateStreak(prevStreak, today);
-        writeStreak(next);
+        if (sid) writeStreak(sid, next);
         return next;
       });
     },
