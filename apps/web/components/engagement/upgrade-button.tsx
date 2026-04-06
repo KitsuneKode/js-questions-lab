@@ -28,7 +28,7 @@ export function UpgradeButton({ className }: UpgradeButtonProps) {
 
     startTransition(async () => {
       try {
-        const { checkoutUrl } = await createProCheckout(user.id, email);
+        const { checkoutUrl } = await createProCheckout();
         window.location.assign(checkoutUrl);
       } catch (err) {
         console.error('Failed to create checkout:', err);

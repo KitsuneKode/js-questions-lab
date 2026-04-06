@@ -1,5 +1,6 @@
 'use server';
 
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { createCheckout, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 
 function initLemonSqueezy() {
@@ -11,15 +12,19 @@ function initLemonSqueezy() {
 }
 
 /**
- * Creates a Lemon Squeezy checkout session for the Pro monthly plan.
- * Passes userId as custom data so the webhook can match the user.
+ * Creates a Lemon Squeezy checkout session for the authenticated user.
+ * Identity is derived server-side to prevent client-side impersonation.
  *
  * @returns The hosted checkout URL to redirect the user to.
  */
-export async function createProCheckout(
-  userId: string,
-  userEmail: string,
-): Promise<{ checkoutUrl: string }> {
+export async function createProCheckout(): Promise<{ checkoutUrl: string }> {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error('You must be signed in to start checkout');
+  }
+
+  const user = await currentUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
   if (!userEmail) {
     throw new Error('User primary email is required for checkout');
   }
