@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-04-04T12:51:00.347Z",
+  "generatedAt": "2026-04-06T10:14:05.585Z",
   "supported": [
     "en",
     "es",
@@ -16,42 +16,42 @@
       "label": "English",
       "questionCount": 155,
       "sourceHash": "e29b5b485813216c0935a25705653cc859025e4363c80caa569b7b972ead6720",
-      "generatedAt": "2026-03-29T02:22:01.814Z"
+      "generatedAt": "2026-04-06T10:14:01.319Z"
     },
     {
       "code": "es",
       "label": "Español",
       "questionCount": 116,
       "sourceHash": "60a3ace8f6b4297bd7e885b699cc8978dc3f61b3133c4099910a0310234443e0",
-      "generatedAt": "2026-03-29T02:22:01.815Z"
+      "generatedAt": "2026-04-06T10:14:01.319Z"
     },
     {
       "code": "fr",
       "label": "Français",
       "questionCount": 64,
       "sourceHash": "cbbacfc344a1c99f3d01f44a76ddac5837cb5e1a19e9c785c54aa4599e23bb47",
-      "generatedAt": "2026-03-29T02:22:01.815Z"
+      "generatedAt": "2026-04-06T10:14:01.319Z"
     },
     {
       "code": "de",
       "label": "Deutsch",
       "questionCount": 133,
       "sourceHash": "0c3839e20bd7d79cda2959cab8e1397ecf61a88015d4d960509c0f62921c3a3a",
-      "generatedAt": "2026-03-29T02:22:01.813Z"
+      "generatedAt": "2026-04-06T10:14:01.319Z"
     },
     {
       "code": "ja",
       "label": "日本語",
       "questionCount": 86,
       "sourceHash": "1d6ecfc9a8f45a0e1fb04465c85ccb176bd5338a7a814ef2b6ab840aed93bc5b",
-      "generatedAt": "2026-03-29T02:22:01.815Z"
+      "generatedAt": "2026-04-06T10:14:01.320Z"
     },
     {
       "code": "pt-BR",
       "label": "Português (BR)",
       "questionCount": 80,
       "sourceHash": "453306c6b2f3332e4983842eadbdbbdec028d83d4bb78c8f0092e17b7328c38a",
-      "generatedAt": "2026-03-29T02:22:01.816Z"
+      "generatedAt": "2026-04-06T10:14:01.320Z"
     }
   ]
 }
