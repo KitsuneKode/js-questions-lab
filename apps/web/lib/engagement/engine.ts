@@ -137,7 +137,7 @@ export function buildAuthoritativeAttemptResult({
     status,
     difficulty: question.difficulty,
     srsData: baseProgress.srsData,
-    todayAttempts: priorAttemptSummaries,
+    priorAttempts: priorAttemptSummaries,
     isFirstAnswerToday,
   }).map((event) => ({ ...event, timestamp: answeredAt }));
 

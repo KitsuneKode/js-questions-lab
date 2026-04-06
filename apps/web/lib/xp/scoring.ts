@@ -27,7 +27,7 @@ export interface ComputeXPParams {
    * All prior attempts for this question (unfiltered).
    * Used for cooldown detection (time-based) and precision bonus (date-based).
    */
-  todayAttempts: AttemptSummary[];
+  priorAttempts: AttemptSummary[];
   /** Whether this is the first answer of the day across ALL questions. */
   isFirstAnswerToday: boolean;
 }
@@ -61,12 +61,12 @@ function isMastered(srsData: SRSData | undefined): boolean {
  * When within cooldown, returns a single cooldown event with xpDelta: 0.
  */
 export function computeXP(params: ComputeXPParams): XPEvent[] {
-  const { questionId, status, difficulty, srsData, todayAttempts, isFirstAnswerToday } = params;
+  const { questionId, status, difficulty, srsData, priorAttempts, isFirstAnswerToday } = params;
   const now = new Date().toISOString();
   const todayStr = now.slice(0, 10);
 
   // Cooldown: same question answered within 10 minutes → 0 XP (time-based, not date-based)
-  if (isWithinCooldown(todayAttempts)) {
+  if (isWithinCooldown(priorAttempts)) {
     return [{ questionId, xpDelta: 0, eventType: 'cooldown', timestamp: now }];
   }
 
@@ -92,7 +92,7 @@ export function computeXP(params: ComputeXPParams): XPEvent[] {
   });
 
   // Precision bonus: first attempt correct with no prior wrongs today on this question
-  const attemptsToday = todayAttempts.filter((a) => a.attemptedAt.slice(0, 10) === todayStr);
+  const attemptsToday = priorAttempts.filter((a) => a.attemptedAt.slice(0, 10) === todayStr);
   const hadWrongToday = attemptsToday.some((a) => a.status === 'incorrect');
   if (!mastered && !hadWrongToday && attemptsToday.length === 0) {
     events.push({

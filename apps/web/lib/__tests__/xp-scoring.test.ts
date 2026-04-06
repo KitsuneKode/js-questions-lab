@@ -25,7 +25,7 @@ describe('computeXP', () => {
         status: 'incorrect',
         difficulty: 'advanced',
         srsData: undefined,
-        todayAttempts: [],
+        priorAttempts: [],
         isFirstAnswerToday: true,
       }).map((event) => [event.eventType, event.xpDelta]),
     ).toEqual([
@@ -43,7 +43,7 @@ describe('computeXP', () => {
       status: 'correct',
       difficulty: 'beginner',
       srsData: undefined,
-      todayAttempts: [createAttempt('incorrect', '2026-04-05T23:59:00.000Z')],
+      priorAttempts: [createAttempt('incorrect', '2026-04-05T23:59:00.000Z')],
       isFirstAnswerToday: false,
     });
 
@@ -62,7 +62,7 @@ describe('computeXP', () => {
         status: 'correct',
         difficulty: 'beginner',
         srsData: undefined,
-        todayAttempts: [createAttempt('incorrect', '2026-04-05T08:00:00.000Z')],
+        priorAttempts: [createAttempt('incorrect', '2026-04-05T08:00:00.000Z')],
         isFirstAnswerToday: false,
       }).map((event) => event.eventType),
     ).toEqual(['correct', 'precision_bonus']);
@@ -82,7 +82,7 @@ describe('computeXP', () => {
         easeFactor: 2.5,
         nextReviewDate: '2026-04-20T12:00:00.000Z',
       },
-      todayAttempts: [],
+      priorAttempts: [],
       isFirstAnswerToday: false,
     });
 
@@ -101,7 +101,7 @@ describe('computeXP', () => {
         status: 'correct',
         difficulty: 'intermediate',
         srsData: undefined,
-        todayAttempts: [],
+        priorAttempts: [],
         isFirstAnswerToday: true,
       }).map((event) => [event.eventType, event.xpDelta]),
     ).toEqual([

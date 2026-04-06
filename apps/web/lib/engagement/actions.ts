@@ -1,5 +1,6 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { auth } from '@clerk/nextjs/server';
 import { getQuestionById } from '@/lib/content/loaders';
 import {
@@ -35,6 +36,7 @@ interface XPEventRow {
 interface RecordAttemptInput {
   questionId: number;
   selected: ProgressItem['attempts'][number]['selected'];
+  submissionId?: string;
   recallAnswer?: string | null;
   locale?: string;
 }
@@ -121,6 +123,7 @@ export async function recordAttempt(
   const { userId } = await auth();
   if (!userId) return null;
 
+  const submissionId = input.submissionId ?? randomUUID();
   const locale = toLocaleCode(input.locale);
   const question =
     getQuestionById(locale, input.questionId) ?? getQuestionById(DEFAULT_LOCALE, input.questionId);
@@ -144,38 +147,54 @@ export async function recordAttempt(
     recallAnswer: input.recallAnswer,
   });
 
-  const rows = result.xpEvents.map((event) => ({
+  const rows = result.xpEvents.map((event, index) => ({
     user_id: userId,
+    submission_id: submissionId,
+    event_index: index,
     question_id: event.questionId,
     event_type: event.eventType,
     xp_delta: event.xpDelta,
     created_at: event.timestamp,
   }));
   const supabase = createServerSupabaseClient();
-  const [{ error: progressError }, xpInsertResult, { error: streakError }] = await Promise.all([
-    supabase.from('user_progress').upsert(
-      {
-        user_id: userId,
-        question_id: result.progressItem.questionId,
-        attempts: result.progressItem.attempts,
-        bookmarked: result.progressItem.bookmarked,
-        srs_data: result.progressItem.srsData ?? null,
-        updated_at: result.progressItem.updatedAt,
-      },
-      { onConflict: 'user_id,question_id' },
-    ),
-    rows.length > 0 ? supabase.from('xp_events').insert(rows) : Promise.resolve({ error: null }),
-    supabase.from('user_streaks').upsert(
-      {
-        user_id: userId,
-        current_streak: result.streakState.currentStreak,
-        longest_streak: result.streakState.longestStreak,
-        last_activity_date: result.streakState.lastActivityDate,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id' },
-    ),
-  ]);
+  const [{ error: progressError }, xpInsertResult, { error: streakError }, { error: totalsError }] =
+    await Promise.all([
+      supabase.from('user_progress').upsert(
+        {
+          user_id: userId,
+          question_id: result.progressItem.questionId,
+          attempts: result.progressItem.attempts,
+          bookmarked: result.progressItem.bookmarked,
+          srs_data: result.progressItem.srsData ?? null,
+          updated_at: result.progressItem.updatedAt,
+        },
+        { onConflict: 'user_id,question_id' },
+      ),
+      rows.length > 0
+        ? supabase.from('xp_events').upsert(rows, {
+            onConflict: 'user_id,submission_id,event_index',
+            ignoreDuplicates: true,
+          })
+        : Promise.resolve({ error: null }),
+      supabase.from('user_streaks').upsert(
+        {
+          user_id: userId,
+          current_streak: result.streakState.currentStreak,
+          longest_streak: result.streakState.longestStreak,
+          last_activity_date: result.streakState.lastActivityDate,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' },
+      ),
+      supabase.from('user_xp_totals').upsert(
+        {
+          user_id: userId,
+          total_xp: result.xpState.totalXP,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' },
+      ),
+    ]);
 
   if (progressError) {
     console.error('Failed to upsert question progress:', progressError.message);
@@ -190,6 +209,11 @@ export async function recordAttempt(
   if (streakError) {
     console.error('Failed to upsert streak:', streakError.message);
     throw streakError;
+  }
+
+  if (totalsError) {
+    console.error('Failed to upsert XP totals:', totalsError.message);
+    throw totalsError;
   }
 
   if (rows.length > 0) {

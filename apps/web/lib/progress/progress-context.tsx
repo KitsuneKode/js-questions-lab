@@ -272,6 +272,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
     ) => {
       const now = new Date().toISOString();
+      const submissionId =
+        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${questionId}:${now}:${selected ?? 'recall'}`;
       const difficulty = options?.difficulty ?? 'beginner';
       const prev = ensureItem(stateRef.current, questionId);
       dispatch({ type: 'attempt', questionId, selected, status });
@@ -294,6 +298,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         recordAttempt({
           questionId,
           selected,
+          submissionId,
           recallAnswer: options?.recallAnswer,
           locale: options?.locale,
         })
@@ -327,7 +332,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           status,
           difficulty,
           srsData: prev.srsData,
-          todayAttempts: prev.attempts,
+          priorAttempts: prev.attempts,
           isFirstAnswerToday,
         });
         const next = applyXPEvents(prevXP, computedXPEvents);
