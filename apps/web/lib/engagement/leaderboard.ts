@@ -1,5 +1,3 @@
-'use server';
-
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getLevelInfo } from '@/lib/xp/levels';
 
