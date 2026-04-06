@@ -32,7 +32,7 @@ import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metada
 import type { StreakState } from '@/lib/streaks/calculator';
 import { updateStreak } from '@/lib/streaks/calculator';
 import { readStreak, writeStreak } from '@/lib/streaks/storage';
-import { computeXP } from '@/lib/xp/scoring';
+import { computeXP, type XPEvent } from '@/lib/xp/scoring';
 import type { XPState } from '@/lib/xp/storage';
 import { applyXPEvents, defaultXPState, readXP, writeXP } from '@/lib/xp/storage';
 
@@ -294,24 +294,25 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         store.markQuestionAnswered(tag, status === 'correct');
       }
 
-      // XP computation
+      // XP computation — derived inside functional updater so rapid calls can't
+      // both see isFirstAnswerToday=true (React applies updaters sequentially,
+      // each receiving the previous one's result, making this race-free).
       const today = new Date().toISOString().slice(0, 10);
-      const allQuestions = stateRef.current.questions;
-      const isFirstAnswerToday = !Object.values(allQuestions).some((item) =>
-        item.attempts.some((a) => a.attemptedAt.slice(0, 10) === today),
-      );
-      // Pass all prior attempts so cooldown detection is time-based (not just today's date)
-      const xpEvents = computeXP({
-        questionId,
-        status,
-        difficulty,
-        srsData: prev.srsData,
-        todayAttempts: prev.attempts,
-        isFirstAnswerToday,
-      });
+      let computedXPEvents: XPEvent[] = [];
 
-      // Functional setState to avoid stale-ref race on rapid calls
       setXPState((prevXP) => {
+        // isFirstAnswerToday from XP state: if XP was already earned today,
+        // lastEarnedDate will equal today after the first successful answer.
+        const isFirstAnswerToday = prevXP.lastEarnedDate !== today;
+        const xpEvents = computeXP({
+          questionId,
+          status,
+          difficulty,
+          srsData: prev.srsData,
+          todayAttempts: prev.attempts,
+          isFirstAnswerToday,
+        });
+        computedXPEvents = xpEvents;
         const next = applyXPEvents(prevXP, xpEvents);
         writeXP(next);
         return next;
@@ -326,8 +327,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       });
 
       // Server sync (fire-and-forget — same pattern as upsertSingleQuestion)
-      if (isSignedIn && xpEvents.length > 0) {
-        insertXPEvents(xpEvents).catch((err) => console.error('Failed to sync XP events:', err));
+      if (isSignedIn && computedXPEvents.length > 0) {
+        insertXPEvents(computedXPEvents).catch((err) =>
+          console.error('Failed to sync XP events:', err),
+        );
         // capturedStreakState may briefly be stale if setState hasn't flushed, but
         // streak sync is eventually-consistent so this is acceptable
         upsertStreak(capturedStreakState).catch((err) =>

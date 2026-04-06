@@ -27,7 +27,7 @@ export function XPBadge({ className, variant = 'compact' }: XPBadgeProps) {
       >
         <span className="text-[10px] font-mono text-primary font-semibold">L{level.level}</span>
         <span className="text-[11px] text-secondary font-medium">{level.name}</span>
-        <span className="text-[10px] font-mono text-tertiary">{weeklyXP} XP</span>
+        <span className="text-[10px] font-mono text-tertiary">{Math.max(0, weeklyXP)} XP</span>
       </div>
     );
   }

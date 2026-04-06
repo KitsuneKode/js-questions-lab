@@ -31,7 +31,7 @@ export function StreakBadge({ className }: StreakBadgeProps) {
       <IconFlame
         className={cn(
           'h-3.5 w-3.5 transition-colors',
-          currentStreak >= 7 ? 'text-primary fill-primary/20' : 'text-orange-400',
+          isAtMilestone ? 'text-primary fill-primary/20' : 'text-orange-400',
         )}
       />
       <span className="text-[11px] font-semibold text-foreground tabular-nums">
