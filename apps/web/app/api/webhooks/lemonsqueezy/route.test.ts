@@ -157,6 +157,7 @@ describe('Lemon Squeezy webhook route', () => {
   });
 
   it('returns 500 when metadata update fails', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     updateUserMetadataMock.mockRejectedValueOnce(new Error('clerk unavailable'));
     const rawBody = JSON.stringify({
       meta: {
@@ -170,5 +171,15 @@ describe('Lemon Squeezy webhook route', () => {
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ error: 'Internal server error' });
     expect(updateUserMetadataMock).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Failed to update plan from Lemon Squeezy webhook',
+      expect.objectContaining({
+        eventName: 'subscription_created',
+        message: 'clerk unavailable',
+      }),
+    );
+    const loggedPayload = consoleErrorSpy.mock.calls[0]?.[1] as Record<string, unknown>;
+    expect(loggedPayload).not.toHaveProperty('userId');
+    consoleErrorSpy.mockRestore();
   });
 });

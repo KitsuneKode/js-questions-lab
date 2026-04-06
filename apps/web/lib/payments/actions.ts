@@ -33,9 +33,13 @@ export async function createProCheckout(): Promise<{ checkoutUrl: string }> {
 
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;
   const variantId = process.env.LEMONSQUEEZY_VARIANT_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   if (!storeId || !variantId) {
     throw new Error('LEMONSQUEEZY_STORE_ID or LEMONSQUEEZY_VARIANT_ID is not set');
+  }
+  if (!siteUrl) {
+    throw new Error('NEXT_PUBLIC_SITE_URL is not set');
   }
 
   const { data, error } = await createCheckout(storeId, variantId, {
@@ -46,7 +50,7 @@ export async function createProCheckout(): Promise<{ checkoutUrl: string }> {
       },
     },
     productOptions: {
-      redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/dashboard?upgraded=1`,
+      redirectUrl: new URL('/dashboard?upgraded=1', siteUrl).toString(),
     },
   });
 
