@@ -3,6 +3,8 @@ import { useTranslations } from 'next-intl';
 export function ReactBentoSection() {
   const t = useTranslations('landing.reactSection');
 
+  // Pattern names are intentionally kept in English — these are technical/proper-noun
+  // terms used as-is in all developer communities regardless of locale.
   const patterns = [
     'Container',
     'HOC',
