@@ -102,7 +102,7 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  WITH week_events AS (
+  WITH RECURSIVE week_events AS (
     SELECT
       e.user_id,
       e.xp_delta,
@@ -194,7 +194,7 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  WITH viewer AS (
+  WITH RECURSIVE viewer AS (
     SELECT COALESCE((SELECT auth.jwt()->>'sub'), '') AS user_id
   ),
   week_events AS (
