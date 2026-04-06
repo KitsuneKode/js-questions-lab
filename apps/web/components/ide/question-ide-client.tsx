@@ -22,6 +22,7 @@ import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { DomEventSimulator } from '@/components/ide/dom-event-simulator';
 import { KeyboardHintBar } from '@/components/ide/keyboard-hint-bar';
+import { ResourcesPanel } from '@/components/ide/resources-panel';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { useScratchpad } from '@/components/scratchpad/scratchpad-context';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
@@ -956,6 +957,10 @@ export function QuestionIDEClient({
                         </button>
                       ))}
                     </div>
+
+                    {question.resources && question.resources.length > 0 && (
+                      <ResourcesPanel resources={question.resources} />
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

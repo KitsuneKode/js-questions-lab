@@ -49,7 +49,9 @@
       "clear": "Clear All",
       "showLess": "Show Less",
       "more": "+{count} More",
-      "resetTags": "Reset Tags ({count})"
+      "resetTags": "Reset Tags ({count})",
+      "saved": "Saved",
+      "savedEmpty": "Bookmark questions to filter here"
     }
   },
   "question": {
@@ -399,7 +401,8 @@
     "propagationReplay": "Propagation Replay",
     "propagationReplayDesc": "Each row shows the current node handling the click as bubbling moves outward.",
     "clickToInspect": "Click a node to inspect the propagated console output.",
-    "clickable": "Clickable"
+    "clickable": "Clickable",
+    "resourcesHeader": "References"
   },
   "scratchpad": {
     "title": "Scratchpad",

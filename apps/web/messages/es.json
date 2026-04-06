@@ -49,7 +49,9 @@
       "clear": "Limpiar Todo",
       "showLess": "Mostrar menos",
       "more": "+{count} más",
-      "resetTags": "Reiniciar temas ({count})"
+      "resetTags": "Reiniciar temas ({count})",
+      "saved": "Guardado",
+      "savedEmpty": "Marca preguntas para filtrarlas aquí"
     }
   },
   "question": {
@@ -399,7 +401,8 @@
     "propagationReplay": "Repetición de propagación",
     "propagationReplayDesc": "Cada fila muestra el nodo actual manejando el clic mientras el bubbling se mueve hacia afuera.",
     "clickToInspect": "Haz clic en un nodo para inspeccionar la salida de consola propagada.",
-    "clickable": "Clicable"
+    "clickable": "Clicable",
+    "resourcesHeader": "Referencias"
   },
   "scratchpad": {
     "title": "Borrador",

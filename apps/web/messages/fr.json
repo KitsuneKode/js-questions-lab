@@ -49,7 +49,9 @@
       "clear": "Tout effacer",
       "showLess": "Voir moins",
       "more": "+{count} de plus",
-      "resetTags": "Réinitialiser les tags ({count})"
+      "resetTags": "Réinitialiser les tags ({count})",
+      "saved": "Sauvegardé",
+      "savedEmpty": "Ajoutez des questions aux favoris pour les filtrer ici"
     }
   },
   "question": {
@@ -399,7 +401,8 @@
     "propagationReplay": "Relecture de propagation",
     "propagationReplayDesc": "Chaque ligne montre le nœud actuel gérant le clic alors que le bubbling se déplace vers l'extérieur.",
     "clickToInspect": "Cliquez sur un nœud pour inspecter la sortie console propagée.",
-    "clickable": "Cliquable"
+    "clickable": "Cliquable",
+    "resourcesHeader": "Références"
   },
   "scratchpad": {
     "title": "Brouillon",
