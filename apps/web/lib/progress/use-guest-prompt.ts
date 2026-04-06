@@ -1,7 +1,10 @@
 'use client';
 
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { buildAuthEntryHref } from '@/lib/auth-redirects';
 import { clerkEnabled, useSafeAuth } from '@/lib/auth-utils';
 import { useProgress } from '@/lib/progress/progress-context';
 
@@ -11,7 +14,11 @@ const SESSION_KEY = 'jsq_signup_prompt_seen_session';
 export function useGuestPrompt() {
   const { isLoaded, isSignedIn } = useSafeAuth();
   const { ready } = useProgress();
+  const locale = useLocale();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const shownRef = useRef(false);
+  const signUpHref = buildAuthEntryHref(locale, pathname, searchParams.toString(), '/sign-up');
 
   useEffect(() => {
     if (!clerkEnabled || !isLoaded || !ready || isSignedIn || shownRef.current) return;
@@ -29,7 +36,7 @@ export function useGuestPrompt() {
       action: {
         label: 'Sign Up',
         onClick: () => {
-          window.location.href = '/sign-up';
+          window.location.href = signUpHref;
         },
       },
       cancel: {
@@ -39,5 +46,5 @@ export function useGuestPrompt() {
         },
       },
     });
-  }, [isLoaded, isSignedIn, ready]);
+  }, [isLoaded, isSignedIn, ready, signUpHref]);
 }
