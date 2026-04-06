@@ -62,8 +62,8 @@ export default async function ReactQuestionPage({
   }
 
   return (
-    <main className="min-h-screen bg-void overflow-hidden pt-24">
-      <div className="h-[calc(100vh-6rem)] min-h-[620px] overflow-hidden">
+    <main className="min-h-screen bg-void overflow-hidden pt-20 md:pt-[5.5rem]">
+      <div className="h-[calc(100svh-5rem)] min-h-[640px] overflow-hidden">
         <ReactIDEDynamic question={question} />
       </div>
     </main>
