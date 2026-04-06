@@ -120,20 +120,23 @@
       "topics": "{count} Temas"
     },
     "reactSection": {
-      "eyebrow": "Coming Soon",
-      "sectionTitle": "React Practice",
-      "sectionSubline": "Build real components, explore patterns, and master React — with a live Sandpack IDE inside every challenge.",
-      "comingSoon": "Coming Soon",
-      "heroTitle": "React Practice",
-      "heroSubtitle": "Build real components with a live Sandpack IDE. No config, no boilerplate — just React and you.",
-      "flowLabel": "The Practice Loop",
-      "flowStep1": "Read",
-      "flowStep2": "Build",
-      "flowStep3": "Review",
-      "patternsLabel": "Patterns",
-      "patternsTitle": "30+ React Patterns",
-      "patternsSubtitle": "From Lydia Hallie's javascript-react-patterns — distilled into interactive challenges.",
-      "patternsMore": "+20 more"
+      "eyebrow": "Muy pronto",
+      "sectionTitle": "Práctica de React",
+      "sectionSubline": "Crea componentes reales, explora patrones y domina React, con un IDE de Sandpack en vivo dentro de cada reto.",
+      "comingSoon": "Muy pronto",
+      "heroTitle": "Práctica de React",
+      "heroSubtitle": "Crea componentes reales con un IDE de Sandpack en vivo. Sin configuración, sin boilerplate: solo React y tú.",
+      "heroTagIde": "IDE de Sandpack",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Vista previa en vivo",
+      "flowLabel": "El ciclo de práctica",
+      "flowStep1": "Leer",
+      "flowStep2": "Construir",
+      "flowStep3": "Revisar",
+      "patternsLabel": "Patrones",
+      "patternsTitle": "Más de 30 patrones de React",
+      "patternsSubtitle": "De javascript-react-patterns de Lydia Hallie, convertidos en retos interactivos.",
+      "patternsMore": "+20 más"
     }
   },
   "dashboard": {

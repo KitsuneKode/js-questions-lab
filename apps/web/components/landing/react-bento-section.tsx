@@ -1,5 +1,3 @@
-'use client';
-
 import { useTranslations } from 'next-intl';
 
 export function ReactBentoSection() {
@@ -18,6 +16,7 @@ export function ReactBentoSection() {
     'Module',
     'Singleton',
   ];
+  const heroTags = [t('heroTagIde'), t('heroTagVersion'), t('heroTagPreview')];
 
   return (
     <section id="react" className="py-24 px-4 border-t border-border-subtle">
@@ -67,7 +66,7 @@ export function ReactBentoSection() {
             {/* Bottom gradient line */}
             <div className="relative z-10 mt-8">
               <div className="flex gap-2">
-                {['Sandpack IDE', 'React 19', 'Live Preview'].map((tag) => (
+                {heroTags.map((tag) => (
                   <span
                     key={tag}
                     className="px-2.5 py-1 rounded-md border border-border-subtle bg-elevated text-tertiary text-xs font-mono"

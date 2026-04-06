@@ -120,20 +120,23 @@
       "topics": "{count} トピック"
     },
     "reactSection": {
-      "eyebrow": "Coming Soon",
-      "sectionTitle": "React Practice",
-      "sectionSubline": "Build real components, explore patterns, and master React — with a live Sandpack IDE inside every challenge.",
-      "comingSoon": "Coming Soon",
-      "heroTitle": "React Practice",
-      "heroSubtitle": "Build real components with a live Sandpack IDE. No config, no boilerplate — just React and you.",
-      "flowLabel": "The Practice Loop",
-      "flowStep1": "Read",
-      "flowStep2": "Build",
-      "flowStep3": "Review",
-      "patternsLabel": "Patterns",
-      "patternsTitle": "30+ React Patterns",
-      "patternsSubtitle": "From Lydia Hallie's javascript-react-patterns — distilled into interactive challenges.",
-      "patternsMore": "+20 more"
+      "eyebrow": "近日公開",
+      "sectionTitle": "React 練習",
+      "sectionSubline": "実践的なコンポーネントを作り、パターンを学び、すべてのチャレンジ内で動く Sandpack IDE と一緒に React を身につけましょう。",
+      "comingSoon": "近日公開",
+      "heroTitle": "React 練習",
+      "heroSubtitle": "動く Sandpack IDE で実際にコンポーネントを作れます。設定不要、ボイラープレート不要。React にそのまま集中できます。",
+      "heroTagIde": "Sandpack IDE",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "ライブプレビュー",
+      "flowLabel": "練習の流れ",
+      "flowStep1": "読む",
+      "flowStep2": "作る",
+      "flowStep3": "振り返る",
+      "patternsLabel": "パターン",
+      "patternsTitle": "30種類以上の React パターン",
+      "patternsSubtitle": "Lydia Hallie の javascript-react-patterns を、インタラクティブなチャレンジに落とし込みました。",
+      "patternsMore": "+20 以上"
     }
   },
   "dashboard": {
