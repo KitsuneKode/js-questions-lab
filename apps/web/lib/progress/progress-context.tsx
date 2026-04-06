@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { useSafeAuth } from '@/lib/auth-utils';
 import type { Difficulty } from '@/lib/content/types';
+import { fetchStreak, insertXPEvents, upsertStreak } from '@/lib/engagement/actions';
 import {
   fetchServerProgress,
   syncProgressToServer,
@@ -196,11 +197,25 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
     (async () => {
       try {
-        const serverItems = await fetchServerProgress();
+        const [serverItems, serverStreak] = await Promise.all([
+          fetchServerProgress(),
+          fetchStreak(),
+        ]);
         const localState = readProgress();
 
         if (!cancelled) {
           dispatch({ type: 'merge', serverItems });
+
+          // Merge streak: server wins if its last_activity_date is newer
+          if (serverStreak) {
+            const localStreak = readStreak();
+            const serverDate = serverStreak.lastActivityDate ?? '';
+            const localDate = localStreak.lastActivityDate ?? '';
+            if (serverDate > localDate) {
+              setStreakState(serverStreak);
+              writeStreak(serverStreak);
+            }
+          }
 
           const localNewer: ProgressItem[] = [];
           for (const localItem of Object.values(localState.questions)) {
@@ -302,6 +317,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const { state: newStreakState } = updateStreak(streakStateRef.current, today);
       setStreakState(newStreakState);
       writeStreak(newStreakState);
+
+      // Server sync (fire-and-forget — same pattern as upsertSingleQuestion)
+      if (isSignedIn && xpEvents.length > 0) {
+        insertXPEvents(xpEvents).catch((err) => console.error('Failed to sync XP events:', err));
+        upsertStreak(newStreakState).catch((err) => console.error('Failed to sync streak:', err));
+      }
     },
     [isSignedIn],
   );
