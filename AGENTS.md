@@ -9,10 +9,17 @@ Run these from the repository root:
 - `bun run dev`
 - `bun run build`
 - `bun run typecheck`
+- `bun run test`
 - `bun run lint`
 - `bun run parse:questions`
 - `bun run sync:upstream`
 - `bun run content:refresh`
+
+## Testing Expectations
+
+- Add or update automated tests whenever a notable feature, bug fix, or regression-prone behavior is introduced.
+- Prefer `apps/web/lib/__tests__/` for logic and storage coverage, and `apps/web/components/__tests__/` for UI/component behavior.
+- Changes are not ready to merge until CI can verify them with `bun run typecheck` and `bun run test`.
 
 ## Important Files & Topology
 
