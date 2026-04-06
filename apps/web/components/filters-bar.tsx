@@ -438,7 +438,7 @@ export function FiltersBar({
           {/* Saved / Bookmarks Filter */}
           <button
             type="button"
-            onClick={bookmarkedCount > 0 ? toggleBookmarkFilter : undefined}
+            onClick={toggleBookmarkFilter}
             disabled={bookmarkedCount === 0}
             title={bookmarkedCount === 0 ? t('filters.savedEmpty') : undefined}
             className={cn(
