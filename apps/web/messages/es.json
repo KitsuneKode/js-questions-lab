@@ -449,5 +449,16 @@
     "badgeMicro": "Microtarea",
     "badgeTask": "Tarea",
     "badgeConsole": "Consola"
+  },
+  "leaderboard": {
+    "title": "Clasificación",
+    "description": "Mira quién está ganando más XP y subiendo en los rangos.",
+    "eyebrow": "Clasificaciones",
+    "subtitle": "Compite, aprende y sube de nivel junto a la comunidad.",
+    "weeklyTitle": "Esta Semana",
+    "allTimeTitle": "Todos los Tiempos",
+    "resetsMonday": "Se reinicia los lunes",
+    "empty": "Aún no hay entradas. ¡Sé el primero en ganar XP!",
+    "you": "Tú"
   }
 }

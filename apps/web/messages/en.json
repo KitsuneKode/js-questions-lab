@@ -449,5 +449,16 @@
     "badgeMicro": "Microtask",
     "badgeTask": "Task",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "description": "See who's earning the most XP and climbing the ranks.",
+    "eyebrow": "Rankings",
+    "subtitle": "Compete, learn, and level up alongside the community.",
+    "weeklyTitle": "This Week",
+    "allTimeTitle": "All Time",
+    "resetsMonday": "Resets Monday",
+    "empty": "No entries yet. Be the first to earn XP!",
+    "you": "You"
   }
 }
