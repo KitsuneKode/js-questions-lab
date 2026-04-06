@@ -7,7 +7,7 @@
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS xp_events (
   id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      TEXT        NOT NULL,
+  user_id      TEXT        NOT NULL DEFAULT (auth.jwt()->>'sub'),
   question_id  INTEGER     NOT NULL,
   event_type   TEXT        NOT NULL
                              CHECK (event_type IN (
@@ -36,10 +36,12 @@ ALTER TABLE xp_events ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "users can read own xp_events"
   ON xp_events FOR SELECT
+  TO authenticated
   USING ((SELECT auth.jwt()->>'sub') = user_id);
 
 CREATE POLICY "users can insert own xp_events"
   ON xp_events FOR INSERT
+  TO authenticated
   WITH CHECK ((SELECT auth.jwt()->>'sub') = user_id);
 
 COMMENT ON TABLE xp_events IS
@@ -49,7 +51,7 @@ COMMENT ON TABLE xp_events IS
 -- user_streaks: current and longest daily streak per user
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_streaks (
-  user_id            TEXT        PRIMARY KEY,
+  user_id            TEXT        PRIMARY KEY DEFAULT (auth.jwt()->>'sub'),
   current_streak     INTEGER     NOT NULL DEFAULT 0,
   longest_streak     INTEGER     NOT NULL DEFAULT 0,
   last_activity_date DATE,
@@ -61,14 +63,17 @@ ALTER TABLE user_streaks ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "users can read own user_streaks"
   ON user_streaks FOR SELECT
+  TO authenticated
   USING ((SELECT auth.jwt()->>'sub') = user_id);
 
 CREATE POLICY "users can insert own user_streaks"
   ON user_streaks FOR INSERT
+  TO authenticated
   WITH CHECK ((SELECT auth.jwt()->>'sub') = user_id);
 
 CREATE POLICY "users can update own user_streaks"
   ON user_streaks FOR UPDATE
+  TO authenticated
   USING ((SELECT auth.jwt()->>'sub') = user_id)
   WITH CHECK ((SELECT auth.jwt()->>'sub') = user_id);
 
@@ -85,7 +90,7 @@ CREATE OR REPLACE VIEW leaderboard_weekly AS
     SUM(xp_delta)  AS total_xp,
     COUNT(*)       AS event_count
   FROM xp_events
-  WHERE created_at >= date_trunc('week', NOW() AT TIME ZONE 'UTC')
+  WHERE created_at >= (date_trunc('week', NOW() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC')
   GROUP BY user_id
   ORDER BY total_xp DESC;
 
