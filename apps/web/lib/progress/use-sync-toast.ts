@@ -8,13 +8,13 @@ import { useProgress } from './progress-context';
 const SESSION_KEY = 'jsq_sync_toast_shown';
 
 export function useSyncToast() {
-  const { isSignedIn } = useSafeAuth();
+  const { isLoaded, isSignedIn } = useSafeAuth();
   const { syncStatus } = useProgress();
   const shownRef = useRef(false);
   const [toastShown, setToastShown] = useState(false);
 
   useEffect(() => {
-    if (!clerkEnabled || !isSignedIn || shownRef.current || toastShown) return;
+    if (!clerkEnabled || !isLoaded || !isSignedIn || shownRef.current || toastShown) return;
 
     const alreadyShown = sessionStorage.getItem(SESSION_KEY);
     if (alreadyShown) return;
@@ -55,5 +55,5 @@ export function useSyncToast() {
         duration: 3000,
       });
     }
-  }, [isSignedIn, syncStatus, toastShown]);
+  }, [isLoaded, isSignedIn, syncStatus, toastShown]);
 }

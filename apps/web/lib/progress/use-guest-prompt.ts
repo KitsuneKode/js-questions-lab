@@ -9,12 +9,12 @@ const DISMISS_KEY = 'jsq_signup_dismissed';
 const THRESHOLD = 3;
 
 export function useGuestPrompt() {
-  const { isSignedIn } = useSafeAuth();
+  const { isLoaded, isSignedIn } = useSafeAuth();
   const { state, ready } = useProgress();
   const shownRef = useRef(false);
 
   useEffect(() => {
-    if (!clerkEnabled || !ready || isSignedIn || shownRef.current) return;
+    if (!clerkEnabled || !isLoaded || !ready || isSignedIn || shownRef.current) return;
 
     const dismissed = localStorage.getItem(DISMISS_KEY);
     if (dismissed) return;
@@ -40,5 +40,5 @@ export function useGuestPrompt() {
         },
       },
     });
-  }, [isSignedIn, ready, state]);
+  }, [isLoaded, isSignedIn, ready, state]);
 }
