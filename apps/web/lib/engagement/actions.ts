@@ -7,6 +7,7 @@ import {
   buildAuthoritativeSelfGradeResult,
   rebuildXPState,
 } from '@/lib/engagement/engine';
+import { revalidateLeaderboardCaches } from '@/lib/engagement/leaderboard-cache';
 import { DEFAULT_LOCALE, isValidLocale, type LocaleCode } from '@/lib/i18n/config';
 import type { Grade } from '@/lib/progress/srs';
 import type { ProgressItem } from '@/lib/progress/storage';
@@ -189,6 +190,10 @@ export async function recordAttempt(
   if (streakError) {
     console.error('Failed to upsert streak:', streakError.message);
     throw streakError;
+  }
+
+  if (rows.length > 0) {
+    revalidateLeaderboardCaches();
   }
 
   return result;

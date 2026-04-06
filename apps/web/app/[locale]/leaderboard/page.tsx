@@ -1,9 +1,13 @@
-import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/container';
 import { LeaderboardTable } from '@/components/leaderboard/leaderboard-table';
-import { getAllTimeLeaderboard, getWeeklyLeaderboard } from '@/lib/engagement/leaderboard';
+import {
+  getAllTimeCurrentUserPosition,
+  getAllTimeLeaderboard,
+  getWeeklyCurrentUserPosition,
+  getWeeklyLeaderboard,
+} from '@/lib/engagement/leaderboard';
 import type { LocaleCode } from '@/lib/i18n/config';
 import { getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
@@ -33,12 +37,13 @@ export default async function LeaderboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const { userId } = await auth();
-
-  const [weekly, allTime] = await Promise.all([
-    getWeeklyLeaderboard(50),
-    getAllTimeLeaderboard(50),
-  ]);
+  const [weekly, allTime, weeklyCurrentUserPosition, allTimeCurrentUserPosition] =
+    await Promise.all([
+      getWeeklyLeaderboard(50),
+      getAllTimeLeaderboard(50),
+      getWeeklyCurrentUserPosition(),
+      getAllTimeCurrentUserPosition(),
+    ]);
 
   const t = await getTranslations({ locale, namespace: 'leaderboard' });
 
@@ -65,7 +70,7 @@ export default async function LeaderboardPage({
               </h2>
               <span className="text-[10px] text-tertiary font-mono">{t('resetsMonday')}</span>
             </div>
-            <LeaderboardTable entries={weekly} currentUserId={userId} />
+            <LeaderboardTable entries={weekly} currentUserPosition={weeklyCurrentUserPosition} />
           </section>
 
           {/* All-time */}
@@ -73,7 +78,7 @@ export default async function LeaderboardPage({
             <h2 className="text-xs font-bold uppercase tracking-widest text-tertiary">
               {t('allTimeTitle')}
             </h2>
-            <LeaderboardTable entries={allTime} currentUserId={userId} />
+            <LeaderboardTable entries={allTime} currentUserPosition={allTimeCurrentUserPosition} />
           </section>
         </div>
       </Container>

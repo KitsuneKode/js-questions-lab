@@ -1,7 +1,7 @@
 'use client';
 
-import { IconFlame, IconTrophy } from '@tabler/icons-react';
-import { useTranslations } from 'next-intl';
+import { IconTrophy } from '@tabler/icons-react';
+import { useFormatter, useTranslations } from 'next-intl';
 import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
 import { cn } from '@/lib/utils';
 
@@ -13,11 +13,12 @@ const RANK_STYLES: Record<number, string> = {
 
 interface LeaderboardTableProps {
   entries: LeaderboardEntry[];
-  currentUserId?: string | null;
+  currentUserPosition?: number | null;
 }
 
-export function LeaderboardTable({ entries, currentUserId }: LeaderboardTableProps) {
+export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTableProps) {
   const t = useTranslations('leaderboard');
+  const format = useFormatter();
 
   if (entries.length === 0) {
     return <div className="text-center py-16 text-secondary text-sm">{t('empty')}</div>;
@@ -26,12 +27,12 @@ export function LeaderboardTable({ entries, currentUserId }: LeaderboardTablePro
   return (
     <div className="space-y-2">
       {entries.map((entry) => {
-        const isCurrentUser = entry.userId === currentUserId;
+        const isCurrentUser = entry.position === currentUserPosition;
         const rankStyle = RANK_STYLES[entry.rank];
 
         return (
           <div
-            key={entry.userId}
+            key={entry.position}
             className={cn(
               'flex items-center gap-4 rounded-xl border px-4 py-3 transition-colors',
               isCurrentUser
@@ -61,9 +62,6 @@ export function LeaderboardTable({ entries, currentUserId }: LeaderboardTablePro
                 >
                   {isCurrentUser ? t('you') : entry.displayName}
                 </span>
-                {isCurrentUser && (
-                  <span className="text-[10px] text-primary font-mono shrink-0">← {t('you')}</span>
-                )}
               </div>
               <span className="text-[11px] text-tertiary font-mono">
                 Lv.{entry.level} {entry.levelName}
@@ -73,7 +71,7 @@ export function LeaderboardTable({ entries, currentUserId }: LeaderboardTablePro
             {/* XP */}
             <div className="text-right shrink-0">
               <div className="text-sm font-semibold font-mono text-foreground tabular-nums">
-                {entry.totalXP.toLocaleString()}
+                {format.number(entry.totalXP)}
               </div>
               <div className="text-[10px] text-tertiary uppercase tracking-wider">XP</div>
             </div>
