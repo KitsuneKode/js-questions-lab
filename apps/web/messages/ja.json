@@ -118,6 +118,22 @@
       "runnable": "{count}件の実行可能なスニペット",
       "questions": "{count} 質問",
       "topics": "{count} トピック"
+    },
+    "reactSection": {
+      "eyebrow": "Coming Soon",
+      "sectionTitle": "React Practice",
+      "sectionSubline": "Build real components, explore patterns, and master React — with a live Sandpack IDE inside every challenge.",
+      "comingSoon": "Coming Soon",
+      "heroTitle": "React Practice",
+      "heroSubtitle": "Build real components with a live Sandpack IDE. No config, no boilerplate — just React and you.",
+      "flowLabel": "The Practice Loop",
+      "flowStep1": "Read",
+      "flowStep2": "Build",
+      "flowStep3": "Review",
+      "patternsLabel": "Patterns",
+      "patternsTitle": "30+ React Patterns",
+      "patternsSubtitle": "From Lydia Hallie's javascript-react-patterns — distilled into interactive challenges.",
+      "patternsMore": "+20 more"
     }
   },
   "dashboard": {
