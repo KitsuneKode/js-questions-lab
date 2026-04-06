@@ -105,7 +105,10 @@ export async function POST(request: Request): Promise<Response> {
         break;
     }
   } catch (err) {
-    console.error(`Failed to update plan for user ${userId} on event ${eventName}:`, err);
+    console.error('Failed to update plan from Lemon Squeezy webhook', {
+      eventName,
+      message: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 
