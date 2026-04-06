@@ -9,7 +9,8 @@
     "lint": "bunx biome check .",
     "lint:fix": "bunx biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@babel/standalone": "^7.29.2",
