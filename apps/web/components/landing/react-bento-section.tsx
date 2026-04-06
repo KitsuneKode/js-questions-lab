@@ -51,12 +51,6 @@ export function ReactBentoSection() {
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
             <div className="relative z-10">
-              {/* Coming soon badge */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold tracking-wide mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                {t('comingSoon')}
-              </span>
-
               <h3 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-4">
                 {t('heroTitle')}
               </h3>

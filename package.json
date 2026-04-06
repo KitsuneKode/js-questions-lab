@@ -12,6 +12,8 @@
   "scripts": {
     "sync:upstream": "node scripts/sync-upstream.mjs",
     "parse:questions": "node scripts/parse-readme.mjs",
+    "parse:react": "node scripts/parse-react-patterns.mjs",
+    "content:react": "bun run parse:react",
     "content:refresh": "bun run sync:upstream && bun run parse:questions",
     "clean": "find . -name node_modules -o -name .next -o -name .turbo -o -name dist -type d -prune | xargs rm -rf",
     "dev": "turbo run dev",

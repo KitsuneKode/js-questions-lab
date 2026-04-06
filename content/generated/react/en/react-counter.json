@@ -1,0 +1,25 @@
+{
+  "id": "react-counter",
+  "title": "Build a Counter Component",
+  "difficulty": "beginner",
+  "tags": ["state", "events", "components"],
+  "category": "component",
+  "prompt": "Build a `Counter` component that displays a count and has three buttons: **Increment**, **Decrement**, and **Reset**. The count should never go below 0.",
+  "context": "React state (`useState`) lets a component remember values between renders. Each call to the state setter triggers a re-render with the new value. Event handlers (onClick) are the standard way to trigger state changes in response to user interaction.",
+  "starterCode": {
+    "App.tsx": "import { useState } from 'react';\n\nexport default function Counter() {\n  // TODO: add state here\n\n  return (\n    <div className=\"flex flex-col items-center gap-4 p-8\">\n      <p className=\"text-4xl font-bold\">{/* count */}</p>\n      <div className=\"flex gap-2\">\n        <button>Decrement</button>\n        <button>Reset</button>\n        <button>Increment</button>\n      </div>\n    </div>\n  );\n}\n"
+  },
+  "entryFile": "App.tsx",
+  "solutionCode": {
+    "App.tsx": "import { useState } from 'react';\n\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div className=\"flex flex-col items-center gap-4 p-8\">\n      <p className=\"text-4xl font-bold\">{count}</p>\n      <div className=\"flex gap-2\">\n        <button onClick={() => setCount(c => Math.max(0, c - 1))}>Decrement</button>\n        <button onClick={() => setCount(0)}>Reset</button>\n        <button onClick={() => setCount(c => c + 1)}>Increment</button>\n      </div>\n    </div>\n  );\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}
