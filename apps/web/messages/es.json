@@ -10,7 +10,8 @@
     "language": "Idioma",
     "contact": "Contacto",
     "shortcuts": "Atajos",
-    "signIn": "Iniciar sesión"
+    "signIn": "Iniciar sesión",
+    "leaderboard": "Clasificación"
   },
   "questions": {
     "title": "Biblioteca de preguntas",

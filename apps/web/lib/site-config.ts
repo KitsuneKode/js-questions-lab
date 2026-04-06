@@ -29,5 +29,6 @@ export const siteLinks = {
   questions: '/questions',
   progress: '/progress',
   dashboard: '/dashboard',
+  leaderboard: '/leaderboard',
   contact: '/contact',
 } as const;

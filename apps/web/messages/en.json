@@ -10,7 +10,8 @@
     "language": "Language",
     "contact": "Contact",
     "shortcuts": "Shortcuts",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "leaderboard": "Leaderboard"
   },
   "questions": {
     "title": "Question Library",

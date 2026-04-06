@@ -10,7 +10,8 @@
     "language": "言語",
     "contact": "お問い合わせ",
     "shortcuts": "ショートカット",
-    "signIn": "サインイン"
+    "signIn": "サインイン",
+    "leaderboard": "ランキング"
   },
   "questions": {
     "title": "問題ライブラリ",
