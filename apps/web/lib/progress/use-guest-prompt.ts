@@ -8,8 +8,10 @@ import { buildAuthEntryHref } from '@/lib/auth-redirects';
 import { clerkEnabled, useSafeAuth } from '@/lib/auth-utils';
 import { useProgress } from '@/lib/progress/progress-context';
 
-const DISMISS_KEY = 'jsq_signup_dismissed';
+const LEGACY_DISMISS_KEY = 'jsq_signup_dismissed';
 const SESSION_KEY = 'jsq_signup_prompt_seen_session';
+const SNOOZE_UNTIL_KEY = 'jsq_signup_snooze_until';
+const SNOOZE_DURATION_MS = 1000 * 60 * 60 * 24; // 24h
 
 export function useGuestPrompt() {
   const { isLoaded, isSignedIn } = useSafeAuth();
@@ -23,8 +25,15 @@ export function useGuestPrompt() {
   useEffect(() => {
     if (!clerkEnabled || !isLoaded || !ready || isSignedIn || shownRef.current) return;
 
-    const dismissed = localStorage.getItem(DISMISS_KEY);
-    if (dismissed) return;
+    // Migrate old permanent-dismiss behavior to snooze-based behavior.
+    if (localStorage.getItem(LEGACY_DISMISS_KEY)) {
+      localStorage.removeItem(LEGACY_DISMISS_KEY);
+      localStorage.setItem(SNOOZE_UNTIL_KEY, String(Date.now() + SNOOZE_DURATION_MS));
+    }
+
+    const snoozeUntil = Number(localStorage.getItem(SNOOZE_UNTIL_KEY) || '0');
+    if (Number.isFinite(snoozeUntil) && snoozeUntil > Date.now()) return;
+
     const seenThisSession = sessionStorage.getItem(SESSION_KEY);
     if (seenThisSession) return;
 
@@ -40,9 +49,9 @@ export function useGuestPrompt() {
         },
       },
       cancel: {
-        label: "Don't show again",
+        label: 'Remind me tomorrow',
         onClick: () => {
-          localStorage.setItem(DISMISS_KEY, '1');
+          localStorage.setItem(SNOOZE_UNTIL_KEY, String(Date.now() + SNOOZE_DURATION_MS));
         },
       },
     });
