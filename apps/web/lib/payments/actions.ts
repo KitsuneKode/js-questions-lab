@@ -20,6 +20,10 @@ export async function createProCheckout(
   userId: string,
   userEmail: string,
 ): Promise<{ checkoutUrl: string }> {
+  if (!userEmail) {
+    throw new Error('User primary email is required for checkout');
+  }
+
   initLemonSqueezy();
 
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;

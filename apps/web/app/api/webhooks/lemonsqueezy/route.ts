@@ -86,10 +86,16 @@ export async function POST(request: Request): Promise<Response> {
   try {
     switch (eventName) {
       case 'subscription_created':
+      case 'subscription_resumed':
+      case 'subscription_unpaused':
         await setUserPlan(userId, 'pro');
         break;
 
       case 'subscription_cancelled':
+        // Cancellation enters a grace period until end-of-term.
+        // Pro access is removed only when the subscription actually expires.
+        break;
+
       case 'subscription_expired':
         await setUserPlan(userId, 'free');
         break;

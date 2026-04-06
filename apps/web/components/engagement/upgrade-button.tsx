@@ -1,8 +1,8 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { createProCheckout } from '@/lib/payments/actions';
 
@@ -16,26 +16,29 @@ interface UpgradeButtonProps {
  */
 export function UpgradeButton({ className }: UpgradeButtonProps) {
   const { user } = useUser();
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const email = user?.primaryEmailAddress?.emailAddress ?? null;
 
   function handleUpgrade() {
     if (!user) return;
-
-    const email = user.primaryEmailAddress?.emailAddress ?? '';
+    if (!email) {
+      toast.error('Please add a primary email before upgrading.');
+      return;
+    }
 
     startTransition(async () => {
       try {
         const { checkoutUrl } = await createProCheckout(user.id, email);
-        router.push(checkoutUrl);
+        window.location.assign(checkoutUrl);
       } catch (err) {
         console.error('Failed to create checkout:', err);
+        toast.error('Could not start checkout. Please try again.');
       }
     });
   }
 
   return (
-    <Button onClick={handleUpgrade} disabled={isPending || !user} className={className}>
+    <Button onClick={handleUpgrade} disabled={isPending || !user || !email} className={className}>
       {isPending ? 'Redirecting…' : 'Upgrade to Pro — $9/mo'}
     </Button>
   );
