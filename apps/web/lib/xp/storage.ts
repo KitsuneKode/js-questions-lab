@@ -9,7 +9,8 @@ export interface XPState {
   events: XPEvent[];
 }
 
-const KEY = 'jsq_xp_v1';
+const BASE_KEY = 'jsq_xp_v2';
+const key = (sid: string) => `${BASE_KEY}_${sid}`;
 
 export const defaultXPState: XPState = {
   version: 1,
@@ -29,10 +30,10 @@ export function isValid(value: unknown): value is XPState {
   );
 }
 
-export function readXP(): XPState {
+export function readXP(sid: string): XPState {
   if (typeof window === 'undefined') return defaultXPState;
   try {
-    const raw = window.localStorage.getItem(KEY);
+    const raw = window.localStorage.getItem(key(sid));
     if (!raw) return defaultXPState;
     const parsed: unknown = JSON.parse(raw);
     return isValid(parsed) ? parsed : defaultXPState;
@@ -41,10 +42,10 @@ export function readXP(): XPState {
   }
 }
 
-export function writeXP(state: XPState) {
+export function writeXP(sid: string, state: XPState) {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(state));
+    window.localStorage.setItem(key(sid), JSON.stringify(state));
   } catch (err) {
     console.warn('Failed to persist XP state:', err);
   }

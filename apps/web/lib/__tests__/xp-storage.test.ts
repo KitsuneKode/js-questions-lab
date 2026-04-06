@@ -44,7 +44,7 @@ describe('xp storage', () => {
       throw new Error('quota exceeded');
     });
 
-    expect(() => writeXP(defaultXPState)).not.toThrow();
+    expect(() => writeXP('test-sid', defaultXPState)).not.toThrow();
     expect(warnSpy).toHaveBeenCalled();
   });
 
