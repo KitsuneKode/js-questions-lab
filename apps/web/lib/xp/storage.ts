@@ -18,7 +18,7 @@ export const defaultXPState: XPState = {
   events: [],
 };
 
-function isValid(value: unknown): value is XPState {
+export function isValid(value: unknown): value is XPState {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as XPState;
   return (

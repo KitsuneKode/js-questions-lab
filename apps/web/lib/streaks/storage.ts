@@ -2,7 +2,7 @@ import { defaultStreakState, type StreakState } from '@/lib/streaks/calculator';
 
 const KEY = 'jsq_streak_v1';
 
-function isValid(value: unknown): value is StreakState {
+export function isValid(value: unknown): value is StreakState {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as StreakState;
   return (
