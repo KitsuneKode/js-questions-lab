@@ -2,31 +2,31 @@ import type { SandpackTheme } from '@codesandbox/sandpack-react';
 
 export const darkForgeTheme: SandpackTheme = {
   colors: {
-    surface1: '#111113',
-    surface2: '#1a1a1f',
-    surface3: '#0d0d12',
-    clickable: '#71717a',
-    base: '#fafafa',
-    disabled: '#3f3f46',
-    hover: '#a1a1aa',
+    surface1: 'transparent', // Let the app's native bg-code/bg-void shine through
+    surface2: '#1a1a1f', // borders and secondary backgrounds
+    surface3: '#27272a', // hovers
+    clickable: '#a1a1aa',
+    base: '#f4f4f5',
+    disabled: '#52525b',
+    hover: '#fafafa',
     accent: '#f59e0b',
     error: '#ef4444',
-    errorSurface: '#1a0a0a',
+    errorSurface: 'rgba(239, 68, 68, 0.1)',
   },
   syntax: {
-    plain: '#fafafa',
-    comment: { color: '#3f3f46', fontStyle: 'italic' },
-    keyword: '#38bdf8',
-    tag: '#f59e0b',
-    punctuation: '#71717a',
-    definition: '#fafafa',
-    property: '#38bdf8',
-    static: '#22c55e',
-    string: '#f59e0b',
+    plain: '#f4f4f5',
+    comment: { color: '#71717a', fontStyle: 'italic' },
+    keyword: '#38bdf8', // sky-400
+    tag: '#fbbf24', // amber-400
+    punctuation: '#a1a1aa', // zinc-400
+    definition: '#818cf8', // indigo-400
+    property: '#38bdf8', // sky-400
+    static: '#34d399', // emerald-400
+    string: '#a7f3d0', // emerald-200
   },
   font: {
-    body: 'Geist Sans, ui-sans-serif, system-ui',
-    mono: 'JetBrains Mono, Fira Code, ui-monospace',
+    body: 'ui-sans-serif, system-ui, -apple-system, sans-serif',
+    mono: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
     size: '14px',
     lineHeight: '1.6',
   },

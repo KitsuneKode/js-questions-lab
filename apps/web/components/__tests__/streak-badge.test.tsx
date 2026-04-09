@@ -13,10 +13,13 @@ const mockUseProgress = vi.mocked(useProgress);
 function createProgressContext(overrides: Partial<ReturnType<typeof useProgress>>) {
   return {
     state: { version: 2, questions: {} },
+    reactState: { version: 1 as const, questions: {} },
     ready: true,
     syncStatus: 'idle' as const,
     saveAttempt: vi.fn(),
     saveSelfGrade: vi.fn(),
+    saveReactAttempt: vi.fn(),
+    saveReactSelfGrade: vi.fn(),
     toggleBookmark: vi.fn(),
     xpState: {
       version: 1,

@@ -4,11 +4,13 @@ import { setRequestLocale } from 'next-intl/server';
 import { ReactIDEDynamic } from '@/components/react-ide/react-ide-dynamic';
 import { getReactDiscoveryIndex, getReactQuestion } from '@/lib/content/react-loaders';
 import type { LocaleCode } from '@/lib/i18n/config';
+import { SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl, truncateDescription } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
 export async function generateStaticParams() {
-  return getReactDiscoveryIndex().map((question) => ({ id: question.id }));
+  const ids = getReactDiscoveryIndex().map((question) => question.id);
+  return SUPPORTED_LOCALES.flatMap((locale) => ids.map((id) => ({ locale, id })));
 }
 
 export const dynamic = 'force-static';
@@ -62,8 +64,8 @@ export default async function ReactQuestionPage({
   }
 
   return (
-    <main className="min-h-screen bg-void overflow-hidden pt-20 md:pt-[5.5rem]">
-      <div className="h-[calc(100svh-5rem)] min-h-[640px] overflow-hidden">
+    <main className="min-h-dvh bg-void overflow-hidden pt-26">
+      <div className="h-[calc(100dvh-6.5rem)] min-h-[640px] overflow-hidden">
         <ReactIDEDynamic question={question} />
       </div>
     </main>

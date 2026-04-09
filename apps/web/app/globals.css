@@ -305,6 +305,13 @@
     background: rgba(6, 182, 212, 0.12) !important;
     border-left: 3px solid rgb(6, 182, 212) !important;
   }
+
+  /* Sandpack layout: allow Sandpack wrappers to fill flex containers */
+  .sp-wrapper {
+    /* Sandpack sets flex styles inline; override to allow full-height panes */
+    flex-grow: 1 !important;
+    min-height: 0 !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -75,12 +75,22 @@ export function SiteHeader() {
   const locale = getLocaleFromPathname(pathname ?? `/${DEFAULT_LOCALE}`);
 
   const navLinks = [
-    { href: withLocale(locale, siteLinks.questions), label: t('questions'), badge: false },
-    { href: withLocale(locale, '/react'), label: 'React', badge: false },
-    { href: withLocale(locale, siteLinks.progress), label: t('progress'), badge: true },
-    { href: withLocale(locale, siteLinks.leaderboard), label: t('leaderboard'), badge: false },
-    { href: withLocale(locale, siteLinks.credits), label: t('credits'), badge: false },
-    { href: withLocale(locale, siteLinks.contact), label: t('contact'), badge: false },
+    {
+      href: withLocale(locale, siteLinks.questions),
+      label: t('questions'),
+      badge: false,
+    },
+    { href: withLocale(locale, siteLinks.react), label: 'React', badge: false },
+    {
+      href: withLocale(locale, siteLinks.progress),
+      label: t('progress'),
+      badge: true,
+    },
+    {
+      href: withLocale(locale, siteLinks.leaderboard),
+      label: t('leaderboard'),
+      badge: false,
+    },
   ];
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -109,7 +119,10 @@ export function SiteHeader() {
       >
         <header
           className="pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full border border-border/50 px-4 shadow-sm sm:px-5"
-          style={{ backdropFilter: 'blur(16px)', background: 'rgba(9, 9, 11, 0.8)' }}
+          style={{
+            backdropFilter: 'blur(16px)',
+            background: 'rgba(9, 9, 11, 0.8)',
+          }}
         >
           <Link
             href={withLocale(locale, '/')}
@@ -137,7 +150,11 @@ export function SiteHeader() {
                       layoutId="nav-indicator"
                       className="absolute -bottom-[6px] left-1/2 h-[2px] w-[2px] -translate-x-1/2 rounded-full bg-primary"
                       initial={false}
-                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
                     />
                   ) : null}
                 </Link>
@@ -151,10 +168,11 @@ export function SiteHeader() {
                 variant="ghost"
                 size="sm"
                 onClick={() => openScratchpad()}
-                className="h-8 gap-1.5 px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
+                className="h-8 gap-2 text-xs font-medium border-border-subtle hover:border-primary/40 transition-all active:scale-[0.95]"
+                title={t('scratchpad')}
+                aria-label={t('scratchpad')}
               >
                 <IconTerminal2 className="h-3.5 w-3.5" />
-                {t('scratchpad')}
               </Button>
 
               <DropdownMenu>
@@ -162,7 +180,7 @@ export function SiteHeader() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 gap-1.5 px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
+                    className="h-8 gap-2 text-xs font-medium border-border-subtle hover:border-primary/40 transition-all active:scale-[0.95]"
                     aria-label="Switch language"
                   >
                     <IconWorld className="h-3.5 w-3.5" />
@@ -190,7 +208,7 @@ export function SiteHeader() {
             </div>
 
             {/* Keyboard shortcuts button */}
-            <KeyboardShortcutsTrigger />
+            <KeyboardShortcutsTrigger compact />
 
             <Button
               variant="ghost"

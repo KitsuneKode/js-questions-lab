@@ -220,7 +220,7 @@ export function useKeyboardShortcuts() {
   const [open, setOpen] = useState(false);
   const tNav = useTranslations('nav');
 
-  const KeyboardShortcutsTrigger = () => (
+  const KeyboardShortcutsTrigger = ({ compact = false }: { compact?: boolean }) => (
     <>
       <Button
         variant="outline"
@@ -230,10 +230,14 @@ export function useKeyboardShortcuts() {
         title="Keyboard shortcuts (?)"
       >
         <IconKeyboard className="h-4 w-4" />
-        <span className="hidden sm:inline">{tNav('shortcuts')}</span>
-        <kbd className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded border border-border-subtle bg-muted/50 text-[9px] font-mono">
-          ?
-        </kbd>
+        {!compact && (
+          <>
+            <span className="hidden sm:inline">{tNav('shortcuts')}</span>
+            <kbd className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded border border-border-subtle bg-muted/50 text-[9px] font-mono">
+              ?
+            </kbd>
+          </>
+        )}
       </Button>
       <KeyboardShortcutsModal open={open} onOpenChange={setOpen} />
     </>

@@ -33,6 +33,13 @@ describe('react-loaders', () => {
     expect(question?.id).toBe('react-counter');
   });
 
+  it('render props mouse challenge keeps a full-height preview container', () => {
+    const question = getReactQuestion('react-render-props-mouse');
+    expect(question).not.toBeNull();
+    expect(question?.starterCode['App.tsx']).toContain('min-h-screen');
+    expect(question?.solutionCode['App.tsx']).toContain('min-h-screen');
+  });
+
   it('getReactQuestion returns null for unknown id', () => {
     expect(getReactQuestion('does-not-exist')).toBeNull();
   });
