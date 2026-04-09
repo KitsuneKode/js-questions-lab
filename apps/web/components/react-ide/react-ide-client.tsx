@@ -18,9 +18,12 @@ import {
   IconTerminal2,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
+import * as prettierBabel from 'prettier/plugins/babel';
+import * as prettierEstree from 'prettier/plugins/estree';
+import * as prettier from 'prettier/standalone';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
-import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
+import { CodeMirrorEditor } from '@/components/editor/codemirror-editor';
 import { ResourcesPanel } from '@/components/ide/resources-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -598,7 +601,7 @@ function BuildPhase({
             {/* Editor */}
             <ResizablePanel defaultSize={80} minSize={40} className="flex flex-col min-h-0 h-full">
               <div className="flex flex-1 min-h-0 h-full w-full flex-col overflow-hidden bg-code">
-                <SandpackMonacoEditor
+                <SandpackCodeMirrorEditor
                   headerLeft={
                     <EditorHeaderTabs
                       viewMode={viewMode}
@@ -897,17 +900,30 @@ function ReviewPhase({
   );
 }
 
-function SandpackMonacoEditor({ headerLeft }: { headerLeft?: React.ReactNode }) {
+function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode }) {
   const { code, updateCode } = useActiveCode();
   const { sandpack } = useSandpack();
   const { activeFile } = sandpack;
-  const editorRef = useRef<any>(null);
 
-  const language =
-    activeFile.endsWith('.ts') || activeFile.endsWith('.tsx') ? 'typescript' : 'javascript';
+  const language = activeFile.endsWith('.html')
+    ? 'html'
+    : activeFile.endsWith('.ts') || activeFile.endsWith('.tsx')
+      ? 'typescript'
+      : 'javascript';
 
-  function handleFormat() {
-    editorRef.current?.getAction('editor.action.formatDocument')?.run();
+  async function handleFormat() {
+    try {
+      const formatted = await prettier.format(code, {
+        parser: 'babel',
+        plugins: [prettierBabel, prettierEstree],
+        singleQuote: true,
+        printWidth: 100,
+        trailingComma: 'all',
+      });
+      updateCode(formatted);
+    } catch (e) {
+      console.error('Format failed', e);
+    }
   }
 
   function handleReset() {
@@ -938,18 +954,12 @@ function SandpackMonacoEditor({ headerLeft }: { headerLeft?: React.ReactNode }) 
         </div>
       </div>
       <div className="relative flex-1 min-h-0 w-full">
-        <MonacoCodeEditor
+        <CodeMirrorEditor
           key={activeFile}
           path={activeFile}
-          projectFiles={Object.fromEntries(
-            Object.entries(sandpack.files).map(([p, f]) => [p, f.code]),
-          )}
           value={code}
           onChange={(newCode) => updateCode(newCode || '')}
-          language={language}
-          onEditorMount={(editor) => {
-            editorRef.current = editor;
-          }}
+          language={language as 'html' | 'javascript' | 'typescript'}
         />
       </div>
     </div>
