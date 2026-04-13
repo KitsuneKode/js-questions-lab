@@ -9,12 +9,14 @@ export interface SafeAuthState {
   userId: string | null;
 }
 
-export const clerkEnabled =
-  !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith('pk_') &&
-  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('REPLACE') &&
-  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('placeholder') &&
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.length > 20;
+export function isValidClerkKey(key?: string): boolean {
+  if (!key) return false;
+  return (
+    key.startsWith('pk_') && !key.includes('REPLACE') && !key.toLowerCase().includes('placeholder')
+  );
+}
+
+export const clerkEnabled = isValidClerkKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export const guestAuth: SafeAuthState = { isLoaded: true, isSignedIn: false, userId: null };
 
