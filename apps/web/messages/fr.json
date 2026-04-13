@@ -10,7 +10,8 @@
     "language": "Langue",
     "contact": "Contact",
     "shortcuts": "Raccourcis",
-    "signIn": "Connexion"
+    "signIn": "Connexion",
+    "leaderboard": "Classement"
   },
   "questions": {
     "title": "Bibliothèque de questions",
@@ -49,7 +50,9 @@
       "clear": "Tout effacer",
       "showLess": "Voir moins",
       "more": "+{count} de plus",
-      "resetTags": "Réinitialiser les tags ({count})"
+      "resetTags": "Réinitialiser les tags ({count})",
+      "saved": "Sauvegardé",
+      "savedEmpty": "Ajoutez des questions aux favoris pour les filtrer ici"
     }
   },
   "question": {
@@ -118,6 +121,25 @@
       "runnable": "{count} Extraits exécutables",
       "questions": "{count} Questions",
       "topics": "{count} Sujets"
+    },
+    "reactSection": {
+      "eyebrow": "Bientôt disponible",
+      "sectionTitle": "Pratique React",
+      "sectionSubline": "Créez de vrais composants, explorez les patterns et maîtrisez React, avec un IDE Sandpack en direct dans chaque défi.",
+      "comingSoon": "Bientôt disponible",
+      "heroTitle": "Pratique React",
+      "heroSubtitle": "Créez de vrais composants avec un IDE Sandpack en direct. Pas de configuration, pas de boilerplate, juste React et vous.",
+      "heroTagIde": "IDE Sandpack",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Aperçu en direct",
+      "flowLabel": "La boucle de pratique",
+      "flowStep1": "Lire",
+      "flowStep2": "Construire",
+      "flowStep3": "Réviser",
+      "patternsLabel": "Patterns",
+      "patternsTitle": "30+ patterns React",
+      "patternsSubtitle": "À partir de javascript-react-patterns de Lydia Hallie, transformés en défis interactifs.",
+      "patternsMore": "+20 de plus"
     }
   },
   "dashboard": {
@@ -380,7 +402,8 @@
     "propagationReplay": "Relecture de propagation",
     "propagationReplayDesc": "Chaque ligne montre le nœud actuel gérant le clic alors que le bubbling se déplace vers l'extérieur.",
     "clickToInspect": "Cliquez sur un nœud pour inspecter la sortie console propagée.",
-    "clickable": "Cliquable"
+    "clickable": "Cliquable",
+    "resourcesHeader": "Références"
   },
   "scratchpad": {
     "title": "Brouillon",
@@ -427,5 +450,16 @@
     "badgeMicro": "Microtâche",
     "badgeTask": "Tâche",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "description": "Découvrez qui gagne le plus d'XP et grimpe dans les rangs.",
+    "eyebrow": "Classements",
+    "subtitle": "Rivalisez, apprenez et progressez avec la communauté.",
+    "weeklyTitle": "Cette semaine",
+    "allTimeTitle": "Tous les temps",
+    "resetsMonday": "Remis à zéro le lundi",
+    "empty": "Aucune entrée pour le moment. Soyez le premier à gagner des XP !",
+    "you": "Vous"
   }
 }

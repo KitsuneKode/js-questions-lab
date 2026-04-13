@@ -47,13 +47,20 @@ export async function upsertSingleQuestion(item: ProgressItem): Promise<void> {
   if (!userId) return;
 
   const supabase = createServerSupabaseClient();
+  const { data: existing } = await supabase
+    .from('user_progress')
+    .select('srs_data')
+    .eq('user_id', userId)
+    .eq('question_id', item.questionId)
+    .maybeSingle();
+
   const { error } = await supabase.from('user_progress').upsert(
     {
       user_id: userId,
       question_id: item.questionId,
       attempts: item.attempts,
       bookmarked: item.bookmarked,
-      srs_data: item.srsData ?? null,
+      srs_data: existing?.srs_data ?? null,
       updated_at: item.updatedAt,
     },
     { onConflict: 'user_id,question_id' },
@@ -70,12 +77,28 @@ export async function syncProgressToServer(items: ProgressItem[]): Promise<void>
   if (!userId || items.length === 0) return;
 
   const supabase = createServerSupabaseClient();
+  const { data: existingRows } = await supabase
+    .from('user_progress')
+    .select('question_id, srs_data')
+    .eq('user_id', userId)
+    .in(
+      'question_id',
+      items.map((item) => item.questionId),
+    );
+
+  const existingSrsByQuestionId = new Map<number, ProgressItem['srsData'] | null>(
+    (existingRows ?? []).map((row) => [
+      row.question_id as number,
+      row.srs_data as ProgressItem['srsData'] | null,
+    ]),
+  );
+
   const rows = items.map((item) => ({
     user_id: userId,
     question_id: item.questionId,
     attempts: item.attempts,
     bookmarked: item.bookmarked,
-    srs_data: item.srsData ?? null,
+    srs_data: existingSrsByQuestionId.get(item.questionId) ?? null,
     updated_at: item.updatedAt,
   }));
 

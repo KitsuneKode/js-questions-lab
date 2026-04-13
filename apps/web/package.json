@@ -9,7 +9,8 @@
     "lint": "bunx biome check .",
     "lint:fix": "bunx biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@babel/standalone": "^7.29.2",
@@ -20,6 +21,7 @@
     "@supabase/supabase-js": "^2.101.1",
     "@tabler/icons-react": "^3.41.1",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

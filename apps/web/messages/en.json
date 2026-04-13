@@ -10,7 +10,8 @@
     "language": "Language",
     "contact": "Contact",
     "shortcuts": "Shortcuts",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "leaderboard": "Leaderboard"
   },
   "questions": {
     "title": "Question Library",
@@ -49,7 +50,9 @@
       "clear": "Clear All",
       "showLess": "Show Less",
       "more": "+{count} More",
-      "resetTags": "Reset Tags ({count})"
+      "resetTags": "Reset Tags ({count})",
+      "saved": "Saved",
+      "savedEmpty": "Bookmark questions to filter here"
     }
   },
   "question": {
@@ -118,6 +121,25 @@
       "runnable": "{count} Runnable Snippets",
       "questions": "{count} Questions",
       "topics": "{count} Topics"
+    },
+    "reactSection": {
+      "eyebrow": "Coming Soon",
+      "sectionTitle": "React Practice",
+      "sectionSubline": "Build real components, explore patterns, and master React — with a live Sandpack IDE inside every challenge.",
+      "comingSoon": "Coming Soon",
+      "heroTitle": "React Practice",
+      "heroSubtitle": "Build real components with a live Sandpack IDE. No config, no boilerplate — just React and you.",
+      "heroTagIde": "Sandpack IDE",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Live Preview",
+      "flowLabel": "The Practice Loop",
+      "flowStep1": "Read",
+      "flowStep2": "Build",
+      "flowStep3": "Review",
+      "patternsLabel": "Patterns",
+      "patternsTitle": "30+ React Patterns",
+      "patternsSubtitle": "From Lydia Hallie's javascript-react-patterns — distilled into interactive challenges.",
+      "patternsMore": "+20 more"
     }
   },
   "dashboard": {
@@ -380,7 +402,8 @@
     "propagationReplay": "Propagation Replay",
     "propagationReplayDesc": "Each row shows the current node handling the click as bubbling moves outward.",
     "clickToInspect": "Click a node to inspect the propagated console output.",
-    "clickable": "Clickable"
+    "clickable": "Clickable",
+    "resourcesHeader": "References"
   },
   "scratchpad": {
     "title": "Scratchpad",
@@ -427,5 +450,16 @@
     "badgeMicro": "Microtask",
     "badgeTask": "Task",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "description": "See who's earning the most XP and climbing the ranks.",
+    "eyebrow": "Rankings",
+    "subtitle": "Compete, learn, and level up alongside the community.",
+    "weeklyTitle": "This Week",
+    "allTimeTitle": "All Time",
+    "resetsMonday": "Resets Monday",
+    "empty": "No entries yet. Be the first to earn XP!",
+    "you": "You"
   }
 }

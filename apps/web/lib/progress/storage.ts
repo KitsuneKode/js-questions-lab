@@ -3,7 +3,7 @@ import type { SRSData } from '@/lib/progress/srs';
 export type AnswerStatus = 'correct' | 'incorrect';
 
 export interface AttemptRecord {
-  selected: 'A' | 'B' | 'C' | 'D';
+  selected: 'A' | 'B' | 'C' | 'D' | null;
   status: AnswerStatus;
   attemptedAt: string;
 }
@@ -21,7 +21,8 @@ export interface ProgressState {
   questions: Record<string, ProgressItem>;
 }
 
-const KEY = 'jsq_progress_v2';
+const BASE_KEY = 'jsq_progress_v2';
+const key = (sid: string) => `${BASE_KEY}_${sid}`;
 
 export const defaultProgressState: ProgressState = {
   version: 2,
@@ -39,26 +40,14 @@ function isValidProgressState(value: unknown): value is ProgressState {
   );
 }
 
-export function readProgress(): ProgressState {
+export function readProgress(sid: string): ProgressState {
   if (typeof window === 'undefined') {
     return defaultProgressState;
   }
 
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) {
-      // Check for v1 data to migrate
-      const v1Raw = window.localStorage.getItem('jsq_progress_v1');
-      if (v1Raw) {
-        const v1Parsed = JSON.parse(v1Raw);
-        window.localStorage.removeItem('jsq_progress_v1');
-        return {
-          version: 2,
-          questions: v1Parsed.questions || {},
-        };
-      }
-      return defaultProgressState;
-    }
+    const raw = window.localStorage.getItem(key(sid));
+    if (!raw) return defaultProgressState;
 
     const parsed: unknown = JSON.parse(raw);
     if (!isValidProgressState(parsed)) {
@@ -71,10 +60,14 @@ export function readProgress(): ProgressState {
   }
 }
 
-export function writeProgress(state: ProgressState) {
+export function writeProgress(sid: string, state: ProgressState) {
   if (typeof window === 'undefined') {
     return;
   }
 
-  window.localStorage.setItem(KEY, JSON.stringify(state));
+  try {
+    window.localStorage.setItem(key(sid), JSON.stringify(state));
+  } catch (err) {
+    console.warn('Failed to persist progress state:', err);
+  }
 }

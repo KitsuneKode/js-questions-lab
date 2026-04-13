@@ -77,6 +77,7 @@ export function SiteHeader() {
   const navLinks = [
     { href: withLocale(locale, siteLinks.questions), label: t('questions'), badge: false },
     { href: withLocale(locale, siteLinks.progress), label: t('progress'), badge: true },
+    { href: withLocale(locale, siteLinks.leaderboard), label: t('leaderboard'), badge: false },
     { href: withLocale(locale, siteLinks.credits), label: t('credits'), badge: false },
     { href: withLocale(locale, siteLinks.contact), label: t('contact'), badge: false },
   ];

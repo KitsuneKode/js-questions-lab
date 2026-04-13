@@ -10,7 +10,8 @@
     "language": "Idioma",
     "contact": "Contato",
     "shortcuts": "Atalhos",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "leaderboard": "Classificação"
   },
   "questions": {
     "title": "Biblioteca de perguntas",
@@ -49,7 +50,9 @@
       "clear": "Limpar tudo",
       "showLess": "Mostrar menos",
       "more": "+{count} mais",
-      "resetTags": "Resetar tags ({count})"
+      "resetTags": "Resetar tags ({count})",
+      "saved": "Salvos",
+      "savedEmpty": "Salve questões para filtrá-las aqui"
     }
   },
   "question": {
@@ -118,6 +121,25 @@
       "runnable": "{count} Snippets executáveis",
       "questions": "{count} Perguntas",
       "topics": "{count} Tópicos"
+    },
+    "reactSection": {
+      "eyebrow": "Em breve",
+      "sectionTitle": "Prática de React",
+      "sectionSubline": "Crie componentes reais, explore padrões e domine React, com uma IDE Sandpack ao vivo dentro de cada desafio.",
+      "comingSoon": "Em breve",
+      "heroTitle": "Prática de React",
+      "heroSubtitle": "Crie componentes reais com uma IDE Sandpack ao vivo. Sem configuração, sem boilerplate, só React e você.",
+      "heroTagIde": "IDE Sandpack",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Prévia ao vivo",
+      "flowLabel": "O ciclo de prática",
+      "flowStep1": "Ler",
+      "flowStep2": "Construir",
+      "flowStep3": "Revisar",
+      "patternsLabel": "Padrões",
+      "patternsTitle": "Mais de 30 padrões de React",
+      "patternsSubtitle": "Do javascript-react-patterns da Lydia Hallie, transformados em desafios interativos.",
+      "patternsMore": "+20 a mais"
     }
   },
   "dashboard": {
@@ -380,7 +402,8 @@
     "propagationReplay": "Reprodução de Propagação",
     "propagationReplayDesc": "Cada linha mostra o nó atual tratando o clique conforme o bubbling se move outward.",
     "clickToInspect": "Clique em um nó para inspecionar a saída do console propagado.",
-    "clickable": "Clicável"
+    "clickable": "Clicável",
+    "resourcesHeader": "Referências"
   },
   "scratchpad": {
     "title": "Rascunho",
@@ -427,5 +450,16 @@
     "badgeMicro": "Microtarefa",
     "badgeTask": "Tarefa",
     "badgeConsole": "Console"
+  },
+  "leaderboard": {
+    "title": "Classificação",
+    "description": "Veja quem está ganhando mais XP e subindo nos ranks.",
+    "eyebrow": "Rankings",
+    "subtitle": "Compita, aprenda e evolua junto com a comunidade.",
+    "weeklyTitle": "Esta Semana",
+    "allTimeTitle": "Todos os Tempos",
+    "resetsMonday": "Reseta às segundas",
+    "empty": "Nenhuma entrada ainda. Seja o primeiro a ganhar XP!",
+    "you": "Você"
   }
 }

@@ -10,7 +10,8 @@
     "language": "言語",
     "contact": "お問い合わせ",
     "shortcuts": "ショートカット",
-    "signIn": "サインイン"
+    "signIn": "サインイン",
+    "leaderboard": "ランキング"
   },
   "questions": {
     "title": "問題ライブラリ",
@@ -49,7 +50,9 @@
       "clear": "すべてクリア",
       "showLess": "表示を減らす",
       "more": "+{count}件をさらに表示",
-      "resetTags": "タグをリセット ({count})"
+      "resetTags": "タグをリセット ({count})",
+      "saved": "保存済み",
+      "savedEmpty": "ここでフィルタリングするには質問をブックマークしてください"
     }
   },
   "question": {
@@ -118,6 +121,25 @@
       "runnable": "{count}件の実行可能なスニペット",
       "questions": "{count} 質問",
       "topics": "{count} トピック"
+    },
+    "reactSection": {
+      "eyebrow": "近日公開",
+      "sectionTitle": "React 練習",
+      "sectionSubline": "実践的なコンポーネントを作り、パターンを学び、すべてのチャレンジ内で動く Sandpack IDE と一緒に React を身につけましょう。",
+      "comingSoon": "近日公開",
+      "heroTitle": "React 練習",
+      "heroSubtitle": "動く Sandpack IDE で実際にコンポーネントを作れます。設定不要、ボイラープレート不要。React にそのまま集中できます。",
+      "heroTagIde": "Sandpack IDE",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "ライブプレビュー",
+      "flowLabel": "練習の流れ",
+      "flowStep1": "読む",
+      "flowStep2": "作る",
+      "flowStep3": "振り返る",
+      "patternsLabel": "パターン",
+      "patternsTitle": "30種類以上の React パターン",
+      "patternsSubtitle": "Lydia Hallie の javascript-react-patterns を、インタラクティブなチャレンジに落とし込みました。",
+      "patternsMore": "+20 以上"
     }
   },
   "dashboard": {
@@ -380,7 +402,8 @@
     "propagationReplay": "プロパゲーションリプレイ",
     "propagationReplayDesc": "各行は、バブリングが外側へ移動するにつれてクリックを処理する現在のノードを示します。",
     "clickToInspect": "ノードをクリックして伝播コンソール出力を検査します。",
-    "clickable": "クリック可能"
+    "clickable": "クリック可能",
+    "resourcesHeader": "参考資料"
   },
   "scratchpad": {
     "title": "スクラッチパッド",
@@ -427,5 +450,16 @@
     "badgeMicro": "マイクロタスク",
     "badgeTask": "タスク",
     "badgeConsole": "コンソール"
+  },
+  "leaderboard": {
+    "title": "ランキング",
+    "description": "最もXPを獲得してランクを上げているユーザーを確認しよう。",
+    "eyebrow": "順位",
+    "subtitle": "コミュニティとともに競い、学び、レベルアップしよう。",
+    "weeklyTitle": "今週",
+    "allTimeTitle": "全期間",
+    "resetsMonday": "毎週月曜日にリセット",
+    "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
+    "you": "あなた"
   }
 }

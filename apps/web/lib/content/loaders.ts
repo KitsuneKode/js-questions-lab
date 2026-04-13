@@ -5,6 +5,7 @@ import type {
   LocaleIndex,
   QuestionDiscoveryItem,
   QuestionRecord,
+  QuestionResource,
   QuestionSummary,
   QuestionsManifest,
 } from '@/lib/content/types';
@@ -92,30 +93,49 @@ function toQuestionDiscoveryItem(question: QuestionRecord): QuestionDiscoveryIte
  * Returns all questions for a locale. Missing question ids (relative to English)
  * are back-filled with the English record annotated with `isFallback: true`.
  */
+const getResourcesMap = cache((): Record<string, QuestionResource[]> => {
+  // Resolve from repo root, not generated/ subdir
+  for (const root of DATA_ROOTS.map((r) => path.resolve(r, '..', '..'))) {
+    const candidate = path.join(root, 'content', 'resources.json');
+    if (fs.existsSync(candidate)) {
+      return JSON.parse(fs.readFileSync(candidate, 'utf8')) as Record<string, QuestionResource[]>;
+    }
+  }
+  return {};
+});
+
+function mergeResources(questions: QuestionRecord[]): QuestionRecord[] {
+  const map = getResourcesMap();
+  if (Object.keys(map).length === 0) return questions;
+  return questions.map((q) => ({ ...q, resources: map[String(q.id)] ?? q.resources }));
+}
+
 export const getQuestions = cache((locale: LocaleCode = DEFAULT_LOCALE): QuestionRecord[] => {
   const localePath = `locales/${locale}/questions.v1.json`;
   const localeQuestions = readJson<QuestionRecord[]>(localePath);
 
   // English is always the authoritative set
   if (locale === DEFAULT_LOCALE) {
-    return localeQuestions ?? [];
+    return mergeResources(localeQuestions ?? []);
   }
 
   const enQuestions = readJson<QuestionRecord[]>(`locales/en/questions.v1.json`) ?? [];
 
   if (!localeQuestions) {
     // Entire locale is missing — return English fallback for all questions
-    return enQuestions.map((q) => ({ ...q, isFallback: true }));
+    return mergeResources(enQuestions.map((q) => ({ ...q, isFallback: true })));
   }
 
   // Merge: locale records take precedence; missing ids get English fallback
   const localeById = new Map<number, QuestionRecord>(localeQuestions.map((q) => [q.id, q]));
 
-  return enQuestions.map((enQ) => {
-    const localeQ = localeById.get(enQ.id);
-    if (localeQ) return localeQ;
-    return { ...enQ, isFallback: true };
-  });
+  return mergeResources(
+    enQuestions.map((enQ) => {
+      const localeQ = localeById.get(enQ.id);
+      if (localeQ) return localeQ;
+      return { ...enQ, isFallback: true };
+    }),
+  );
 });
 
 export const getManifest = cache((locale: LocaleCode = DEFAULT_LOCALE): QuestionsManifest => {

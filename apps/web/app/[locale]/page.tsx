@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { ContinueLearningShelf } from '@/components/continue-learning-shelf';
+import { ReactBentoSection } from '@/components/landing/react-bento-section';
 import { LandingHero } from '@/components/landing-hero';
 import { LandingSections } from '@/components/landing-sections';
 import { QuestionCard } from '@/components/question-card';
@@ -79,6 +80,8 @@ export default async function HomePage({ params }: HomePageProps) {
         />
 
         <ContinueLearningShelf questions={questions} locale={locale} />
+
+        <ReactBentoSection />
 
         <LandingSections tagCounts={tagCounts} locale={locale} />
 

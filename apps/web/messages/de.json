@@ -10,7 +10,8 @@
     "language": "Sprache",
     "contact": "Kontakt",
     "shortcuts": "Tastenkürzel",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "leaderboard": "Rangliste"
   },
   "questions": {
     "title": "Fragenbibliothek",
@@ -49,7 +50,9 @@
       "clear": "Alles löschen",
       "showLess": "Weniger anzeigen",
       "more": "+{count} mehr",
-      "resetTags": "Themen zurücksetzen ({count})"
+      "resetTags": "Themen zurücksetzen ({count})",
+      "saved": "Gespeichert",
+      "savedEmpty": "Fragen mit Lesezeichen versehen, um sie hier zu filtern"
     }
   },
   "question": {
@@ -118,6 +121,25 @@
       "runnable": "{count} ausführbare Snippets",
       "questions": "{count} Fragen",
       "topics": "{count} Themen"
+    },
+    "reactSection": {
+      "eyebrow": "Demnächst",
+      "sectionTitle": "React-Praxis",
+      "sectionSubline": "Baue echte Komponenten, erkunde Patterns und meistere React, mit einer Live-Sandpack-IDE in jeder Challenge.",
+      "comingSoon": "Demnächst",
+      "heroTitle": "React-Praxis",
+      "heroSubtitle": "Baue echte Komponenten mit einer Live-Sandpack-IDE. Keine Konfiguration, kein Boilerplate, nur React und du.",
+      "heroTagIde": "Sandpack-IDE",
+      "heroTagVersion": "React 19",
+      "heroTagPreview": "Live-Vorschau",
+      "flowLabel": "Die Übungsschleife",
+      "flowStep1": "Lesen",
+      "flowStep2": "Bauen",
+      "flowStep3": "Prüfen",
+      "patternsLabel": "Patterns",
+      "patternsTitle": "30+ React-Patterns",
+      "patternsSubtitle": "Aus Lydia Hallies javascript-react-patterns, verdichtet zu interaktiven Challenges.",
+      "patternsMore": "+20 mehr"
     }
   },
   "dashboard": {
@@ -380,7 +402,8 @@
     "propagationReplay": "Propagationswiedergabe",
     "propagationReplayDesc": "Jede Zeile zeigt den aktuellen Knoten, der den Klick behandelt, während sich das Bubbling nach außen bewegt.",
     "clickToInspect": "Klicken Sie auf einen Knoten, um die propagierte Konsolenausgabe zu untersuchen.",
-    "clickable": "Klickbar"
+    "clickable": "Klickbar",
+    "resourcesHeader": "Referenzen"
   },
   "scratchpad": {
     "title": "Notizblock",
@@ -427,5 +450,16 @@
     "badgeMicro": "Microtask",
     "badgeTask": "Task",
     "badgeConsole": "Konsole"
+  },
+  "leaderboard": {
+    "title": "Rangliste",
+    "description": "Sieh, wer die meisten XP verdient und die Rangliste erklimmt.",
+    "eyebrow": "Rangliste",
+    "subtitle": "Konkurriere, lerne und steige mit der Community auf.",
+    "weeklyTitle": "Diese Woche",
+    "allTimeTitle": "Alle Zeiten",
+    "resetsMonday": "Zurückgesetzt montags",
+    "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
+    "you": "Du"
   }
 }

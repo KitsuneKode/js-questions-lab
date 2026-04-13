@@ -1,5 +1,12 @@
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
+export interface QuestionResource {
+  type: 'video' | 'blog' | 'docs' | 'repo';
+  title: string;
+  url: string;
+  author?: string;
+}
+
 export interface QuestionOption {
   key: 'A' | 'B' | 'C' | 'D';
   text: string;
@@ -40,6 +47,7 @@ export interface QuestionRecord {
   difficulty: Difficulty;
   runnable: boolean;
   runtime: QuestionRuntime;
+  resources?: QuestionResource[];
   source: {
     startLineHint: number | null;
   };

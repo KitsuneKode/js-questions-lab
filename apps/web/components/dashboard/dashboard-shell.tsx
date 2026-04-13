@@ -14,6 +14,8 @@ import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { ReviewQueue } from '@/components/dashboard/review-queue';
 import { TopicAccuracyChart } from '@/components/dashboard/topic-accuracy-chart';
 import { WeakestTopics } from '@/components/dashboard/weakest-topics';
+import { StreakBadge } from '@/components/engagement/streak-badge';
+import { XPBadge } from '@/components/engagement/xp-badge';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
@@ -91,6 +93,10 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
             ? t('statSummary', { count: overall.totalAnswered, topics: tagStats.length })
             : t('statHero')}
         </p>
+        <div className="flex items-center gap-3">
+          <XPBadge />
+          <StreakBadge />
+        </div>
       </header>
 
       {/* Stats overview */}
