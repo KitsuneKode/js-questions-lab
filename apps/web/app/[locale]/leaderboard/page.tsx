@@ -28,6 +28,7 @@ export async function generateMetadata({
     title: `${t('title')} — ${siteConfig.name}`,
     description: t('description'),
     alternates: { canonical: canonicalUrl },
+    robots: { index: true, follow: true, noarchive: true },
   };
 }
 
@@ -52,8 +53,29 @@ export default async function LeaderboardPage({
 
   const t = await getTranslations({ locale, namespace: 'leaderboard' });
 
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t('title'),
+    description: t('description'),
+    url: getCanonicalUrl(locale, 'leaderboard'),
+    isPartOf: {
+      '@type': 'WebSite',
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+  };
+
   return (
     <main className="bg-void min-h-screen pt-32 pb-24 md:pt-40">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD SEO structured data
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <Container>
         <div className="mx-auto max-w-2xl space-y-10">
           {/* ─── Header ──────────────────────────────────────────────── */}
@@ -96,6 +118,7 @@ export default async function LeaderboardPage({
             allTime={allTime}
             weeklyCurrentUserPosition={weeklyPos}
             allTimeCurrentUserPosition={allTimePos}
+            isAuthenticated={!!userId}
           />
         </div>
       </Container>

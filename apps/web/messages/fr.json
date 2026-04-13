@@ -463,6 +463,12 @@
     "you": "Vous",
     "guestCtaHeading": "Sign in to join the rankings",
     "guestCtaBody": "Create a free account to track your XP, appear on the leaderboard, and compete weekly.",
-    "guestCtaAction": "Get started"
+    "guestCtaAction": "Get started",
+    "totalParticipants": "{count} competing",
+    "totalXpThisWeek": "{count} XP earned",
+    "yourRank": "Your rank",
+    "signInToSee": "Sign in",
+    "position": "#{position}",
+    "stickyYou": "Your position"
   }
 }

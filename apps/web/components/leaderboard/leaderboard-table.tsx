@@ -1,7 +1,7 @@
 'use client';
 
 import { IconFlame } from '@tabler/icons-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
@@ -16,7 +16,17 @@ const RANK_COLOURS: Record<number, { ring: string; text: string; bg: string }> =
 
 const RANK_NUMERALS: Record<number, string> = { 1: '1st', 2: '2nd', 3: '3rd' };
 
-// ─── Avatar (initials fallback — no external dependency) ───────────────────
+// ─── level colours ─────────────────────────────────────────────────────────
+const LEVEL_COLOURS: Record<number, string> = {
+  1: 'border-zinc-600/40 text-zinc-400',
+  2: 'border-sky-600/40 text-sky-400',
+  3: 'border-emerald-600/40 text-emerald-400',
+  4: 'border-violet-600/40 text-violet-400',
+  5: 'border-primary/40 text-primary',
+  6: 'border-yellow-400/50 text-yellow-400',
+};
+
+// ─── Avatar ────────────────────────────────────────────────────────────────
 function Avatar({ name, rank }: { name: string; rank: number }) {
   const initials = name
     .replace(/^Anonymous.*/, 'AN')
@@ -50,7 +60,7 @@ function RankBadge({ rank }: { rank: number }) {
   return (
     <div
       className={cn(
-        'flex h-7 w-10 shrink-0 items-center justify-center rounded-md border text-[11px] font-bold font-mono',
+        'flex h-7 w-10 shrink-0 items-center justify-center rounded-md border font-mono text-[11px] font-bold',
         colour
           ? `${colour.ring} ${colour.text} ${colour.bg}`
           : 'border-zinc-700/50 bg-transparent text-zinc-500',
@@ -62,15 +72,6 @@ function RankBadge({ rank }: { rank: number }) {
 }
 
 // ─── Level badge ───────────────────────────────────────────────────────────
-const LEVEL_COLOURS: Record<number, string> = {
-  1: 'border-zinc-600/40 text-zinc-400',
-  2: 'border-sky-600/40 text-sky-400',
-  3: 'border-emerald-600/40 text-emerald-400',
-  4: 'border-violet-600/40 text-violet-400',
-  5: 'border-primary/40 text-primary',
-  6: 'border-yellow-400/50 text-yellow-400',
-};
-
 function LevelBadge({ level, name }: { level: number; name: string }) {
   return (
     <Badge
@@ -125,27 +126,43 @@ interface LeaderboardEntryRowProps {
   entry: LeaderboardEntry;
   isCurrentUser: boolean;
   index: number;
+  shouldAnimate: boolean;
+  shouldReduceMotion: boolean;
 }
 
-function LeaderboardEntryRow({ entry, isCurrentUser, index }: LeaderboardEntryRowProps) {
+function LeaderboardEntryRow({
+  entry,
+  isCurrentUser,
+  index,
+  shouldAnimate,
+  shouldReduceMotion,
+}: LeaderboardEntryRowProps) {
   const format = useFormatter();
   const t = useTranslations('leaderboard');
 
+  // Position 4-10 get subtle border, 11+ get transparent border
+  const tierClass =
+    entry.position <= 10
+      ? 'border-zinc-800/80 bg-zinc-900/60 hover:border-zinc-700/60 hover:bg-zinc-900'
+      : 'border-transparent bg-zinc-900/30 hover:bg-zinc-900/50';
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
+    <motion.li
+      tabIndex={0}
+      initial={shouldAnimate && !shouldReduceMotion ? { opacity: 0, y: 6 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.25,
-        delay: index * 0.04,
+        delay: shouldAnimate && !shouldReduceMotion ? index * 0.04 : 0,
         ease: [0.23, 1, 0.32, 1],
       }}
       className={cn(
         'group relative flex items-center gap-3 rounded-xl border px-4 py-3',
         'transition-colors duration-150 ease-out',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-1 focus-visible:ring-offset-zinc-950',
         isCurrentUser
           ? 'border-primary/30 bg-primary/5 shadow-[0_0_24px_rgba(245,158,11,0.07)]'
-          : 'border-zinc-800/80 bg-zinc-900/60 hover:border-zinc-700/60 hover:bg-zinc-900',
+          : tierClass,
       )}
     >
       {/* Rank badge */}
@@ -180,7 +197,7 @@ function LeaderboardEntryRow({ entry, isCurrentUser, index }: LeaderboardEntryRo
         </div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">XP</div>
       </div>
-    </motion.div>
+    </motion.li>
   );
 }
 
@@ -192,24 +209,51 @@ interface LeaderboardTableProps {
 
 export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTableProps) {
   const t = useTranslations('leaderboard');
+  const shouldReduceMotion = useReducedMotion() ?? false;
 
   if (entries.length === 0) {
     return <EmptyState message={t('empty')} />;
   }
 
   return (
-    <div className="space-y-1.5">
+    <ol className="list-none space-y-1.5">
       {entries.map((entry, index) => {
         const isCurrentUser = entry.position === currentUserPosition;
+        // Only stagger-animate the first 10 rows
+        const shouldAnimate = index < 10;
         return (
           <LeaderboardEntryRow
             key={entry.position}
             entry={entry}
             isCurrentUser={isCurrentUser}
             index={index}
+            shouldAnimate={shouldAnimate}
+            shouldReduceMotion={shouldReduceMotion}
           />
         );
       })}
-    </div>
+    </ol>
   );
+}
+
+// ─── Utility: split entries into podium + rest ─────────────────────────────
+export function extractPodium(entries: LeaderboardEntry[]): {
+  podium: LeaderboardEntry[];
+  rest: LeaderboardEntry[];
+} {
+  return {
+    podium: entries.slice(0, 3),
+    rest: entries.slice(3),
+  };
+}
+
+// ─── Utility: compute aggregate stats ──────────────────────────────────────
+export function computeStats(entries: LeaderboardEntry[]): {
+  totalParticipants: number;
+  totalWeeklyXP: number;
+} {
+  return {
+    totalParticipants: entries.length,
+    totalWeeklyXP: entries.reduce((sum, e) => sum + e.totalXP, 0),
+  };
 }
