@@ -16,6 +16,7 @@ vi.mock('react', async () => {
   const actual = await vi.importActual<typeof import('react')>('react');
   return {
     ...actual,
+    // biome-ignore lint/suspicious/noExplicitAny: <placeholder>
     cache: <T extends (...args: any[]) => any>(fn: T) => fn,
   };
 });
