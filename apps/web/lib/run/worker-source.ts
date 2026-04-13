@@ -18,6 +18,8 @@ export function generateWorkerSource(): string {
 'use strict';
 
 const runnerScope = self;
+let activeRunId = null;
+let activeTransportToken = null;
 
 // =============================================================================
 // Security Hardening
@@ -33,9 +35,16 @@ BLOCKED_APIS.forEach(name => {
       // Allow our internal postMessage by checking the call stack
       if (name === 'postMessage') {
         return function sandboxedPostMessage(...args) {
-          // Only allow messages from our internal code (has 'jsq-worker' source)
+          // Only allow messages from our internal code for the current run.
           const msg = args[0];
-          if (msg && typeof msg === 'object' && msg.source === 'jsq-worker') {
+          if (
+            msg &&
+            typeof msg === 'object' &&
+            msg.source === 'jsq-worker' &&
+            msg.runId === activeRunId &&
+            msg.transportToken === activeTransportToken &&
+            typeof msg.type === 'string'
+          ) {
             return original.apply(runnerScope, args);
           }
           throw new Error('postMessage is not available in sandbox');
@@ -92,18 +101,36 @@ const createMockElement = (tagName = 'div', id = null) => {
   };
 };
 
-const document = {
-  getElementById: (id) => createMockElement('div', id),
-  querySelector: () => createMockElement('div'),
-  querySelectorAll: () => [],
+const elementsById = new Map();
+const elementsBySelector = new Map();
+const documentNode = createMockElement('document');
+
+const getOrCreateElementById = (id) => {
+  if (!elementsById.has(id)) {
+    elementsById.set(id, createMockElement('div', id));
+  }
+  return elementsById.get(id);
+};
+
+const getOrCreateElementBySelector = (selector) => {
+  if (!elementsBySelector.has(selector)) {
+    elementsBySelector.set(selector, createMockElement('div'));
+  }
+  return elementsBySelector.get(selector);
+};
+
+const document = Object.assign(documentNode, {
+  getElementById: (id) => getOrCreateElementById(id),
+  querySelector: (selector) => getOrCreateElementBySelector(selector),
+  querySelectorAll: (selector) => {
+    const element = getOrCreateElementBySelector(selector);
+    return element ? [element] : [];
+  },
   createElement: (tagName) => createMockElement(tagName),
   body: createMockElement('body'),
   head: createMockElement('head'),
-  documentElement: createMockElement('html'),
-  addEventListener(type, handler, options) {
-    createMockElement('document').addEventListener(type, handler, options);
-  }
-};
+  documentElement: createMockElement('html')
+});
 
 const frames = [];
 const navigator = { userAgent: 'sandbox' };
@@ -130,8 +157,10 @@ const sessionStorage = createStorageShim();
 runnerScope.addEventListener('message', async (event) => {
   if (!event?.data || event.data.type !== 'RUN_CODE') return;
 
-  const { runId, code, options = {} } = event.data;
-  const { enableTracing = false, timeout = 5000 } = options;
+  const { runId, code, options = {}, transportToken } = event.data;
+  const { enableTracing = false } = options;
+  activeRunId = runId;
+  activeTransportToken = typeof transportToken === 'string' ? transportToken : null;
 
   // ============= State =============
   let eventId = 0;
@@ -147,6 +176,7 @@ runnerScope.addEventListener('message', async (event) => {
   let groupDepth = 0;
 
   // Interval/RAF tracking
+  const activeTimeouts = new Set();
   const activeIntervals = new Set();
   const intervalIterations = new Map();
   const activeRAFs = new Set();
@@ -162,6 +192,9 @@ runnerScope.addEventListener('message', async (event) => {
   const originalClearTimeout = runnerScope.clearTimeout.bind(runnerScope);
   const originalSetInterval = runnerScope.setInterval.bind(runnerScope);
   const originalClearInterval = runnerScope.clearInterval.bind(runnerScope);
+  const originalRequestAnimationFrame = runnerScope.requestAnimationFrame;
+  const originalCancelAnimationFrame = runnerScope.cancelAnimationFrame;
+  const originalFetch = runnerScope.fetch;
   const originalQueueMicrotask = runnerScope.queueMicrotask
     ? runnerScope.queueMicrotask.bind(runnerScope)
     : (cb) => Promise.resolve().then(cb);
@@ -171,7 +204,7 @@ runnerScope.addEventListener('message', async (event) => {
 
   // ============= Utilities =============
   const post = (payload) => {
-    runnerScope.postMessage({ source: 'jsq-worker', runId, ...payload });
+    runnerScope.postMessage({ source: 'jsq-worker', runId, transportToken: activeTransportToken, ...payload });
   };
 
   const formatValue = (value, depth = 0) => {
@@ -319,10 +352,18 @@ runnerScope.addEventListener('message', async (event) => {
     runnerScope.clearTimeout = originalClearTimeout;
     runnerScope.setInterval = originalSetInterval;
     runnerScope.clearInterval = originalClearInterval;
+    runnerScope.requestAnimationFrame = originalRequestAnimationFrame;
+    runnerScope.cancelAnimationFrame = originalCancelAnimationFrame;
+    runnerScope.fetch = originalFetch;
     runnerScope.queueMicrotask = originalQueueMicrotask;
     Promise.prototype.then = originalThen;
     Promise.prototype.catch = originalCatch;
     Promise.prototype.finally = originalFinally;
+
+    for (const timeoutId of activeTimeouts) {
+      originalClearTimeout(timeoutId);
+    }
+    activeTimeouts.clear();
 
     // Clean up active intervals
     for (const intervalId of activeIntervals) {
@@ -331,6 +372,8 @@ runnerScope.addEventListener('message', async (event) => {
     activeIntervals.clear();
     intervalIterations.clear();
     activeRAFs.clear();
+    activeRunId = null;
+    activeTransportToken = null;
   };
 
   const maybePostDone = () => {
@@ -492,7 +535,8 @@ runnerScope.addEventListener('message', async (event) => {
     });
     markAsyncStart();
 
-    return originalSetTimeout(() => {
+    const timeoutId = originalSetTimeout(() => {
+      activeTimeouts.delete(timeoutId);
       pushTimeline('macro', 'start', 'setTimeout callback');
       try {
         if (typeof fn === 'function') {
@@ -508,9 +552,18 @@ runnerScope.addEventListener('message', async (event) => {
         markAsyncEnd();
       }
     }, delayNum);
+
+    activeTimeouts.add(timeoutId);
+    return timeoutId;
   };
 
-  runnerScope.clearTimeout = originalClearTimeout;
+  runnerScope.clearTimeout = (id) => {
+    if (activeTimeouts.has(id)) {
+      activeTimeouts.delete(id);
+      markAsyncEnd();
+    }
+    return originalClearTimeout(id);
+  };
 
   // ============= setInterval =============
   runnerScope.setInterval = (fn, delay = 0, ...args) => {

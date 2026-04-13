@@ -71,7 +71,7 @@ import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
 import { useProgress } from '@/lib/progress/progress-context';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
-import { runJavaScriptInEnhancedSandbox } from '@/lib/run/sandbox';
+import { runJavaScript } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
 import { getPrimaryErrorMessage, toTerminalLogEntries } from '@/lib/run/terminal';
 import type { EnhancedTimelineEvent, TimelineEvent } from '@/lib/run/types';
@@ -249,8 +249,7 @@ export function QuestionIDEClient({
     setRunnerError(null);
 
     try {
-      // Use enhanced sandbox for Visual Debugger support
-      const result = await runJavaScriptInEnhancedSandbox(javascriptCodeBlock.code, {
+      const result = await runJavaScript(javascriptCodeBlock.code, {
         enableTracing: true,
       });
       setLogs(toTerminalLogEntries(result));

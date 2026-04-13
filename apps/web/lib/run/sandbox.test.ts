@@ -10,7 +10,144 @@
  * or use Playwright/Cypress for E2E tests.
  */
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
+
+class MockWorker {
+  static instances: MockWorker[] = [];
+
+  readonly listeners = new Map<string, Array<(event: unknown) => void>>();
+  readonly postedMessages: unknown[] = [];
+  terminated = false;
+
+  constructor(
+    public readonly url: string,
+    public readonly options?: WorkerOptions,
+  ) {
+    MockWorker.instances.push(this);
+  }
+
+  addEventListener(type: string, handler: (event: unknown) => void) {
+    const handlers = this.listeners.get(type) ?? [];
+    handlers.push(handler);
+    this.listeners.set(type, handlers);
+  }
+
+  postMessage(message: unknown) {
+    this.postedMessages.push(message);
+  }
+
+  terminate() {
+    this.terminated = true;
+  }
+
+  dispatch(type: string, event: unknown) {
+    for (const handler of this.listeners.get(type) ?? []) {
+      handler(event);
+    }
+  }
+}
+
+function installMockWorkerEnvironment() {
+  MockWorker.instances = [];
+  vi.resetModules();
+  vi.doMock('./babel-transform', () => ({
+    prepareCodeForSandbox: async (code: string) => ({
+      code,
+      error: null,
+    }),
+  }));
+  const originalWorker = globalThis.Worker;
+
+  Object.defineProperty(globalThis, 'Worker', {
+    configurable: true,
+    writable: true,
+    value: MockWorker,
+  });
+
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'Worker', {
+      configurable: true,
+      writable: true,
+      value: MockWorker,
+    });
+  }
+
+  const originalCreateObjectURL = URL.createObjectURL;
+  Object.defineProperty(URL, 'createObjectURL', {
+    configurable: true,
+    writable: true,
+    value: vi.fn(() => 'blob:mock-worker'),
+  });
+
+  return () => {
+    vi.doUnmock('./babel-transform');
+    vi.restoreAllMocks();
+
+    if (typeof originalWorker === 'function') {
+      Object.defineProperty(globalThis, 'Worker', {
+        configurable: true,
+        writable: true,
+        value: originalWorker,
+      });
+
+      if (typeof window !== 'undefined') {
+        Object.defineProperty(window, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: originalWorker,
+        });
+      }
+    } else {
+      Reflect.deleteProperty(globalThis, 'Worker');
+      if (typeof window !== 'undefined') {
+        Reflect.deleteProperty(window, 'Worker');
+      }
+    }
+
+    if (typeof originalCreateObjectURL === 'function') {
+      Object.defineProperty(URL, 'createObjectURL', {
+        configurable: true,
+        writable: true,
+        value: originalCreateObjectURL,
+      });
+      return;
+    }
+
+    Reflect.deleteProperty(URL, 'createObjectURL');
+  };
+}
+
+async function waitForLastWorker(): Promise<MockWorker> {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const worker = MockWorker.instances.at(-1);
+    if (worker) {
+      return worker;
+    }
+
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+  }
+
+  throw new Error('Expected sandbox worker to be created');
+}
+
+async function waitForPostedRequest(
+  worker: MockWorker,
+): Promise<{ runId: string; transportToken: string }> {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const request = worker.postedMessages[0] as
+      | { runId: string; transportToken: string }
+      | undefined;
+    if (request) {
+      return request;
+    }
+
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+  }
+
+  throw new Error('Expected sandbox worker to receive the run request');
+}
 
 // Test helper functions that don't require Worker
 describe('sandbox helpers', () => {
@@ -25,6 +162,120 @@ describe('sandbox helpers', () => {
       expect(sandbox.runJavaScriptInSandbox).toBeDefined();
       expect(sandbox.runJavaScriptInEnhancedSandbox).toBeDefined();
     });
+  });
+});
+
+describe('sandbox runtime host', () => {
+  it('resolves immediately when the worker crashes', async () => {
+    const restore = installMockWorkerEnvironment();
+
+    try {
+      const sandbox = await import('./sandbox');
+      const runPromise = sandbox.runJavaScript('console.log("hello")', { timeout: 25 });
+      const worker = await waitForLastWorker();
+
+      worker.dispatch('error', { message: 'worker crashed' });
+
+      const result = await runPromise;
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]?.name).toBe('WorkerError');
+      expect(result.errors[0]?.message).toBe('worker crashed');
+      expect(worker.terminated).toBe(true);
+    } finally {
+      restore();
+    }
+  });
+
+  it('ignores worker messages without the matching transport token', async () => {
+    const restore = installMockWorkerEnvironment();
+
+    try {
+      const sandbox = await import('./sandbox');
+      const runPromise = sandbox.runJavaScript('console.log("hello")', { timeout: 25 });
+      const worker = await waitForLastWorker();
+      const request = await waitForPostedRequest(worker);
+
+      expect(request.transportToken).toEqual(expect.any(String));
+
+      worker.dispatch('message', {
+        data: {
+          source: 'jsq-worker',
+          runId: request.runId,
+          transportToken: 'spoofed-token',
+          type: 'log',
+          level: 'log',
+          message: 'spoofed log',
+        },
+      });
+
+      worker.dispatch('message', {
+        data: {
+          source: 'jsq-worker',
+          runId: request.runId,
+          transportToken: request.transportToken,
+          type: 'done',
+        },
+      });
+
+      const result = await runPromise;
+      expect(result.logs).toEqual([]);
+      expect(result.errors).toEqual([]);
+    } finally {
+      restore();
+    }
+  });
+
+  it('warns when deprecated transformCode is provided', async () => {
+    const restore = installMockWorkerEnvironment();
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      const sandbox = await import('./sandbox');
+      const runPromise = sandbox.runJavaScriptInEnhancedSandbox('console.log("hello")', {
+        transformCode: (code) => code,
+      });
+      const worker = await waitForLastWorker();
+      const request = await waitForPostedRequest(worker);
+
+      worker.dispatch('message', {
+        data: {
+          source: 'jsq-worker',
+          runId: request.runId,
+          transportToken: request.transportToken,
+          type: 'done',
+        },
+      });
+
+      await runPromise;
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('transformCode'));
+    } finally {
+      restore();
+    }
+  });
+});
+
+describe('sandbox API usage', () => {
+  it('uses the unified runJavaScript entry point in app callers', async () => {
+    const ideClientSource = await fs.readFile(
+      path.resolve(process.cwd(), 'components/ide/question-ide-client.tsx'),
+      'utf8',
+    );
+    const scratchpadSource = await fs.readFile(
+      path.resolve(process.cwd(), 'components/scratchpad/floating-scratchpad.tsx'),
+      'utf8',
+    );
+
+    expect(ideClientSource).toMatch(
+      /import\s+\{\s*runJavaScript\s*\}\s+from\s+['"]@\/lib\/run\/sandbox['"]/,
+    );
+    expect(ideClientSource).not.toContain('runJavaScriptInEnhancedSandbox');
+
+    expect(scratchpadSource).toMatch(
+      /import\s+\{\s*runJavaScript\s*\}\s+from\s+['"]@\/lib\/run\/sandbox['"]/,
+    );
+    expect(scratchpadSource).not.toContain('runJavaScriptInSandbox');
   });
 });
 
@@ -206,9 +457,7 @@ describe('babel-transform', () => {
       expect(result.code).not.toContain('__tracer');
     });
 
-    // Note: Tracing transform uses babel.template which may not work in test env
-    // This is tested manually in browser or via E2E tests
-    it.skip('adds tracing when enabled', async () => {
+    it('adds tracing when enabled', async () => {
       const { prepareCodeForSandbox } = await import('./babel-transform');
 
       const result = await prepareCodeForSandbox(
@@ -223,6 +472,29 @@ describe('babel-transform', () => {
 
       expect(result.error).toBeNull();
       expect(result.code).toContain('__tracer');
+      expect(result.code).toContain('scopeEnter');
+      expect(result.code).toContain('beforeCall');
+    });
+
+    it('traces loop callbacks without crashing on runtime snippets', async () => {
+      const { prepareCodeForSandbox } = await import('./babel-transform');
+
+      const result = await prepareCodeForSandbox(
+        `
+        for (var i = 0; i < 3; i++) {
+          setTimeout(() => console.log(i), 1);
+        }
+
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => console.log(i), 1);
+        }
+      `,
+        { enableTracing: true },
+      );
+
+      expect(result.error).toBeNull();
+      expect(result.code).toContain('__tracer.beforeCall("setTimeout"');
+      expect(result.code).toContain('__tracer.scopeEnter("anonymous"');
     });
   });
 });
@@ -279,6 +551,16 @@ describe('worker-source', () => {
     expect(source).toContain('BLOCKED_APIS');
   });
 
+  it('guards worker transport with a per-run token', async () => {
+    const { generateWorkerSource } = await import('./worker-source');
+
+    const source = generateWorkerSource();
+
+    expect(source).toContain('let activeTransportToken = null');
+    expect(source).toContain('msg.transportToken === activeTransportToken');
+    expect(source).toContain('transportToken: activeTransportToken');
+  });
+
   it('includes cleanup function that runs after async completes', async () => {
     const { generateWorkerSource } = await import('./worker-source');
 
@@ -289,6 +571,18 @@ describe('worker-source', () => {
     expect(source).toContain('maybePostDone');
     // Cleanup should be called inside maybePostDone, before posting 'done'
     expect(source).toMatch(/cleanup\(\)[\s\S]*completionPosted = true/);
+  });
+
+  it('tracks cancelled timeouts and reuses DOM shim nodes', async () => {
+    const { generateWorkerSource } = await import('./worker-source');
+
+    const source = generateWorkerSource();
+
+    expect(source).toContain('const activeTimeouts = new Set()');
+    expect(source).toContain('runnerScope.clearTimeout = (id) =>');
+    expect(source).toContain("const documentNode = createMockElement('document')");
+    expect(source).toContain('const elementsById = new Map()');
+    expect(source).toContain('const elementsBySelector = new Map()');
   });
 });
 

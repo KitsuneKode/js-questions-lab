@@ -79,6 +79,10 @@ interface TracerPlugin {
 
 type BabelModule = BabelRuntime & {
   registerPlugin(name: string, factory: () => unknown): void;
+  packages?: {
+    template?: BabelTemplate;
+    types?: BabelTypes;
+  };
 };
 
 let Babel: BabelModule | null = null;
@@ -86,8 +90,14 @@ let pluginRegistered = false;
 
 async function loadBabel(): Promise<BabelModule> {
   if (Babel) return Babel;
-  const mod = await import('@babel/standalone');
-  Babel = mod as unknown as BabelModule;
+  const mod = (await import('@babel/standalone')) as unknown as BabelModule;
+  const packages = mod.packages ?? {};
+
+  Babel = {
+    ...mod,
+    template: mod.template ?? packages.template,
+    types: mod.types ?? packages.types,
+  };
   return Babel;
 }
 
@@ -279,7 +289,6 @@ function createTracerPlugin(babel: BabelRuntime): TracerPlugin {
 
         const sequence = t.sequenceExpression([beforeCall, path.node]);
         path.replaceWith(sequence);
-        path.skip();
       },
 
       VariableDeclarator(path: VisitorPath) {
@@ -532,7 +541,7 @@ export async function stripImportsExports(code: string): Promise<TransformResult
     const babel = await loadBabel();
 
     if (!importStripperRegistered) {
-      babel.registerPlugin('import-export-stripper', createImportExportStripperPlugin);
+      babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin());
       importStripperRegistered = true;
     }
 
@@ -578,7 +587,7 @@ export function stripImportsExportsSync(code: string): TransformResult {
 
   try {
     if (!importStripperRegistered) {
-      Babel.registerPlugin('import-export-stripper', createImportExportStripperPlugin);
+      Babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin());
       importStripperRegistered = true;
     }
 

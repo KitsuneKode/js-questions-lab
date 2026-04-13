@@ -310,7 +310,20 @@ function getWorkerUrl(): string {
 }
 
 function createWorker(): Worker {
-  return new Worker(getWorkerUrl(), { name: 'jsq-sandbox' });
+  const WorkerConstructor =
+    globalThis.Worker ??
+    (typeof window !== 'undefined' ? window.Worker : undefined) ??
+    (typeof self !== 'undefined' ? self.Worker : undefined);
+
+  if (typeof WorkerConstructor !== 'function') {
+    throw new Error('Worker is not available in this environment.');
+  }
+
+  return new WorkerConstructor(getWorkerUrl(), { name: 'jsq-sandbox' });
+}
+
+function createRunTransportToken(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 
 // =============================================================================
@@ -382,6 +395,7 @@ export async function runJavaScript(
   const executableCode = prepared.code;
   const worker = createWorker();
   const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const transportToken = createRunTransportToken();
 
   const logs: string[] = [];
   const errors: SandboxError[] = [];
@@ -389,22 +403,41 @@ export async function runJavaScript(
   const enhancedTimeline: EnhancedTimelineEvent[] = [];
 
   return new Promise((resolve) => {
+    let settled = false;
+
+    const sortedResult = () => ({
+      logs,
+      errors,
+      timeline: [...timeline].sort((a, b) => a.at - b.at),
+      enhancedTimeline: [...enhancedTimeline].sort((a, b) => a.at - b.at),
+    });
+
     const cleanup = () => {
       worker.terminate();
     };
 
+    const finish = () => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      window.clearTimeout(timeoutId);
+      cleanup();
+      resolve(sortedResult());
+    };
+
     const timeoutId = window.setTimeout(() => {
       errors.push(createTimeoutError(timeout));
-      cleanup();
-      resolve({
-        logs,
-        errors,
-        timeline: [...timeline].sort((a, b) => a.at - b.at),
-        enhancedTimeline: [...enhancedTimeline].sort((a, b) => a.at - b.at),
-      });
+      finish();
     }, timeout);
 
     worker.addEventListener('message', (event: MessageEvent) => {
+      const payload = event.data;
+      if (!payload || typeof payload !== 'object' || payload.transportToken !== transportToken) {
+        return;
+      }
+
       const parsedMessage = workerTransportMessageSchema.safeParse(event.data);
 
       if (!parsedMessage.success) {
@@ -435,14 +468,7 @@ export async function runJavaScript(
           break;
 
         case 'done':
-          window.clearTimeout(timeoutId);
-          cleanup();
-          resolve({
-            logs,
-            errors,
-            timeline: [...timeline].sort((a, b) => a.at - b.at),
-            enhancedTimeline: [...enhancedTimeline].sort((a, b) => a.at - b.at),
-          });
+          finish();
           break;
       }
     });
@@ -458,12 +484,14 @@ export async function runJavaScript(
         userLine: null,
         userColumn: null,
       });
+      finish();
     });
 
     // Send code to worker
     worker.postMessage({
       type: 'RUN_CODE',
       runId,
+      transportToken,
       code: executableCode,
       options: {
         enableTracing,
@@ -498,7 +526,12 @@ export async function runJavaScriptInEnhancedSandbox(
   code: string,
   options: { enableTracing?: boolean; transformCode?: (code: string) => string } = {},
 ): Promise<EnhancedSandboxRunResult> {
-  // Note: transformCode option is no longer supported as we use Babel internally
+  if (typeof options.transformCode === 'function') {
+    console.warn(
+      'runJavaScriptInEnhancedSandbox: `transformCode` is deprecated and ignored. Code preparation now happens internally via Babel.',
+    );
+  }
+
   return runJavaScript(code, {
     enableTracing: options.enableTracing ?? true,
   });

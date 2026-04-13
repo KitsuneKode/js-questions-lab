@@ -28,7 +28,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { TimelineChart } from '@/components/visualization/timeline-chart';
-import { runJavaScriptInSandbox } from '@/lib/run/sandbox';
+import { runJavaScript } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
 import { toTerminalLogEntries } from '@/lib/run/terminal';
 import type { TimelineEvent } from '@/lib/run/types';
@@ -41,7 +41,7 @@ function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
         {keys.map((k) => (
           <kbd
             key={k}
-            className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
+            className="inline-flex h-6 min-w-6 items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
           >
             {k}
           </kbd>
@@ -77,7 +77,7 @@ export function FloatingScratchpad() {
     setTimeline([]);
 
     try {
-      const result = await runJavaScriptInSandbox(code);
+      const result = await runJavaScript(code, { enableTracing: false });
       setLogs(toTerminalLogEntries(result));
       setTimeline(result.timeline);
     } catch (error) {
