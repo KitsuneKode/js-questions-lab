@@ -155,6 +155,7 @@ const sessionStorage = createStorageShim();
 Object.defineProperty(runnerScope, 'window', { value: runnerScope, configurable: false });
 Object.defineProperty(runnerScope, 'document', { value: document, configurable: false });
 Object.defineProperty(runnerScope, 'navigator', { value: navigator, configurable: false });
+Object.defineProperty(runnerScope, 'frames', { value: frames, configurable: false });
 Object.defineProperty(runnerScope, 'localStorage', { value: localStorage, configurable: false });
 Object.defineProperty(runnerScope, 'sessionStorage', { value: sessionStorage, configurable: false });
 
@@ -486,8 +487,9 @@ runnerScope.addEventListener('message', async (event) => {
   };
 
   console.dir = (obj, options) => {
+    const depth = options?.depth !== undefined ? options.depth : 0;
     pushTimeline('output', 'instant', 'console.dir');
-    post({ type: 'log', level: 'log', message: indent() + formatValue(obj, 0) });
+    post({ type: 'log', level: 'log', message: indent() + formatValue(obj, depth) });
   };
 
   console.time = (label = 'default') => {
