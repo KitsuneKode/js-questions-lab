@@ -317,5 +317,9 @@ describe('QuestionIDEClient autorun', () => {
     await waitFor(() => {
       expect(runJavaScriptMock).toHaveBeenCalledTimes(1);
     });
+
+    expect(runJavaScriptMock).toHaveBeenCalledWith(baseQuestion.codeBlocks[0]?.code, {
+      enableTracing: true,
+    });
   });
 });

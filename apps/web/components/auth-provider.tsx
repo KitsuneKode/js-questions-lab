@@ -7,7 +7,12 @@ import type { ReactNode } from 'react';
 import { guestAuth, SafeAuthProvider } from '@/lib/auth-utils';
 
 const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-const hasValidClerkKey = clerkKey?.startsWith('pk_') && !clerkKey.includes('REPLACE');
+const hasValidClerkKey =
+  !!clerkKey &&
+  clerkKey.startsWith('pk_') &&
+  !clerkKey.includes('REPLACE') &&
+  !clerkKey.includes('placeholder') &&
+  clerkKey.length > 20;
 
 const locales: Record<string, typeof enUS> = {
   en: enUS,

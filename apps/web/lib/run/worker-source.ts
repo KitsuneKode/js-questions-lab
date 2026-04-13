@@ -27,10 +27,11 @@ let activeTransportToken = null;
 // =============================================================================
 
 const BLOCKED_APIS = ['postMessage', 'importScripts', 'close'];
+const scopeProto = Object.getPrototypeOf(runnerScope);
 
 BLOCKED_APIS.forEach(name => {
   const original = runnerScope[name];
-  Object.defineProperty(runnerScope, name, {
+  const descriptor = {
     get() {
       if (name === 'postMessage') {
         return function sandboxedPostMessage(...args) {
@@ -52,14 +53,16 @@ BLOCKED_APIS.forEach(name => {
       throw new Error(name + ' is not available in sandbox');
     },
     configurable: false
-  });
+  };
+  Object.defineProperty(runnerScope, name, descriptor);
+  if (scopeProto) {
+    Object.defineProperty(scopeProto, name, descriptor);
+  }
 });
 
 // =============================================================================
 // Browser Environment Shims
 // =============================================================================
-
-const window = runnerScope;
 
 const createMockElement = (tagName = 'div', id = null) => {
   const listeners = new Map();
@@ -149,6 +152,12 @@ const createStorageShim = () => {
 const localStorage = createStorageShim();
 const sessionStorage = createStorageShim();
 
+Object.defineProperty(runnerScope, 'window', { value: runnerScope, configurable: false });
+Object.defineProperty(runnerScope, 'document', { value: document, configurable: false });
+Object.defineProperty(runnerScope, 'navigator', { value: navigator, configurable: false });
+Object.defineProperty(runnerScope, 'localStorage', { value: localStorage, configurable: false });
+Object.defineProperty(runnerScope, 'sessionStorage', { value: sessionStorage, configurable: false });
+
 // =============================================================================
 // Message Handler
 // =============================================================================
@@ -168,6 +177,11 @@ runnerScope.addEventListener('message', async (event) => {
   let scriptSettled = false;
   let idleTimer = null;
   let cleanedUp = false;
+
+  const handleUnhandledRejection = (e) => {
+    post({ type: 'error', error: serializeError(e.reason, 'unhandledRejection') });
+  };
+  runnerScope.addEventListener('unhandledrejection', handleUnhandledRejection);
 
   // Console state
   const timers = new Map();
@@ -334,6 +348,8 @@ runnerScope.addEventListener('message', async (event) => {
     if (cleanedUp) return;
     cleanedUp = true;
 
+    runnerScope.removeEventListener('unhandledrejection', handleUnhandledRejection);
+
     // Restore all patched globals
     console.log = originalConsole.log;
     console.warn = originalConsole.warn;
@@ -362,6 +378,16 @@ runnerScope.addEventListener('message', async (event) => {
     runnerScope.cancelAnimationFrame = originalCancelAnimationFrame;
     runnerScope.fetch = originalFetch;
     runnerScope.queueMicrotask = originalQueueMicrotask;
+    if (scopeProto) {
+      scopeProto.setTimeout = originalSetTimeout;
+      scopeProto.clearTimeout = originalClearTimeout;
+      scopeProto.setInterval = originalSetInterval;
+      scopeProto.clearInterval = originalClearInterval;
+      scopeProto.requestAnimationFrame = originalRequestAnimationFrame;
+      scopeProto.cancelAnimationFrame = originalCancelAnimationFrame;
+      scopeProto.fetch = originalFetch;
+      scopeProto.queueMicrotask = originalQueueMicrotask;
+    }
     Promise.prototype.then = originalThen;
     Promise.prototype.catch = originalCatch;
     Promise.prototype.finally = originalFinally;
@@ -565,6 +591,7 @@ runnerScope.addEventListener('message', async (event) => {
     activeTimeouts.add(timeoutId);
     return timeoutId;
   };
+  if (scopeProto) scopeProto.setTimeout = runnerScope.setTimeout;
 
   runnerScope.clearTimeout = (id) => {
     if (activeTimeouts.has(id)) {
@@ -573,6 +600,7 @@ runnerScope.addEventListener('message', async (event) => {
     }
     return originalClearTimeout(id);
   };
+  if (scopeProto) scopeProto.clearTimeout = runnerScope.clearTimeout;
 
   // ============= setInterval =============
   runnerScope.setInterval = (fn, delay = 0, ...args) => {
@@ -612,6 +640,7 @@ runnerScope.addEventListener('message', async (event) => {
     intervalIterations.set(intervalId, 0);
     return intervalId;
   };
+  if (scopeProto) scopeProto.setInterval = runnerScope.setInterval;
 
   runnerScope.clearInterval = (id) => {
     if (activeIntervals.has(id)) {
@@ -621,6 +650,7 @@ runnerScope.addEventListener('message', async (event) => {
     }
     return originalClearInterval(id);
   };
+  if (scopeProto) scopeProto.clearInterval = runnerScope.clearInterval;
 
   // ============= queueMicrotask =============
   runnerScope.queueMicrotask = (fn) => {
@@ -641,6 +671,7 @@ runnerScope.addEventListener('message', async (event) => {
       }
     });
   };
+  if (scopeProto) scopeProto.queueMicrotask = runnerScope.queueMicrotask;
 
   // ============= requestAnimationFrame =============
   runnerScope.requestAnimationFrame = (fn) => {
@@ -682,6 +713,7 @@ runnerScope.addEventListener('message', async (event) => {
 
     return currentRafId;
   };
+  if (scopeProto) scopeProto.requestAnimationFrame = runnerScope.requestAnimationFrame;
 
   runnerScope.cancelAnimationFrame = (id) => {
     if (activeRAFs.has(id)) {
@@ -689,6 +721,7 @@ runnerScope.addEventListener('message', async (event) => {
       markAsyncEnd();
     }
   };
+  if (scopeProto) scopeProto.cancelAnimationFrame = runnerScope.cancelAnimationFrame;
 
   // ============= fetch (mock) =============
   runnerScope.fetch = async (url, options = {}) => {
@@ -725,6 +758,7 @@ runnerScope.addEventListener('message', async (event) => {
 
     return mockResponse;
   };
+  if (scopeProto) scopeProto.fetch = runnerScope.fetch;
 
   // ============= Promise.prototype.then =============
   // FIX: Only track when callback actually executes, not at registration

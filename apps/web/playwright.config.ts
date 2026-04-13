@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 3100);
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim();
 const isCI = process.env.CI === 'true';
 
@@ -26,7 +26,7 @@ export default defineConfig({
   },
   webServer: {
     command: isCI
-      ? `bun run build && bun run start -- --hostname 127.0.0.1 -p ${port}`
+      ? `bun run build && bun run start -- --hostname localhost -p ${port}`
       : `bun run dev -- -p ${port}`,
     url: baseURL,
     reuseExistingServer: !isCI,

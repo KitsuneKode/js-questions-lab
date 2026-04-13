@@ -24,9 +24,14 @@ test.describe('Runtime Smoke', () => {
 
     await page.getByTestId('open-scratchpad').click();
     await expect(page.getByTestId('scratchpad-sheet')).toBeVisible();
+    await page.waitForTimeout(500); // wait for sheet animation to settle
 
+    await expect(page.getByTestId('scratchpad-editor')).toBeVisible();
+    await expect(page.locator('.monaco-editor textarea')).toBeAttached();
     await page.getByTestId('scratchpad-editor').click();
-    await page.keyboard.insertText('console.log("pw-runtime-ok")');
+
+    await page.keyboard.type('console.log("pw-runtime-ok")');
+    await expect(page.getByTestId('scratchpad-editor')).toContainText('pw-runtime-ok');
 
     await page.getByTestId('scratchpad-run-code').click();
     await expect(page.getByTestId('scratchpad-terminal')).toContainText('pw-runtime-ok');
