@@ -43,9 +43,9 @@ jobs:
               --title "chore(release): 🚀 auto-promote dev to main" \
               --body "## 🔄 Automated Release Promotion
               
-This is a scheduled PR to promote the latest tested changes from \`dev\` into the \`main\` production branch.
-
-**Note:** Any additional commits pushed to \`dev\` while this PR remains open will automatically be synced and appended here.")
+              This is a scheduled PR to promote the latest tested changes from \`dev\` into the \`main\` production branch.
+              
+              **Note:** Any additional commits pushed to \`dev\` while this PR remains open will automatically be synced and appended here.")
             
             echo "Setting auto-merge for $PR_URL"
             gh pr merge "$PR_URL" --auto --merge || echo "Warning: Could not enable auto-merge. Ensure 'Allow auto-merge' is enabled in repo settings."

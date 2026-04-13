@@ -46,9 +46,9 @@ jobs:
               --title "chore(sync): 🔄 auto-sync main into dev" \
               --body "## 🔄 Automated Reverse Sync
               
-This PR automatically catches \`dev\` up with recent commits pushed directly to \`main\`. 
-
-Ensures branch alignment and parity.")
+              This PR automatically catches \`dev\` up with recent commits pushed directly to \`main\`. 
+              
+              Ensures branch alignment and parity.")
             
             echo "Setting auto-merge for $PR_URL"
             gh pr merge "$PR_URL" --auto --merge || echo "Warning: Could not enable auto-merge. Ensure 'Allow auto-merge' is enabled in repo settings."
