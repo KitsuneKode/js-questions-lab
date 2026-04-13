@@ -18,7 +18,7 @@ interface KeyboardHintBarProps {
 
 function Key({ label }: { label: string }) {
   return (
-    <kbd className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded bg-elevated border border-border/60 px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]">
+    <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded bg-elevated border border-border/60 px-1.5 font-mono text-[10px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]">
       {label}
     </kbd>
   );

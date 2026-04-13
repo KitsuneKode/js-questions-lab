@@ -168,7 +168,8 @@ export function SiteHeader() {
                 variant="ghost"
                 size="sm"
                 onClick={() => openScratchpad()}
-                className="h-8 gap-2 text-xs font-medium border-border-subtle hover:border-primary/40 transition-all active:scale-[0.95]"
+                data-testid="open-scratchpad"
+                className="h-8 gap-2 px-3 text-xs font-medium text-muted-foreground border-border-subtle hover:border-primary/40 transition-all hover:text-primary active:scale-[0.95]"
                 title={t('scratchpad')}
                 aria-label={t('scratchpad')}
               >
