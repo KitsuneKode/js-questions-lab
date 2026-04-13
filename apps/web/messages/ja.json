@@ -460,6 +460,9 @@
     "allTimeTitle": "全期間",
     "resetsMonday": "毎週月曜日にリセット",
     "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
-    "you": "あなた"
+    "you": "あなた",
+    "guestCtaHeading": "Sign in to join the rankings",
+    "guestCtaBody": "Create a free account to track your XP, appear on the leaderboard, and compete weekly.",
+    "guestCtaAction": "Get started"
   }
 }

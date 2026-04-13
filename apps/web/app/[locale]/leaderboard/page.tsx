@@ -1,7 +1,10 @@
+import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+
 import { Container } from '@/components/container';
-import { LeaderboardTable } from '@/components/leaderboard/leaderboard-table';
+import { LeaderboardTabsClient } from '@/components/leaderboard/leaderboard-tabs-client';
 import {
   getAllTimeCurrentUserPosition,
   getAllTimeLeaderboard,
@@ -9,6 +12,7 @@ import {
   getWeeklyLeaderboard,
 } from '@/lib/engagement/leaderboard';
 import type { LocaleCode } from '@/lib/i18n/config';
+import { withLocale } from '@/lib/locale-paths';
 import { getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 
@@ -37,49 +41,62 @@ export default async function LeaderboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [weekly, allTime, weeklyCurrentUserPosition, allTimeCurrentUserPosition] =
-    await Promise.all([
-      getWeeklyLeaderboard(50),
-      getAllTimeLeaderboard(50),
-      getWeeklyCurrentUserPosition(),
-      getAllTimeCurrentUserPosition(),
-    ]);
+  const { userId } = await auth();
+
+  const [weekly, allTime, weeklyPos, allTimePos] = await Promise.all([
+    getWeeklyLeaderboard(50),
+    getAllTimeLeaderboard(50),
+    getWeeklyCurrentUserPosition(),
+    getAllTimeCurrentUserPosition(),
+  ]);
 
   const t = await getTranslations({ locale, namespace: 'leaderboard' });
 
   return (
-    <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40">
+    <main className="bg-void min-h-screen pt-32 pb-24 md:pt-40">
       <Container>
-        <div className="max-w-2xl mx-auto space-y-12">
-          {/* Header */}
-          <header className="space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              <span className="uppercase tracking-widest font-bold">{t('eyebrow')}</span>
+        <div className="mx-auto max-w-2xl space-y-10">
+          {/* ─── Header ──────────────────────────────────────────────── */}
+          <header className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/8 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary">
+              {t('eyebrow')}
             </div>
-            <h1 className="font-display text-5xl font-normal tracking-tight text-foreground">
+            <h1 className="font-display text-4xl font-normal tracking-tight text-zinc-50 md:text-5xl">
               {t('title')}
             </h1>
-            <p className="text-secondary text-lg">{t('subtitle')}</p>
+            <p className="text-base text-zinc-400">{t('subtitle')}</p>
           </header>
 
-          {/* Weekly */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
-                {t('weeklyTitle')}
-              </h2>
-              <span className="text-[10px] text-tertiary font-mono">{t('resetsMonday')}</span>
+          {/* ─── Guest CTA (unauthenticated only) ────────────────────── */}
+          {!userId && (
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 px-6 py-5">
+              {/* decorative amber glow */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-8 left-1/2 h-24 w-48 -translate-x-1/2 rounded-full bg-primary/15 blur-2xl"
+              />
+              <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-sm font-semibold text-zinc-100">{t('guestCtaHeading')}</p>
+                  <p className="text-xs text-zinc-400">{t('guestCtaBody')}</p>
+                </div>
+                <Link
+                  href={withLocale(locale, '/sign-up')}
+                  className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition-transform duration-150 ease-out hover:brightness-110 active:scale-[0.97]"
+                >
+                  {t('guestCtaAction')}
+                </Link>
+              </div>
             </div>
-            <LeaderboardTable entries={weekly} currentUserPosition={weeklyCurrentUserPosition} />
-          </section>
+          )}
 
-          {/* All-time */}
-          <section className="space-y-4">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-tertiary">
-              {t('allTimeTitle')}
-            </h2>
-            <LeaderboardTable entries={allTime} currentUserPosition={allTimeCurrentUserPosition} />
-          </section>
+          {/* ─── Tabs (Weekly / All-Time) ─────────────────────────────── */}
+          <LeaderboardTabsClient
+            weekly={weekly}
+            allTime={allTime}
+            weeklyCurrentUserPosition={weeklyPos}
+            allTimeCurrentUserPosition={allTimePos}
+          />
         </div>
       </Container>
     </main>

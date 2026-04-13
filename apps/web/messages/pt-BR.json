@@ -460,6 +460,9 @@
     "allTimeTitle": "Todos os Tempos",
     "resetsMonday": "Reseta às segundas",
     "empty": "Nenhuma entrada ainda. Seja o primeiro a ganhar XP!",
-    "you": "Você"
+    "you": "Você",
+    "guestCtaHeading": "Sign in to join the rankings",
+    "guestCtaBody": "Create a free account to track your XP, appear on the leaderboard, and compete weekly.",
+    "guestCtaAction": "Get started"
   }
 }
