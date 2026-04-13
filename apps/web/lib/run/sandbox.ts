@@ -299,12 +299,33 @@ export function createSyntaxError(error: Error): SandboxError {
 // =============================================================================
 
 let workerUrl: string | null = null;
+let workerUrlCleanupRegistered = false;
+
+function revokeWorkerUrl() {
+  if (!workerUrl) {
+    return;
+  }
+
+  URL.revokeObjectURL(workerUrl);
+  workerUrl = null;
+  workerUrlCleanupRegistered = false;
+}
+
+function registerWorkerUrlCleanup() {
+  if (workerUrlCleanupRegistered || typeof window === 'undefined') {
+    return;
+  }
+
+  window.addEventListener('pagehide', revokeWorkerUrl, { once: true });
+  workerUrlCleanupRegistered = true;
+}
 
 function getWorkerUrl(): string {
   if (!workerUrl) {
     const source = generateWorkerSource();
     const blob = new Blob([source], { type: 'text/javascript' });
     workerUrl = URL.createObjectURL(blob);
+    registerWorkerUrlCleanup();
   }
   return workerUrl;
 }

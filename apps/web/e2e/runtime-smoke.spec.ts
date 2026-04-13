@@ -25,8 +25,7 @@ test.describe('Runtime Smoke', () => {
     await page.getByTestId('open-scratchpad').click();
     await expect(page.getByTestId('scratchpad-sheet')).toBeVisible();
 
-    const editorTextarea = page.getByTestId('scratchpad-editor').locator('textarea').first();
-    await editorTextarea.click();
+    await page.getByTestId('scratchpad-editor').click();
     await page.keyboard.insertText('console.log("pw-runtime-ok")');
 
     await page.getByTestId('scratchpad-run-code').click();

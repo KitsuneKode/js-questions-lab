@@ -260,15 +260,20 @@ runnerScope.addEventListener('message', async (event) => {
 
   const formatArgs = (...args) => args.map(arg => formatValue(arg)).join(' ');
 
-  const formatTable = (data) => {
+  const formatTable = (data, columns) => {
     if (!data || typeof data !== 'object') return formatValue(data);
 
     try {
+      const requestedColumns = Array.isArray(columns)
+        ? columns.filter(column => typeof column === 'string')
+        : [];
+
       if (Array.isArray(data)) {
         if (data.length === 0) return '(empty array)';
-        const keys = typeof data[0] === 'object' && data[0] !== null
+        const availableKeys = typeof data[0] === 'object' && data[0] !== null
           ? Object.keys(data[0])
           : ['Value'];
+        const keys = requestedColumns.length > 0 ? requestedColumns : availableKeys;
         let table = '| (index) | ' + keys.join(' | ') + ' |\\n';
         table += '|---------|' + keys.map(() => '-------').join('|') + '|\\n';
         data.slice(0, 20).forEach((row, i) => {
@@ -281,7 +286,9 @@ runnerScope.addEventListener('message', async (event) => {
         if (data.length > 20) table += '... ' + (data.length - 20) + ' more rows';
         return table;
       } else {
-        const entries = Object.entries(data);
+        const entries = Object.entries(data).filter(([key]) => {
+          return requestedColumns.length === 0 || requestedColumns.includes(key);
+        });
         if (entries.length === 0) return '(empty object)';
         let table = '| (key) | Value |\\n|-------|-------|\\n';
         entries.slice(0, 20).forEach(([k, v]) => {
@@ -449,7 +456,7 @@ runnerScope.addEventListener('message', async (event) => {
 
   console.table = (data, columns) => {
     pushTimeline('output', 'instant', 'console.table');
-    post({ type: 'log', level: 'log', message: indent() + formatTable(data) });
+    post({ type: 'log', level: 'log', message: indent() + formatTable(data, columns) });
   };
 
   console.dir = (obj, options) => {

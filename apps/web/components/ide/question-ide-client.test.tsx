@@ -2,6 +2,21 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type * as React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+const terminalLogKeys = new WeakMap<object, string>();
+let terminalLogKeySeed = 0;
+
+function getTerminalLogKey(log: { content: string }) {
+  const existingKey = terminalLogKeys.get(log);
+  if (existingKey) {
+    return existingKey;
+  }
+
+  terminalLogKeySeed += 1;
+  const nextKey = `terminal-log-${terminalLogKeySeed}`;
+  terminalLogKeys.set(log, nextKey);
+  return nextKey;
+}
+
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     prefetch: vi.fn(),
@@ -60,7 +75,13 @@ vi.mock('@/components/terminal/terminal-output', () => ({
   }: {
     logs: Array<{ content: string }>;
     emptyMessage?: string;
-  }) => <div>{logs.length > 0 ? logs.map((log) => log.content).join('\n') : emptyMessage}</div>,
+  }) => (
+    <div>
+      {logs.length > 0
+        ? logs.map((log) => <div key={getTerminalLogKey(log)}>{log.content}</div>)
+        : emptyMessage}
+    </div>
+  ),
 }));
 
 vi.mock('@/components/ui/badge', () => ({

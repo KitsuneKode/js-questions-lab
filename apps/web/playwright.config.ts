@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 3100);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim();
+const isCI = process.env.CI === 'true';
 
 export default defineConfig({
   testDir: './e2e',
@@ -14,14 +16,20 @@ export default defineConfig({
     baseURL,
     headless: true,
     trace: 'on-first-retry',
-    launchOptions: {
-      executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ?? '/usr/bin/google-chrome-stable',
-    },
+    ...(executablePath
+      ? {
+          launchOptions: {
+            executablePath,
+          },
+        }
+      : {}),
   },
   webServer: {
-    command: `bun run dev -- -p ${port}`,
+    command: isCI
+      ? `bun run build && bun run start -- --hostname 127.0.0.1 -p ${port}`
+      : `bun run dev -- -p ${port}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    reuseExistingServer: !isCI,
+    timeout: isCI ? 180_000 : 120_000,
   },
 });
