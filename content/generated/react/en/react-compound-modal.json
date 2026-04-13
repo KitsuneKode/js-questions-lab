@@ -1,0 +1,27 @@
+{
+  "id": "react-compound-modal",
+  "title": "Build a Compound Modal Component",
+  "difficulty": "advanced",
+  "tags": ["compound-components", "context", "patterns", "accessibility"],
+  "category": "pattern",
+  "prompt": "Build a `Modal` compound component with sub-components `Modal.Trigger`, `Modal.Content`, and `Modal.Close`. The trigger opens the modal; the close button (or clicking the backdrop) dismisses it. Internal state is shared via Context — the consumer should not manage `isOpen` themselves.",
+  "context": "The Compound Component pattern uses React Context to share implicit state between a parent and its designated children. This keeps the API ergonomic: `<Modal><Modal.Trigger>Open</Modal.Trigger><Modal.Content>...</Modal.Content></Modal>` — no prop drilling or external state.",
+  "starterCode": {
+    "App.tsx": "import { Modal } from './Modal';\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <Modal>\n        <Modal.Trigger>Open Modal</Modal.Trigger>\n        <Modal.Content>\n          <h2 className=\"text-lg font-bold mb-2\">Hello!</h2>\n          <p>This is the modal content.</p>\n          <Modal.Close>Close</Modal.Close>\n        </Modal.Content>\n      </Modal>\n    </div>\n  );\n}\n",
+    "Modal.tsx": "import { createContext, useContext, useState, type ReactNode } from 'react';\n\ninterface ModalContextValue {\n  isOpen: boolean;\n  open: () => void;\n  close: () => void;\n}\n\nconst ModalContext = createContext<ModalContextValue | null>(null);\n\nfunction useModal() {\n  const ctx = useContext(ModalContext);\n  if (!ctx) throw new Error('useModal must be used within Modal');\n  return ctx;\n}\n\nfunction Modal({ children }: { children: ReactNode }) {\n  // TODO: provide context\n  return <>{children}</>;\n}\n\nModal.Trigger = function Trigger({ children }: { children: ReactNode }) {\n  // TODO: open on click\n  return <button>{children}</button>;\n};\n\nModal.Content = function Content({ children }: { children: ReactNode }) {\n  // TODO: render only when open\n  return null;\n};\n\nModal.Close = function Close({ children }: { children: ReactNode }) {\n  // TODO: close on click\n  return <button>{children}</button>;\n};\n\nexport { Modal };\n"
+  },
+  "entryFile": "Modal.tsx",
+  "solutionCode": {
+    "App.tsx": "import { Modal } from './Modal';\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <Modal>\n        <Modal.Trigger>Open Modal</Modal.Trigger>\n        <Modal.Content>\n          <h2 className=\"text-lg font-bold mb-2\">Hello!</h2>\n          <p>This is the modal content.</p>\n          <Modal.Close>Close</Modal.Close>\n        </Modal.Content>\n      </Modal>\n    </div>\n  );\n}\n",
+    "Modal.tsx": "import { createContext, useContext, useState, type ReactNode } from 'react';\n\ninterface ModalContextValue {\n  isOpen: boolean;\n  open: () => void;\n  close: () => void;\n}\n\nconst ModalContext = createContext<ModalContextValue | null>(null);\n\nfunction useModal() {\n  const ctx = useContext(ModalContext);\n  if (!ctx) throw new Error('useModal must be used within Modal');\n  return ctx;\n}\n\nfunction Modal({ children }: { children: ReactNode }) {\n  const [isOpen, setIsOpen] = useState(false);\n  return (\n    <ModalContext.Provider value={{ isOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) }}>\n      {children}\n    </ModalContext.Provider>\n  );\n}\n\nModal.Trigger = function Trigger({ children }: { children: ReactNode }) {\n  const { open } = useModal();\n  return <button onClick={open}>{children}</button>;\n};\n\nModal.Content = function Content({ children }: { children: ReactNode }) {\n  const { isOpen, close } = useModal();\n  if (!isOpen) return null;\n  return (\n    <>\n      <div className=\"fixed inset-0 bg-black/50\" onClick={close} />\n      <div className=\"fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 z-50 min-w-64\">\n        {children}\n      </div>\n    </>\n  );\n};\n\nModal.Close = function Close({ children }: { children: ReactNode }) {\n  const { close } = useModal();\n  return <button onClick={close} className=\"mt-4 text-sm underline\">{children}</button>;\n};\n\nexport { Modal };\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/design-patterns/compound",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

@@ -1,7 +1,9 @@
-import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function ReactBentoSection() {
   const t = useTranslations('landing.reactSection');
+  const locale = useLocale();
 
   // Pattern names are intentionally kept in English — these are technical/proper-noun
   // terms used as-is in all developer communities regardless of locale.
@@ -40,7 +42,7 @@ export function ReactBentoSection() {
           <div
             className="
               relative md:col-span-2 md:row-span-2 overflow-hidden rounded-[20px]
-              border border-border-subtle bg-surface
+              border border-border-subtle bg-surface grain-overlay
               hover:border-primary/40 hover:shadow-[0_20px_50px_-10px_rgba(245,158,11,0.15)]
               transition-all duration-500 group
               min-h-[280px] flex flex-col justify-between p-8
@@ -51,12 +53,6 @@ export function ReactBentoSection() {
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
             <div className="relative z-10">
-              {/* Coming soon badge */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold tracking-wide mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                {t('comingSoon')}
-              </span>
-
               <h3 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-4">
                 {t('heroTitle')}
               </h3>
@@ -85,16 +81,18 @@ export function ReactBentoSection() {
           <div
             className="
               relative overflow-hidden rounded-[20px]
-              border border-border-subtle bg-[#0d0d12]
+              border border-border-subtle bg-code grain-overlay
               hover:border-primary/30 transition-all duration-500
               p-5 min-h-[180px]
             "
           >
             <div className="flex items-center gap-1.5 mb-4">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-              <span className="ml-2 text-xs text-tertiary font-mono">App.tsx</span>
+              <span className="w-1.5 h-1.5 rounded-sm bg-border-strong/60" />
+              <span className="w-1.5 h-1.5 rounded-sm bg-border-strong/60" />
+              <span className="w-1.5 h-1.5 rounded-sm bg-border-strong/60" />
+              <span className="ml-2 text-[10px] text-tertiary font-mono uppercase tracking-widest">
+                App.tsx
+              </span>
             </div>
             <pre className="font-mono text-[11px] leading-relaxed overflow-hidden">
               <span className="text-[#c678dd]">function</span>
@@ -148,7 +146,7 @@ export function ReactBentoSection() {
           <div
             className="
               relative overflow-hidden rounded-[20px]
-              border border-border-subtle bg-surface
+              border border-border-subtle bg-surface grain-overlay
               hover:border-primary/30 transition-all duration-500
               p-6 min-h-[180px] flex flex-col justify-between
             "
@@ -203,6 +201,25 @@ export function ReactBentoSection() {
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* CTA */}
+          <div className="md:col-span-3 flex justify-center pt-2">
+            <Link
+              href={`/${locale}/react`}
+              className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-primary px-8 font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.6)] active:scale-95"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.3),transparent_50%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="relative flex items-center gap-2">
+                Start practicing
+                <span
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </span>
+            </Link>
           </div>
         </div>
       </div>

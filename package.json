@@ -12,6 +12,8 @@
   "scripts": {
     "sync:upstream": "node scripts/sync-upstream.mjs",
     "parse:questions": "node scripts/parse-readme.mjs",
+    "parse:react": "node scripts/parse-react-patterns.mjs",
+    "content:react": "bun run parse:react",
     "content:refresh": "bun run sync:upstream && bun run parse:questions",
     "clean": "find . -name node_modules -o -name .next -o -name .turbo -o -name dist -type d -prune | xargs rm -rf",
     "dev": "turbo run dev",
@@ -39,5 +41,18 @@
     "lint-staged": "^16.4.0",
     "markdownlint-cli2": "^0.22.0",
     "turbo": "^2.9.6"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.41.0",
+    "@types/prettier": "^3.0.0",
+    "@uiw/codemirror-theme-vscode": "^4.25.9",
+    "@uiw/react-codemirror": "^4.25.9",
+    "prettier": "^3.8.1"
   }
 }

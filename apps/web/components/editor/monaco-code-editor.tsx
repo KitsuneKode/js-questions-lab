@@ -1,7 +1,7 @@
 'use client';
 
 import type { OnMount } from '@monaco-editor/react';
-import { Editor } from '@monaco-editor/react';
+import { Editor, useMonaco } from '@monaco-editor/react';
 import { IconLoader2 as Loader2 } from '@tabler/icons-react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -15,6 +15,7 @@ interface MonacoEditorProps {
   language?: 'html' | 'javascript' | 'typescript';
   readOnly?: boolean;
   path?: string;
+  projectFiles?: Record<string, string>;
 }
 
 const EDITOR_OPTIONS = {
@@ -45,6 +46,45 @@ const EDITOR_OPTIONS = {
   },
 };
 
+const REACT_GLOBAL_TYPES = `
+declare namespace JSX {
+  // Minimal JSX typing so TSX/JSX is usable inside the in-browser editor
+  // without bundling full @types/react into Monaco.
+  interface IntrinsicElements {
+    [elemName: string]: any;
+  }
+}
+`;
+
+const REACT_MODULE_STUBS = `
+declare module 'react' {
+  const React: any;
+  export default React;
+  export const useState: any;
+  export const useEffect: any;
+  export const useMemo: any;
+  export const useCallback: any;
+  export const useRef: any;
+  export const useLayoutEffect: any;
+  export const useReducer: any;
+  export const useContext: any;
+  export const createContext: any;
+  export const memo: any;
+  export const Fragment: any;
+  export type FC<P = any> = (props: P) => any;
+}
+
+declare module 'react-dom/client' {
+  export const createRoot: any;
+}
+
+declare module 'react/jsx-runtime' {
+  export const jsx: any;
+  export const jsxs: any;
+  export const Fragment: any;
+}
+`;
+
 export function MonacoCodeEditor({
   value,
   onChange,
@@ -55,8 +95,10 @@ export function MonacoCodeEditor({
   language = 'javascript',
   readOnly = false,
   path,
+  projectFiles,
 }: MonacoEditorProps) {
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  const didSetupReactTypesRef = useRef(false);
   // Refs keep commands up-to-date without re-registering on every render
   const onRunRef = useRef(onRun);
   const onResetRef = useRef(onReset);
@@ -67,9 +109,62 @@ export function MonacoCodeEditor({
     onResetRef.current = onReset;
   }, [onReset]);
 
+  const monaco = useMonaco();
+
+  useEffect(() => {
+    if (!monaco || !projectFiles) return;
+
+    Object.entries(projectFiles).forEach(([filePath, fileContent]) => {
+      // Sandpack activeFile has leading slash, Monaco Uri expects it
+      const uri = monaco.Uri.file(filePath);
+      const model = monaco.editor.getModel(uri);
+
+      if (filePath === path) return; // Managed by <Editor /> prop
+
+      if (model) {
+        if (model.getValue() !== fileContent) {
+          model.setValue(fileContent);
+        }
+      } else {
+        const lang =
+          filePath.endsWith('.ts') || filePath.endsWith('.tsx') ? 'typescript' : 'javascript';
+        monaco.editor.createModel(fileContent, lang, uri);
+      }
+    });
+  }, [monaco, projectFiles, path]);
+
   const handleMount = useCallback<OnMount>(
     (editor, monaco) => {
       editorRef.current = editor;
+
+      if (!didSetupReactTypesRef.current) {
+        didSetupReactTypesRef.current = true;
+
+        const ts = monaco.languages.typescript;
+        const compilerOptions = {
+          // Keep editor usable across arbitrary Sandpack templates.
+          allowNonTsExtensions: true,
+          allowJs: true,
+          checkJs: false,
+          noEmit: true,
+          target: monaco.languages.typescript.ScriptTarget.ES2022,
+          module: monaco.languages.typescript.ModuleKind.ESNext,
+          moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+          jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+        };
+
+        ts.typescriptDefaults.setCompilerOptions(compilerOptions);
+        ts.javascriptDefaults.setCompilerOptions(compilerOptions);
+
+        ts.typescriptDefaults.setDiagnosticsOptions({
+          noSemanticValidation: false,
+          noSyntaxValidation: false,
+        });
+
+        // Minimal React/JSX typing to avoid the "Cannot find name JSX" / module errors
+        ts.typescriptDefaults.addExtraLib(REACT_GLOBAL_TYPES, 'file:///types/react-jsx.d.ts');
+        ts.typescriptDefaults.addExtraLib(REACT_MODULE_STUBS, 'file:///types/react-stubs.d.ts');
+      }
 
       // Use refs so commands always call the latest callback, not the stale closure
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -92,6 +187,24 @@ export function MonacoCodeEditor({
         domReadOnly: readOnly,
       });
 
+      // Monaco can mount at 0px height in complex flex layouts (resizable panels,
+      // animated mounts, etc.). Force a layout pass on the next frame so the editor
+      // paints even if its container size stabilizes slightly later.
+      requestAnimationFrame(() => {
+        try {
+          editor.layout();
+        } catch {
+          // ignore
+        }
+      });
+      setTimeout(() => {
+        try {
+          editor.layout();
+        } catch {
+          // ignore
+        }
+      }, 0);
+
       if (autoFocus) {
         // Defer one tick so the Sheet/Dialog animation doesn't steal focus back
         setTimeout(() => editor.focus(), 50);
@@ -104,19 +217,21 @@ export function MonacoCodeEditor({
   );
 
   return (
-    <Editor
-      path={path}
-      height="100%"
-      language={language}
-      theme="vs-dark"
-      value={value}
-      onChange={(val) => onChange(val || '')}
-      onMount={handleMount}
-      loading={
-        <div className="flex h-full items-center justify-center bg-[#1e1e1e]">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      }
-    />
+    <div className="h-full w-full" data-monaco-editor-root>
+      <Editor
+        path={path}
+        height="100%"
+        language={language}
+        theme="vs-dark"
+        value={value}
+        onChange={(val) => onChange(val || '')}
+        onMount={handleMount}
+        loading={
+          <div className="flex h-full items-center justify-center bg-[#1e1e1e]">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        }
+      />
+    </div>
   );
 }
