@@ -59,6 +59,23 @@ describe('leaderboard entries', () => {
     const entries = toEntries([{ position: 1, rank: 1, display_name: 'Anonymous', total_xp: -5 }]);
     expect(entries[0]?.totalXP).toBe(0);
   });
+
+  it('computes levelProgress for a known XP value', () => {
+    // 750 XP is in level 2 (Practitioner: 500–1499), progress = (750-500)/(1500-500) = 0.25
+    const entries = toEntries([{ position: 1, rank: 1, display_name: 'Test', total_xp: 750 }]);
+    expect(entries[0]?.levelProgress).toBe(0.25);
+  });
+
+  it('sets levelProgress to 1 for max-level users', () => {
+    // 30000 XP is in level 6 (Distinguished: 25000+, no next level), progress = 1
+    const entries = toEntries([{ position: 1, rank: 1, display_name: 'Test', total_xp: 30000 }]);
+    expect(entries[0]?.levelProgress).toBe(1);
+  });
+
+  it('sets levelProgress to 0 for 0 XP', () => {
+    const entries = toEntries([{ position: 1, rank: 1, display_name: 'Test', total_xp: 0 }]);
+    expect(entries[0]?.levelProgress).toBe(0);
+  });
 });
 
 describe('extractPodium', () => {
@@ -71,6 +88,7 @@ describe('extractPodium', () => {
         totalXP: 0,
         level: 1,
         levelName: '',
+        levelProgress: 0,
         rank: 0,
         currentStreak: 0,
         isPro: false,

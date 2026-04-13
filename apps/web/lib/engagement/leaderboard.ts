@@ -15,6 +15,7 @@ export interface LeaderboardEntry {
   totalXP: number;
   level: number;
   levelName: string;
+  levelProgress: number;
   rank: number;
   currentStreak: number;
   isPro: boolean;
@@ -102,6 +103,7 @@ export function toEntries(rows: LeaderboardRow[]): LeaderboardEntry[] {
       totalXP: Math.max(0, row.total_xp),
       level: level.level,
       levelName: level.name,
+      levelProgress: level.progress,
       rank: row.rank,
       currentStreak: row.current_streak ?? 0,
       isPro: row.is_pro ?? false,

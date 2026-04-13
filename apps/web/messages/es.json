@@ -469,6 +469,7 @@
     "yourRank": "Your rank",
     "signInToSee": "Sign in",
     "position": "#{position}",
-    "stickyYou": "Your position"
+    "stickyYou": "Your position",
+    "guestBlurCta": "Sign in to see the full leaderboard"
   }
 }

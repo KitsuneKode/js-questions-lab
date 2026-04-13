@@ -1,10 +1,10 @@
 'use client';
 
-import { IconFlame } from '@tabler/icons-react';
+import { IconCrown, IconFlame, IconMedal } from '@tabler/icons-react';
 import { motion, useReducedMotion } from 'motion/react';
-import { useFormatter } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
+import { useCountUp } from '@/lib/hooks/use-count-up';
 import { cn } from '@/lib/utils';
 
 // ─── constants ─────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ const ORDINALS: Record<number, string> = { 1: '1st', 2: '2nd', 3: '3rd' };
 
 const PODIUM_STYLES: Record<
   number,
-  { text: string; border: string; bg: string; glow: string; ordinal: string }
+  { text: string; border: string; bg: string; glow: string; ordinal: string; iconColor: string }
 > = {
   1: {
     text: 'text-yellow-400',
@@ -20,6 +20,7 @@ const PODIUM_STYLES: Record<
     bg: 'bg-yellow-400/5',
     glow: 'shadow-[0_0_40px_rgba(250,204,21,0.08)]',
     ordinal: 'text-yellow-400',
+    iconColor: 'text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.4)]',
   },
   2: {
     text: 'text-zinc-300',
@@ -27,6 +28,7 @@ const PODIUM_STYLES: Record<
     bg: 'bg-zinc-400/5',
     glow: '',
     ordinal: 'text-zinc-400',
+    iconColor: 'text-zinc-400 opacity-70',
   },
   3: {
     text: 'text-amber-600',
@@ -34,6 +36,7 @@ const PODIUM_STYLES: Record<
     bg: 'bg-amber-600/5',
     glow: '',
     ordinal: 'text-amber-600',
+    iconColor: 'text-amber-600 opacity-70',
   },
 };
 
@@ -45,6 +48,18 @@ const LEVEL_COLOURS: Record<number, string> = {
   5: 'border-primary/40 text-primary',
   6: 'border-yellow-400/50 text-yellow-400',
 };
+
+// Noise texture SVG data URI (zero runtime cost)
+const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E")`;
+
+// ─── rank icon ─────────────────────────────────────────────────────────────
+function RankIcon({ rank }: { rank: number }) {
+  const style = PODIUM_STYLES[rank];
+  const iconClass = cn('h-5 w-5', style?.iconColor ?? 'text-zinc-500');
+
+  if (rank === 1) return <IconCrown className={iconClass} />;
+  return <IconMedal className={iconClass} />;
+}
 
 // ─── avatar ────────────────────────────────────────────────────────────────
 function PodiumAvatar({ name, rank }: { name: string; rank: number }) {
@@ -76,6 +91,20 @@ function PodiumAvatar({ name, rank }: { name: string; rank: number }) {
   );
 }
 
+// ─── animated XP value ─────────────────────────────────────────────────────
+function AnimatedXP({ xp }: { xp: number }) {
+  const animatedValue = useCountUp(xp, 1200);
+
+  return (
+    <div className="mt-1">
+      <span className="font-mono text-lg font-semibold tabular-nums text-zinc-100">
+        {animatedValue.toLocaleString()}
+      </span>
+      <span className="ml-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">XP</span>
+    </div>
+  );
+}
+
 // ─── single podium column ──────────────────────────────────────────────────
 function PodiumColumn({
   entry,
@@ -84,7 +113,6 @@ function PodiumColumn({
   entry: LeaderboardEntry;
   shouldReduceMotion: boolean;
 }) {
-  const format = useFormatter();
   const style = PODIUM_STYLES[entry.rank] ?? PODIUM_STYLES[3];
 
   // Center card (#1) animates first; sides animate after
@@ -121,16 +149,31 @@ function PodiumColumn({
         />
       )}
 
-      {/* Ordinal */}
-      <span
-        className={cn(
-          'font-display text-3xl font-normal tracking-tight',
-          isFirst ? 'md:text-5xl' : 'md:text-4xl',
-          style.ordinal,
-        )}
-      >
-        {ORDINALS[entry.rank]}
-      </span>
+      {/* Noise texture on #1 */}
+      {isFirst && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.03] mix-blend-overlay"
+          style={{
+            backgroundImage: NOISE_TEXTURE,
+            backgroundSize: '128px 128px',
+          }}
+        />
+      )}
+
+      {/* Rank icon + ordinal */}
+      <div className="flex flex-col items-center gap-1">
+        <RankIcon rank={entry.rank} />
+        <span
+          className={cn(
+            'font-display text-2xl font-normal tracking-tight',
+            isFirst ? 'md:text-4xl' : 'md:text-3xl',
+            style.ordinal,
+          )}
+        >
+          {ORDINALS[entry.rank]}
+        </span>
+      </div>
 
       {/* Avatar */}
       <PodiumAvatar name={entry.displayName} rank={entry.rank} />
@@ -159,15 +202,8 @@ function PodiumColumn({
         )}
       </div>
 
-      {/* XP */}
-      <div className="mt-1">
-        <span className="font-mono text-lg font-semibold tabular-nums text-zinc-100">
-          {format.number(entry.totalXP)}
-        </span>
-        <span className="ml-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
-          XP
-        </span>
-      </div>
+      {/* Animated XP counter */}
+      <AnimatedXP xp={entry.totalXP} />
 
       {/* Pro badge */}
       {entry.isPro && (

@@ -190,12 +190,18 @@ function LeaderboardEntryRow({
         </div>
       </div>
 
-      {/* XP */}
-      <div className="shrink-0 text-right">
+      {/* XP + level progress */}
+      <div className="shrink-0 text-right min-w-[60px]">
         <div className="font-mono text-sm font-semibold tabular-nums text-zinc-100">
           {format.number(entry.totalXP)}
         </div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">XP</div>
+        <div className="mt-1 h-[2px] w-full rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-primary/60 transition-all duration-700 ease-out"
+            style={{ width: `${entry.levelProgress * 100}%` }}
+          />
+        </div>
       </div>
     </motion.li>
   );
