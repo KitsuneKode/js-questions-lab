@@ -41,13 +41,13 @@ function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
         {keys.map((k) => (
           <kbd
             key={k}
-            className="inline-flex h-6 min-w-6 items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[9px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded border border-border/60 bg-elevated px-1.5 font-mono text-[10px] font-semibold text-muted-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)]"
           >
             {k}
           </kbd>
         ))}
       </span>
-      <span className="text-[10px] text-muted-foreground/60">{label}</span>
+      <span className="text-xs text-muted-foreground/70">{label}</span>
     </div>
   );
 }
