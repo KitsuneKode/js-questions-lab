@@ -20,6 +20,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TimelineEvent } from '@/lib/run/types';
 import { cn } from '@/lib/utils';
+import { getReplayStepDelay, type ReplaySpeed } from '@/lib/visualization/playback-speed';
+
+import { PlaybackSpeedToggle } from './playback-speed-toggle';
 
 type TFunction = ReturnType<typeof useTranslations>;
 
@@ -499,6 +502,7 @@ interface ReplayExperienceProps {
 function ReplayExperience({ steps, prefersReducedMotion }: ReplayExperienceProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(!prefersReducedMotion && steps.length > 1);
+  const [speed, setSpeed] = useState<ReplaySpeed>('normal');
 
   useEffect(() => {
     if (
@@ -510,25 +514,28 @@ function ReplayExperience({ steps, prefersReducedMotion }: ReplayExperienceProps
       return;
     }
 
-    const timeout = window.setTimeout(() => {
-      setActiveIndex((currentIndex) => {
-        if (currentIndex >= steps.length - 1) {
-          setIsPlaying(false);
-          return currentIndex;
-        }
+    const timeout = window.setTimeout(
+      () => {
+        setActiveIndex((currentIndex) => {
+          if (currentIndex >= steps.length - 1) {
+            setIsPlaying(false);
+            return currentIndex;
+          }
 
-        const nextIndex = currentIndex + 1;
+          const nextIndex = currentIndex + 1;
 
-        if (nextIndex >= steps.length - 1) {
-          setIsPlaying(false);
-        }
+          if (nextIndex >= steps.length - 1) {
+            setIsPlaying(false);
+          }
 
-        return nextIndex;
-      });
-    }, steps[activeIndex]?.durationMs ?? 1000);
+          return nextIndex;
+        });
+      },
+      getReplayStepDelay(steps[activeIndex]?.durationMs ?? 1000, speed),
+    );
 
     return () => window.clearTimeout(timeout);
-  }, [activeIndex, isPlaying, prefersReducedMotion, steps]);
+  }, [activeIndex, isPlaying, prefersReducedMotion, speed, steps]);
 
   const activeStep = steps[Math.min(activeIndex, steps.length - 1)];
   const progress = steps.length === 1 ? 100 : (activeIndex / (steps.length - 1)) * 100;
@@ -898,6 +905,13 @@ function ReplayExperience({ steps, prefersReducedMotion }: ReplayExperienceProps
                 <span>+{activeStep.atOffset.toFixed(1)}ms</span>
               </div>
             </div>
+
+            <PlaybackSpeedToggle
+              value={speed}
+              onChange={setSpeed}
+              disabled={prefersReducedMotion || steps.length < 2}
+              className="mt-4"
+            />
           </div>
 
           <div className="rounded-lg border border-border/50 bg-[#111] p-4 flex-1 flex flex-col min-h-[300px] max-h-[500px]">
@@ -908,7 +922,7 @@ function ReplayExperience({ steps, prefersReducedMotion }: ReplayExperienceProps
             </div>
 
             <div
-              className="flex-1 space-y-1.5 overflow-y-auto pr-1 -mr-1 custom-scrollbar"
+              className="flex-1 space-y-1.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               id="execution-log-container"
             >
               {steps.map((step, index) => (
