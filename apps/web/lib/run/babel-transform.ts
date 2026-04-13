@@ -434,3 +434,206 @@ export async function transformForTracingCached(code: string): Promise<Transform
   transformCache.set(code, result);
   return result;
 }
+
+// =============================================================================
+// Import/Export Stripping
+// Uses Babel AST to properly handle all import/export syntax variations
+// =============================================================================
+
+interface ImportExportPath {
+  node: {
+    type: string;
+    declaration?: unknown;
+    specifiers?: unknown[];
+  };
+  remove(): void;
+  replaceWith(node: unknown): void;
+}
+
+interface ImportExportPlugin {
+  name: string;
+  visitor: {
+    ImportDeclaration(path: ImportExportPath): void;
+    ExportNamedDeclaration(path: ImportExportPath): void;
+    ExportDefaultDeclaration(path: ImportExportPath): void;
+    ExportAllDeclaration(path: ImportExportPath): void;
+  };
+}
+
+function createImportExportStripperPlugin(): ImportExportPlugin {
+  return {
+    name: 'import-export-stripper',
+    visitor: {
+      // Remove all imports: import x from 'y', import { x } from 'y', import 'y'
+      ImportDeclaration(path: ImportExportPath) {
+        path.remove();
+      },
+
+      // Handle named exports: export const x = 1, export { x }, export { x } from 'y'
+      ExportNamedDeclaration(path: ImportExportPath) {
+        if (path.node.declaration) {
+          // export const x = 1 -> const x = 1
+          // export function foo() {} -> function foo() {}
+          // export class Bar {} -> class Bar {}
+          path.replaceWith(path.node.declaration);
+        } else {
+          // export { x } or export { x } from 'y' - just remove
+          path.remove();
+        }
+      },
+
+      // Handle default exports: export default x, export default function() {}
+      ExportDefaultDeclaration(path: ImportExportPath) {
+        const declaration = path.node.declaration as Record<string, unknown> | undefined;
+        if (declaration) {
+          // Check if it's a named function/class or anonymous
+          if (
+            declaration.type === 'FunctionDeclaration' ||
+            declaration.type === 'ClassDeclaration'
+          ) {
+            if (declaration.id) {
+              // export default function foo() {} -> function foo() {}
+              path.replaceWith(declaration);
+            } else {
+              // export default function() {} -> remove entirely (anonymous)
+              path.remove();
+            }
+          } else {
+            // export default expr -> remove (can't convert to statement)
+            path.remove();
+          }
+        } else {
+          path.remove();
+        }
+      },
+
+      // Remove re-exports: export * from 'y'
+      ExportAllDeclaration(path: ImportExportPath) {
+        path.remove();
+      },
+    },
+  };
+}
+
+let importStripperRegistered = false;
+
+/**
+ * Strip all import/export statements from code using Babel AST.
+ * This handles:
+ * - Single and multiline imports
+ * - Named exports (export const, export function, export class)
+ * - Default exports
+ * - Re-exports (export { x } from 'y', export * from 'y')
+ *
+ * Returns the stripped code, or the original code if parsing fails.
+ */
+export async function stripImportsExports(code: string): Promise<TransformResult> {
+  try {
+    const babel = await loadBabel();
+
+    if (!importStripperRegistered) {
+      babel.registerPlugin('import-export-stripper', createImportExportStripperPlugin);
+      importStripperRegistered = true;
+    }
+
+    const result = babel.transform(code, {
+      plugins: ['import-export-stripper'],
+      sourceType: 'module', // Must be 'module' to parse import/export
+      retainLines: true,
+      compact: false,
+    });
+
+    if (!result?.code) {
+      return {
+        code,
+        error: new Error('Babel transform returned empty result'),
+      };
+    }
+
+    return {
+      code: result.code,
+      error: null,
+    };
+  } catch (error) {
+    // If Babel fails to parse (syntax error), return original code
+    // The worker will catch the syntax error at runtime
+    return {
+      code,
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+}
+
+/**
+ * Synchronous version of stripImportsExports.
+ * Requires Babel to be pre-loaded via an async function first.
+ */
+export function stripImportsExportsSync(code: string): TransformResult {
+  if (!Babel) {
+    return {
+      code,
+      error: new Error('Babel not loaded. Call stripImportsExports first.'),
+    };
+  }
+
+  try {
+    if (!importStripperRegistered) {
+      Babel.registerPlugin('import-export-stripper', createImportExportStripperPlugin);
+      importStripperRegistered = true;
+    }
+
+    const result = Babel.transform(code, {
+      plugins: ['import-export-stripper'],
+      sourceType: 'module',
+      retainLines: true,
+      compact: false,
+    });
+
+    if (!result?.code) {
+      return {
+        code,
+        error: new Error('Babel transform returned empty result'),
+      };
+    }
+
+    return {
+      code: result.code,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      code,
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+}
+
+/**
+ * Prepare code for sandbox execution:
+ * 1. Strip imports/exports
+ * 2. Optionally add tracing instrumentation
+ *
+ * This is the main entry point for code preparation.
+ */
+export async function prepareCodeForSandbox(
+  code: string,
+  options: { enableTracing?: boolean } = {},
+): Promise<TransformResult> {
+  const { enableTracing = false } = options;
+
+  // First, strip imports/exports
+  const stripped = await stripImportsExports(code);
+
+  // If stripping failed with a syntax error, return early
+  // Let the sandbox report the error at runtime
+  if (stripped.error) {
+    return stripped;
+  }
+
+  // If tracing is enabled, apply tracing transform
+  if (enableTracing) {
+    return transformForTracing(stripped.code);
+  }
+
+  return stripped;
+}
