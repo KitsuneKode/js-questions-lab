@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # Allow manual triggering if needed
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
@@ -19,30 +19,34 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Check for changes and open PR
+      - name: Check for changes, open PR, and auto-merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Exit if there are no changes to promote
           if git diff --quiet origin/main..origin/dev; then
             echo "No changes. origin/main is up-to-date with origin/dev."
-            exit 0
+            exit  0
           fi
           
           # Check if an open PR from dev -> main already exists
           EXISTING_PR=$(gh pr list --state open --base main --head dev --json number --jq '.[0].number')
           
           if [ "$EXISTING_PR" != "null" ] && [ -n "$EXISTING_PR" ]; then
-            echo "PR #$EXISTING_PR already exists. New commits to 'dev' will automatically be included."
+            echo "PR #$EXISTING_PR already exists. Engaging auto-merge flag..."
+            gh pr merge "$EXISTING_PR" --auto --merge || echo "Auto-merge might already be enabled or repo settings prevent it."
           else
             echo "Creating a new promotion PR..."
-            gh pr create \
+            PR_URL=$(gh pr create \
               --base main \
               --head dev \
               --title "chore(release): 🚀 auto-promote dev to main" \
               --body "## 🔄 Automated Release Promotion
               
-This is a scheduled PR to promote the latest tested changes from \`dev\` into the \`main\` production branch.
-
-**Note:** Any additional commits pushed to \`dev\` while this PR remains open will automatically be synced and appended here."
+              This is a scheduled PR to promote the latest tested changes from \`dev\` into the \`main\` production branch.
+              
+              **Note:** Any additional commits pushed to \`dev\` while this PR remains open will automatically be synced and appended here.")
+            
+            echo "Setting auto-merge for $PR_URL"
+            gh pr merge "$PR_URL" --auto --merge || echo "Warning: Could not enable auto-merge. Ensure 'Allow auto-merge' is enabled in repo settings."
           fi
