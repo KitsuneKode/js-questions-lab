@@ -150,6 +150,7 @@ export function SiteHeader() {
                 variant="ghost"
                 size="sm"
                 onClick={() => openScratchpad()}
+                data-testid="open-scratchpad"
                 className="h-8 gap-1.5 px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
               >
                 <IconTerminal2 className="h-3.5 w-3.5" />

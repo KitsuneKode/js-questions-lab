@@ -161,6 +161,18 @@ describe('sandbox helpers', () => {
       expect(sandbox.runJavaScript).toBeDefined();
       expect(sandbox.runJavaScriptInSandbox).toBeDefined();
       expect(sandbox.runJavaScriptInEnhancedSandbox).toBeDefined();
+      expect(sandbox.createSyntaxError).toBeDefined();
+      expect(sandbox.createTimeoutError).toBeDefined();
+
+      const syntaxError = sandbox.createSyntaxError(new Error('Bad syntax'));
+      expect(syntaxError.name).toBe('SyntaxError');
+      expect(syntaxError.message).toContain('Bad syntax');
+      expect(syntaxError.kind).toBe('syntax');
+
+      const timeoutError = sandbox.createTimeoutError(2500);
+      expect(timeoutError.name).toBe('TimeoutError');
+      expect(timeoutError.message).toContain('2.5');
+      expect(timeoutError.kind).toBe('timeout');
     });
   });
 });

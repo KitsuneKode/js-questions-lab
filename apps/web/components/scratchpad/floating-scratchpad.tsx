@@ -99,6 +99,7 @@ export function FloatingScratchpad() {
       <SheetContent
         side="right"
         showCloseButton={false}
+        data-testid="scratchpad-sheet"
         className="flex w-[95vw] sm:w-[90vw] lg:w-[85vw] max-w-[1200px] flex-col overflow-hidden border-l border-border-subtle bg-surface p-0 shadow-[-20px_0_40px_rgba(0,0,0,0.4)] backdrop-blur-xl pt-10"
       >
         <SheetHeader className="border-b border-border-subtle bg-elevated/80 px-6 py-4 text-left shrink-0">
@@ -168,6 +169,7 @@ export function FloatingScratchpad() {
                 size="sm"
                 onClick={runCode}
                 disabled={isRunning}
+                data-testid="scratchpad-run-code"
                 className="h-8 gap-2 rounded-lg px-3 sm:px-4 text-[11px] font-semibold bg-primary text-background hover:bg-primary/90 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]"
               >
                 <Play className="h-3.5 w-3.5" />
@@ -193,17 +195,19 @@ export function FloatingScratchpad() {
               <span>{t('javaScript')}</span>
             </div>
             <div className="relative flex-1 overflow-hidden bg-code">
-              <MonacoCodeEditor
-                path="floating-scratchpad.js"
-                value={code}
-                onChange={setCode}
-                onRun={runCode}
-                onReset={resetCode}
-                autoFocus
-                onEditorMount={(editor) => {
-                  editorRef.current = editor;
-                }}
-              />
+              <div data-testid="scratchpad-editor" className="h-full">
+                <MonacoCodeEditor
+                  path="floating-scratchpad.js"
+                  value={code}
+                  onChange={setCode}
+                  onRun={runCode}
+                  onReset={resetCode}
+                  autoFocus
+                  onEditorMount={(editor) => {
+                    editorRef.current = editor;
+                  }}
+                />
+              </div>
             </div>
           </section>
 
@@ -213,7 +217,13 @@ export function FloatingScratchpad() {
               <span>{t('output')}</span>
             </div>
             <div className="flex-1 p-4 bg-void overflow-auto">
-              <TerminalOutput logs={logs} isRunning={isRunning} emptyMessage={t('emptyTerminal')} />
+              <div data-testid="scratchpad-terminal">
+                <TerminalOutput
+                  logs={logs}
+                  isRunning={isRunning}
+                  emptyMessage={t('emptyTerminal')}
+                />
+              </div>
             </div>
           </section>
         </div>

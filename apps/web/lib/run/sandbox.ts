@@ -262,7 +262,7 @@ function toSandboxError(error: WorkerTransportError | string): SandboxError {
   };
 }
 
-function createTimeoutError(timeoutMs: number): SandboxError {
+export function createTimeoutError(timeoutMs: number): SandboxError {
   const name = 'TimeoutError';
   const message = `Execution timed out after ${timeoutMs / 1000} seconds.`;
 
@@ -278,7 +278,7 @@ function createTimeoutError(timeoutMs: number): SandboxError {
   };
 }
 
-function createSyntaxError(error: Error): SandboxError {
+export function createSyntaxError(error: Error): SandboxError {
   const name = 'SyntaxError';
   const message = error.message || 'Invalid syntax';
 

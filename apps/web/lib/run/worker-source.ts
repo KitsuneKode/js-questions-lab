@@ -32,7 +32,6 @@ BLOCKED_APIS.forEach(name => {
   const original = runnerScope[name];
   Object.defineProperty(runnerScope, name, {
     get() {
-      // Allow our internal postMessage by checking the call stack
       if (name === 'postMessage') {
         return function sandboxedPostMessage(...args) {
           // Only allow messages from our internal code for the current run.
@@ -372,8 +371,6 @@ runnerScope.addEventListener('message', async (event) => {
     activeIntervals.clear();
     intervalIterations.clear();
     activeRAFs.clear();
-    activeRunId = null;
-    activeTransportToken = null;
   };
 
   const maybePostDone = () => {
@@ -389,6 +386,8 @@ runnerScope.addEventListener('message', async (event) => {
       cleanup();
       completionPosted = true;
       post({ type: 'done' });
+      activeRunId = null;
+      activeTransportToken = null;
     }, 12);
   };
 
@@ -542,7 +541,10 @@ runnerScope.addEventListener('message', async (event) => {
         if (typeof fn === 'function') {
           fn(...args);
         } else if (typeof fn === 'string') {
-          // Handle string argument (legacy eval behavior)
+          // Preserve legacy browser compatibility for setTimeout(fn, delay) when fn is a
+          // string. Using new Function(fn) here is intentional: this sandbox already
+          // executes arbitrary user code, so matching the legacy runtime behavior for fn
+          // is more important than avoiding an eval-like construct inside the worker.
           new Function(fn)();
         }
       } catch (error) {
@@ -692,11 +694,16 @@ runnerScope.addEventListener('message', async (event) => {
     });
     markAsyncStart();
 
-    // Simulate network delay
+    // This mock intentionally favors predictable visualization over full fidelity:
+    // it always resolves successfully, does not honor AbortController signals, and
+    // does not simulate network errors or timeouts yet. The fixed 50ms delay and
+    // JSON Response payload make pushTimeline/markAsyncStart/markAsyncEnd deterministic.
     await new Promise(resolve => originalSetTimeout(resolve, 50));
 
     pushTimeline('macro', 'start', label + ' resolved');
 
+    // Future extension point: inspect options.signal or other flags here if we want
+    // runnerScope.fetch to exercise abort or failure paths in tests later.
     const mockResponse = new Response(JSON.stringify({
       mocked: true,
       url: urlStr,

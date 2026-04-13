@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import type { EnhancedTimelineEvent } from '@/lib/run/types';
 import { cn } from '@/lib/utils';
+import { getReplayStepDelay, type ReplaySpeed } from '@/lib/visualization/playback-speed';
 import { buildEnhancedReplaySteps } from '@/lib/visualization/replay-engine';
 
 import { DebuggerCallStack } from './debugger-call-stack';
@@ -35,6 +36,7 @@ export function VisualDebugger({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState<ReplaySpeed>('normal');
   const t = useTranslations('debugger');
 
   // Build replay steps from timeline
@@ -64,18 +66,21 @@ export function VisualDebugger({
     }
 
     const currentStep = steps[activeIndex];
-    const timeout = window.setTimeout(() => {
-      setActiveIndex((idx) => {
-        const next = idx + 1;
-        if (next >= steps.length - 1) {
-          setIsPlaying(false);
-        }
-        return Math.min(next, steps.length - 1);
-      });
-    }, currentStep?.durationMs ?? 1000);
+    const timeout = window.setTimeout(
+      () => {
+        setActiveIndex((idx) => {
+          const next = idx + 1;
+          if (next >= steps.length - 1) {
+            setIsPlaying(false);
+          }
+          return Math.min(next, steps.length - 1);
+        });
+      },
+      getReplayStepDelay(currentStep?.durationMs ?? 1000, speed),
+    );
 
     return () => window.clearTimeout(timeout);
-  }, [activeIndex, isPlaying, prefersReducedMotion, steps]);
+  }, [activeIndex, isPlaying, prefersReducedMotion, speed, steps]);
 
   // Reset when timeline changes
   useEffect(() => {
@@ -170,7 +175,7 @@ export function VisualDebugger({
       </div>
 
       {/* Main content — scrollable */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <div className="grid gap-4 p-4 md:p-5 xl:grid-cols-[1fr_340px]">
           <div className="flex flex-col gap-4 lg:flex-row">
             {/* Code Panel */}
@@ -286,6 +291,7 @@ export function VisualDebugger({
             steps={steps}
             activeIndex={activeIndex}
             isPlaying={isPlaying}
+            speed={speed}
             prefersReducedMotion={prefersReducedMotion}
             onPrevious={handlePrevious}
             onNext={handleNext}
@@ -294,6 +300,7 @@ export function VisualDebugger({
             onJumpToStart={handleJumpToStart}
             onJumpToEnd={handleJumpToEnd}
             onStepClick={handleStepClick}
+            onSpeedChange={setSpeed}
           />
         </div>
       </div>

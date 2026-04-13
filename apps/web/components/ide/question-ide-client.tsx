@@ -17,7 +17,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { DomEventSimulator } from '@/components/ide/dom-event-simulator';
@@ -203,7 +203,8 @@ export function QuestionIDEClient({
   const [enhancedTimeline, setEnhancedTimeline] = useState<EnhancedTimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [runnerError, setRunnerError] = useState<string | null>(null);
-  const [_debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual'>('timeline');
+  const [debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual' | null>(null);
+  const pendingAutorunRef = useRef<number | null>(null);
 
   const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
   const [frozenStatusScope, setFrozenStatusScope] = useState<{
@@ -233,47 +234,75 @@ export function QuestionIDEClient({
     return counts;
   }, [questionIndex]);
 
-  const runCode = useCallback(async () => {
+  const clearPendingAutorun = useCallback(() => {
+    if (pendingAutorunRef.current === null) {
+      return;
+    }
+
+    window.clearTimeout(pendingAutorunRef.current);
+    pendingAutorunRef.current = null;
+  }, []);
+
+  const runCode = useCallback(
+    async ({ requireAnswered = true }: { requireAnswered?: boolean } = {}) => {
+      if (!isJavascriptRuntime || !javascriptCodeBlock?.code.trim()) {
+        return;
+      }
+
+      if (requireAnswered && !isAnswered) {
+        return;
+      }
+
+      clearPendingAutorun();
+      setIsRunning(true);
+      setLogs([]);
+      setTimeline([]);
+      setEnhancedTimeline([]);
+      setRunnerError(null);
+
+      try {
+        const result = await runJavaScript(javascriptCodeBlock.code, {
+          enableTracing: true,
+        });
+        setLogs(toTerminalLogEntries(result));
+        setTimeline(result.timeline);
+        setEnhancedTimeline(result.enhancedTimeline);
+
+        if (result.errors.length > 0 && result.logs.length === 0) {
+          setRunnerError(getPrimaryErrorMessage(result.errors[0]));
+        } else {
+          setRunnerError(null);
+        }
+      } catch (error) {
+        const message = String(error);
+        setRunnerError(message);
+        setLogs([{ type: 'error', content: message, timestamp: Date.now() }]);
+      } finally {
+        setIsRunning(false);
+      }
+    },
+    [clearPendingAutorun, isAnswered, isJavascriptRuntime, javascriptCodeBlock],
+  );
+
+  const scheduleAnswerAutorun = useCallback(() => {
     if (!isJavascriptRuntime || !javascriptCodeBlock?.code.trim()) {
       return;
     }
 
-    if (!isAnswered) {
-      return;
-    }
+    clearPendingAutorun();
+    pendingAutorunRef.current = window.setTimeout(() => {
+      pendingAutorunRef.current = null;
+      void runCode({ requireAnswered: false });
+    }, 0);
+  }, [clearPendingAutorun, isJavascriptRuntime, javascriptCodeBlock, runCode]);
 
-    setIsRunning(true);
-    setLogs([]);
-    setTimeline([]);
-    setEnhancedTimeline([]);
-    setRunnerError(null);
-
-    try {
-      const result = await runJavaScript(javascriptCodeBlock.code, {
-        enableTracing: true,
-      });
-      setLogs(toTerminalLogEntries(result));
-      setTimeline(result.timeline);
-      setEnhancedTimeline(result.enhancedTimeline);
-
-      if (result.errors.length > 0 && result.logs.length === 0) {
-        setRunnerError(getPrimaryErrorMessage(result.errors[0]));
-      } else {
-        setRunnerError(null);
-      }
-    } catch (error) {
-      const message = String(error);
-      setRunnerError(message);
-      setLogs([{ type: 'error', content: message, timestamp: Date.now() }]);
-    } finally {
-      setIsRunning(false);
-    }
-  }, [isAnswered, isJavascriptRuntime, javascriptCodeBlock]);
+  useEffect(() => clearPendingAutorun, [clearPendingAutorun]);
 
   const handleRecallSubmit = useCallback(() => {
     if (!recallAnswer.trim()) return;
     if (!question.correctOption) {
       setHasSubmittedRecall(true);
+      scheduleAnswerAutorun();
       return;
     }
 
@@ -303,6 +332,7 @@ export function QuestionIDEClient({
       }
       markQuestionAnswered(primaryTag, isStrictMatch);
     }
+    scheduleAnswerAutorun();
   }, [
     recallAnswer,
     question.correctOption,
@@ -312,6 +342,7 @@ export function QuestionIDEClient({
     primaryTag,
     updateSection,
     markQuestionAnswered,
+    scheduleAnswerAutorun,
     tagQuestionCounts,
     locale,
   ]);
@@ -344,6 +375,7 @@ export function QuestionIDEClient({
         // Increment answered/correct counts
         markQuestionAnswered(primaryTag, isCorrect);
       }
+      scheduleAnswerAutorun();
     },
     [
       isAnswered,
@@ -353,6 +385,7 @@ export function QuestionIDEClient({
       primaryTag,
       updateSection,
       markQuestionAnswered,
+      scheduleAnswerAutorun,
       tagQuestionCounts,
       locale,
     ],
@@ -617,8 +650,11 @@ export function QuestionIDEClient({
 
                         <Button
                           size="sm"
-                          onClick={runCode}
+                          onClick={() => {
+                            void runCode();
+                          }}
                           disabled={!isAnswered || isRunning}
+                          data-testid="question-run-code"
                           className="h-6 text-[10px] gap-1"
                         >
                           <Play className="h-3 w-3" />
@@ -672,17 +708,19 @@ export function QuestionIDEClient({
 
             {isJavascriptRuntime && primaryCodeBlock && (
               <div className="mt-4 flex flex-col h-48 rounded-lg overflow-hidden border border-border/30 bg-black/40">
-                <TerminalOutput
-                  logs={logs}
-                  isRunning={isRunning}
-                  emptyMessage={
-                    !isAnswered
-                      ? t('unlockRuntime')
-                      : runnerError
-                        ? runnerError
-                        : tCommon('loading')
-                  }
-                />
+                <div data-testid="question-terminal" className="contents">
+                  <TerminalOutput
+                    logs={logs}
+                    isRunning={isRunning}
+                    emptyMessage={
+                      !isAnswered
+                        ? t('unlockRuntime')
+                        : runnerError
+                          ? runnerError
+                          : tCommon('loading')
+                    }
+                  />
+                </div>
               </div>
             )}
 
@@ -701,67 +739,147 @@ export function QuestionIDEClient({
                   transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
                   className="overflow-hidden"
                 >
-                  <div className="flex gap-2">
-                    <Dialog>
-                      <DialogTrigger asChild>
+                  <div className="rounded-2xl border border-border/50 bg-linear-to-br from-card/90 via-card/70 to-background/90 p-3">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground/70">
+                          Runtime Inspectors
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground/75">
+                          Replay the event loop or step through the traced execution state.
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="border-border/60 bg-background/40 px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground"
+                      >
+                        Inspect
+                      </Badge>
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <button
+                        type="button"
+                        onClick={() => setDebuggerMode('timeline')}
+                        className="group relative overflow-hidden rounded-xl border border-amber-500/25 bg-linear-to-br from-amber-500/10 via-amber-500/[0.07] to-transparent p-4 text-left transition-colors duration-200 hover:border-amber-400/45 hover:bg-amber-500/12"
+                      >
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_55%)] opacity-80" />
+                        <div className="relative flex items-start justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-amber-300/85">
+                              <Activity className="h-3.5 w-3.5" />
+                              Event Loop Replay
+                            </div>
+                            <p className="mt-2 text-sm font-medium text-foreground">
+                              Watch tasks, microtasks, and console output move through the loop.
+                            </p>
+                            <p className="mt-2 text-xs leading-relaxed text-muted-foreground/75">
+                              Best for timing, queue order, and callback sequencing.
+                            </p>
+                          </div>
+                          <span className="rounded-full border border-amber-400/25 bg-amber-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-200/90">
+                            Replay
+                          </span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDebuggerMode('visual')}
+                        className="group relative overflow-hidden rounded-xl border border-violet-500/25 bg-linear-to-br from-violet-500/10 via-violet-500/[0.07] to-transparent p-4 text-left transition-colors duration-200 hover:border-violet-400/45 hover:bg-violet-500/12"
+                      >
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_55%)] opacity-80" />
+                        <div className="relative flex items-start justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-violet-300/85">
+                              <Eye className="h-3.5 w-3.5" />
+                              Visual Debugger
+                            </div>
+                            <p className="mt-2 text-sm font-medium text-foreground">
+                              Inspect expression-level flow, queue transitions, and snapshots.
+                            </p>
+                            <p className="mt-2 text-xs leading-relaxed text-muted-foreground/75">
+                              Best for deeper step-through debugging once the timeline looks odd.
+                            </p>
+                          </div>
+                          <span className="rounded-full border border-violet-400/25 bg-violet-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-violet-200/90">
+                            Trace
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <Dialog
+                    open={debuggerMode === 'timeline'}
+                    onOpenChange={(open) => setDebuggerMode(open ? 'timeline' : null)}
+                  >
+                    <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
+                      <DialogHeader>
+                        <DialogTitle>Event Loop Replay</DialogTitle>
+                        <DialogDescription>
+                          Replay the recorded macro and microtask timeline for this snippet.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="mt-4 flex flex-col gap-4">
+                        <div className="flex flex-col gap-3 rounded-xl border border-border/50 bg-muted/15 p-3 md:flex-row md:items-center md:justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">
+                              Need the lower-level trace too?
+                            </p>
+                            <p className="text-xs text-muted-foreground/80">
+                              Jump into the Visual Debugger to inspect the same run in more detail.
+                            </p>
+                          </div>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="gap-2 border border-violet-500/30 bg-violet-500/10 text-violet-200 hover:bg-violet-500/20"
+                            onClick={() => setDebuggerMode('visual')}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            Open Visual Debugger
+                          </Button>
+                        </div>
+
+                        <TimelineChart events={timeline} />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog
+                    open={debuggerMode === 'visual'}
+                    onOpenChange={(open) => setDebuggerMode(open ? 'visual' : null)}
+                  >
+                    <DialogContent className="flex h-[90vh] w-[95vw] max-w-7xl flex-col overflow-hidden border-border-subtle bg-surface p-0 shadow-glow sm:max-w-7xl">
+                      <DialogHeader className="sr-only">
+                        <DialogTitle>
+                          <VisuallyHidden>Visual Debugger</VisuallyHidden>
+                        </DialogTitle>
+                        <DialogDescription>
+                          Step through expression-level execution, queues, and logs for this
+                          snippet.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex items-center justify-end border-b border-border/50 bg-muted/10 px-4 py-3">
                         <Button
-                          variant="secondary"
-                          className="flex-1 gap-2 text-xs border border-primary/50 bg-primary/10 text-primary shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:bg-primary/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+                          variant="ghost"
+                          size="sm"
+                          className="gap-2 text-xs text-muted-foreground hover:text-foreground"
                           onClick={() => setDebuggerMode('timeline')}
                         >
-                          <Activity className="h-3 w-3" />
-                          Event Loop Replay
+                          <Activity className="h-3.5 w-3.5" />
+                          Open Event Loop Replay
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-h-[88vh] w-[96vw] max-w-5xl sm:max-w-5xl lg:max-w-6xl overflow-y-auto border-border-subtle bg-surface p-4 md:p-6 shadow-glow">
-                        <DialogHeader>
-                          <DialogTitle>Event Loop Replay</DialogTitle>
-                          <DialogDescription>
-                            Replay the recorded macro and microtask timeline for this snippet.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="mt-4 pb-2">
-                          <TimelineChart events={timeline} />
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-4">
-                          Simple timeline view of macro/micro tasks. For detailed expression-level
-                          tracing, use the Visual Debugger.
-                        </p>
-                      </DialogContent>
-                    </Dialog>
-
-                    <Dialog
-                      open={_debuggerMode === 'visual'}
-                      onOpenChange={(open) => setDebuggerMode(open ? 'visual' : 'timeline')}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="secondary"
-                          className="flex-1 gap-2 text-xs border border-violet-500/50 bg-violet-500/10 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:bg-violet-500/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                          onClick={() => setDebuggerMode('visual')}
-                        >
-                          <Eye className="h-3 w-3" />
-                          Visual Debugger
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="h-[90vh] w-[95vw] max-w-7xl overflow-hidden border-border-subtle bg-surface p-0 shadow-glow sm:max-w-7xl">
-                        <DialogHeader className="sr-only">
-                          <DialogTitle>
-                            <VisuallyHidden>Visual Debugger</VisuallyHidden>
-                          </DialogTitle>
-                          <DialogDescription>
-                            Step through expression-level execution, queues, and logs for this
-                            snippet.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <VisualDebugger
-                          code={javascriptCodeBlock?.code ?? ''}
-                          enhancedTimeline={enhancedTimeline}
-                          logs={logs.map((l) => `[${l.type}] ${l.content}`)}
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+                      </div>
+                      <VisualDebugger
+                        code={javascriptCodeBlock?.code ?? ''}
+                        enhancedTimeline={enhancedTimeline}
+                        logs={logs.map((l) => `[${l.type}] ${l.content}`)}
+                        className="min-h-0 flex-1"
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </motion.div>
               )}
             </AnimatePresence>

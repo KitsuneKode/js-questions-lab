@@ -469,7 +469,7 @@ interface ImportExportPlugin {
   };
 }
 
-function createImportExportStripperPlugin(): ImportExportPlugin {
+function createImportExportStripperPlugin(_babel: BabelRuntime): ImportExportPlugin {
   return {
     name: 'import-export-stripper',
     visitor: {
@@ -541,7 +541,7 @@ export async function stripImportsExports(code: string): Promise<TransformResult
     const babel = await loadBabel();
 
     if (!importStripperRegistered) {
-      babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin());
+      babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin(babel));
       importStripperRegistered = true;
     }
 
@@ -586,12 +586,14 @@ export function stripImportsExportsSync(code: string): TransformResult {
   }
 
   try {
+    const babel = Babel;
+
     if (!importStripperRegistered) {
-      Babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin());
+      babel.registerPlugin('import-export-stripper', () => createImportExportStripperPlugin(babel));
       importStripperRegistered = true;
     }
 
-    const result = Babel.transform(code, {
+    const result = babel.transform(code, {
       plugins: ['import-export-stripper'],
       sourceType: 'module',
       retainLines: true,
