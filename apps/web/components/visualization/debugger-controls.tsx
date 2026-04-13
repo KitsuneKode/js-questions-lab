@@ -13,7 +13,10 @@ import { motion } from 'motion/react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import type { ReplaySpeed } from '@/lib/visualization/playback-speed';
 import type { ReplayStep } from '@/lib/visualization/replay-engine';
+
+import { PlaybackSpeedToggle } from './playback-speed-toggle';
 
 const SPRING_TRANSITION = { type: 'spring', bounce: 0.15, duration: 0.4 } as const;
 
@@ -21,6 +24,7 @@ interface DebuggerControlsProps {
   steps: ReplayStep[];
   activeIndex: number;
   isPlaying: boolean;
+  speed: ReplaySpeed;
   prefersReducedMotion?: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -29,6 +33,7 @@ interface DebuggerControlsProps {
   onJumpToStart: () => void;
   onJumpToEnd: () => void;
   onStepClick: (index: number) => void;
+  onSpeedChange: (speed: ReplaySpeed) => void;
   className?: string;
 }
 
@@ -36,6 +41,7 @@ export function DebuggerControls({
   steps,
   activeIndex,
   isPlaying,
+  speed,
   prefersReducedMotion = false,
   onPrevious,
   onNext,
@@ -44,6 +50,7 @@ export function DebuggerControls({
   onJumpToStart,
   onJumpToEnd,
   onStepClick,
+  onSpeedChange,
   className,
 }: DebuggerControlsProps) {
   const currentStep = steps[activeIndex];
@@ -160,6 +167,13 @@ export function DebuggerControls({
             <span>+{currentStep?.atOffset.toFixed(1) ?? 0}ms</span>
           </div>
         </div>
+
+        <PlaybackSpeedToggle
+          value={speed}
+          onChange={onSpeedChange}
+          disabled={prefersReducedMotion || steps.length < 2}
+          className="mt-4"
+        />
       </div>
 
       {/* Step list */}
@@ -173,7 +187,7 @@ export function DebuggerControls({
           </div>
         </div>
 
-        <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 -mr-1 custom-scrollbar">
+        <div className="flex-1 space-y-1.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {steps.map((step, index) => (
             <button
               key={step.key}
