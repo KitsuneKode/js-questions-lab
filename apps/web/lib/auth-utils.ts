@@ -12,7 +12,9 @@ export interface SafeAuthState {
 export const clerkEnabled =
   !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith('pk_') &&
-  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('REPLACE');
+  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('REPLACE') &&
+  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.includes('placeholder') &&
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.length > 20;
 
 export const guestAuth: SafeAuthState = { isLoaded: true, isSignedIn: false, userId: null };
 

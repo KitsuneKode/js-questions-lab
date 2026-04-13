@@ -4,15 +4,7 @@ import { deDE, enUS, esES, frFR, jaJP, ptBR } from '@clerk/localizations';
 import { ClerkProvider, useAuth } from '@clerk/nextjs';
 import { useLocale } from 'next-intl';
 import type { ReactNode } from 'react';
-import { guestAuth, SafeAuthProvider } from '@/lib/auth-utils';
-
-const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-const hasValidClerkKey =
-  !!clerkKey &&
-  clerkKey.startsWith('pk_') &&
-  !clerkKey.includes('REPLACE') &&
-  !clerkKey.includes('placeholder') &&
-  clerkKey.length > 20;
+import { clerkEnabled, guestAuth, SafeAuthProvider } from '@/lib/auth-utils';
 
 const locales: Record<string, typeof enUS> = {
   en: enUS,
@@ -42,7 +34,7 @@ function ClerkAuthBridge({ children }: { children: ReactNode }) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const locale = useLocale();
 
-  if (!hasValidClerkKey) {
+  if (!clerkEnabled) {
     return <SafeAuthProvider value={guestAuth}>{children}</SafeAuthProvider>;
   }
 
