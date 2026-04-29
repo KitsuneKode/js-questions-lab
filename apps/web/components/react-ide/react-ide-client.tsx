@@ -62,14 +62,19 @@ export function ReactIDEClient({ question }: ReactIDEClientProps) {
   const existingProgress = reactState.questions[question.id];
   const isAlreadyAttempted = (existingProgress?.attempts?.length ?? 0) > 0;
 
-  const [phase, setPhase] = useState<ReactIDEPhase>(isAlreadyAttempted ? 'build' : 'read');
+  const [phase, setPhase] = useState<ReactIDEPhase>('read');
   const [solutionViewed, setSolutionViewed] = useState(false);
-  const [hasAttempted, setHasAttempted] = useState(isAlreadyAttempted);
+  const [hasAttempted, setHasAttempted] = useState(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
+  // useProgress hydrates from localStorage asynchronously — isAlreadyAttempted is false
+  // on first render. Correct phase and hasAttempted once the real value is known.
   useEffect(() => {
-    if (isAlreadyAttempted) setHasAttempted(true);
+    if (isAlreadyAttempted) {
+      setHasAttempted(true);
+      setPhase((prev) => (prev === 'read' ? 'build' : prev));
+    }
   }, [isAlreadyAttempted]);
 
   // Mobile: default to editor-only
