@@ -1,20 +1,23 @@
 'use client';
 
+// Sandpack runs user code inside a cross-origin sandboxed iframe (*.csb.io).
+// Executed code cannot access the host page's window, document, localStorage, or cookies.
+// No additional security hardening is required — the iframe sandbox handles isolation.
+
 import {
   SandpackConsole,
   SandpackPreview,
   SandpackProvider,
-  useActiveCode,
   useSandpack,
 } from '@codesandbox/sandpack-react';
 import {
+  IconArrowRight,
   IconChevronDown,
   IconChevronUp,
   IconCode,
   IconColumns,
   IconEye,
   IconFolder,
-  IconInfoCircle,
   IconTerminal2,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -27,7 +30,6 @@ import { CodeMirrorEditor } from '@/components/editor/codemirror-editor';
 import { ResourcesPanel } from '@/components/ide/resources-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -56,16 +58,15 @@ interface ReactIDEClientProps {
 // ---------------------------------------------------------------------------
 
 export function ReactIDEClient({ question }: ReactIDEClientProps) {
-  const [phase, setPhase] = useState<ReactIDEPhase>('build');
-  const [isProblemModalOpen, setIsProblemModalOpen] = useState(true);
-  const [solutionViewed, setSolutionViewed] = useState(false);
-  const [hasAttempted, setHasAttempted] = useState(false);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
-  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const { saveReactAttempt, saveReactSelfGrade, reactState } = useProgress();
-
   const existingProgress = reactState.questions[question.id];
   const isAlreadyAttempted = (existingProgress?.attempts?.length ?? 0) > 0;
+
+  const [phase, setPhase] = useState<ReactIDEPhase>(isAlreadyAttempted ? 'build' : 'read');
+  const [solutionViewed, setSolutionViewed] = useState(false);
+  const [hasAttempted, setHasAttempted] = useState(isAlreadyAttempted);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   useEffect(() => {
     if (isAlreadyAttempted) setHasAttempted(true);
@@ -84,8 +85,6 @@ export function ReactIDEClient({ question }: ReactIDEClientProps) {
     );
 
     // Ensure there's a stable React entrypoint for the preview iframe.
-    // Sandpack templates provide defaults, but these can drift; supplying our own
-    // entry guarantees preview renders for "previewVisible" questions.
     if (!result['/index.tsx']) {
       result['/index.tsx'] = {
         code: `import React from 'react';
@@ -103,9 +102,16 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: 20, color: '#ef4444', fontFamily: 'monospace' }}>
-          <h2>Runtime Error</h2>
-          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px' }}>{this.state.error?.toString()}</pre>
+        <div style={{
+          padding: '20px',
+          backgroundColor: '#0d0d12',
+          color: '#ef4444',
+          fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+          height: '100%',
+          minHeight: '100vh',
+        }}>
+          <h2 style={{ marginBottom: '8px', fontSize: '14px' }}>Runtime Error</h2>
+          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px', opacity: 0.8 }}>{this.state.error?.toString()}</pre>
         </div>
       );
     }
@@ -127,9 +133,6 @@ if (rootEl) {
       };
     }
 
-    // Sandpack templates expect /App.tsx to exist (rendered by the template entry).
-    // If a question uses a different entry file, provide a thin App wrapper so the
-    // preview reliably renders something instead of a blank screen.
     if (!result['/App.tsx'] && question.entryFile && result[`/${question.entryFile}`]) {
       const importedName = 'Exercise';
       result['/App.tsx'] = {
@@ -137,8 +140,6 @@ if (rootEl) {
       };
     }
 
-    // Inject a small base stylesheet so seeded React exercises render
-    // predictably even when they use Tailwind-like utility classes.
     const stylesCode = `
 html, body, #root {
   min-height: 100%;
@@ -193,11 +194,10 @@ button {
 .underline { text-decoration: underline; }
 .-translate-x-1\\/2 { transform: translateX(-50%); }
 .-translate-y-1\\/2 { transform: translateY(-50%); }
-      `.trim();
+    `.trim();
 
     result['/styles.css'] = { code: stylesCode };
 
-    // Pass the styles to the entry file (e.g. App.tsx or index.tsx)
     const entryKey = `/${question.entryFile}`;
     if (result[entryKey] && !result[entryKey].code.includes('styles.css')) {
       result[entryKey].code = `import './styles.css';\n${result[entryKey].code}`;
@@ -215,7 +215,6 @@ button {
   function handleViewSolution() {
     setSolutionViewed(true);
     setHasAttempted(true);
-    // Stay in build phase so they can actually look at the solution tabs
     saveReactAttempt(question.id, 'incorrect');
   }
 
@@ -247,8 +246,6 @@ button {
           onMarkDone={handleMarkDone}
           onViewSolution={handleViewSolution}
           onGrade={handleGrade}
-          isProblemModalOpen={isProblemModalOpen}
-          setIsProblemModalOpen={setIsProblemModalOpen}
           isConsoleOpen={isConsoleOpen}
           setIsConsoleOpen={setIsConsoleOpen}
         />
@@ -272,8 +269,6 @@ interface IDELayoutProps {
   onMarkDone: () => void;
   onViewSolution: () => void;
   onGrade: (grade: Grade) => void;
-  isProblemModalOpen: boolean;
-  setIsProblemModalOpen: (open: boolean) => void;
   isConsoleOpen: boolean;
   setIsConsoleOpen: (open: boolean) => void;
 }
@@ -289,8 +284,6 @@ function IDELayout({
   onMarkDone,
   onViewSolution,
   onGrade,
-  isProblemModalOpen,
-  setIsProblemModalOpen,
   isConsoleOpen,
   setIsConsoleOpen,
 }: IDELayoutProps) {
@@ -349,7 +342,7 @@ function IDELayout({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.06),transparent_28%),radial-gradient(circle_at_85%_20%,rgba(56,189,248,0.06),transparent_22%)]" />
 
       {/* ── Compact header ── */}
-      <div className="relative z-10 shrink-0 flex-none flex flex-wrap items-center gap-3 border-b border-border/50 bg-background/80 px-4 py-2 backdrop-blur-xl lg:px-5">
+      <div className="relative z-10 shrink-0 flex-none flex flex-wrap items-center gap-3 border-b border-border/50 bg-background px-4 py-2 lg:px-5">
         {/* Left: title + badge */}
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
           <span className="hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-primary/60 sm:inline">
@@ -370,20 +363,8 @@ function IDELayout({
         {/* Right: build-phase controls */}
         {phase === 'build' && (
           <div className="flex items-center gap-1.5">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-3 text-xs border border-border/40 bg-surface hover:bg-surface/80 text-foreground"
-              onClick={() => setIsProblemModalOpen(true)}
-            >
-              <IconInfoCircle className="mr-1.5 h-3.5 w-3.5 text-primary" />
-              Requirements
-            </Button>
-
-            <div className="h-4 w-px bg-border/40 mx-1" />
-
             {/* Layout mode toggle */}
-            <div className="hidden items-center rounded-md border border-border/40 bg-background/60 p-0.5 lg:inline-flex">
+            <div className="hidden items-center rounded-lg border border-border/40 bg-background/60 p-1 lg:inline-flex gap-0.5">
               {layoutOptions.map(({ id, icon: Icon, label }) => (
                 <button
                   key={id}
@@ -391,10 +372,10 @@ function IDELayout({
                   onClick={() => onLayoutModeChange(id)}
                   title={label}
                   className={cn(
-                    'rounded p-1.5 transition-colors active:scale-[0.95]',
+                    'min-h-8 min-w-8 rounded-md p-1.5 transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.96]',
                     layoutMode === id
                       ? 'bg-primary/12 text-primary'
-                      : 'text-muted-foreground hover:text-foreground',
+                      : 'text-muted-foreground hover:text-foreground hover:bg-surface/50',
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -412,7 +393,7 @@ function IDELayout({
                 onClick={handleViewSolutionClick}
                 variant="ghost"
                 size="sm"
-                className="h-7 border border-border/40 bg-transparent px-3 text-xs text-muted-foreground hover:border-border/70 hover:text-foreground transition-all active:scale-[0.97]"
+                className="h-7 border border-border/40 bg-transparent px-3 text-xs text-muted-foreground hover:border-border/70 hover:text-foreground transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97]"
               >
                 Solution
               </Button>
@@ -421,49 +402,30 @@ function IDELayout({
         )}
       </div>
 
-      {/* ── Problem Modal ── */}
-      <Dialog open={isProblemModalOpen} onOpenChange={setIsProblemModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <span className="rounded-full bg-primary/10 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-primary">
-                {question.difficulty}
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                {question.category}
-              </span>
-            </div>
-            <DialogTitle className="text-2xl">{question.title}</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-6 mt-4">
-            {question.context && (
-              <section>
-                <h3 className="text-sm font-medium mb-2 text-foreground">The Concept</h3>
-                <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
-                  <Streamdown>{question.context}</Streamdown>
-                </div>
-              </section>
-            )}
-            <section>
-              <h3 className="text-sm font-medium mb-2 text-foreground">What to Build</h3>
-              <div className="rounded-xl border border-border/50 bg-surface/30 p-4 sm:p-6">
-                <div className="markdown text-sm leading-relaxed text-muted-foreground/90">
-                  <Streamdown>{question.prompt}</Streamdown>
-                </div>
-              </div>
-            </section>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* ── Phase content ── */}
       <AnimatePresence mode="wait" initial={false}>
+        {phase === 'read' && (
+          <motion.div
+            key="read"
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 16 }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+            className="relative flex flex-1 w-full min-h-0 overflow-hidden"
+          >
+            <ReadPhase
+              question={question}
+              onStartBuilding={() => onPhaseChange('build')}
+              isAlreadyAttempted={hasAttempted}
+            />
+          </motion.div>
+        )}
+
         {phase === 'build' && (
           <motion.div
             key="build"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="relative flex flex-1 w-full min-h-0 overflow-hidden"
@@ -498,6 +460,113 @@ function IDELayout({
 }
 
 // ---------------------------------------------------------------------------
+// READ phase — concept + static preview
+// ---------------------------------------------------------------------------
+
+function ReadPhase({
+  question,
+  onStartBuilding,
+  isAlreadyAttempted,
+}: {
+  question: ReactQuestion;
+  onStartBuilding: () => void;
+  isAlreadyAttempted: boolean;
+}) {
+  const entryFileName = question.entryFile;
+  const previewCode =
+    question.starterCode[entryFileName] ?? Object.values(question.starterCode)[0] ?? '';
+
+  return (
+    <div className="flex flex-1 w-full h-full min-h-0 divide-x divide-border/30">
+      {/* Left: concept + prompt */}
+      <div className="flex flex-col w-full lg:w-[60%] h-full min-h-0 overflow-y-auto scrollbar-thin px-6 py-8 lg:px-10 gap-6">
+        {/* Header */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <span
+            className={cn(
+              'rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+              question.difficulty === 'beginner'
+                ? 'border-green-500/30 bg-green-500/10 text-green-400'
+                : question.difficulty === 'intermediate'
+                  ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                  : 'border-red-500/30 bg-red-500/10 text-red-400',
+            )}
+          >
+            {question.difficulty}
+          </span>
+          <span className="rounded-full border border-border/40 bg-surface/50 px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+            {question.category}
+          </span>
+        </div>
+
+        <h2 className="text-2xl font-semibold text-foreground tracking-tight text-balance shrink-0">
+          {question.title}
+        </h2>
+
+        {/* Concept */}
+        {question.context && (
+          <section className="shrink-0">
+            <h3 className="text-[11px] font-semibold uppercase tracking-widest text-primary/70 mb-3">
+              The Concept
+            </h3>
+            <div className="markdown text-sm leading-relaxed text-muted-foreground/90 prose prose-sm prose-invert max-w-none">
+              <Streamdown>{question.context}</Streamdown>
+            </div>
+          </section>
+        )}
+
+        {/* What to build */}
+        <section className="shrink-0">
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-primary/70 mb-3">
+            What to Build
+          </h3>
+          <div className="rounded-lg border border-border/50 bg-surface/30 p-4 sm:p-5">
+            <div className="markdown text-sm leading-relaxed text-muted-foreground/90 prose prose-sm prose-invert max-w-none">
+              <Streamdown>{question.prompt}</Streamdown>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        {!isAlreadyAttempted && (
+          <div className="shrink-0 pt-2">
+            <Button onClick={onStartBuilding} className="gap-2 px-5 h-9 text-sm font-medium">
+              Start Building
+              <IconArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Right: static code preview (desktop only) */}
+      <div className="hidden lg:flex flex-col w-[40%] h-full min-h-0 overflow-hidden bg-code">
+        <div className="flex items-center justify-between border-b border-border/40 px-3 py-1.5 shrink-0">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <IconCode className="w-3.5 h-3.5" />
+            {entryFileName}
+          </span>
+          <span className="text-[10px] text-muted-foreground/50">starter</span>
+        </div>
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <CodeMirrorEditor
+            value={previewCode}
+            onChange={() => {}}
+            readOnly
+            language={
+              entryFileName.endsWith('.html')
+                ? 'html'
+                : entryFileName.endsWith('.ts') || entryFileName.endsWith('.tsx')
+                  ? 'typescript'
+                  : 'javascript'
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // BUILD phase — split layout with file tree, editor, preview, console
 // ---------------------------------------------------------------------------
 
@@ -515,7 +584,7 @@ function EditorHeaderTabs({ viewMode, onToggleMode, solutionViewed }: EditorHead
         type="button"
         onClick={() => onToggleMode('problem')}
         className={cn(
-          'rounded-md px-3 py-1 text-[11px] font-medium transition-colors',
+          'rounded-md px-3 py-1 text-[11px] font-medium transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.96]',
           viewMode === 'problem'
             ? 'bg-primary/20 text-primary'
             : 'text-muted-foreground hover:bg-surface hover:text-foreground',
@@ -527,7 +596,7 @@ function EditorHeaderTabs({ viewMode, onToggleMode, solutionViewed }: EditorHead
         type="button"
         onClick={() => onToggleMode('solution')}
         className={cn(
-          'rounded-md px-3 py-1 text-[11px] font-medium transition-all active:scale-[0.97]',
+          'rounded-md px-3 py-1 text-[11px] font-medium transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.96]',
           viewMode === 'solution'
             ? 'bg-primary/20 text-primary'
             : 'text-muted-foreground hover:bg-surface hover:text-foreground',
@@ -556,8 +625,9 @@ function BuildPhase({
   isConsoleOpen: boolean;
   setIsConsoleOpen: (open: boolean) => void;
 }) {
-  // Important: keep preview + console mounted while switching modes.
-  // Unmounting SandpackPreview can stall the iframe/runtime in some browsers.
+  const { sandpack } = useSandpack();
+  const hasError = !!sandpack.error;
+
   const showLeft = layoutMode !== 'preview' && layoutMode !== 'console';
   const showRight = layoutMode !== 'editor';
   const showPreview = question.previewVisible && layoutMode !== 'console';
@@ -607,6 +677,7 @@ function BuildPhase({
             <ResizablePanel defaultSize={80} minSize={40} className="flex flex-col min-h-0 h-full">
               <div className="flex flex-1 min-h-0 h-full w-full flex-col overflow-hidden bg-code">
                 <SandpackCodeMirrorEditor
+                  viewMode={viewMode}
                   headerLeft={
                     <EditorHeaderTabs
                       viewMode={viewMode}
@@ -651,15 +722,29 @@ function BuildPhase({
                       <button
                         type="button"
                         onClick={() => setIsConsoleOpen(!isConsoleOpen)}
-                        className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground"
+                        className="relative flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground"
                       >
                         <IconTerminal2 className="w-3 h-3" />
                         Console
-                        {isConsoleOpen ? (
-                          <IconChevronDown className="w-3 h-3" />
-                        ) : (
-                          <IconChevronUp className="w-3 h-3" />
+                        {/* Error badge */}
+                        {hasError && !isConsoleOpen && (
+                          <span className="absolute -top-1 -right-1 h-1.5 w-1.5 rounded-full bg-danger" />
                         )}
+                        {/* Chevron cross-fade */}
+                        <span className="relative h-3 w-3">
+                          <IconChevronDown
+                            className={cn(
+                              'absolute inset-0 w-3 h-3 transition-[opacity,transform] duration-150',
+                              isConsoleOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75',
+                            )}
+                          />
+                          <IconChevronUp
+                            className={cn(
+                              'absolute inset-0 w-3 h-3 transition-[opacity,transform] duration-150',
+                              isConsoleOpen ? 'opacity-0 scale-75' : 'opacity-100 scale-100',
+                            )}
+                          />
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -684,6 +769,7 @@ function BuildPhase({
                     <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                       <IconTerminal2 className="w-3.5 h-3.5" />
                       Console
+                      {hasError && <span className="h-1.5 w-1.5 rounded-full bg-danger" />}
                     </span>
                     {!showPreview && (
                       <button
@@ -707,6 +793,7 @@ function BuildPhase({
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                   <IconTerminal2 className="w-3.5 h-3.5" />
                   Console
+                  {hasError && <span className="h-1.5 w-1.5 rounded-full bg-danger" />}
                 </span>
               </div>
               <div className="flex flex-1 min-h-0 h-full w-full overflow-hidden bg-void">
@@ -723,7 +810,7 @@ function BuildPhase({
 function SolutionBadge() {
   return (
     <div className="border-t border-primary/20 bg-primary/5 px-3 py-1.5 text-center text-[10px] font-semibold uppercase tracking-widest text-primary">
-      Solution
+      Solution — Reference Only
     </div>
   );
 }
@@ -792,7 +879,7 @@ function ReviewPhase({
           <p className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-primary">
             Session Review
           </p>
-          <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl text-balance">
             {question.title}
           </h2>
           <p className="mt-5 max-w-xl text-base text-secondary/90 leading-relaxed">
@@ -835,16 +922,20 @@ function ReviewPhase({
             </motion.div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-3">
-              {(['hard', 'good', 'easy'] as const).map((id) => {
+              {(['hard', 'good', 'easy'] as const).map((id, index) => {
                 const cfg = GRADE_CONFIG[id];
                 const isSelected = selectedGrade === id;
                 return (
-                  <button
+                  <motion.button
                     key={id}
                     type="button"
                     onClick={() => handleGrade(id)}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.08, ease: 'easeOut' }}
                     className={cn(
-                      'group relative flex flex-col items-start overflow-hidden rounded-2xl border p-5 text-left transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]',
+                      'group relative flex flex-col items-start overflow-hidden rounded-2xl border p-5 text-left',
+                      'transition-[colors,transform,box-shadow] duration-150 ease-out hover:scale-[1.01] active:scale-[0.98]',
                       isSelected ? cfg.activeClass : cfg.defaultClass,
                     )}
                   >
@@ -853,7 +944,7 @@ function ReviewPhase({
                     <div className="mb-3 flex items-center gap-3">
                       <span
                         className={cn(
-                          'h-2 w-2 rounded-sm transition-all',
+                          'h-2 w-2 rounded-sm transition-colors duration-150',
                           isSelected ? cfg.dotClass : 'bg-border/60 group-hover:bg-border',
                         )}
                       />
@@ -869,7 +960,7 @@ function ReviewPhase({
                     <p className="text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground/90">
                       {cfg.description}
                     </p>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -894,7 +985,7 @@ function ReviewPhase({
             <Button
               variant="ghost"
               onClick={onViewSolution}
-              className="h-10 rounded-full border border-border/40 bg-surface/30 px-6 text-sm font-medium text-muted-foreground transition-all hover:border-border hover:bg-surface hover:text-foreground"
+              className="h-10 rounded-full border border-border/40 bg-surface/30 px-6 text-sm font-medium text-muted-foreground transition-[color,background-color,border-color] duration-150 hover:border-border hover:bg-surface hover:text-foreground"
             >
               Analyze the reference implementation
             </Button>
@@ -905,7 +996,17 @@ function ReviewPhase({
   );
 }
 
-function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode }) {
+// ---------------------------------------------------------------------------
+// Editor (CodeMirror bridge to Sandpack)
+// ---------------------------------------------------------------------------
+
+function SandpackCodeMirrorEditor({
+  headerLeft,
+  viewMode,
+}: {
+  headerLeft?: React.ReactNode;
+  viewMode: 'problem' | 'solution';
+}) {
   const { sandpack } = useSandpack();
   const { files, activeFile, updateFile } = sandpack;
   const code = files[activeFile]?.code || '';
@@ -916,7 +1017,10 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
       ? 'typescript'
       : 'javascript';
 
+  const isReadOnly = viewMode === 'solution';
+
   async function handleFormat() {
+    if (isReadOnly) return;
     try {
       const formatted = await prettier.format(code, {
         parser: 'babel',
@@ -932,6 +1036,7 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
   }
 
   function handleReset() {
+    if (isReadOnly) return;
     sandpack.resetAllFiles();
   }
 
@@ -939,24 +1044,26 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
     <div className="relative flex-1 min-h-0 h-full w-full flex flex-col overflow-hidden bg-code">
       <div className="flex items-center justify-between border-b border-border/40 bg-surface/50 px-2 py-1.5 shrink-0">
         <div className="flex items-center min-w-0">{headerLeft}</div>
-        <div className="flex items-center gap-1.5 shrink-0 ml-2">
-          <button
-            type="button"
-            onClick={handleFormat}
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
-            title="Format Code (Shift+Alt+F)"
-          >
-            Format
-          </button>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
-            title="Reset to Starter Code"
-          >
-            Reset
-          </button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+            <button
+              type="button"
+              onClick={handleFormat}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
+              title="Format Code (Shift+Alt+F)"
+            >
+              Format
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
+              title="Reset to Starter Code"
+            >
+              Reset
+            </button>
+          </div>
+        )}
       </div>
       <div className="relative flex-1 min-h-0 w-full">
         <CodeMirrorEditor
@@ -965,6 +1072,7 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
           value={code}
           onChange={(newCode) => updateFile(activeFile, newCode)}
           language={language as 'html' | 'javascript' | 'typescript'}
+          readOnly={isReadOnly}
         />
       </div>
     </div>

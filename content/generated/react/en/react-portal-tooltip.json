@@ -1,0 +1,38 @@
+{
+  "id": "react-portal-tooltip",
+  "title": "Build a Portal-Based Tooltip",
+  "difficulty": "intermediate",
+  "tags": ["portal", "tooltip", "createPortal", "refs", "positioning"],
+  "category": "component",
+  "prompt": "Build a `Tooltip` component that renders its content via `ReactDOM.createPortal` to `document.body`, positioned relative to its trigger element.\n\nRequirements:\n- Accept `children` (the trigger) and `content` (the tooltip text) props\n- Show the tooltip on hover (mouse enter/leave)\n- Position the tooltip above the trigger element using `getBoundingClientRect()`\n- Render the tooltip into `document.body` via `createPortal` so it escapes overflow-hidden parents\n- Handle cleanup on unmount",
+  "context": "**Portals** let you render React elements into a DOM node outside the component's own tree. The most common use case is tooltips, modals, and dropdowns: they need to visually overlay other content, but they live inside deeply nested components that may have `overflow: hidden` or a stacking context that clips them.\n\n`createPortal(children, domNode)` renders `children` into `domNode` while keeping them as part of the React component tree — event bubbling still works through the React tree, not the DOM tree.\n\nPositioning a portal tooltip requires reading the trigger element's position with `getBoundingClientRect()` on mouse enter, then applying those coordinates as fixed-position CSS. This avoids any layout relationship between the portal and its trigger.",
+  "starterCode": {
+    "App.tsx": "import { Tooltip } from './Tooltip';\n\nexport default function App() {\n  return (\n    <div style={{ padding: '4rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>\n      <Tooltip content=\"Saved to your account\">\n        <button style={{ padding: '0.5rem 1rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', cursor: 'pointer' }}>\n          Save\n        </button>\n      </Tooltip>\n\n      <div style={{ overflow: 'hidden', border: '1px solid #d1d5db', borderRadius: '0.5rem', padding: '1rem' }}>\n        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>overflow: hidden parent</p>\n        <Tooltip content=\"This tooltip escapes the overflow container!\">\n          <button style={{ padding: '0.5rem 1rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', cursor: 'pointer' }}>\n            Hover me\n          </button>\n        </Tooltip>\n      </div>\n    </div>\n  );\n}\n",
+    "Tooltip.tsx": "import { type ReactNode, useRef, useState } from 'react';\nimport { createPortal } from 'react-dom';\n\ninterface TooltipProps {\n  children: ReactNode;\n  content: string;\n}\n\nexport function Tooltip({ children, content }: TooltipProps) {\n  const [visible, setVisible] = useState(false);\n  const [position, setPosition] = useState({ top: 0, left: 0 });\n  const triggerRef = useRef<HTMLSpanElement>(null);\n\n  function handleMouseEnter() {\n    // TODO: compute position from triggerRef.current.getBoundingClientRect() and show tooltip\n  }\n\n  function handleMouseLeave() {\n    // TODO: hide tooltip\n  }\n\n  return (\n    <>\n      <span ref={triggerRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>\n        {children}\n      </span>\n      {/* TODO: render tooltip via createPortal when visible */}\n    </>\n  );\n}\n"
+  },
+  "entryFile": "Tooltip.tsx",
+  "solutionCode": {
+    "App.tsx": "import { Tooltip } from './Tooltip';\n\nexport default function App() {\n  return (\n    <div style={{ padding: '4rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>\n      <Tooltip content=\"Saved to your account\">\n        <button style={{ padding: '0.5rem 1rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', cursor: 'pointer' }}>\n          Save\n        </button>\n      </Tooltip>\n\n      <div style={{ overflow: 'hidden', border: '1px solid #d1d5db', borderRadius: '0.5rem', padding: '1rem' }}>\n        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>overflow: hidden parent</p>\n        <Tooltip content=\"This tooltip escapes the overflow container!\">\n          <button style={{ padding: '0.5rem 1rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', cursor: 'pointer' }}>\n            Hover me\n          </button>\n        </Tooltip>\n      </div>\n    </div>\n  );\n}\n",
+    "Tooltip.tsx": "import { type ReactNode, useRef, useState } from 'react';\nimport { createPortal } from 'react-dom';\n\ninterface TooltipProps {\n  children: ReactNode;\n  content: string;\n}\n\nexport function Tooltip({ children, content }: TooltipProps) {\n  const [visible, setVisible] = useState(false);\n  const [position, setPosition] = useState({ top: 0, left: 0 });\n  const triggerRef = useRef<HTMLSpanElement>(null);\n\n  function handleMouseEnter() {\n    if (!triggerRef.current) return;\n    const rect = triggerRef.current.getBoundingClientRect();\n    // Position above the trigger, centered horizontally\n    setPosition({\n      top: rect.top + window.scrollY - 8,\n      left: rect.left + window.scrollX + rect.width / 2,\n    });\n    setVisible(true);\n  }\n\n  function handleMouseLeave() {\n    setVisible(false);\n  }\n\n  const tooltip = visible\n    ? createPortal(\n        <div\n          style={{\n            position: 'absolute',\n            top: position.top,\n            left: position.left,\n            transform: 'translate(-50%, -100%)',\n            background: '#111827',\n            color: '#f9fafb',\n            padding: '0.25rem 0.625rem',\n            borderRadius: '0.375rem',\n            fontSize: '0.75rem',\n            whiteSpace: 'nowrap',\n            pointerEvents: 'none',\n            zIndex: 9999,\n            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.3)',\n          }}\n        >\n          {content}\n        </div>,\n        document.body,\n      )\n    : null;\n\n  return (\n    <>\n      <span ref={triggerRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>\n        {children}\n      </span>\n      {tooltip}\n    </>\n  );\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [
+    {
+      "title": "React – createPortal",
+      "url": "https://react.dev/reference/react-dom/createPortal",
+      "type": "docs"
+    },
+    {
+      "title": "MDN – Element.getBoundingClientRect()",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect",
+      "type": "docs"
+    }
+  ],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/patterns",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

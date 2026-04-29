@@ -1,17 +1,29 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-04-07T00:00:00.000Z",
-  "totalQuestions": 10,
+  "generatedAt": "2026-04-29T00:00:00.000Z",
+  "totalQuestions": 22,
   "questions": [
     { "id": "react-counter", "title": "Build a Counter Component", "difficulty": "beginner", "category": "component", "tags": ["state", "events", "components"] },
     { "id": "react-toggle", "title": "Build a useToggle Hook", "difficulty": "beginner", "category": "hook", "tags": ["hooks", "state", "boolean"] },
+    { "id": "react-use-event-listener", "title": "Build a useEventListener Hook", "difficulty": "beginner", "category": "hook", "tags": ["hooks", "events", "refs", "cleanup", "DOM"] },
+    { "id": "react-use-intersection", "title": "Build a useIntersectionObserver Hook", "difficulty": "beginner", "category": "hook", "tags": ["hooks", "intersection-observer", "scroll", "lazy-loading"] },
+    { "id": "react-use-media-query", "title": "Build a useMediaQuery Hook", "difficulty": "beginner", "category": "hook", "tags": ["hooks", "media-query", "responsive", "window"] },
     { "id": "react-use-debounce", "title": "Build a useDebounce Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "timers", "performance", "closures"] },
     { "id": "react-use-local-storage", "title": "Build a useLocalStorage Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "localStorage", "state", "persistence"] },
+    { "id": "react-use-local-storage-sync", "title": "Build a Cross-Tab Synchronized useLocalStorage", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "localStorage", "storage-event", "cross-tab", "sync"] },
     { "id": "react-use-previous", "title": "Build a usePrevious Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "refs", "state"] },
     { "id": "react-use-fetch", "title": "Build a useFetch Hook", "difficulty": "intermediate", "category": "hook", "tags": ["hooks", "async", "data-fetching", "effects"] },
+    { "id": "react-controlled-form", "title": "Build a Controlled Form with Validation", "difficulty": "intermediate", "category": "component", "tags": ["forms", "controlled-inputs", "validation", "state"] },
     { "id": "react-hoc-with-logger", "title": "Build a withLogger Higher-Order Component", "difficulty": "intermediate", "category": "pattern", "tags": ["hoc", "patterns", "props", "logging"] },
     { "id": "react-render-props-mouse", "title": "Build a Mouse Tracker with Render Props", "difficulty": "intermediate", "category": "pattern", "tags": ["render-props", "patterns", "events"] },
+    { "id": "react-context-theme", "title": "Build a Theme Context + Provider Pattern", "difficulty": "intermediate", "category": "pattern", "tags": ["context", "provider", "hooks", "theme", "typescript"] },
+    { "id": "react-portal-tooltip", "title": "Build a Portal-Based Tooltip", "difficulty": "intermediate", "category": "component", "tags": ["portal", "tooltip", "createPortal", "refs", "positioning"] },
     { "id": "react-compound-modal", "title": "Build a Compound Modal Component", "difficulty": "advanced", "category": "pattern", "tags": ["compound-components", "context", "patterns", "accessibility"] },
-    { "id": "react-error-boundary", "title": "Build an ErrorBoundary Component", "difficulty": "advanced", "category": "component", "tags": ["error-handling", "class-components", "lifecycle", "patterns"] }
+    { "id": "react-error-boundary", "title": "Build an ErrorBoundary Component", "difficulty": "advanced", "category": "component", "tags": ["error-handling", "class-components", "lifecycle", "patterns"] },
+    { "id": "react-compound-select", "title": "Build a Compound Component Select", "difficulty": "advanced", "category": "pattern", "tags": ["compound-components", "context", "patterns", "inversion-of-control"] },
+    { "id": "react-use-undo", "title": "Build a useUndo / useRedo Hook", "difficulty": "advanced", "category": "hook", "tags": ["hooks", "useReducer", "undo", "redo", "state-machine"] },
+    { "id": "react-virtual-list", "title": "Build a Basic Virtualised List", "difficulty": "advanced", "category": "component", "tags": ["performance", "virtualisation", "scroll", "large-data"] },
+    { "id": "react-optimistic-update", "title": "Build an Optimistic UI Mutation", "difficulty": "advanced", "category": "pattern", "tags": ["async", "optimistic-ui", "rollback", "state", "UX"] },
+    { "id": "react-suspense-boundary", "title": "Build a Suspense + ErrorBoundary Tree", "difficulty": "advanced", "category": "pattern", "tags": ["suspense", "error-boundary", "concurrent", "react-18", "async"] }
   ]
 }
