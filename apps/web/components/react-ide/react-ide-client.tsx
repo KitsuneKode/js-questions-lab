@@ -228,7 +228,12 @@ button {
       <SandpackProvider
         template={question.sandpackTemplate}
         files={sandpackFiles}
-        options={{ activeFile: `/${question.entryFile}` }}
+        options={{
+          activeFile: `/${question.entryFile}`,
+          recompileMode: 'delayed',
+          recompileDelay: 100,
+          initMode: 'immediate',
+        }}
         theme={darkForgeTheme}
       >
         <IDELayout
@@ -901,9 +906,9 @@ function ReviewPhase({
 }
 
 function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode }) {
-  const { code, updateCode } = useActiveCode();
   const { sandpack } = useSandpack();
-  const { activeFile } = sandpack;
+  const { files, activeFile, updateFile } = sandpack;
+  const code = files[activeFile]?.code || '';
 
   const language = activeFile.endsWith('.html')
     ? 'html'
@@ -920,7 +925,7 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
         printWidth: 100,
         trailingComma: 'all',
       });
-      updateCode(formatted);
+      updateFile(activeFile, formatted);
     } catch (e) {
       console.error('Format failed', e);
     }
@@ -958,7 +963,7 @@ function SandpackCodeMirrorEditor({ headerLeft }: { headerLeft?: React.ReactNode
           key={activeFile}
           path={activeFile}
           value={code}
-          onChange={(newCode) => updateCode(newCode || '')}
+          onChange={(newCode) => updateFile(activeFile, newCode)}
           language={language as 'html' | 'javascript' | 'typescript'}
         />
       </div>

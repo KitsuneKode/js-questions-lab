@@ -8,6 +8,8 @@ import { keymap } from '@codemirror/view';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import CodeMirror from '@uiw/react-codemirror';
 
+import { useCallback, useMemo, useRef } from 'react';
+
 interface CodeMirrorEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -29,7 +31,7 @@ export function CodeMirrorEditor({
   language = 'javascript',
   readOnly = false,
 }: CodeMirrorEditorProps) {
-  const getLanguageExtension = () => {
+  const getLanguageExtension = useCallback(() => {
     switch (language) {
       case 'html':
         return html();
@@ -40,26 +42,40 @@ export function CodeMirrorEditor({
       default:
         return javascript({ jsx: true });
     }
-  };
+  }, [language]);
 
-  const customKeymap = keymap.of([
-    ...defaultKeymap,
-    ...historyKeymap,
-    {
-      key: 'Mod-Enter',
-      run: () => {
-        onRun?.();
-        return true;
+  const onRunRef = useRef(onRun);
+  const onResetRef = useRef(onReset);
+  onRunRef.current = onRun;
+  onResetRef.current = onReset;
+
+  const extensions = useMemo(() => {
+    const customKeymap = keymap.of([
+      ...defaultKeymap,
+      ...historyKeymap,
+      {
+        key: 'Mod-Enter',
+        run: () => {
+          onRunRef.current?.();
+          return true;
+        },
       },
-    },
-    {
-      key: 'Mod-Shift-Backspace',
-      run: () => {
-        onReset?.();
-        return true;
+      {
+        key: 'Mod-Shift-Backspace',
+        run: () => {
+          onResetRef.current?.();
+          return true;
+        },
       },
-    },
-  ]);
+    ]);
+
+    return [
+      getLanguageExtension(),
+      customKeymap,
+      history(),
+      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+    ];
+  }, [getLanguageExtension]);
 
   return (
     <div className="h-full w-full [&>.cm-theme-vscode]:h-full [&_.cm-scroller]:font-mono [&_.cm-scroller]:text-[14px]">
@@ -67,12 +83,8 @@ export function CodeMirrorEditor({
         value={value}
         height="100%"
         theme={vscodeDark}
-        extensions={[
-          getLanguageExtension(),
-          customKeymap,
-          history(),
-          syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-        ]}
+        indentWithTab={true}
+        extensions={extensions}
         onChange={onChange}
         readOnly={readOnly}
         autoFocus={autoFocus}
