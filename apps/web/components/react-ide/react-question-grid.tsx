@@ -158,8 +158,8 @@ export function ReactQuestionGrid({ questions, totalQuestions, locale }: ReactQu
               key={question.id}
               href={`/${locale}/react/${question.id}`}
               className={cn(
-                'group relative flex flex-col gap-3 rounded-xl border border-border/40 bg-surface/50 p-4',
-                'transition-all duration-200 hover:-translate-y-0.5',
+                'group relative flex flex-col gap-3 rounded-2xl border border-white/5 bg-surface/40 p-4',
+                'transition-[transform,box-shadow,background-color,border-color] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]',
                 catHover,
               )}
             >

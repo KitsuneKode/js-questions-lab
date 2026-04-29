@@ -141,7 +141,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
       </div>
 
       {/* Time Invested / Streak */}
-      <div className="col-span-1 rounded-2xl border border-border-subtle bg-surface p-6 flex flex-col justify-between relative overflow-hidden group">
+      <div className="col-span-1 rounded-2xl border border-white/5 bg-surface/40 p-6 flex flex-col justify-between relative overflow-hidden group shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)] transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-surface/60">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <Activity className="w-24 h-24 text-primary" />
         </div>
@@ -163,7 +163,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           </div>
           <p
             className={cn(
-              'font-display text-4xl',
+              'font-display text-4xl tabular-nums tracking-tight',
               hasActiveStreak ? 'text-[#F59E0B]' : 'text-foreground',
             )}
           >

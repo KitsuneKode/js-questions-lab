@@ -51,17 +51,17 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
     <IntentPrefetchLink
       href={href ?? `/${locale}/questions/${question.id}`}
       className={cn(
-        'group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface p-5 transition-all duration-500',
+        'group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface/40 p-5 transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out active:scale-[0.98]',
         isHovered
-          ? 'border-border-focus shadow-glow bg-elevated/80'
-          : 'border-border-subtle hover:border-border-focus hover:bg-elevated/50 hover:shadow-lg hover:-translate-y-1',
+          ? 'border-primary/40 shadow-[0_8px_30px_rgba(245,158,11,0.12)] bg-surface/60'
+          : 'border-white/5 hover:border-white/10 hover:bg-surface/60 hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:-translate-y-0.5',
       )}
     >
       {/* Top Row: Number, Difficulty, and Status */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span
-            className="font-mono text-xs font-semibold text-secondary"
+            className="font-mono text-xs font-semibold text-secondary tabular-nums"
             style={{ viewTransitionName: `question-num-${question.id}` }}
           >
             #{question.id}
@@ -95,7 +95,7 @@ export function QuestionCard({ question, locale, isHovered, href }: QuestionCard
       </div>
 
       {/* Title */}
-      <h3 className="mb-4 font-display text-xl font-medium leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
+      <h3 className="mb-4 font-display text-xl font-medium leading-snug tracking-tight text-foreground transition-[color] duration-200 group-hover:text-primary text-balance">
         <span style={{ viewTransitionName: `question-title-${question.id}` }}>
           {question.title}
         </span>

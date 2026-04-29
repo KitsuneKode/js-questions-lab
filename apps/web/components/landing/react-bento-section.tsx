@@ -42,9 +42,9 @@ export function ReactBentoSection() {
           <div
             className="
               relative md:col-span-2 md:row-span-2 overflow-hidden rounded-[20px]
-              border border-border-subtle bg-surface grain-overlay
-              hover:border-primary/40 hover:shadow-[0_20px_50px_-10px_rgba(245,158,11,0.15)]
-              transition-all duration-500 group
+              border border-white/5 bg-surface/40 grain-overlay shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)]
+              hover:border-primary/40 hover:bg-surface/60 hover:shadow-[0_20px_50px_-10px_rgba(245,158,11,0.15)]
+              transition-[transform,box-shadow,border-color,background-color] duration-500 ease-out group
               min-h-[280px] flex flex-col justify-between p-8
             "
           >
@@ -53,10 +53,10 @@ export function ReactBentoSection() {
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
             <div className="relative z-10">
-              <h3 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-4">
+              <h3 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-4 text-balance">
                 {t('heroTitle')}
               </h3>
-              <p className="text-secondary text-base leading-relaxed max-w-md">
+              <p className="text-secondary text-base leading-relaxed max-w-md text-pretty">
                 {t('heroSubtitle')}
               </p>
             </div>
@@ -146,8 +146,8 @@ export function ReactBentoSection() {
           <div
             className="
               relative overflow-hidden rounded-[20px]
-              border border-border-subtle bg-surface grain-overlay
-              hover:border-primary/30 transition-all duration-500
+              border border-white/5 bg-surface/40 grain-overlay shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)]
+              hover:border-primary/30 hover:bg-surface/60 transition-[transform,box-shadow,border-color,background-color] duration-500 ease-out
               p-6 min-h-[180px] flex flex-col justify-between
             "
           >
@@ -173,9 +173,9 @@ export function ReactBentoSection() {
           <div
             className="
               relative overflow-hidden rounded-[20px]
-              border border-border-subtle bg-surface
-              hover:border-primary/30 hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.1)]
-              transition-all duration-500
+              border border-white/5 bg-surface/40 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)]
+              hover:border-primary/30 hover:bg-surface/60 hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.1)]
+              transition-[transform,box-shadow,border-color,background-color] duration-500 ease-out
               md:col-span-3 p-6
             "
           >
@@ -184,8 +184,12 @@ export function ReactBentoSection() {
                 <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-1">
                   {t('patternsLabel')}
                 </p>
-                <h4 className="font-display text-xl text-foreground">{t('patternsTitle')}</h4>
-                <p className="mt-1.5 text-sm text-secondary max-w-xs">{t('patternsSubtitle')}</p>
+                <h4 className="font-display text-xl text-foreground text-balance">
+                  {t('patternsTitle')}
+                </h4>
+                <p className="mt-1.5 text-sm text-secondary max-w-xs text-pretty">
+                  {t('patternsSubtitle')}
+                </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {patterns.map((p) => (

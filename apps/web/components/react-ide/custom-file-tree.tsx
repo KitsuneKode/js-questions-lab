@@ -12,7 +12,7 @@ import {
   IconFolder,
   IconFolderOpen,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 function getFileIcon(filename: string) {
@@ -41,33 +41,42 @@ export function CustomFileTree() {
   const { files, activeFile } = sandpack;
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({ '/': true });
 
-  const tree: Record<string, TreeNode> = {};
+  const filePathsKey = useMemo(() => Object.keys(files).sort().join(','), [files]);
 
-  Object.keys(files).forEach((path) => {
-    // Ignore hidden files and generated styles if we don't want them visible,
-    // but sandpack's visibleFiles handles most. Let's just filter node_modules to be safe.
-    if (path.includes('/node_modules/')) return;
-    // We optionally hide our injected styles.css to keep tree clean, but user might want to edit it.
-    // If it's standard react, let's keep it visible.
+  const tree = useMemo(() => {
+    const root: Record<string, TreeNode> = {};
+    if (!filePathsKey) return root;
 
-    const parts = path.split('/').filter(Boolean);
-    let currentLevel = tree;
-    let currentPath = '';
+    filePathsKey.split(',').forEach((path) => {
+      // Hide generated or node_modules files from the user tree
+      if (
+        path.includes('/node_modules/') ||
+        path.startsWith('/public/') ||
+        path === '/package.json'
+      )
+        return;
 
-    parts.forEach((part, index) => {
-      currentPath += `/${part}`;
-      const isFile = index === parts.length - 1;
+      const parts = path.split('/').filter(Boolean);
+      let currentLevel = root;
+      let currentPath = '';
 
-      if (isFile) {
-        currentLevel[part] = { type: 'file', path: currentPath, name: part };
-      } else {
-        if (!currentLevel[part]) {
-          currentLevel[part] = { type: 'folder', path: currentPath, name: part, children: {} };
+      parts.forEach((part, index) => {
+        currentPath += `/${part}`;
+        const isFile = index === parts.length - 1;
+
+        if (isFile) {
+          currentLevel[part] = { type: 'file', path: currentPath, name: part };
+        } else {
+          if (!currentLevel[part]) {
+            currentLevel[part] = { type: 'folder', path: currentPath, name: part, children: {} };
+          }
+          currentLevel = (currentLevel[part] as FolderNode).children;
         }
-        currentLevel = (currentLevel[part] as FolderNode).children;
-      }
+      });
     });
-  });
+
+    return root;
+  }, [filePathsKey]);
 
   const toggleFolder = (path: string) => {
     setExpandedFolders((prev) => ({ ...prev, [path]: !prev[path] }));
@@ -83,13 +92,13 @@ export function CustomFileTree() {
           onClick={() => sandpack.setActiveFile(node.path)}
           style={{ paddingLeft: `${depth * 12 + 12}px` }}
           className={cn(
-            'group flex w-full items-center gap-2 py-1.5 pr-3 text-[13px] transition-all active:scale-[0.98]',
+            'group flex w-full items-center gap-2 py-1.5 pr-3 text-[13px] transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96]',
             isActive
               ? 'bg-primary/10 font-medium text-primary border-r-2 border-primary'
               : 'text-muted-foreground hover:bg-surface/50 hover:text-foreground border-r-2 border-transparent',
           )}
         >
-          <div className="shrink-0 transition-transform group-hover:scale-110">
+          <div className="shrink-0 transition-transform duration-200 ease-out group-hover:scale-110">
             {getFileIcon(node.name)}
           </div>
           <span className="truncate tracking-wide">{node.name}</span>
@@ -105,7 +114,7 @@ export function CustomFileTree() {
             type="button"
             onClick={() => toggleFolder(node.path)}
             style={{ paddingLeft: `${depth * 12 + 12}px` }}
-            className="flex w-full items-center gap-2 py-1.5 pr-3 text-[13px] text-foreground/80 transition-colors hover:bg-surface/50"
+            className="flex w-full items-center gap-2 py-1.5 pr-3 text-[13px] text-foreground/80 transition-[color,background-color] duration-150 ease-out hover:bg-surface/50"
           >
             {isExpanded ? (
               <IconFolderOpen className="h-4 w-4 text-primary/70" />

@@ -29,7 +29,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-surface p-6 relative overflow-hidden group">
+    <div className="rounded-2xl border border-white/5 bg-surface/40 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)] p-6 relative overflow-hidden group">
       <div className="mb-6 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
           <h3 className="font-display text-2xl text-foreground flex items-center gap-2">
@@ -38,7 +38,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
           </h3>
           <p className="text-sm text-secondary mt-1">{t('savedSub')}</p>
         </div>
-        <span className="font-mono text-sm text-tertiary bg-background px-4 py-1.5 rounded-lg border border-border-subtle shadow-sm">
+        <span className="font-mono text-sm text-tertiary bg-background px-4 py-1.5 rounded-lg border border-white/5 shadow-sm tabular-nums">
           <span className="text-foreground font-medium">{bookmarked.length}</span>{' '}
           {t('savedCount', { count: '' }).replace('()', '').trim()}
         </span>
@@ -53,10 +53,10 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
             <IntentPrefetchLink
               key={q.id}
               href={withLocale(locale, `/questions/${q.id}`)}
-              className="group/item flex flex-col justify-between rounded-xl border border-border-subtle bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow min-h-[120px]"
+              className="group/item flex flex-col justify-between rounded-xl border border-white/5 bg-background/50 p-5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-[0_4px_20px_rgba(245,158,11,0.08)] active:scale-[0.98] min-h-[120px]"
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="text-base font-medium text-foreground line-clamp-2 leading-snug group-hover/item:text-primary transition-colors">
+                <p className="text-base font-medium text-foreground line-clamp-2 leading-snug group-hover/item:text-primary transition-colors text-pretty">
                   {q.title}
                 </p>
                 {lastStatus && (
@@ -73,7 +73,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
               </div>
               <div className="mt-4 flex items-center justify-between border-t border-border-subtle/50 pt-3">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[11px] text-tertiary bg-surface px-1.5 py-0.5 rounded border border-border-subtle">
+                  <span className="font-mono text-[11px] text-tertiary bg-surface px-1.5 py-0.5 rounded border border-border-subtle tabular-nums">
                     #{q.id}
                   </span>
                   <span className="text-[9px] uppercase tracking-wider text-tertiary border border-border-subtle px-1.5 py-0.5 rounded bg-surface">
@@ -92,7 +92,7 @@ export function BookmarkedList({ questions }: BookmarkedListProps) {
           <IntentPrefetchLink href={withLocale(locale, '/questions?status=bookmarked')}>
             <Button
               variant="outline"
-              className="gap-2 h-10 px-6 rounded-full border-border-subtle bg-background hover:bg-elevated hover:text-primary transition-all group/btn"
+              className="gap-2 h-10 px-6 rounded-full border-border-subtle bg-background hover:bg-elevated hover:text-primary transition-[transform,box-shadow,border-color,background-color,color] duration-200 ease-out active:scale-[0.96] group/btn"
             >
               {t('viewAllSaved', { count: bookmarked.length })}
               <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />

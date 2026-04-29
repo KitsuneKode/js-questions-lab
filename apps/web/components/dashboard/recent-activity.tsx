@@ -58,7 +58,7 @@ export function RecentActivity({ questions }: RecentActivityProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-surface p-6 h-full flex flex-col relative overflow-hidden group">
+    <div className="rounded-2xl border border-white/5 bg-surface/40 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.12)] p-6 h-full flex flex-col relative overflow-hidden group">
       <div className="absolute top-0 right-0 p-4 opacity-[0.02] group-hover:opacity-10 transition-opacity duration-500">
         <Clock className="w-32 h-32 text-primary" />
       </div>
@@ -78,7 +78,7 @@ export function RecentActivity({ questions }: RecentActivityProps) {
             <li key={`${entry.questionId}-${entry.attempt.attemptedAt}-${entry.attempt.status}`}>
               <IntentPrefetchLink
                 href={withLocale(locale, `/questions/${entry.questionId}`)}
-                className="group/item flex items-center justify-between rounded-xl border border-border-subtle bg-background p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/5 hover:shadow-glow"
+                className="group/item flex items-center justify-between rounded-xl border border-white/5 bg-background/50 p-3.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-[0_4px_20px_rgba(245,158,11,0.08)] active:scale-[0.98]"
               >
                 <div className="flex items-center gap-4 min-w-0">
                   <div
@@ -95,14 +95,14 @@ export function RecentActivity({ questions }: RecentActivityProps) {
                       {entry.title}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-tertiary font-mono bg-surface border border-border-subtle px-1 rounded">
+                      <span className="text-[10px] text-tertiary font-mono bg-surface border border-border-subtle px-1 rounded tabular-nums">
                         #{entry.questionId}
                       </span>
-                      <span className="text-[10px] text-tertiary">{relTime}</span>
+                      <span className="text-[10px] text-tertiary tabular-nums">{relTime}</span>
                     </div>
                   </div>
                 </div>
-                <div className="h-8 w-8 shrink-0 rounded-full border border-border-subtle bg-surface flex items-center justify-center group-hover/item:border-primary/30 group-hover/item:bg-primary/10 transition-colors ml-4">
+                <div className="h-8 w-8 shrink-0 rounded-full border border-white/5 bg-surface flex items-center justify-center group-hover/item:border-primary/30 group-hover/item:bg-primary/10 transition-colors ml-4">
                   <ArrowRight className="h-3.5 w-3.5 text-tertiary group-hover/item:text-primary transition-transform group-hover/item:translate-x-0.5" />
                 </div>
               </IntentPrefetchLink>
