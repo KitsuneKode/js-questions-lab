@@ -20,6 +20,7 @@ import {
   IconFolder,
   IconMaximize,
   IconMinimize,
+  IconRefresh,
   IconTerminal2,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -41,7 +42,7 @@ import { cn } from '@/lib/utils';
 import { CustomFileTree } from './custom-file-tree';
 import { darkForgeTheme } from './dark-forge-theme';
 import { PhaseTabs, type ReactIDEPhase } from './phase-tabs';
-import { SandpackMonacoEditor } from './sandpack-monaco-editor';
+import { SandpackCodeEditorLayout } from './sandpack-code-editor';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -90,47 +91,37 @@ export function ReactIDEClient({ question }: ReactIDEClientProps) {
     );
 
     // Ensure there's a stable React entrypoint for the preview iframe.
+    //
+    // HMR contract:
+    //   - Tailwind CDN <script> is injected exactly once (idempotent guard).
+    //   - createRoot is cached on window so HMR re-renders into the same root
+    //     instead of double-rooting.
+    //   - No custom ErrorBoundary — Sandpack's own error overlay surfaces
+    //     thrown errors and clears them on the next successful render.
+    //     A custom boundary that doesn't reset on prop change leaves the
+    //     iframe stuck on the first error forever (the exact bug we hit).
     if (!result['/index.tsx']) {
       result['/index.tsx'] = {
         code: `import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{
-          padding: '20px',
-          backgroundColor: '#0d0d12',
-          color: '#ef4444',
-          fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-          height: '100%',
-          minHeight: '100vh',
-        }}>
-          <h2 style={{ marginBottom: '8px', fontSize: '14px' }}>Runtime Error</h2>
-          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px', opacity: 0.8 }}>{this.state.error?.toString()}</pre>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
+if (!document.getElementById('__tw_cdn__')) {
+  const tw = document.createElement('script');
+  tw.id = '__tw_cdn__';
+  tw.src = 'https://cdn.tailwindcss.com';
+  document.head.appendChild(tw);
 }
 
 const rootEl = document.getElementById('root');
 if (rootEl) {
-  createRoot(rootEl).render(
+  const w = window;
+  if (!w.__react_root__) {
+    w.__react_root__ = createRoot(rootEl);
+  }
+  w.__react_root__.render(
     <React.StrictMode>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
+      <App />
     </React.StrictMode>,
   );
 }
@@ -145,12 +136,14 @@ if (rootEl) {
       };
     }
 
+    // Minimal reset only — Tailwind CDN (injected via index.tsx) provides all utility classes.
+    // The preview iframe is a fully isolated sandbox; these base styles keep it clean by default.
     const stylesCode = `
 html, body, #root {
   min-height: 100%;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -158,47 +151,23 @@ body {
   margin: 0;
   background-color: #ffffff;
   color: #111827;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font: inherit;
 }
 
 button {
-  font: inherit;
   cursor: pointer;
 }
 
-.fixed { position: fixed; }
-.inset-0 { inset: 0; }
-.top-1\\/2 { top: 50%; }
-.left-1\\/2 { left: 50%; }
-.z-50 { z-index: 50; }
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.gap-2 { gap: 0.5rem; }
-.gap-4 { gap: 1rem; }
-.p-2 { padding: 0.5rem; }
-.p-6 { padding: 1.5rem; }
-.p-8 { padding: 2rem; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-4 { margin-top: 1rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.h-64 { height: 16rem; }
-.min-w-64 { min-width: 16rem; }
-.rounded { border-radius: 0.25rem; }
-.rounded-lg { border-radius: 0.5rem; }
-.border { border: 1px solid #d1d5db; }
-.bg-white { background: #ffffff; }
-.bg-black\\/50 { background: rgba(0, 0, 0, 0.5); }
-.font-bold { font-weight: 700; }
-.text-sm { font-size: 0.875rem; }
-.text-lg { font-size: 1.125rem; }
-.text-4xl { font-size: 2.25rem; line-height: 1; }
-.text-gray-500 { color: #6b7280; }
-.text-red-500 { color: #ef4444; }
-.underline { text-decoration: underline; }
-.-translate-x-1\\/2 { transform: translateX(-50%); }
-.-translate-y-1\\/2 { transform: translateY(-50%); }
+img, video {
+  max-width: 100%;
+  height: auto;
+}
     `.trim();
 
     result['/styles.css'] = { code: stylesCode };
@@ -230,12 +199,12 @@ button {
   return (
     <div className="react-ide-root flex flex-col flex-1 h-full w-full min-h-0 relative">
       <SandpackProvider
+        key={question.id}
         template={question.sandpackTemplate}
         files={sandpackFiles}
         options={{
           activeFile: `/${question.entryFile}`,
-          recompileMode: 'delayed',
-          recompileDelay: 100,
+          recompileMode: 'immediate',
           initMode: 'immediate',
         }}
         theme={darkForgeTheme}
@@ -712,7 +681,7 @@ function BuildPhase({
             {/* Editor */}
             <ResizablePanel defaultSize={80} minSize={40} className="flex flex-col min-h-0 h-full">
               <div className="flex flex-1 min-h-0 h-full w-full flex-col overflow-hidden bg-code">
-                <SandpackMonacoEditor
+                <SandpackCodeEditorLayout
                   viewMode={viewMode}
                   headerLeft={
                     <EditorHeaderTabs
@@ -754,6 +723,18 @@ function BuildPhase({
                       Preview
                     </span>
                     <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sandpack.clients[Object.keys(sandpack.clients)[0]]?.dispatch({
+                            type: 'refresh',
+                          });
+                        }}
+                        className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground"
+                        title="Refresh Preview"
+                      >
+                        <IconRefresh className="w-3 h-3" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => setIsConsoleOpen(!isConsoleOpen)}

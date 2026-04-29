@@ -1,9 +1,9 @@
 'use client';
 
-import type { OnMount } from '@monaco-editor/react';
-import { Editor, useMonaco } from '@monaco-editor/react';
+import type { BeforeMount, OnMount } from '@monaco-editor/react';
+import { Editor } from '@monaco-editor/react';
 import { IconLoader2 as Loader2 } from '@tabler/icons-react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 interface MonacoEditorProps {
   value: string;
@@ -12,7 +12,7 @@ interface MonacoEditorProps {
   onReset?: () => void;
   onEditorMount?: (editor: Parameters<OnMount>[0]) => void;
   autoFocus?: boolean;
-  language?: 'html' | 'javascript' | 'typescript';
+  language?: 'html' | 'javascript' | 'typescript' | 'css' | 'json' | string;
   readOnly?: boolean;
   path?: string;
   projectFiles?: Record<string, string>;
@@ -31,7 +31,8 @@ const EDITOR_OPTIONS = {
   wordWrap: 'on' as const,
   padding: { top: 16, bottom: 16 },
   renderLineHighlight: 'line' as const,
-  cursorBlinking: 'smooth' as const,
+  cursorBlinking: 'expand' as const,
+  formatOnPaste: true,
   cursorSmoothCaretAnimation: 'on' as const,
   smoothScrolling: true,
   scrollbar: {
@@ -46,36 +47,127 @@ const EDITOR_OPTIONS = {
   },
 };
 
-const REACT_GLOBAL_TYPES = `
-declare namespace JSX {
-  // Minimal JSX typing so TSX/JSX is usable inside the in-browser editor
-  // without bundling full @types/react into Monaco.
-  interface IntrinsicElements {
-    [elemName: string]: any;
-  }
-}
-`;
+// ---------------------------------------------------------------------------
+// React typings — bundled directly so IntelliSense works offline and without
+// network. Hand-curated to cover the React API surface used by exercises.
+// Registered at a path the TypeScript language service treats as installed
+// node_modules, so `import React from 'react'` resolves cleanly.
+// ---------------------------------------------------------------------------
 
-const REACT_MODULE_STUBS = `
+const REACT_TYPES = `
 declare module 'react' {
-  const React: any;
-  export default React;
-  export const useState: any;
-  export const useEffect: any;
-  export const useMemo: any;
-  export const useCallback: any;
-  export const useRef: any;
-  export const useLayoutEffect: any;
-  export const useReducer: any;
-  export const useContext: any;
-  export const createContext: any;
-  export const memo: any;
+  export type Key = string | number;
+  export type ReactNode =
+    | ReactElement
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | Iterable<ReactNode>;
+  export interface ReactElement<P = any, T = any> {
+    type: T;
+    props: P;
+    key: Key | null;
+  }
+  export type JSXElementConstructor<P> = (props: P) => ReactElement | null;
+
+  export type FC<P = {}> = FunctionComponent<P>;
+  export interface FunctionComponent<P = {}> {
+    (props: P & { children?: ReactNode }): ReactElement | null;
+    displayName?: string;
+  }
+
+  export type Dispatch<A> = (action: A) => void;
+  export type SetStateAction<S> = S | ((prev: S) => S);
+  export type EffectCallback = () => void | (() => void | undefined);
+  export type DependencyList = ReadonlyArray<unknown>;
+
+  export interface MutableRefObject<T> { current: T; }
+  export interface RefObject<T> { readonly current: T | null; }
+  export type Ref<T> = ((instance: T | null) => void) | RefObject<T> | null;
+
+  export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
+  export function useState<S = undefined>(): [S | undefined, Dispatch<SetStateAction<S | undefined>>];
+  export function useEffect(effect: EffectCallback, deps?: DependencyList): void;
+  export function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
+  export function useMemo<T>(factory: () => T, deps: DependencyList): T;
+  export function useCallback<T extends (...args: any[]) => any>(callback: T, deps: DependencyList): T;
+  export function useRef<T>(initialValue: T): MutableRefObject<T>;
+  export function useRef<T>(initialValue: T | null): RefObject<T>;
+  export function useRef<T = undefined>(): MutableRefObject<T | undefined>;
+  export function useReducer<S, A>(reducer: (state: S, action: A) => S, initial: S): [S, Dispatch<A>];
+  export function useContext<T>(context: Context<T>): T;
+  export function useId(): string;
+  export function useTransition(): [boolean, (cb: () => void) => void];
+  export function useDeferredValue<T>(value: T): T;
+
+  export interface Context<T> {
+    Provider: FC<{ value: T; children?: ReactNode }>;
+    Consumer: FC<{ children: (value: T) => ReactNode }>;
+    displayName?: string;
+  }
+  export function createContext<T>(defaultValue: T): Context<T>;
+  export function memo<P>(component: FC<P>, areEqual?: (prev: P, next: P) => boolean): FC<P>;
+  export function forwardRef<T, P = {}>(
+    render: (props: P, ref: Ref<T>) => ReactElement | null,
+  ): FC<P & { ref?: Ref<T> }>;
+  export function lazy<T>(loader: () => Promise<{ default: T }>): T;
   export const Fragment: any;
-  export type FC<P = any> = (props: P) => any;
+  export const StrictMode: FC<{ children?: ReactNode }>;
+  export const Suspense: FC<{ children?: ReactNode; fallback?: ReactNode }>;
+
+  export class Component<P = {}, S = {}> {
+    constructor(props: P);
+    props: P;
+    state: S;
+    setState(state: Partial<S> | ((prev: S, props: P) => Partial<S>), cb?: () => void): void;
+    forceUpdate(cb?: () => void): void;
+    render(): ReactNode;
+  }
+  export class PureComponent<P = {}, S = {}> extends Component<P, S> {}
+
+  export type ChangeEvent<T = Element> = { target: T & { value: string; checked?: boolean } } & SyntheticEvent<T>;
+  export type FormEvent<T = Element> = SyntheticEvent<T>;
+  export type MouseEvent<T = Element> = SyntheticEvent<T>;
+  export type KeyboardEvent<T = Element> = SyntheticEvent<T> & { key: string; code: string };
+  export interface SyntheticEvent<T = Element> {
+    currentTarget: T;
+    target: EventTarget;
+    preventDefault(): void;
+    stopPropagation(): void;
+  }
+
+  const React: {
+    useState: typeof useState;
+    useEffect: typeof useEffect;
+    useMemo: typeof useMemo;
+    useCallback: typeof useCallback;
+    useRef: typeof useRef;
+    useReducer: typeof useReducer;
+    useContext: typeof useContext;
+    createContext: typeof createContext;
+    memo: typeof memo;
+    forwardRef: typeof forwardRef;
+    Fragment: any;
+    StrictMode: typeof StrictMode;
+    Component: typeof Component;
+  };
+  export default React;
 }
 
 declare module 'react-dom/client' {
-  export const createRoot: any;
+  export interface Root {
+    render(children: import('react').ReactNode): void;
+    unmount(): void;
+  }
+  export function createRoot(container: Element | DocumentFragment | null): Root;
+  export function hydrateRoot(container: Element, children: import('react').ReactNode): Root;
+}
+
+declare module 'react-dom' {
+  export function createPortal(children: import('react').ReactNode, container: Element): import('react').ReactElement;
+  export function flushSync<R>(fn: () => R): R;
 }
 
 declare module 'react/jsx-runtime' {
@@ -83,7 +175,45 @@ declare module 'react/jsx-runtime' {
   export const jsxs: any;
   export const Fragment: any;
 }
+
+declare module 'react/jsx-dev-runtime' {
+  export const jsxDEV: any;
+  export const Fragment: any;
+}
+
+declare namespace JSX {
+  interface Element extends import('react').ReactElement {}
+  interface ElementClass extends import('react').Component<any, any> {}
+  interface IntrinsicAttributes { key?: import('react').Key }
+  interface IntrinsicElements {
+    [elemName: string]: any;
+  }
+}
 `;
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function getLanguageForFile(filePath: string): string {
+  if (filePath.endsWith('.tsx') || filePath.endsWith('.ts')) return 'typescript';
+  if (filePath.endsWith('.jsx') || filePath.endsWith('.js') || filePath.endsWith('.mjs'))
+    return 'javascript';
+  if (filePath.endsWith('.css')) return 'css';
+  if (filePath.endsWith('.scss') || filePath.endsWith('.less')) return 'css';
+  if (filePath.endsWith('.json')) return 'json';
+  if (filePath.endsWith('.html') || filePath.endsWith('.htm')) return 'html';
+  if (filePath.endsWith('.md')) return 'markdown';
+  return 'plaintext';
+}
+
+// Module-level guard so we configure TS defaults exactly once per page load,
+// even if multiple <MonacoCodeEditor> instances mount/unmount.
+let typescriptDefaultsConfigured = false;
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export function MonacoCodeEditor({
   value,
@@ -98,10 +228,15 @@ export function MonacoCodeEditor({
   projectFiles,
 }: MonacoEditorProps) {
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
-  const didSetupReactTypesRef = useRef(false);
+  const monacoRef = useRef<Parameters<OnMount>[1] | null>(null);
+
   // Refs keep commands up-to-date without re-registering on every render
+  const onChangeRef = useRef(onChange);
   const onRunRef = useRef(onRun);
   const onResetRef = useRef(onReset);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
   useEffect(() => {
     onRunRef.current = onRun;
   }, [onRun]);
@@ -109,76 +244,122 @@ export function MonacoCodeEditor({
     onResetRef.current = onReset;
   }, [onReset]);
 
-  const monaco = useMonaco();
+  // Build a content-aware signature so we only re-sync when files actually change.
+  // Sandpack returns a fresh `files` object on every keystroke; without this,
+  // the sync effect fires on every render.
+  const projectFilesSignature = useMemo(() => {
+    if (!projectFiles) return '';
+    return Object.entries(projectFiles)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => `${k}:${v}`)
+      .join('|');
+  }, [projectFiles]);
 
+  // Sync project files → Monaco models. Pre-creating models lets the TypeScript
+  // language service resolve cross-file imports (so `import App from './App'`
+  // gets IntelliSense from the model created here).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: projectFilesSignature intentionally tracks content changes without depending on Sandpack's object identity.
   useEffect(() => {
+    const monaco = monacoRef.current;
     if (!monaco || !projectFiles) return;
 
-    Object.entries(projectFiles).forEach(([filePath, fileContent]) => {
-      // Sandpack activeFile has leading slash, Monaco Uri expects it
+    const seen = new Set<string>();
+
+    for (const [filePath, content] of Object.entries(projectFiles)) {
+      seen.add(filePath);
+      if (filePath === path) continue; // The active file is owned by <Editor value={...} />
+
       const uri = monaco.Uri.file(filePath);
-      const model = monaco.editor.getModel(uri);
+      const existing = monaco.editor.getModel(uri);
+      const lang = getLanguageForFile(filePath);
 
-      if (filePath === path) return; // Managed by <Editor /> prop
-
-      if (model) {
-        if (model.getValue() !== fileContent) {
-          model.setValue(fileContent);
-        }
+      if (existing) {
+        if (existing.getValue() !== content) existing.setValue(content);
       } else {
-        const lang =
-          filePath.endsWith('.ts') || filePath.endsWith('.tsx') ? 'typescript' : 'javascript';
-        monaco.editor.createModel(fileContent, lang, uri);
+        monaco.editor.createModel(content, lang, uri);
       }
+    }
+
+    // Dispose models for files that no longer exist in the project (e.g. on
+    // question switch). Avoids stale ghost imports lingering in IntelliSense.
+    for (const model of monaco.editor.getModels()) {
+      const uriPath = model.uri.path;
+      if (!seen.has(uriPath) && uriPath.startsWith('/') && !uriPath.startsWith('/types/')) {
+        // Only dispose models that look like project files (not our extra-libs).
+        if (uriPath !== path) model.dispose();
+      }
+    }
+  }, [projectFilesSignature, path]);
+
+  // Configure TypeScript defaults BEFORE any model is created so the very
+  // first .tsx model gets the correct JSX tokenization & compiler options.
+  const handleBeforeMount = useCallback<BeforeMount>((monaco) => {
+    monacoRef.current = monaco;
+
+    if (typescriptDefaultsConfigured) return;
+    typescriptDefaultsConfigured = true;
+
+    const ts = monaco.languages.typescript;
+
+    const compilerOptions = {
+      allowNonTsExtensions: true,
+      allowJs: true,
+      checkJs: false,
+      noEmit: true,
+      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ESNext,
+      moduleResolution: ts.ModuleResolutionKind.NodeJs,
+      jsx: ts.JsxEmit.ReactJSX,
+      esModuleInterop: true,
+      allowSyntheticDefaultImports: true,
+      isolatedModules: true,
+      skipLibCheck: true,
+      strict: false,
+    };
+
+    ts.typescriptDefaults.setCompilerOptions(compilerOptions);
+    ts.javascriptDefaults.setCompilerOptions(compilerOptions);
+
+    // Diagnostics off — this is a learning scratchpad, not a strict project.
+    // Highlighting and IntelliSense don't depend on diagnostics.
+    ts.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+      noSuggestionDiagnostics: true,
     });
-  }, [monaco, projectFiles, path]);
+    ts.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+      noSuggestionDiagnostics: true,
+    });
+
+    // Eager mode: ensure cross-file lookups resolve immediately.
+    ts.typescriptDefaults.setEagerModelSync(true);
+    ts.javascriptDefaults.setEagerModelSync(true);
+
+    // Register React types so `import React from 'react'` resolves with full
+    // hover info / autocomplete. Path is treated as installed node_modules.
+    ts.typescriptDefaults.addExtraLib(REACT_TYPES, 'file:///node_modules/@types/react/index.d.ts');
+    ts.javascriptDefaults.addExtraLib(REACT_TYPES, 'file:///node_modules/@types/react/index.d.ts');
+  }, []);
 
   const handleMount = useCallback<OnMount>(
     (editor, monaco) => {
       editorRef.current = editor;
+      monacoRef.current = monaco;
 
-      if (!didSetupReactTypesRef.current) {
-        didSetupReactTypesRef.current = true;
-
-        const ts = monaco.languages.typescript;
-        const compilerOptions = {
-          // Keep editor usable across arbitrary Sandpack templates.
-          allowNonTsExtensions: true,
-          allowJs: true,
-          checkJs: false,
-          noEmit: true,
-          target: monaco.languages.typescript.ScriptTarget.ES2022,
-          module: monaco.languages.typescript.ModuleKind.ESNext,
-          moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-          jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
-        };
-
-        ts.typescriptDefaults.setCompilerOptions(compilerOptions);
-        ts.javascriptDefaults.setCompilerOptions(compilerOptions);
-
-        ts.typescriptDefaults.setDiagnosticsOptions({
-          noSemanticValidation: false,
-          noSyntaxValidation: false,
-        });
-
-        // Minimal React/JSX typing to avoid the "Cannot find name JSX" / module errors
-        ts.typescriptDefaults.addExtraLib(REACT_GLOBAL_TYPES, 'file:///types/react-jsx.d.ts');
-        ts.typescriptDefaults.addExtraLib(REACT_MODULE_STUBS, 'file:///types/react-stubs.d.ts');
-      }
-
-      // Use refs so commands always call the latest callback, not the stale closure
+      // Cmd/Ctrl+Enter → run
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
         onRunRef.current?.();
       });
-
-      // Ctrl+Shift+Backspace → reset scratchpad
+      // Cmd/Ctrl+Shift+Backspace → reset
       editor.addCommand(
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Backspace,
         () => {
           onResetRef.current?.();
         },
       );
-
+      // Swallow Cmd/Ctrl+S so the browser save dialog doesn't appear
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {});
 
       editor.updateOptions({
@@ -187,9 +368,13 @@ export function MonacoCodeEditor({
         domReadOnly: readOnly,
       });
 
-      // Monaco can mount at 0px height in complex flex layouts (resizable panels,
-      // animated mounts, etc.). Force a layout pass on the next frame so the editor
-      // paints even if its container size stabilizes slightly later.
+      const changeDisposable = editor.onDidChangeModelContent(() => {
+        onChangeRef.current(editor.getValue());
+      });
+
+      // Monaco can mount at 0px height in resizable/animated layouts. Force a
+      // layout pass on the next frame so it paints even when its container
+      // size stabilizes slightly later.
       requestAnimationFrame(() => {
         try {
           editor.layout();
@@ -197,24 +382,27 @@ export function MonacoCodeEditor({
           // ignore
         }
       });
-      setTimeout(() => {
-        try {
-          editor.layout();
-        } catch {
-          // ignore
-        }
-      }, 0);
 
       if (autoFocus) {
-        // Defer one tick so the Sheet/Dialog animation doesn't steal focus back
+        // Defer one tick so a parent Sheet/Dialog animation doesn't steal focus
         setTimeout(() => editor.focus(), 50);
       }
 
       onEditorMount?.(editor);
+
+      return () => {
+        changeDisposable.dispose();
+      };
     },
-    // readOnly and autoFocus are layout-time values; refs handle the rest
     [readOnly, autoFocus, onEditorMount],
   );
+
+  useEffect(() => {
+    editorRef.current?.updateOptions({
+      readOnly,
+      domReadOnly: readOnly,
+    });
+  }, [readOnly]);
 
   return (
     <div className="h-full w-full" data-monaco-editor-root>
@@ -224,7 +412,7 @@ export function MonacoCodeEditor({
         language={language}
         theme="vs-dark"
         value={value}
-        onChange={(val) => onChange(val || '')}
+        beforeMount={handleBeforeMount}
         onMount={handleMount}
         loading={
           <div className="flex h-full items-center justify-center bg-[#1e1e1e]">

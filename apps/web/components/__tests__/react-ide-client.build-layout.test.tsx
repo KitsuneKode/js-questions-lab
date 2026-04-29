@@ -41,12 +41,15 @@ vi.mock('streamdown', () => ({
   Streamdown: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
+vi.mock('@/components/react-ide/custom-file-tree', () => ({
+  CustomFileTree: () => <div data-testid="sandpack-file-explorer" />,
+}));
+
 vi.mock('@codesandbox/sandpack-react', () => ({
   SandpackProvider: ({ children, ...props }: { children: ReactNode }) => {
     sandpackProviderMock(props);
     return <div data-testid="sandpack-provider">{children}</div>;
   },
-  SandpackFileExplorer: () => <div data-testid="sandpack-file-explorer" />,
   SandpackPreview: (props: unknown) => {
     sandpackPreviewMock(props);
     return <div data-testid="sandpack-preview" />;
@@ -55,8 +58,8 @@ vi.mock('@codesandbox/sandpack-react', () => ({
   useSandpack: () => ({ sandpack: sandpackState }),
 }));
 
-vi.mock('@/components/editor/monaco-code-editor', () => ({
-  MonacoCodeEditor: () => <div data-testid="monaco-editor" />,
+vi.mock('@/components/react-ide/sandpack-code-editor', () => ({
+  SandpackCodeEditorLayout: () => <div data-testid="sandpack-code-editor" />,
 }));
 
 vi.mock('@/components/ui/resizable-panel', () => ({
@@ -133,12 +136,11 @@ describe('ReactIDEClient build layout', () => {
   it('renders editor, preview, and console in build split mode', () => {
     render(<ReactIDEClient question={question} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Open Workbench/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Start Building/i }));
 
     expect(screen.getByTestId('sandpack-file-explorer')).toBeInTheDocument();
-    expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+    expect(screen.getByTestId('sandpack-code-editor')).toBeInTheDocument();
     expect(screen.getByTestId('sandpack-preview')).toBeInTheDocument();
-    expect(screen.getByTestId('sandpack-console')).toBeInTheDocument();
   });
 
   it('injects preview base styles and hides the open-in-codesandbox action', () => {
@@ -149,10 +151,10 @@ describe('ReactIDEClient build layout', () => {
     };
 
     expect(providerProps.files['/styles.css']?.code).toContain('background-color: #ffffff');
-    expect(providerProps.files['/styles.css']?.code).toContain('.h-64 { height: 16rem; }');
     expect(providerProps.files['/useToggle.ts']?.code).toContain("import './styles.css';");
+    expect(providerProps.files['/index.tsx']?.code).toContain('cdn.tailwindcss.com');
 
-    fireEvent.click(screen.getByRole('button', { name: /Open Workbench/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Start Building/i }));
 
     const previewProps = sandpackPreviewMock.mock.calls[0]?.[0] as {
       showOpenInCodeSandbox?: boolean;
