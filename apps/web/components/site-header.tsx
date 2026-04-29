@@ -109,6 +109,7 @@ export function SiteHeader() {
   return (
     <>
       <motion.div
+        data-site-header
         variants={{
           visible: { y: 0 },
           hidden: { y: '-150%' },

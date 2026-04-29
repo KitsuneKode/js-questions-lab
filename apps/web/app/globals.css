@@ -419,3 +419,8 @@
     opacity: 0;
   }
 }
+
+/* Focus mode — hides the site header while the React IDE is maximized */
+html.ide-focused [data-site-header] {
+  display: none;
+}

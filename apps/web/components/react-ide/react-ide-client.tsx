@@ -18,12 +18,11 @@ import {
   IconColumns,
   IconEye,
   IconFolder,
+  IconMaximize,
+  IconMinimize,
   IconTerminal2,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import * as prettierBabel from 'prettier/plugins/babel';
-import * as prettierEstree from 'prettier/plugins/estree';
-import * as prettier from 'prettier/standalone';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { CodeMirrorEditor } from '@/components/editor/codemirror-editor';
@@ -42,12 +41,13 @@ import { cn } from '@/lib/utils';
 import { CustomFileTree } from './custom-file-tree';
 import { darkForgeTheme } from './dark-forge-theme';
 import { PhaseTabs, type ReactIDEPhase } from './phase-tabs';
+import { SandpackMonacoEditor } from './sandpack-monaco-editor';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-type LayoutMode = 'split' | 'editor' | 'preview' | 'console';
+type LayoutMode = 'split' | 'editor' | 'preview' | 'console' | 'focused';
 
 interface ReactIDEClientProps {
   question: ReactQuestion;
@@ -328,6 +328,24 @@ function IDELayout({
     advanced: 'border-red-500/30 bg-red-500/10 text-red-400',
   }[question.difficulty];
 
+  const isFocused = layoutMode === 'focused';
+
+  // Toggle ide-focused class on <html> so the site header hides via CSS
+  useEffect(() => {
+    document.documentElement.classList.toggle('ide-focused', isFocused);
+    return () => document.documentElement.classList.remove('ide-focused');
+  }, [isFocused]);
+
+  // Escape exits focus mode
+  useEffect(() => {
+    if (!isFocused) return;
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') onLayoutModeChange('split');
+    }
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [isFocused, onLayoutModeChange]);
+
   const layoutOptions: Array<{
     id: LayoutMode;
     icon: typeof IconColumns;
@@ -386,6 +404,19 @@ function IDELayout({
                   <Icon className="h-3.5 w-3.5" />
                 </button>
               ))}
+              <div className="w-px h-3.5 bg-border/40 mx-0.5" />
+              <button
+                type="button"
+                onClick={() => onLayoutModeChange(isFocused ? 'split' : 'focused')}
+                title={isFocused ? 'Exit focus mode (Esc)' : 'Focus mode'}
+                className="min-h-8 min-w-8 rounded-md p-1.5 transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.96] text-muted-foreground hover:text-foreground hover:bg-surface/50"
+              >
+                {isFocused ? (
+                  <IconMinimize className="h-3.5 w-3.5" />
+                ) : (
+                  <IconMaximize className="h-3.5 w-3.5" />
+                )}
+              </button>
             </div>
 
             <div className="h-4 w-px bg-border/40" />
@@ -681,7 +712,7 @@ function BuildPhase({
             {/* Editor */}
             <ResizablePanel defaultSize={80} minSize={40} className="flex flex-col min-h-0 h-full">
               <div className="flex flex-1 min-h-0 h-full w-full flex-col overflow-hidden bg-code">
-                <SandpackCodeMirrorEditor
+                <SandpackMonacoEditor
                   viewMode={viewMode}
                   headerLeft={
                     <EditorHeaderTabs
@@ -691,7 +722,6 @@ function BuildPhase({
                     />
                   }
                 />
-                {solutionViewed && viewMode === 'solution' && <SolutionBadge />}
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
@@ -809,14 +839,6 @@ function BuildPhase({
         </ResizablePanel>
       )}
     </ResizablePanelGroup>
-  );
-}
-
-function SolutionBadge() {
-  return (
-    <div className="border-t border-primary/20 bg-primary/5 px-3 py-1.5 text-center text-[10px] font-semibold uppercase tracking-widest text-primary">
-      Solution — Reference Only
-    </div>
   );
 }
 
@@ -998,88 +1020,5 @@ function ReviewPhase({
         )}
       </div>
     </motion.div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Editor (CodeMirror bridge to Sandpack)
-// ---------------------------------------------------------------------------
-
-function SandpackCodeMirrorEditor({
-  headerLeft,
-  viewMode,
-}: {
-  headerLeft?: React.ReactNode;
-  viewMode: 'problem' | 'solution';
-}) {
-  const { sandpack } = useSandpack();
-  const { files, activeFile, updateFile } = sandpack;
-  const code = files[activeFile]?.code || '';
-
-  const language = activeFile.endsWith('.html')
-    ? 'html'
-    : activeFile.endsWith('.ts') || activeFile.endsWith('.tsx')
-      ? 'typescript'
-      : 'javascript';
-
-  const isReadOnly = viewMode === 'solution';
-
-  async function handleFormat() {
-    if (isReadOnly) return;
-    try {
-      const formatted = await prettier.format(code, {
-        parser: 'babel',
-        plugins: [prettierBabel, prettierEstree],
-        singleQuote: true,
-        printWidth: 100,
-        trailingComma: 'all',
-      });
-      updateFile(activeFile, formatted);
-    } catch (e) {
-      console.error('Format failed', e);
-    }
-  }
-
-  function handleReset() {
-    if (isReadOnly) return;
-    sandpack.resetAllFiles();
-  }
-
-  return (
-    <div className="relative flex-1 min-h-0 h-full w-full flex flex-col overflow-hidden bg-code">
-      <div className="flex items-center justify-between border-b border-border/40 bg-surface/50 px-2 py-1.5 shrink-0">
-        <div className="flex items-center min-w-0">{headerLeft}</div>
-        {!isReadOnly && (
-          <div className="flex items-center gap-1.5 shrink-0 ml-2">
-            <button
-              type="button"
-              onClick={handleFormat}
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
-              title="Format Code (Shift+Alt+F)"
-            >
-              Format
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-border/40 hover:bg-surface/50 transition-colors text-[10px] font-medium text-muted-foreground active:scale-[0.97]"
-              title="Reset to Starter Code"
-            >
-              Reset
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="relative flex-1 min-h-0 w-full">
-        <CodeMirrorEditor
-          key={activeFile}
-          path={activeFile}
-          value={code}
-          onChange={(newCode) => updateFile(activeFile, newCode)}
-          language={language as 'html' | 'javascript' | 'typescript'}
-          readOnly={isReadOnly}
-        />
-      </div>
-    </div>
   );
 }

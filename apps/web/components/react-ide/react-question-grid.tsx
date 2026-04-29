@@ -1,6 +1,7 @@
 'use client';
 
 import { IconCheck, IconCircleFilled, IconFlame } from '@tabler/icons-react';
+import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { ReactDiscoveryItem, ReactQuestionCategory } from '@/lib/content/types';
@@ -132,7 +133,7 @@ export function ReactQuestionGrid({ questions, totalQuestions, locale }: ReactQu
             type="button"
             onClick={() => setActiveFilter(cat)}
             className={cn(
-              'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-all duration-150 active:scale-[0.97]',
+              'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97]',
               activeFilter === cat
                 ? cat === 'all'
                   ? 'border-primary/30 bg-primary/10 text-primary'
@@ -145,72 +146,87 @@ export function ReactQuestionGrid({ questions, totalQuestions, locale }: ReactQu
         ))}
       </div>
 
-      {/* Question cards grid */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {filtered.map((question) => {
-          const progress = reactState.questions[question.id];
-          const isAttempted = progress && progress.attempts.length > 0;
-          const isCompleted = isAttempted && progress?.srsData;
-          const catHover = CATEGORY_HOVER[question.category];
+      {/* Question cards grid — AnimatePresence orchestrates filter changes */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeFilter}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.12 }}
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+        >
+          {filtered.map((question, i) => {
+            const progress = reactState.questions[question.id];
+            const isAttempted = progress && progress.attempts.length > 0;
+            const isCompleted = isAttempted && progress?.srsData;
+            const catHover = CATEGORY_HOVER[question.category];
 
-          return (
-            <Link
-              key={question.id}
-              href={`/${locale}/react/${question.id}`}
-              className={cn(
-                'group relative flex flex-col gap-3 rounded-2xl border border-white/5 bg-surface/40 p-4',
-                'transition-[transform,box-shadow,background-color,border-color] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]',
-                catHover,
-              )}
-            >
-              {/* Completed / in-progress indicator */}
-              {isCompleted ? (
-                <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-green-500/15 ring-1 ring-green-500/25">
-                  <IconCheck className="h-3 w-3 text-green-400" />
-                </div>
-              ) : isAttempted ? (
-                <div className="absolute right-3 top-3">
-                  <IconCircleFilled className="h-2 w-2 text-amber-400" />
-                </div>
-              ) : null}
-
-              <div className="flex items-start justify-between gap-3 pr-7">
-                <p className="text-sm font-medium leading-snug text-foreground/90 transition-colors group-hover:text-foreground">
-                  {question.title}
-                </p>
-                <span
+            return (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.18, delay: i * 0.03, ease: [0.23, 1, 0.32, 1] }}
+              >
+                <Link
+                  href={`/${locale}/react/${question.id}`}
                   className={cn(
-                    'shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-                    DIFFICULTY_BADGE_CLASS[question.difficulty],
+                    'group relative flex flex-col gap-3 rounded-2xl border border-white/5 bg-surface/40 p-4',
+                    'transition-[transform,box-shadow,background-color,border-color] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]',
+                    catHover,
                   )}
                 >
-                  {question.difficulty}
-                </span>
-              </div>
+                  {/* Completed / in-progress indicator */}
+                  {isCompleted ? (
+                    <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-green-500/15 ring-1 ring-green-500/25">
+                      <IconCheck className="h-3 w-3 text-green-400" />
+                    </div>
+                  ) : isAttempted ? (
+                    <div className="absolute right-3 top-3">
+                      <IconCircleFilled className="h-2 w-2 text-amber-400" />
+                    </div>
+                  ) : null}
 
-              {/* Bottom row: category pill + tags */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span
-                  className={cn(
-                    'rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-                    CATEGORY_ACCENT[question.category],
-                  )}
-                >
-                  {CATEGORY_LABELS[question.category]}
-                </span>
-                {question.tags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded border border-border/40 bg-surface/70 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+                  <div className="flex items-start justify-between gap-3 pr-7">
+                    <p className="text-sm font-medium leading-snug text-foreground/90 transition-colors group-hover:text-foreground">
+                      {question.title}
+                    </p>
+                    <span
+                      className={cn(
+                        'shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+                        DIFFICULTY_BADGE_CLASS[question.difficulty],
+                      )}
+                    >
+                      {question.difficulty}
+                    </span>
+                  </div>
+
+                  {/* Bottom row: category pill + tags */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span
+                      className={cn(
+                        'rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+                        CATEGORY_ACCENT[question.category],
+                      )}
+                    >
+                      {CATEGORY_LABELS[question.category]}
+                    </span>
+                    {question.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded border border-border/40 bg-surface/70 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Empty state */}
       {filtered.length === 0 && (
