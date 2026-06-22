@@ -33,6 +33,9 @@ jobs:
           manifest-file: .release-please-manifest.json
           target-branch: main
 
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
       - name: Queue Release PR auto-merge
         env:
           GH_TOKEN: ${{ secrets.AUTOMATION_PAT }}
