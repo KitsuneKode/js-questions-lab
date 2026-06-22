@@ -19,16 +19,15 @@ inputs:
     required: false
     default: "true"
   token:
-    description: GitHub token for gh CLI (use AUTOMATION_PAT when available)
-    required: false
-    default: ""
+    description: GitHub token for gh CLI (AUTOMATION_PAT required for auto-merge)
+    required: true
 
 runs:
   using: composite
   steps:
     - shell: bash
       env:
-        GH_TOKEN: ${{ inputs.token != '' && inputs.token || github.token }}
+        GH_TOKEN: ${{ inputs.token }}
         BASE: ${{ inputs.base }}
         HEAD: ${{ inputs.head }}
         AUTO_MERGE: ${{ inputs.auto_merge }}
@@ -36,6 +35,12 @@ runs:
         PR_BODY: ${{ inputs.body }}
       run: |
         set -euo pipefail
+
+        if [ -z "${GH_TOKEN:-}" ]; then
+          echo "::error::A GitHub token is required for branch sync PR creation."
+          exit 1
+        fi
+
         git fetch origin "$BASE" "$HEAD"
 
         if git diff --quiet "origin/$BASE..origin/$HEAD"; then
@@ -54,5 +59,6 @@ runs:
         fi
 
         if [ "$AUTO_MERGE" = "true" ]; then
-          gh pr merge "$PR" --auto --merge || echo "Auto-merge not enabled or checks pending"
+          gh pr merge "$PR" --auto --merge
+          echo "PR #$PR is queued for auto-merge after required CI passes"
         fi

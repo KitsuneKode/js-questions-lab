@@ -63,7 +63,7 @@ If you are working on specific domains, **you must read the relevant guide first
 - All new work goes on a feature branch (`feat/`, `fix/`, `chore/` prefix).
 - **All upstream changes and PRs must target the `dev` branch.**
 - We use `dev` as our staging environment and primary source of work.
-- After changes are made, reviewed, and validated in `dev`, they are promoted to `main` via **release-please** (Release PR with changelog).
+- After changes are made, reviewed, and validated in `dev`, they are promoted to `main` via **release-please** (Release PR with changelog, auto-merged after required CI passes).
 - The main website is deployed directly from the `main` branch.
-- Never commit or push directly to `main` for feature or fix work — branch protection enforces PR-only merges.
-- **Reverse sync** from `main` to `dev` is automated by `sync-main.yml` when `main` is updated. See [`.context/docs/release-train.md`](.context/docs/release-train.md).
+- Never commit or push directly to `main` or `dev` for feature or fix work — branch protection enforces PR-only merges.
+- **Reverse sync** from `main` to `dev` is automated by `sync-main.yml` when `main` is updated. `release-health.yml` verifies branch protection, release PR checks, and automation-token availability. See [`.context/docs/release-train.md`](.context/docs/release-train.md).
