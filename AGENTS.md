@@ -65,5 +65,5 @@ If you are working on specific domains, **you must read the relevant guide first
 - We use `dev` as our staging environment and primary source of work.
 - After changes are made, reviewed, and validated in `dev`, they are promoted to `main` via **release-please** (Release PR with changelog).
 - The main website is deployed directly from the `main` branch.
-- Never commit directly to `main` for feature or fix work.
+- Never commit or push directly to `main` for feature or fix work — branch protection enforces PR-only merges.
 - **Reverse sync** from `main` to `dev` is automated by `sync-main.yml` when `main` is updated. See [`.context/docs/release-train.md`](.context/docs/release-train.md).

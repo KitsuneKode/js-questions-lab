@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -21,10 +22,11 @@ jobs:
           manifest-file: .release-please-manifest.json
           target-branch: main
 
-      - name: Enable auto-merge on Release PR
+      - name: Release PR opened (manual merge required)
         if: ${{ steps.release.outputs.prs_created == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.AUTOMATION_PAT || github.token }}
         run: |
           PR_NUMBER=$(echo '${{ steps.release.outputs.prs }}' | jq -r '.[0].number')
-          gh pr merge "$PR_NUMBER" --auto --merge || echo "Auto-merge queued or unavailable"
+          echo "Release PR #${PR_NUMBER} opened. Review changelog and merge manually after CI passes."
+          echo "Direct pushes to main are blocked — this PR is the only path to production."
