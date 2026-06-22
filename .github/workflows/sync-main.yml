@@ -6,8 +6,12 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: sync-main-to-dev
+  cancel-in-progress: false
+
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 jobs:
@@ -15,41 +19,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Check for changes, open PR, and auto-merge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Verify dev exists locally to trace history
-          git fetch origin dev
-          
-          # Check if dev is missing any commits from main
-          if git diff --quiet origin/dev..origin/main; then
-            echo "No changes. dev is up-to-date with main."
-            exit 0
-          fi
-          
-          echo "Changes detected. Creating reverse-sync PR..."
-          
-          EXISTING_PR=$(gh pr list --state open --base dev --head main --json number --jq '.[0].number')
-          
-          if [ "$EXISTING_PR" != "null" ] && [ -n "$EXISTING_PR" ]; then
-            echo "PR #$EXISTING_PR already exists. Engaging auto-merge flag..."
-            gh pr merge "$EXISTING_PR" --auto --merge || echo "Auto-merge might already be enabled or repo settings prevent it."
-          else
-            PR_URL=$(gh pr create \
-              --base dev \
-              --head main \
-              --title "chore(sync): 🔄 auto-sync main into dev" \
-              --body "## 🔄 Automated Reverse Sync
-              
-              This PR automatically catches \`dev\` up with recent commits pushed directly to \`main\`. 
-              
-              Ensures branch alignment and parity.")
-            
-            echo "Setting auto-merge for $PR_URL"
-            gh pr merge "$PR_URL" --auto --merge || echo "Warning: Could not enable auto-merge. Ensure 'Allow auto-merge' is enabled in repo settings."
-          fi
+      - name: Open reverse-sync PR and enable auto-merge
+        uses: ./.github/actions/branch-sync
+        with:
+          base: dev
+          head: main
+          title: "chore(sync): auto-sync main into dev"
+          body: |
+            Automated reverse sync after `main` was updated.
+
+            Keeps `dev` aligned with merge commits on `main`.
+          auto_merge: "true"
+          token: ${{ secrets.AUTOMATION_PAT || github.token }}

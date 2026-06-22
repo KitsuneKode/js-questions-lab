@@ -104,7 +104,7 @@ feat/your-feature  →  PR to dev  →  CI passes  →  merge  →  PR to main  
 
 2. **Push and open a PR** targeting the `dev` branch — CI will run typecheck, lint, and build automatically.
 3. **After CI passes** and you're happy with the result, merge to `dev`.
-4. **When `dev` is stable**, open a PR from `dev` → `main` and merge manually.
+4. **When `dev` is stable**, release-please opens a **Release PR** to `main` with an updated changelog. Review and merge when CI passes (auto-merge may apply). See [`.context/docs/release-train.md`](.context/docs/release-train.md).
 
 Never commit feature work directly to `main`.
 

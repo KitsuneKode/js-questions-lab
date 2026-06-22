@@ -6,6 +6,7 @@
     "account": "Account",
     "about": "About",
     "credits": "Credits",
+    "releaseNotes": "Release notes",
     "scratchpad": "Scratchpad",
     "language": "Language",
     "contact": "Contact",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - Master JavaScript Interview Prep",
     "description": "Interactive JavaScript interview practice built on Lydia Hallie's questions, with runnable snippets and event-loop visualizations."
+  },
+  "releaseNotes": {
+    "title": "Release Notes",
+    "description": "Stay up to date with the latest changes to JS Questions Lab — new features, fixes, and improvements.",
+    "eyebrow": "Changelog",
+    "intro": "Follow what shipped in each version of JS Questions Lab. Releases are generated from conventional commits and promoted to production after CI passes.",
+    "englishNote": "Release note entries are in English (sourced from development commit messages).",
+    "emptyTitle": "No releases published yet",
+    "emptyBody": "The first production release will appear here after the release train merges to main. Current app version is shown above.",
+    "navigateLabel": "Navigate to version…",
+    "currentVersionLabel": "Release version navigation",
+    "githubRelease": "GitHub Release",
+    "compareChanges": "Compare changes",
+    "sections": {
+      "added": "Added",
+      "fixed": "Fixed",
+      "changed": "Changed",
+      "performance": "Performance",
+      "security": "Security"
+    }
   },
   "footer": {
     "builtBy": "Built by",

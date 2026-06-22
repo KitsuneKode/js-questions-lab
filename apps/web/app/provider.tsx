@@ -14,7 +14,7 @@ import { StickyBanner } from '@/components/ui/sticky-banner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ProgressProvider } from '@/lib/progress/progress-context';
 
-function SiteChrome({ children }: { children: React.ReactNode }) {
+function SiteChrome({ children, appVersion }: { children: React.ReactNode; appVersion?: string }) {
   const t = useTranslations('banner');
 
   return (
@@ -43,7 +43,7 @@ function SiteChrome({ children }: { children: React.ReactNode }) {
       </StickyBanner>
       <SiteHeader />
       {children}
-      <SiteFooter />
+      <SiteFooter appVersion={appVersion} />
       <FloatingScratchpadGate />
       <Toaster
         theme="dark"
@@ -62,13 +62,19 @@ function SiteChrome({ children }: { children: React.ReactNode }) {
 }
 
 /** Marketing and light pages — no notification/sync overlays. */
-export function LiteSiteShell({ children }: { children: React.ReactNode }) {
+export function LiteSiteShell({
+  children,
+  appVersion,
+}: {
+  children: React.ReactNode;
+  appVersion?: string;
+}) {
   return (
     <AuthProvider>
       <TooltipProvider>
         <ProgressProvider>
           <ScratchpadProvider>
-            <SiteChrome>{children}</SiteChrome>
+            <SiteChrome appVersion={appVersion}>{children}</SiteChrome>
           </ScratchpadProvider>
         </ProgressProvider>
       </TooltipProvider>
@@ -77,13 +83,19 @@ export function LiteSiteShell({ children }: { children: React.ReactNode }) {
 }
 
 /** Practice routes — adds guest prompts and sync toasts. */
-export function AppSiteShell({ children }: { children: React.ReactNode }) {
+export function AppSiteShell({
+  children,
+  appVersion,
+}: {
+  children: React.ReactNode;
+  appVersion?: string;
+}) {
   return (
     <AuthProvider>
       <TooltipProvider>
         <ProgressProvider>
           <ScratchpadProvider>
-            <SiteChrome>{children}</SiteChrome>
+            <SiteChrome appVersion={appVersion}>{children}</SiteChrome>
             <NotificationManager />
           </ScratchpadProvider>
         </ProgressProvider>

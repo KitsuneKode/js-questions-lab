@@ -6,6 +6,7 @@
     "account": "Conta",
     "about": "Sobre",
     "credits": "Créditos",
+    "releaseNotes": "Notas de versão",
     "scratchpad": "Rascunho",
     "language": "Idioma",
     "contact": "Contato",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - Domine Entrevistas JavaScript",
     "description": "Prática interativa de entrevistas JavaScript com perguntas da Lydia Hallie, trechos executáveis e visualizações de event loop."
+  },
+  "releaseNotes": {
+    "title": "Notas de versão",
+    "description": "Acompanhe as últimas mudanças do JS Questions Lab.",
+    "eyebrow": "Changelog",
+    "intro": "Veja o que foi publicado em cada versão do JS Questions Lab.",
+    "englishNote": "As entradas estão em inglês (mensagens de commit).",
+    "emptyTitle": "Nenhum release publicado ainda",
+    "emptyBody": "O primeiro release de produção aparecerá aqui após o merge em main.",
+    "navigateLabel": "Ir para a versão…",
+    "currentVersionLabel": "Navegação de versões",
+    "githubRelease": "Release no GitHub",
+    "compareChanges": "Comparar alterações",
+    "sections": {
+      "added": "Adicionado",
+      "fixed": "Corrigido",
+      "changed": "Alterado",
+      "performance": "Desempenho",
+      "security": "Segurança"
+    }
   },
   "footer": {
     "builtBy": "Criado por",

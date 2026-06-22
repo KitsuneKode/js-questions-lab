@@ -14,6 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          release-type: node
-          target-branch: dev
+          token: ${{ secrets.AUTOMATION_PAT || github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          target-branch: main
+
+      - name: Enable auto-merge on Release PR
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMATION_PAT || github.token }}
+        run: |
+          PR_NUMBER=$(echo '${{ steps.release.outputs.prs }}' | jq -r '.[0].number')
+          gh pr merge "$PR_NUMBER" --auto --merge || echo "Auto-merge queued or unavailable"

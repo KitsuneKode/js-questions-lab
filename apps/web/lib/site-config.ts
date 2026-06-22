@@ -26,6 +26,7 @@ export const siteConfig = {
 
 export const siteLinks = {
   credits: '/credits',
+  releaseNotes: '/release-notes',
   questions: '/questions',
   progress: '/progress',
   dashboard: '/dashboard',
