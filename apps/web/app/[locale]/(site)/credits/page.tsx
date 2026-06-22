@@ -74,7 +74,6 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
   const localeIndex = getLocaleIndex();
   const t = await getTranslations({ locale, namespace: 'credits' });
 
-  const additions = [t('addition1'), t('addition2'), t('addition3'), t('addition4')] as const;
   const localeAvailability = new Map(
     (localeIndex?.available ?? []).map((entry) => [entry.code, entry]),
   );
@@ -84,6 +83,38 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
     label: localeAvailability.get(code)?.label ?? LOCALE_LABELS[code],
     questionCount: localeAvailability.get(code)?.questionCount,
   }));
+  const attributions = [
+    {
+      name: 'javascript-react-patterns',
+      author: 'Lydia Hallie',
+      description:
+        'React patterns content — hooks, components, and design patterns used in the React Practice section.',
+      url: 'https://github.com/lydiahallie/javascript-react-patterns',
+      license: 'MIT',
+    },
+    {
+      name: 'Sandpack',
+      author: 'CodeSandbox',
+      description:
+        'In-browser React runtime powering the React Practice IDE. Live preview and module resolution without a server.',
+      url: 'https://sandpack.codesandbox.io',
+      license: 'Apache 2.0',
+    },
+    {
+      name: 'Stream Video SDK',
+      author: 'Stream',
+      description: 'WebRTC video transport for AI Interview Mode (coming soon).',
+      url: 'https://getstream.io/video',
+      license: 'Commercial',
+    },
+    {
+      name: 'ElevenLabs TTS',
+      author: 'ElevenLabs',
+      description: 'AI voice synthesis for the interview AI persona (coming soon).',
+      url: 'https://elevenlabs.io',
+      license: 'Commercial',
+    },
+  ] as const;
 
   return (
     <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40 md:pb-24">
@@ -167,19 +198,38 @@ export default async function CreditsPage({ params }: CreditsPageProps) {
                 {t('addedLabel')}
               </p>
             </div>
-            <ul className="mt-5 flex flex-1 flex-col justify-center gap-2.5">
-              {additions.map((item) => (
-                <li
-                  key={item.slice(0, 30)}
-                  className="flex items-start gap-3 rounded-lg border border-border/50 bg-elevated/50 px-3.5 py-2.5 text-sm leading-relaxed text-muted-foreground"
+            <div className="mt-5 grid gap-3">
+              {attributions.map((item) => (
+                <article
+                  key={item.name}
+                  className="rounded-xl border border-border/50 bg-elevated/50 p-4 transition-colors hover:border-primary/30 hover:bg-elevated"
                 >
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[9px] font-bold text-primary">
-                    +
-                  </span>
-                  {item}
-                </li>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{item.name}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                        {item.author}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-border/60 bg-surface/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                      {item.license}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </p>
+                  <Link
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                  >
+                    View source
+                    <IconArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </article>
               ))}
-            </ul>
+            </div>
           </article>
         </section>
 

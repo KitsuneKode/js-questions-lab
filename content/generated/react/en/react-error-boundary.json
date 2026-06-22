@@ -1,0 +1,29 @@
+{
+  "id": "react-error-boundary",
+  "title": "Build an ErrorBoundary Component",
+  "difficulty": "advanced",
+  "tags": ["error-handling", "class-components", "lifecycle", "patterns"],
+  "category": "component",
+  "prompt": "Build an `ErrorBoundary` class component that catches JavaScript errors in its children and displays a fallback UI instead. It should expose a `fallback` prop (ReactNode) and a `onError` optional callback. After catching an error, provide a 'Try Again' button that resets the boundary.",
+  "context": "Error Boundaries must be class components — they use `getDerivedStateFromError` (to update state after an error) and `componentDidCatch` (to log the error). Function components cannot implement these lifecycle methods. This is one of the few remaining required uses of class components in React.",
+  "starterCode": {
+    "App.tsx": "import { ErrorBoundary } from './ErrorBoundary';\nimport { BrokenComponent } from './BrokenComponent';\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <ErrorBoundary fallback={<p className=\"text-red-500\">Something went wrong.</p>}>\n        <BrokenComponent />\n      </ErrorBoundary>\n    </div>\n  );\n}\n",
+    "ErrorBoundary.tsx": "import { Component, type ReactNode } from 'react';\n\ninterface Props {\n  children: ReactNode;\n  fallback: ReactNode;\n  onError?: (error: Error, info: { componentStack: string }) => void;\n}\n\ninterface State {\n  hasError: boolean;\n}\n\nexport class ErrorBoundary extends Component<Props, State> {\n  constructor(props: Props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(_: Error): State {\n    // TODO: return state indicating an error occurred\n    return { hasError: false };\n  }\n\n  componentDidCatch(error: Error, info: { componentStack: string }) {\n    // TODO: call this.props.onError if provided\n  }\n\n  render() {\n    if (this.state.hasError) {\n      // TODO: show fallback + reset button\n      return this.props.fallback;\n    }\n    return this.props.children;\n  }\n}\n",
+    "BrokenComponent.tsx": "export function BrokenComponent() {\n  throw new Error('Oops! I crashed.');\n  return null;\n}\n"
+  },
+  "entryFile": "ErrorBoundary.tsx",
+  "solutionCode": {
+    "App.tsx": "import { ErrorBoundary } from './ErrorBoundary';\nimport { BrokenComponent } from './BrokenComponent';\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <ErrorBoundary fallback={<p className=\"text-red-500\">Something went wrong.</p>}>\n        <BrokenComponent />\n      </ErrorBoundary>\n    </div>\n  );\n}\n",
+    "ErrorBoundary.tsx": "import { Component, type ReactNode } from 'react';\n\ninterface Props {\n  children: ReactNode;\n  fallback: ReactNode;\n  onError?: (error: Error, info: { componentStack: string }) => void;\n}\n\ninterface State {\n  hasError: boolean;\n}\n\nexport class ErrorBoundary extends Component<Props, State> {\n  constructor(props: Props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(_: Error): State {\n    return { hasError: true };\n  }\n\n  componentDidCatch(error: Error, info: { componentStack: string }) {\n    this.props.onError?.(error, info);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        <>\n          {this.props.fallback}\n          <button\n            onClick={() => this.setState({ hasError: false })}\n            className=\"mt-2 text-sm underline\"\n          >\n            Try Again\n          </button>\n        </>\n      );\n    }\n    return this.props.children;\n  }\n}\n",
+    "BrokenComponent.tsx": "export function BrokenComponent() {\n  throw new Error('Oops! I crashed.');\n  return null;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/design-patterns/compound",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

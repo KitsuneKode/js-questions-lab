@@ -1,0 +1,40 @@
+{
+  "id": "react-context-theme",
+  "title": "Build a Theme Context + Provider Pattern",
+  "difficulty": "intermediate",
+  "tags": ["context", "provider", "hooks", "theme", "typescript"],
+  "category": "pattern",
+  "prompt": "Build a `ThemeContext` with a `ThemeProvider` and a `useTheme` hook that exposes the current theme (`'light' | 'dark'`) and a `toggleTheme` function.\n\nRequirements:\n- `ThemeProvider` wraps children and holds theme state\n- `useTheme` throws a descriptive error when called outside the provider\n- The toggle switches between `'light'` and `'dark'`\n- Wrap the `App` in `ThemeProvider` and use `useTheme` inside a child component to demonstrate it works",
+  "context": "The **Context + Provider + custom hook** trio is the dominant pattern for sharing state in React without prop drilling. It composes three primitives:\n\n1. `createContext` — creates the context object. The default value is used only when a component has no matching `Provider` above it in the tree.\n2. `Provider` — wraps the subtree and supplies the actual value via the `value` prop.\n3. Custom hook (`useTheme`) — calls `useContext` internally and adds a safety check so components get a clear error if they are used outside the provider.\n\nThe safety check is the most commonly skipped step, but it makes debugging significantly easier. Without it, a component outside the provider silently receives the default value — which is often `null` or `undefined` — and produces a confusing runtime error elsewhere.",
+  "starterCode": {
+    "App.tsx": "import { ThemeProvider } from './ThemeContext';\nimport { ThemedPage } from './ThemedPage';\n\nexport default function App() {\n  return (\n    <ThemeProvider>\n      <ThemedPage />\n    </ThemeProvider>\n  );\n}\n",
+    "ThemeContext.tsx": "import { createContext, type ReactNode, useContext, useState } from 'react';\n\ntype Theme = 'light' | 'dark';\n\ninterface ThemeContextValue {\n  theme: Theme;\n  toggleTheme: () => void;\n}\n\n// TODO: create ThemeContext with createContext\n// TODO: build ThemeProvider component\n// TODO: build useTheme hook with error guard\n",
+    "ThemedPage.tsx": "import { useTheme } from './ThemeContext';\n\nexport function ThemedPage() {\n  const { theme, toggleTheme } = useTheme();\n\n  return (\n    <div\n      style={{\n        minHeight: '100vh',\n        background: theme === 'dark' ? '#111827' : '#f9fafb',\n        color: theme === 'dark' ? '#f9fafb' : '#111827',\n        display: 'flex',\n        flexDirection: 'column',\n        alignItems: 'center',\n        justifyContent: 'center',\n        gap: '1rem',\n        transition: 'background 0.3s, color 0.3s',\n      }}\n    >\n      <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>Current theme: {theme}</p>\n      <button\n        onClick={toggleTheme}\n        style={{\n          padding: '0.5rem 1.25rem',\n          borderRadius: '0.375rem',\n          border: '1px solid currentColor',\n          background: 'transparent',\n          color: 'inherit',\n          cursor: 'pointer',\n          fontWeight: 500,\n        }}\n      >\n        Toggle Theme\n      </button>\n    </div>\n  );\n}\n"
+  },
+  "entryFile": "ThemeContext.tsx",
+  "solutionCode": {
+    "App.tsx": "import { ThemeProvider } from './ThemeContext';\nimport { ThemedPage } from './ThemedPage';\n\nexport default function App() {\n  return (\n    <ThemeProvider>\n      <ThemedPage />\n    </ThemeProvider>\n  );\n}\n",
+    "ThemeContext.tsx": "import { createContext, type ReactNode, useContext, useState } from 'react';\n\ntype Theme = 'light' | 'dark';\n\ninterface ThemeContextValue {\n  theme: Theme;\n  toggleTheme: () => void;\n}\n\nconst ThemeContext = createContext<ThemeContextValue | null>(null);\n\nexport function ThemeProvider({ children }: { children: ReactNode }) {\n  const [theme, setTheme] = useState<Theme>('light');\n  const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));\n\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\nexport function useTheme(): ThemeContextValue {\n  const ctx = useContext(ThemeContext);\n  if (!ctx) throw new Error('useTheme must be used within a ThemeProvider');\n  return ctx;\n}\n",
+    "ThemedPage.tsx": "import { useTheme } from './ThemeContext';\n\nexport function ThemedPage() {\n  const { theme, toggleTheme } = useTheme();\n\n  return (\n    <div\n      style={{\n        minHeight: '100vh',\n        background: theme === 'dark' ? '#111827' : '#f9fafb',\n        color: theme === 'dark' ? '#f9fafb' : '#111827',\n        display: 'flex',\n        flexDirection: 'column',\n        alignItems: 'center',\n        justifyContent: 'center',\n        gap: '1rem',\n        transition: 'background 0.3s, color 0.3s',\n      }}\n    >\n      <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>Current theme: {theme}</p>\n      <button\n        onClick={toggleTheme}\n        style={{\n          padding: '0.5rem 1.25rem',\n          borderRadius: '0.375rem',\n          border: '1px solid currentColor',\n          background: 'transparent',\n          color: 'inherit',\n          cursor: 'pointer',\n          fontWeight: 500,\n        }}\n      >\n        Toggle Theme\n      </button>\n    </div>\n  );\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [
+    {
+      "title": "React – createContext",
+      "url": "https://react.dev/reference/react/createContext",
+      "type": "docs"
+    },
+    {
+      "title": "React – Passing Data Deeply with Context",
+      "url": "https://react.dev/learn/passing-data-deeply-with-context",
+      "type": "article"
+    }
+  ],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/patterns",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

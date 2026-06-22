@@ -16,7 +16,7 @@ function ResizablePanel({ children, defaultSize, minSize, className }: Resizable
     <Panel
       defaultSize={defaultSize}
       minSize={minSize}
-      className={cn('flex flex-col overflow-hidden', className)}
+      className={cn('flex min-h-0 flex-col overflow-hidden', className)}
     >
       {children}
     </Panel>
@@ -31,7 +31,10 @@ interface ResizablePanelGroupProps {
 
 function ResizablePanelGroup({ children, direction, className }: ResizablePanelGroupProps) {
   return (
-    <PanelGroup orientation={direction} className={cn('h-full', className)}>
+    <PanelGroup
+      orientation={direction}
+      className={cn('flex h-full min-h-0 w-full flex-1', className)}
+    >
       {children}
     </PanelGroup>
   );

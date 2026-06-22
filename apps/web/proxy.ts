@@ -21,7 +21,7 @@ export const config = {
     // - Next.js internals and static assets
     // - SEO/crawl files: robots.txt, sitemap.xml, llms-full.txt
     // - Next.js metadata image routes
-    '/((?!_next|robots\\.txt|sitemap\\.xml|llms-full\\.txt|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)|icon|apple-icon|twitter-image|opengraph-image).*)',
+    '/((?!_next|robots\\.txt|sitemap\\.xml|llms\\.txt|llms-full\\.txt|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)|icon|apple-icon|twitter-image|opengraph-image).*)',
     '/(api|trpc)(.*)',
   ],
 };

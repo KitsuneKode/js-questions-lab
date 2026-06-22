@@ -1,14 +1,35 @@
 'use client';
 
-import { IconTrophy } from '@tabler/icons-react';
+import type { Variants } from 'motion/react';
+import { motion } from 'motion/react';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
 import { cn } from '@/lib/utils';
 
 const RANK_STYLES: Record<number, string> = {
-  1: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30',
-  2: 'text-zinc-300 bg-zinc-300/10 border-zinc-300/30',
-  3: 'text-amber-600 bg-amber-600/10 border-amber-600/30',
+  1: 'text-amber-500 font-bold',
+  2: 'text-amber-500/80 font-semibold',
+  3: 'text-amber-500/60 font-medium',
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.03,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 4, filter: 'blur(2px)' },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { type: 'spring', bounce: 0, duration: 0.3 },
+  },
 };
 
 interface LeaderboardTableProps {
@@ -25,59 +46,68 @@ export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTa
   }
 
   return (
-    <div className="space-y-2">
+    <motion.div
+      className="flex flex-col border-y border-border/40 bg-surface/20"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      {/* Table Header */}
+      <div className="flex items-center gap-4 px-3 py-2 text-[10px] font-medium uppercase tracking-widest text-muted-foreground border-b border-border/40">
+        <div className="w-8 shrink-0 text-center">#</div>
+        <div className="flex-1">Developer</div>
+        <div className="text-right shrink-0">XP</div>
+      </div>
+
       {entries.map((entry) => {
         const isCurrentUser = entry.position === currentUserPosition;
         const rankStyle = RANK_STYLES[entry.rank];
 
         return (
-          <div
+          <motion.div
             key={entry.position}
+            variants={itemVariants}
             className={cn(
-              'flex items-center gap-4 rounded-xl border px-4 py-3 transition-colors',
+              'group flex items-center gap-4 px-3 py-2 text-sm transition-[background-color,border-color] duration-150 ease-out border-b border-border/40 last:border-b-0',
               isCurrentUser
-                ? 'border-primary/40 bg-primary/5 shadow-[0_0_20px_rgba(245,158,11,0.08)]'
-                : 'border-border-subtle bg-surface hover:bg-elevated',
+                ? 'bg-primary/5 shadow-[inset_2px_0_0_0_rgba(245,158,11,1)]'
+                : 'hover:bg-surface/50',
             )}
           >
             {/* Rank */}
             <div
               className={cn(
-                'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-xs font-bold',
-                rankStyle ?? 'text-tertiary bg-elevated border-border-subtle',
+                'w-8 shrink-0 text-center font-mono text-xs',
+                rankStyle ?? 'text-muted-foreground',
               )}
             >
-              {entry.rank <= 3 ? (
-                <IconTrophy className="h-3.5 w-3.5" />
-              ) : (
-                <span className="font-mono">{entry.rank}</span>
-              )}
+              {entry.rank}
             </div>
 
             {/* Name + level */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn('text-sm font-medium truncate', isCurrentUser && 'text-primary')}
-                >
-                  {isCurrentUser ? t('you') : entry.displayName}
-                </span>
-              </div>
-              <span className="text-[11px] text-tertiary font-mono">
-                Lv.{entry.level} {entry.levelName}
+            <div className="flex-1 min-w-0 flex items-center gap-3">
+              <span
+                className={cn(
+                  'font-medium truncate',
+                  isCurrentUser ? 'text-primary' : 'text-foreground',
+                )}
+              >
+                {isCurrentUser ? t('you') : entry.displayName}
+              </span>
+              <span className="text-[11px] text-muted-foreground/70 font-mono hidden sm:inline-block">
+                Lv.{entry.level}
               </span>
             </div>
 
             {/* XP */}
             <div className="text-right shrink-0">
-              <div className="text-sm font-semibold font-mono text-foreground tabular-nums">
+              <span className="font-mono text-foreground tabular-nums tracking-tight">
                 {format.number(entry.totalXP)}
-              </div>
-              <div className="text-[10px] text-tertiary uppercase tracking-wider">XP</div>
+              </span>
             </div>
-          </div>
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

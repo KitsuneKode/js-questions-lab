@@ -1,0 +1,27 @@
+{
+  "id": "react-toggle",
+  "title": "Build a useToggle Hook",
+  "difficulty": "beginner",
+  "tags": ["hooks", "state", "boolean"],
+  "category": "hook",
+  "prompt": "Build a `useToggle` custom hook that manages a boolean state. It should return `[value, toggle]` where `toggle` flips the boolean. Use it in a component to show/hide a message.",
+  "context": "Custom hooks are functions that start with `use` and call other hooks internally. They let you extract stateful logic into a reusable unit without changing the component tree.",
+  "starterCode": {
+    "App.tsx": "import { useToggle } from './useToggle';\n\nexport default function App() {\n  const [isVisible, toggle] = useToggle(false);\n\n  return (\n    <div className=\"p-8\">\n      <button onClick={toggle}>Toggle</button>\n      {isVisible && <p>Hello, world!</p>}\n    </div>\n  );\n}\n",
+    "useToggle.ts": "import { useState } from 'react';\n\nexport function useToggle(initial: boolean): [boolean, () => void] {\n  // TODO: implement\n  return [initial, () => {}];\n}\n"
+  },
+  "entryFile": "useToggle.ts",
+  "solutionCode": {
+    "App.tsx": "import { useToggle } from './useToggle';\n\nexport default function App() {\n  const [isVisible, toggle] = useToggle(false);\n\n  return (\n    <div className=\"p-8\">\n      <button onClick={toggle}>Toggle</button>\n      {isVisible && <p>Hello, world!</p>}\n    </div>\n  );\n}\n",
+    "useToggle.ts": "import { useState } from 'react';\n\nexport function useToggle(initial: boolean): [boolean, () => void] {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue(v => !v);\n  return [value, toggle];\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

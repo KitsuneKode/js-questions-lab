@@ -1,0 +1,27 @@
+{
+  "id": "react-hoc-with-logger",
+  "title": "Build a withLogger Higher-Order Component",
+  "difficulty": "intermediate",
+  "tags": ["hoc", "patterns", "props", "logging"],
+  "category": "pattern",
+  "prompt": "Build a `withLogger<P>(Component: React.ComponentType<P>): React.FC<P>` HOC that logs `'Rendering: <ComponentName>'` to the console every time the wrapped component renders. The wrapped component should work identically to the original.",
+  "context": "A Higher-Order Component (HOC) is a function that takes a component and returns a new component with enhanced behavior. HOCs use `React.forwardRef` or props spreading to ensure the wrapped component receives all props unchanged. The HOC pattern is now often replaced by hooks, but remains important for wrapping third-party components.",
+  "starterCode": {
+    "App.tsx": "import { withLogger } from './withLogger';\n\nfunction Greeting({ name }: { name: string }) {\n  return <p>Hello, {name}!</p>;\n}\n\nconst LoggedGreeting = withLogger(Greeting);\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <LoggedGreeting name=\"World\" />\n      <p className=\"text-sm text-gray-500 mt-4\">Open the console to see logs.</p>\n    </div>\n  );\n}\n",
+    "withLogger.ts": "import type { ComponentType, FC } from 'react';\n\nexport function withLogger<P extends object>(Component: ComponentType<P>): FC<P> {\n  // TODO: return a new component that logs on every render\n  return Component as FC<P>;\n}\n"
+  },
+  "entryFile": "withLogger.ts",
+  "solutionCode": {
+    "App.tsx": "import { withLogger } from './withLogger';\n\nfunction Greeting({ name }: { name: string }) {\n  return <p>Hello, {name}!</p>;\n}\n\nconst LoggedGreeting = withLogger(Greeting);\n\nexport default function App() {\n  return (\n    <div className=\"p-8\">\n      <LoggedGreeting name=\"World\" />\n      <p className=\"text-sm text-gray-500 mt-4\">Open the console to see logs.</p>\n    </div>\n  );\n}\n",
+    "withLogger.ts": "import type { ComponentType, FC } from 'react';\n\nexport function withLogger<P extends object>(Component: ComponentType<P>): FC<P> {\n  const displayName = Component.displayName ?? Component.name ?? 'Component';\n\n  const LoggedComponent: FC<P> = (props) => {\n    console.log(`Rendering: ${displayName}`);\n    return <Component {...props} />;\n  };\n\n  LoggedComponent.displayName = `withLogger(${displayName})`;\n  return LoggedComponent;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/design-patterns/hoc",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

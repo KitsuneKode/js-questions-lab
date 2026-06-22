@@ -31,4 +31,5 @@ export const siteLinks = {
   dashboard: '/dashboard',
   leaderboard: '/leaderboard',
   contact: '/contact',
+  react: '/react',
 } as const;
