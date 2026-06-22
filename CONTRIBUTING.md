@@ -93,7 +93,7 @@ bun run parse:questions
 All new work follows a feature → dev → main flow:
 
 ```text
-feat/your-feature  →  PR to dev  →  CI passes  →  merge  →  PR to main  →  merge
+feat/your-feature  →  PR to dev  →  CI passes  →  merge  →  Release PR to main  →  auto-merge
 ```
 
 1. **Create a branch** with a `feat/`, `fix/`, or `chore/` prefix:
@@ -102,11 +102,11 @@ feat/your-feature  →  PR to dev  →  CI passes  →  merge  →  PR to main  
    git checkout -b feat/your-feature
    ```
 
-2. **Push and open a PR** targeting the `dev` branch — CI will run typecheck, lint, and build automatically.
+2. **Push and open a PR** targeting the `dev` branch — CI will run typecheck, tests, lint, and build automatically.
 3. **After CI passes** and you're happy with the result, merge to `dev`.
-4. **When `dev` is stable**, release-please opens a **Release PR** to `main` with an updated changelog. Review and merge manually when CI passes. See [`.context/docs/release-train.md`](.context/docs/release-train.md).
+4. **When `dev` changes**, release-please opens or updates a **Release PR** to `main` with an updated changelog. The Release PR auto-merges after required CI passes. See [`.context/docs/release-train.md`](.context/docs/release-train.md).
 
-Never commit or push feature work directly to `main` — the branch is protected and only accepts pull requests.
+Never commit or push feature work directly to `dev` or `main` — both branches are protected and only accept pull requests.
 
 ## Pull Requests
 

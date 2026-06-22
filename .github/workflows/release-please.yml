@@ -4,29 +4,50 @@ on:
   push:
     branches:
       - dev
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+      - name: Require automation token
+        env:
+          AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          if [ -z "$AUTOMATION_PAT" ]; then
+            echo "::error::AUTOMATION_PAT is required so release-please PRs trigger CI."
+            exit 1
+          fi
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.AUTOMATION_PAT || github.token }}
+          token: ${{ secrets.AUTOMATION_PAT }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           target-branch: main
 
-      - name: Release PR opened (manual merge required)
-        if: ${{ steps.release.outputs.prs_created == 'true' }}
+      - name: Queue Release PR auto-merge
         env:
-          GH_TOKEN: ${{ secrets.AUTOMATION_PAT || github.token }}
+          GH_TOKEN: ${{ secrets.AUTOMATION_PAT }}
         run: |
-          PR_NUMBER=$(echo '${{ steps.release.outputs.prs }}' | jq -r '.[0].number')
-          echo "Release PR #${PR_NUMBER} opened. Review changelog and merge manually after CI passes."
-          echo "Direct pushes to main are blocked — this PR is the only path to production."
+          PR_NUMBER=$(gh pr list \
+            --state open \
+            --base main \
+            --head release-please--branches--main \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open Release PR to auto-merge."
+            exit 0
+          fi
+
+          gh pr merge "$PR_NUMBER" --auto --merge
+          echo "Release PR #${PR_NUMBER} is queued for auto-merge after required CI passes."

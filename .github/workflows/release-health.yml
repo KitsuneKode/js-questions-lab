@@ -1,0 +1,28 @@
+name: Release Train Health
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Release Please
+    types:
+      - completed
+  schedule:
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check_release_train:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check release train invariants
+        env:
+          AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
+          GH_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+        run: node scripts/github/check-release-train.mjs --require-automation-pat

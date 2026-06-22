@@ -12,19 +12,22 @@ Architecture for promoting `dev` to production (`main`) and surfacing releases o
 ## Flow
 
 ```text
-feature PR → dev (CI) → release-please opens Release PR → you review + merge → main (CI)
-  → GitHub tag + Release → sync-main opens main→dev PR → dev aligned
+feature PR → dev (CI) → release-please opens Release PR → CI passes → auto-merge to main
+  → GitHub tag + Release → sync-main opens main→dev PR → auto-merge to dev
 ```
 
 1. **Feature work** merges to `dev` after CI passes.
-2. **release-please** (`/.github/workflows/release-please.yml`) runs on every push to `dev`, aggregates conventional commits **since the last tag on `main`**, and opens/updates a **Release PR targeting `main`** with `CHANGELOG.md` and version bumps.
-3. **You review and merge** the Release PR manually after CI passes. release-please then creates a **Git tag** and **GitHub Release**.
-4. **sync-main** (`/.github/workflows/sync-main.yml`) runs on every `push` to `main` and opens a PR to merge `main` back into `dev` (absorbs the merge commit).
-5. **weekly-sync** remains independent — content PRs target `dev`.
+2. **release-please** (`/.github/workflows/release-please.yml`) runs on pushes to `dev` and `main`.
+   - On `dev`, it aggregates conventional commits **since the last tag on `main`** and opens/updates a **Release PR targeting `main`**.
+   - On `main`, it creates the Git tag and GitHub Release after the Release PR lands.
+3. The Release PR is queued for **auto-merge**. Branch protection keeps it blocked until Typecheck, Test, Lint, and Build pass.
+4. **sync-main** (`/.github/workflows/sync-main.yml`) runs on every `push` to `main` and opens a PR to merge `main` back into `dev` (absorbs the merge commit). That PR is also queued for auto-merge.
+5. **release-health** (`/.github/workflows/release-health.yml`) verifies the branch rules, baseline tag, automation token, and Release PR checks.
+6. **weekly-sync** remains independent — content PRs target `dev`.
 
 ## When does `main` update?
 
-Only when a **Release PR merges** — not on a timer and not on every `dev` push.
+Only when a **Release PR auto-merges after green CI** — not on a timer and not on every `dev` push.
 
 ## Website integration
 
@@ -38,19 +41,21 @@ Only when a **Release PR merges** — not on a timer and not on every `dev` push
 
 | Secret | Purpose |
 |--------|---------|
-| `AUTOMATION_PAT` | Fine-grained PAT (contents + pull-requests write). Bot PRs need this to trigger CI; falls back to `GITHUB_TOKEN` if unset. |
+| `AUTOMATION_PAT` | Fine-grained PAT (contents + pull-requests write). Bot PRs need this to trigger CI. Workflows fail loudly if this secret is missing. |
 
 Rotate `AUTOMATION_PAT` every 90–180 days.
 
 ## Branch protection
 
-`main` is **protected**:
+`main` and `dev` are **protected**:
 
 - **No direct pushes** — every change must go through a pull request (including admins).
 - **Required CI** before merge: Typecheck, Test, Lint, Build.
-- **No force-push or branch deletion** on `main`.
+- **No force-push or branch deletion** on protected branches.
 
-If `git push origin main` fails with a protected-branch error, that is expected. Ship via a Release PR instead.
+If `git push origin main` or `git push origin dev` fails with a protected-branch error, that is expected. Ship through a PR instead.
+
+Run `bun run github:protect-branches` to reapply branch rules and `bun run github:check-release-train` to verify the release train.
 
 ### One-time bootstrap (already done)
 
@@ -60,6 +65,9 @@ If `git push origin main` fails with a protected-branch error, that is expected.
 
 - `workflow_dispatch` on **Release Please** (re-run release PR generation)
 - `workflow_dispatch` on **Sync Main to Dev**
+- `workflow_dispatch` on **Release Train Health**
+
+Humans should only need to intervene when CI fails, a PR has conflicts, branch protection drifts, or `AUTOMATION_PAT` expires.
 
 ## Related docs
 

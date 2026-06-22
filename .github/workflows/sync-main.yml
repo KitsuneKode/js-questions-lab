@@ -18,6 +18,15 @@ jobs:
   sync_to_dev:
     runs-on: ubuntu-latest
     steps:
+      - name: Require automation token
+        env:
+          AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          if [ -z "$AUTOMATION_PAT" ]; then
+            echo "::error::AUTOMATION_PAT is required so reverse-sync PRs trigger CI."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -34,4 +43,4 @@ jobs:
 
             Keeps `dev` aligned with merge commits on `main`.
           auto_merge: "true"
-          token: ${{ secrets.AUTOMATION_PAT || github.token }}
+          token: ${{ secrets.AUTOMATION_PAT }}
