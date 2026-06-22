@@ -341,6 +341,7 @@
   --font-bricolage-grotesque: var(--font-bricolage-grotesque);
   --font-geist: var(--font-geist);
   --font-roboto-mono: var(--font-roboto-mono);
+  --font-ja-fallback: 'Noto Sans JP', var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
   --animate-marquee: marquee 30s linear infinite;
   --animate-spin-slow: spin 8s linear infinite;
