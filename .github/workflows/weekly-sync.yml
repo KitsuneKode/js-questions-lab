@@ -16,57 +16,51 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Require automation token
+        env:
+          AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          if [ -z "$AUTOMATION_PAT" ]; then
+            echo "::error::AUTOMATION_PAT is required so weekly sync PRs trigger CI."
+            exit 1
+          fi
+
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          ref: dev
+          token: ${{ secrets.AUTOMATION_PAT }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.9"
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
       - name: Refresh all locale sources and generated data
         run: bun run content:refresh
 
-      - name: Detect changes
-        id: changes
+      - name: Classify sync diff
+        id: diff
+        run: bun run content:check-sync-diff
+
+      - name: Skip metadata-only changes
+        if: steps.diff.outputs.changed == 'true' && steps.diff.outputs.semanticChanged != 'true'
         run: |
-          if git diff --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          echo "Only metadata/timestamp changes were detected. No PR will be opened."
 
       - name: Create pull request
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.diff.outputs.semanticChanged == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ secrets.AUTOMATION_PAT }}
           commit-message: "chore(content): weekly sync from upstream javascript-questions"
           title: "chore(content): weekly upstream sync (all locales)"
-          body: |
-            Automated weekly refresh from https://github.com/lydiahallie/javascript-questions.
-
-            ## Source files updated
-
-            | Locale | Source Path |
-            |--------|------------|
-            | en | content/source/locales/en/README.upstream.md |
-            | es | content/source/locales/es/README.upstream.md |
-            | fr | content/source/locales/fr/README.upstream.md |
-            | de | content/source/locales/de/README.upstream.md |
-            | ja | content/source/locales/ja/README.upstream.md |
-            | pt-BR | content/source/locales/pt-BR/README.upstream.md |
-
-            ## Generated content updated
-
-            - `content/generated/locales/<locale>/questions.v1.json` (all available locales)
-            - `content/generated/locales/<locale>/manifest.v1.json` (all available locales)
-            - `content/generated/locales/index.json` (locale availability index)
-            - `content/generated/questions.v1.json` (English alias for backwards compat)
-            - `content/generated/manifest.v1.json` (English alias for backwards compat)
-
-            > **Note:** Translated READMEs may lag behind English. Check the locale index for
-            > per-locale question counts and coverage.
+          body-path: ${{ steps.diff.outputs.bodyPath }}
           branch: chore/weekly-content-sync
+          base: dev
           delete-branch: true
           labels: |
             content
