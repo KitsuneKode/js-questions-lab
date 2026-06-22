@@ -5,6 +5,12 @@ import type { ProgressItem, ProgressState } from '@/lib/progress/storage';
 // Types
 // ---------------------------------------------------------------------------
 
+/** Minimal question shape for client-side progress analytics. */
+export interface QuestionRef {
+  id: number;
+  title: string;
+}
+
 export interface QuestionStats {
   questionId: number;
   totalAttempts: number;
@@ -39,7 +45,7 @@ export interface DailyActivity {
 }
 
 export interface PracticeSuggestion {
-  question: QuestionSummary | null;
+  question: QuestionRef | null;
   labelKey: string;
   labelParams?: Record<string, string>;
   description: string;
@@ -261,7 +267,7 @@ export function getReviewQueue(
 
 export function getContinueLearningSuggestion(
   progress: ProgressState,
-  questions: QuestionSummary[],
+  questions: QuestionRef[],
 ): PracticeSuggestion {
   const attempted = Object.values(progress.questions)
     .filter((item) => item.attempts.length > 0)
