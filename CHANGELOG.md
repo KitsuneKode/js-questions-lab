@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.0...js-questions-lab-v0.1.1) (2026-06-22)
 
-
 ### Added
 
 * add dom event replay ui and tests ([99db9dc](https://github.com/KitsuneKode/js-questions-lab/commit/99db9dc9e9cf744fadce8b3acc63dac98fdcbbc8))
@@ -64,7 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **web:** clean sandbox error output and validate worker messages ([9928220](https://github.com/KitsuneKode/js-questions-lab/commit/9928220b80e9d7ed7fe4d8389f842517d617795b))
 * **web:** improve worker runner, scratchpad sheet, and event loop replay ([982fe61](https://github.com/KitsuneKode/js-questions-lab/commit/982fe61cb96742abbafcb51b0b4734e89f2b7ac1))
 * **web:** optimize rendering, auth redirects, and dashboard UX ([2eb655a](https://github.com/KitsuneKode/js-questions-lab/commit/2eb655aad0c99ec712d82bf027ef51df8ac1125d))
-
 
 ### Fixed
 
@@ -168,11 +166,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **web:** remove duplicate scratchpad error state ([67ffbe2](https://github.com/KitsuneKode/js-questions-lab/commit/67ffbe293691674a0201b62395f7d4e81c4e0c21))
 * **web:** static metadata assets and preserve discovery context ([b6fa4f5](https://github.com/KitsuneKode/js-questions-lab/commit/b6fa4f57690261fb27f6cbf1226cc053141827d4))
 
-
 ### Performance
 
 * optimize nextjs static generation and client filtering ([1b8e0c9](https://github.com/KitsuneKode/js-questions-lab/commit/1b8e0c9e991d32d7a40e262ca17dbf89373a0612))
-
 
 ### Changed
 

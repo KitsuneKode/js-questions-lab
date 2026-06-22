@@ -8,20 +8,20 @@ import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 
 const robotoMono = Roboto_Mono({
-  subsets: ['cyrillic', 'cyrillic-ext', 'greek', 'latin', 'latin-ext', 'vietnamese'],
-  weight: ['100', '200', '300', '400', '500', '600', '700'],
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500'],
   variable: '--font-roboto-mono',
 });
 
 const geist = Geist({
-  subsets: ['cyrillic', 'latin', 'latin-ext'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600'],
   variable: '--font-geist',
 });
 
 const bricolageGrotesque = Bricolage_Grotesque({
-  subsets: ['latin', 'latin-ext', 'vietnamese'],
-  weight: ['200', '300', '400', '500', '600', '700', '800'],
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '600', '700'],
   variable: '--font-bricolage-grotesque',
 });
 

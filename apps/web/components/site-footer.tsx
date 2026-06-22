@@ -9,7 +9,7 @@ import { BrandMark } from '@/components/brand-mark';
 import { getLocaleFromPathname, withLocale } from '@/lib/locale-paths';
 import { siteConfig, siteLinks } from '@/lib/site-config';
 
-export function SiteFooter() {
+export function SiteFooter({ appVersion }: { appVersion?: string }) {
   const tNav = useTranslations('nav');
   const tFooter = useTranslations('footer');
   const pathname = usePathname();
@@ -19,6 +19,7 @@ export function SiteFooter() {
     product: [
       { href: withLocale(locale, siteLinks.questions), label: tNav('questions') },
       { href: withLocale(locale, siteLinks.progress), label: tNav('progress') },
+      { href: withLocale(locale, siteLinks.releaseNotes), label: tNav('releaseNotes') },
       { href: withLocale(locale, siteLinks.credits), label: tNav('credits') },
     ],
     resources: [
@@ -138,7 +139,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border/40 pt-4">
+        <div className="mt-8 border-t border-border/40 pt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-3xl text-xs leading-6 text-tertiary">
             {tFooter('contentNote')}{' '}
             <Link
@@ -148,6 +149,14 @@ export function SiteFooter() {
               {tFooter('learnMore')}
             </Link>
           </p>
+          {appVersion ? (
+            <Link
+              href={withLocale(locale, siteLinks.releaseNotes)}
+              className="text-xs font-mono text-tertiary transition-colors hover:text-primary shrink-0"
+            >
+              {siteConfig.shortName} · v{appVersion.replace(/^v/, '')}
+            </Link>
+          ) : null}
         </div>
       </div>
     </footer>

@@ -6,6 +6,7 @@
     "account": "アカウント",
     "about": "について",
     "credits": "クレジット",
+    "releaseNotes": "リリースノート",
     "scratchpad": "スクラッチパッド",
     "language": "言語",
     "contact": "お問い合わせ",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - JavaScript面接対策をマスター",
     "description": "Lydia Hallieの問題集を基にした、実行可能なスニペットとイベントループ可視化を備えたインタラクティブなJavaScript面接練習。"
+  },
+  "releaseNotes": {
+    "title": "リリースノート",
+    "description": "JS Questions Lab の最新の変更を確認できます。",
+    "eyebrow": "変更履歴",
+    "intro": "各バージョンでリリースされた内容を確認できます。",
+    "englishNote": "エントリは英語です（コミットメッセージ由来）。",
+    "emptyTitle": "まだリリースがありません",
+    "emptyBody": "最初の本番リリースは main へのマージ後にここに表示されます。",
+    "navigateLabel": "バージョンを選択…",
+    "currentVersionLabel": "バージョンナビゲーション",
+    "githubRelease": "GitHub Release",
+    "compareChanges": "変更を比較",
+    "sections": {
+      "added": "追加",
+      "fixed": "修正",
+      "changed": "変更",
+      "performance": "パフォーマンス",
+      "security": "セキュリティ"
+    }
   },
   "footer": {
     "builtBy": "制作者",

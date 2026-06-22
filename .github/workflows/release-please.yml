@@ -1,0 +1,55 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require automation token
+        env:
+          AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          if [ -z "$AUTOMATION_PAT" ]; then
+            echo "::error::AUTOMATION_PAT is required so release-please PRs trigger CI."
+            exit 1
+          fi
+
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          target-branch: main
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Queue Release PR auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          PR_NUMBER=$(gh pr list \
+            --state open \
+            --base main \
+            --head release-please--branches--main \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open Release PR to auto-merge."
+            exit 0
+          fi
+
+          gh pr merge "$PR_NUMBER" --auto --merge
+          echo "Release PR #${PR_NUMBER} is queued for auto-merge after required CI passes."

@@ -6,6 +6,7 @@
     "account": "Konto",
     "about": "Über uns",
     "credits": "Mitwirkende",
+    "releaseNotes": "Versionshinweise",
     "scratchpad": "Notizblock",
     "language": "Sprache",
     "contact": "Kontakt",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - JavaScript Interview Vorbereitung",
     "description": "Interaktive JavaScript-Interviewvorbereitung mit Lydia Hallie's Fragen, ausführbaren Snippets und Event-Loop-Visualisierungen."
+  },
+  "releaseNotes": {
+    "title": "Versionshinweise",
+    "description": "Bleib auf dem Laufenden über die neuesten Änderungen an JS Questions Lab.",
+    "eyebrow": "Changelog",
+    "intro": "Sieh nach, was in jeder Version von JS Questions Lab veröffentlicht wurde.",
+    "englishNote": "Einträge sind auf Englisch (aus Commit-Nachrichten).",
+    "emptyTitle": "Noch keine Releases",
+    "emptyBody": "Das erste Production-Release erscheint hier nach dem Merge auf main.",
+    "navigateLabel": "Version wählen…",
+    "currentVersionLabel": "Versionsnavigation",
+    "githubRelease": "GitHub Release",
+    "compareChanges": "Änderungen vergleichen",
+    "sections": {
+      "added": "Neu",
+      "fixed": "Behoben",
+      "changed": "Geändert",
+      "performance": "Performance",
+      "security": "Sicherheit"
+    }
   },
   "footer": {
     "builtBy": "Erstellt von",

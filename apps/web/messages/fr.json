@@ -6,6 +6,7 @@
     "account": "Compte",
     "about": "À propos",
     "credits": "Crédits",
+    "releaseNotes": "Notes de version",
     "scratchpad": "Bloc-notes",
     "language": "Langue",
     "contact": "Contact",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - Maîtrisez les Entretiens JavaScript",
     "description": "Pratique interactive d'entretiens JavaScript avec des extraits de code exécutables et des visualisations de la boucle d'événements."
+  },
+  "releaseNotes": {
+    "title": "Notes de version",
+    "description": "Suivez les dernières modifications de JS Questions Lab.",
+    "eyebrow": "Changelog",
+    "intro": "Découvrez ce qui a été publié dans chaque version de JS Questions Lab.",
+    "englishNote": "Les entrées sont en anglais (messages de commit).",
+    "emptyTitle": "Aucune version publiée",
+    "emptyBody": "La première version de production apparaîtra ici après le merge sur main.",
+    "navigateLabel": "Aller à la version…",
+    "currentVersionLabel": "Navigation des versions",
+    "githubRelease": "Release GitHub",
+    "compareChanges": "Comparer les changements",
+    "sections": {
+      "added": "Ajouté",
+      "fixed": "Corrigé",
+      "changed": "Modifié",
+      "performance": "Performance",
+      "security": "Sécurité"
+    }
   },
   "footer": {
     "builtBy": "Créé par",
