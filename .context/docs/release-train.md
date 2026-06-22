@@ -12,22 +12,22 @@ Architecture for promoting `dev` to production (`main`) and surfacing releases o
 ## Flow
 
 ```text
-feature PR → dev (CI) → release-please opens Release PR → CI passes → auto-merge to main
-  → GitHub tag + Release → sync-main opens main→dev PR → auto-merge to dev
+feature PR → dev (CI) → promote-dev opens dev→main PR → CI passes → auto-merge to main
+  → release-please opens Release PR on main → auto-merge → GitHub tag + Release
+  → sync-main opens main→dev PR → auto-merge to dev
 ```
 
 1. **Feature work** merges to `dev` after CI passes.
-2. **release-please** (`/.github/workflows/release-please.yml`) runs on pushes to `dev` and `main`.
-   - On `dev`, it aggregates conventional commits **since the last tag on `main`** and opens/updates a **Release PR targeting `main`**.
-   - On `main`, it creates the Git tag and GitHub Release after the Release PR lands.
-3. The Release PR is queued for **auto-merge**. Branch protection keeps it blocked until Typecheck, Test, Lint, and Build pass.
-4. **sync-main** (`/.github/workflows/sync-main.yml`) runs on every `push` to `main` and opens a PR to merge `main` back into `dev` (absorbs the merge commit). That PR is also queued for auto-merge.
-5. **release-health** (`/.github/workflows/release-health.yml`) verifies the branch rules, baseline tag, automation token, and Release PR checks.
-6. **weekly-sync** remains independent — content PRs target `dev`.
+2. **promote-dev** (`/.github/workflows/promote-dev.yml`) opens or refreshes a full-code `dev` → `main` PR and queues auto-merge. Branch protection keeps it blocked until Typecheck, Test, Lint, and Build pass.
+3. **release-please** (`/.github/workflows/release-please.yml`) runs on pushes to `main`, opens/updates a Release PR on `main`, and queues auto-merge for the changelog/version bump.
+4. After the Release PR lands, release-please creates the Git tag and GitHub Release.
+5. **sync-main** (`/.github/workflows/sync-main.yml`) runs on every `push` to `main` and opens a PR to merge `main` back into `dev` (absorbs release metadata and merge commits). That PR is also queued for auto-merge.
+6. **release-health** (`/.github/workflows/release-health.yml`) verifies the branch rules, baseline tag, automation token, and Release PR checks.
+7. **weekly-sync** remains independent — content PRs target `dev`.
 
 ## When does `main` update?
 
-Only when a **Release PR auto-merges after green CI** — not on a timer and not on every `dev` push.
+Only when a **promotion PR auto-merges after green CI** — not by direct push. The release metadata PR may update `main` again shortly after promotion.
 
 ## Website integration
 
