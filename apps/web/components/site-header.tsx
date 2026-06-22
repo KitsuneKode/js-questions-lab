@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { AuthControls } from '@/components/auth-controls';
 import { BrandMark } from '@/components/brand-mark';
@@ -186,7 +186,9 @@ export function SiteHeader() {
               </DropdownMenu>
 
               <div className="mx-1 h-4 w-px bg-border/50" />
-              <AuthControls />
+              <Suspense fallback={null}>
+                <AuthControls />
+              </Suspense>
             </div>
 
             {/* Keyboard shortcuts button */}
@@ -289,7 +291,9 @@ export function SiteHeader() {
             </div>
 
             <div className="mt-auto pb-8">
-              <AuthControls />
+              <Suspense fallback={null}>
+                <AuthControls />
+              </Suspense>
             </div>
           </motion.div>
         ) : null}

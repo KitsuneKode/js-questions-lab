@@ -1,0 +1,64 @@
+name: Branch Sync PR
+description: Open or refresh a sync PR between two branches and optionally enable auto-merge
+
+inputs:
+  base:
+    description: Base branch (PR target)
+    required: true
+  head:
+    description: Head branch (PR source)
+    required: true
+  title:
+    description: PR title
+    required: true
+  body:
+    description: PR body
+    required: true
+  auto_merge:
+    description: Enable auto-merge when PR exists or after create
+    required: false
+    default: "true"
+  token:
+    description: GitHub token for gh CLI (AUTOMATION_PAT required for auto-merge)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        BASE: ${{ inputs.base }}
+        HEAD: ${{ inputs.head }}
+        AUTO_MERGE: ${{ inputs.auto_merge }}
+        PR_TITLE: ${{ inputs.title }}
+        PR_BODY: ${{ inputs.body }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "${GH_TOKEN:-}" ]; then
+          echo "::error::A GitHub token is required for branch sync PR creation."
+          exit 1
+        fi
+
+        git fetch origin "$BASE" "$HEAD"
+
+        if git diff --quiet "origin/$BASE..origin/$HEAD"; then
+          echo "No changes between $BASE and $HEAD"
+          exit 0
+        fi
+
+        EXISTING=$(gh pr list --state open --base "$BASE" --head "$HEAD" --json number --jq '.[0].number // empty')
+
+        if [ -n "$EXISTING" ]; then
+          echo "PR #$EXISTING already open"
+          PR="$EXISTING"
+        else
+          PR=$(gh pr create --base "$BASE" --head "$HEAD" --title "$PR_TITLE" --body "$PR_BODY" | grep -oE '[0-9]+$')
+          echo "Created PR #$PR"
+        fi
+
+        if [ "$AUTO_MERGE" = "true" ]; then
+          gh pr merge "$PR" --auto --merge
+          echo "PR #$PR is queued for auto-merge after required CI passes"
+        fi

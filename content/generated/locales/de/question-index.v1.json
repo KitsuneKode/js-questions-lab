@@ -1,0 +1,752 @@
+{
+  "schemaVersion": 1,
+  "locale": "de",
+  "byId": {
+    "1": {
+      "tags": [
+        "scope",
+        "objects",
+        "types"
+      ]
+    },
+    "2": {
+      "tags": [
+        "async",
+        "scope",
+        "operators"
+      ]
+    },
+    "3": {
+      "tags": [
+        "scope",
+        "objects",
+        "types"
+      ]
+    },
+    "4": {
+      "tags": [
+        "types"
+      ]
+    },
+    "5": {
+      "tags": [
+        "objects",
+        "types"
+      ]
+    },
+    "6": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "7": {
+      "tags": [
+        "objects",
+        "prototypes"
+      ]
+    },
+    "8": {
+      "tags": [
+        "prototypes"
+      ]
+    },
+    "9": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "10": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "11": {
+      "tags": [
+        "objects",
+        "prototypes",
+        "template-literals"
+      ]
+    },
+    "12": {
+      "tags": [
+        "objects",
+        "types"
+      ]
+    },
+    "13": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "14": {
+      "tags": [
+        "prototypes"
+      ]
+    },
+    "15": {
+      "tags": [
+        "types"
+      ]
+    },
+    "16": {
+      "tags": [
+        "operators"
+      ]
+    },
+    "17": {
+      "tags": [
+        "arrays",
+        "template-literals"
+      ]
+    },
+    "18": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "19": {
+      "tags": [
+        "objects",
+        "arrays",
+        "types",
+        "operators"
+      ]
+    },
+    "20": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "21": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "22": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "23": {
+      "tags": [
+        "scope"
+      ]
+    },
+    "24": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "25": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "26": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "27": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "28": {
+      "tags": [
+        "objects",
+        "prototypes"
+      ]
+    },
+    "29": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "30": {
+      "tags": [
+        "async"
+      ]
+    },
+    "31": {
+      "tags": [
+        "dom-events"
+      ]
+    },
+    "32": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "33": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "34": {
+      "tags": [
+        "objects",
+        "types"
+      ]
+    },
+    "35": {
+      "tags": [
+        "prototypes",
+        "types"
+      ]
+    },
+    "36": {
+      "tags": [
+        "types",
+        "operators"
+      ]
+    },
+    "37": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "38": {
+      "tags": [
+        "scope",
+        "types"
+      ]
+    },
+    "39": {
+      "tags": [
+        "prototypes",
+        "types"
+      ]
+    },
+    "40": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "41": {
+      "tags": [
+        "types"
+      ]
+    },
+    "42": {
+      "tags": [
+        "async"
+      ]
+    },
+    "43": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "44": {
+      "tags": [
+        "generators"
+      ]
+    },
+    "45": {
+      "tags": [
+        "async"
+      ]
+    },
+    "46": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "47": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "48": {
+      "tags": [
+        "types"
+      ]
+    },
+    "49": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "50": {
+      "tags": [
+        "arrays",
+        "types",
+        "operators"
+      ]
+    },
+    "51": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "52": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "53": {
+      "tags": [
+        "prototypes"
+      ]
+    },
+    "54": {
+      "tags": [
+        "scope",
+        "types",
+        "operators"
+      ]
+    },
+    "55": {
+      "tags": [
+        "prototypes",
+        "types",
+        "operators"
+      ]
+    },
+    "56": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "57": {
+      "tags": [
+        "modules"
+      ]
+    },
+    "58": {
+      "tags": [
+        "operators"
+      ]
+    },
+    "59": {
+      "tags": [
+        "objects",
+        "arrays"
+      ]
+    },
+    "60": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "61": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "62": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "63": {
+      "tags": [
+        "operators"
+      ]
+    },
+    "64": {
+      "tags": [
+        "types"
+      ]
+    },
+    "65": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "66": {
+      "tags": [
+        "scope",
+        "objects",
+        "prototypes"
+      ]
+    },
+    "67": {
+      "tags": [
+        "prototypes",
+        "modules"
+      ]
+    },
+    "68": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "69": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "70": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "71": {
+      "tags": [
+        "generators"
+      ]
+    },
+    "72": {
+      "tags": [
+        "scope",
+        "template-literals"
+      ]
+    },
+    "73": {
+      "tags": [
+        "async"
+      ]
+    },
+    "74": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "75": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "76": {
+      "tags": [
+        "scope",
+        "objects"
+      ]
+    },
+    "77": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "78": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "79": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "80": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "81": {
+      "tags": [
+        "types"
+      ]
+    },
+    "82": {
+      "tags": [
+        "async"
+      ]
+    },
+    "83": {
+      "tags": [
+        "types"
+      ]
+    },
+    "84": {
+      "tags": [
+        "scope",
+        "objects"
+      ]
+    },
+    "85": {
+      "tags": [
+        "types"
+      ]
+    },
+    "86": {
+      "tags": [
+        "types"
+      ]
+    },
+    "87": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "88": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "89": {
+      "tags": [
+        "types",
+        "modules"
+      ]
+    },
+    "90": {
+      "tags": [
+        "objects",
+        "types",
+        "operators"
+      ]
+    },
+    "91": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "92": {
+      "tags": [
+        "objects",
+        "prototypes",
+        "types"
+      ]
+    },
+    "93": {
+      "tags": [
+        "scope",
+        "objects",
+        "arrays"
+      ]
+    },
+    "94": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "95": {
+      "tags": [
+        "types"
+      ]
+    },
+    "96": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "97": {
+      "tags": [
+        "objects",
+        "arrays"
+      ]
+    },
+    "98": {
+      "tags": [
+        "scope",
+        "arrays",
+        "types"
+      ]
+    },
+    "99": {
+      "tags": [
+        "scope",
+        "objects"
+      ]
+    },
+    "100": {
+      "tags": [
+        "types"
+      ]
+    },
+    "101": {
+      "tags": [
+        "arrays",
+        "types"
+      ]
+    },
+    "102": {
+      "tags": [
+        "async"
+      ]
+    },
+    "103": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "104": {
+      "tags": [
+        "async"
+      ]
+    },
+    "105": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "106": {
+      "tags": [
+        "types"
+      ]
+    },
+    "107": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "108": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "109": {
+      "tags": [
+        "objects",
+        "arrays"
+      ]
+    },
+    "110": {
+      "tags": [
+        "scope",
+        "objects",
+        "arrays"
+      ]
+    },
+    "111": {
+      "tags": [
+        "scope",
+        "objects"
+      ]
+    },
+    "112": {
+      "tags": [
+        "arrays",
+        "types",
+        "generators"
+      ]
+    },
+    "113": {
+      "tags": [
+        "template-literals"
+      ]
+    },
+    "114": {
+      "tags": [
+        "async",
+        "types"
+      ]
+    },
+    "115": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "116": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "117": {
+      "tags": [
+        "objects"
+      ]
+    },
+    "118": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "119": {
+      "tags": [
+        "types"
+      ]
+    },
+    "120": {
+      "tags": [
+        "types"
+      ]
+    },
+    "121": {
+      "tags": [
+        "types"
+      ]
+    },
+    "122": {
+      "tags": [
+        "objects",
+        "types",
+        "operators"
+      ]
+    },
+    "123": {
+      "tags": [
+        "scope"
+      ]
+    },
+    "124": {
+      "tags": [
+        "async",
+        "generators"
+      ]
+    },
+    "125": {
+      "tags": [
+        "types"
+      ]
+    },
+    "126": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "127": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "128": {
+      "tags": [
+        "types"
+      ]
+    },
+    "129": {
+      "tags": [
+        "scope",
+        "objects",
+        "types",
+        "operators"
+      ]
+    },
+    "130": {
+      "tags": [
+        "async"
+      ]
+    },
+    "131": {
+      "tags": [
+        "arrays"
+      ]
+    },
+    "132": {
+      "tags": [
+        "fundamentals"
+      ]
+    },
+    "133": {
+      "tags": [
+        "async",
+        "types"
+      ]
+    }
+  },
+  "tagCounts": {
+    "scope": 17,
+    "objects": 36,
+    "types": 47,
+    "async": 12,
+    "operators": 12,
+    "prototypes": 12,
+    "template-literals": 4,
+    "fundamentals": 27,
+    "arrays": 25,
+    "dom-events": 1,
+    "generators": 4,
+    "modules": 3
+  }
+}

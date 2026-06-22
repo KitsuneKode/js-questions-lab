@@ -63,7 +63,7 @@ If you are working on specific domains, **you must read the relevant guide first
 - All new work goes on a feature branch (`feat/`, `fix/`, `chore/` prefix).
 - **All upstream changes and PRs must target the `dev` branch.**
 - We use `dev` as our staging environment and primary source of work.
-- After changes are made, reviewed, and validated in `dev`, they are merged into `main`.
+- After changes are made, reviewed, and validated in `dev`, `promote-dev.yml` opens a full-code promotion PR to `main`; release-please then handles changelog/version releases on `main`.
 - The main website is deployed directly from the `main` branch.
-- Never commit directly to `main` for feature or fix work.
-- **After every dev→main merge PR**, run `git checkout dev && git merge origin/main && git push origin dev` to pull the merge commit back into `dev`. GitHub's merge commit lands only on `main`, leaving `dev` 1 commit behind — this re-sync keeps the branches aligned.
+- Never commit or push directly to `main` or `dev` for feature or fix work — branch protection enforces PR-only merges.
+- **Reverse sync** from `main` to `dev` is automated by `sync-main.yml` when `main` is updated. `release-health.yml` verifies branch protection, release PR checks, and automation-token availability. See [`.context/docs/release-train.md`](.context/docs/release-train.md).

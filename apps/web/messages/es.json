@@ -6,6 +6,7 @@
     "account": "Cuenta",
     "about": "Acerca de",
     "credits": "Créditos",
+    "releaseNotes": "Notas de versión",
     "scratchpad": "Bloc de notas",
     "language": "Idioma",
     "contact": "Contacto",
@@ -260,6 +261,26 @@
   "meta": {
     "title": "JS Questions Lab - Domina Entrevistas de JavaScript",
     "description": "Práctica interactiva de entrevistas de JavaScript con fragmentos ejecutables y visualizaciones del bucle de eventos."
+  },
+  "releaseNotes": {
+    "title": "Notas de versión",
+    "description": "Mantente al día con los últimos cambios de JS Questions Lab.",
+    "eyebrow": "Changelog",
+    "intro": "Consulta lo publicado en cada versión de JS Questions Lab.",
+    "englishNote": "Las entradas están en inglés (mensajes de commit).",
+    "emptyTitle": "Aún no hay releases",
+    "emptyBody": "El primer release de producción aparecerá aquí tras el merge a main.",
+    "navigateLabel": "Ir a la versión…",
+    "currentVersionLabel": "Navegación de versiones",
+    "githubRelease": "Release en GitHub",
+    "compareChanges": "Comparar cambios",
+    "sections": {
+      "added": "Añadido",
+      "fixed": "Corregido",
+      "changed": "Cambiado",
+      "performance": "Rendimiento",
+      "security": "Seguridad"
+    }
   },
   "footer": {
     "builtBy": "Creado por",

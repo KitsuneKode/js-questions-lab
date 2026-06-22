@@ -1,13 +1,13 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import type { Metadata } from 'next';
+import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { ContinueLearningShelf } from '@/components/continue-learning-shelf';
+import { HeroSkeleton } from '@/components/landing/hero-skeleton';
 import { ReactBentoSection } from '@/components/landing/react-bento-section';
-import { LandingHero } from '@/components/landing-hero';
-import { LandingSections } from '@/components/landing-sections';
 import { QuestionCard } from '@/components/question-card';
 import {
   getManifest,
@@ -17,6 +17,16 @@ import {
 import type { LocaleCode } from '@/lib/i18n/config';
 import { getAlternateLanguages, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
+
+const LandingHero = nextDynamic(
+  () => import('@/components/landing-hero').then((mod) => mod.LandingHero),
+  { loading: () => <HeroSkeleton /> },
+);
+
+const LandingSections = nextDynamic(
+  () => import('@/components/landing-sections').then((mod) => mod.LandingSections),
+  { loading: () => null },
+);
 
 export const dynamic = 'force-static';
 
@@ -55,6 +65,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const manifest = getManifest(locale);
   const questions = getQuestionSummaries(locale);
+  const questionRefs = questions.map(({ id, title }) => ({ id, title }));
   const featured = getQuestionDiscoveryIndex(locale).slice(0, 6);
 
   const tagCounts = Object.entries(
@@ -79,7 +90,7 @@ export default async function HomePage({ params }: HomePageProps) {
           locale={locale}
         />
 
-        <ContinueLearningShelf questions={questions} locale={locale} />
+        <ContinueLearningShelf questionRefs={questionRefs} locale={locale} />
 
         <ReactBentoSection />
 
