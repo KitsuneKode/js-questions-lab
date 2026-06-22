@@ -63,10 +63,17 @@ export default async function ReactQuestionPage({
     notFound();
   }
 
+  const discoveryIndex = getReactDiscoveryIndex();
+  const currentIndex = discoveryIndex.findIndex((item) => item.id === id);
+  const nextQuestionId =
+    currentIndex >= 0 && currentIndex < discoveryIndex.length - 1
+      ? discoveryIndex[currentIndex + 1]?.id
+      : null;
+
   return (
     <main className="min-h-dvh bg-void overflow-hidden pt-26">
       <div className="h-[calc(100dvh-6.5rem)] min-h-[640px] overflow-hidden">
-        <ReactIDEDynamic question={question} />
+        <ReactIDEDynamic question={question} locale={locale} nextQuestionId={nextQuestionId} />
       </div>
     </main>
   );
