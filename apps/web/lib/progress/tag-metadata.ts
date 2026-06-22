@@ -14,12 +14,12 @@ const defaultIndex = enIndex as QuestionIndex;
  * Locale-aware tag counts are not yet supported due to bundle size constraints.
  */
 export function getTagQuestionCounts(_locale = 'en'): Record<string, number> {
-  return defaultIndex.tagCounts;
+  return { ...defaultIndex.tagCounts };
 }
 
 /**
  * @param _locale - Currently unused. Always returns English index data.
  */
 export function getQuestionTags(id: number, _locale = 'en'): string[] {
-  return defaultIndex.byId[String(id)]?.tags ?? [];
+  return [...(defaultIndex.byId[String(id)]?.tags ?? [])];
 }

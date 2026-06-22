@@ -74,10 +74,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <div
       lang={locale}
       dir={dir}
-      className={cn(
-        'contents',
-        isJapanese && 'ja-locale font-[family-name:var(--font-ja-fallback)]',
-      )}
+      className={cn('contents', isJapanese && 'ja-locale font-(family-name:--font-ja-fallback)')}
     >
       <JaFontLoader locale={locale} />
       <SiteJsonLd />

@@ -40,9 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loader = localeLoaders[locale] ?? localeLoaders.en;
     let cancelled = false;
-    void loader().then((resource) => {
-      if (!cancelled) setLocalization(resource);
-    });
+    void loader()
+      .then((resource) => {
+        if (!cancelled) setLocalization(resource);
+      })
+      .catch(() => {
+        if (!cancelled) setLocalization(enUS);
+      });
     return () => {
       cancelled = true;
     };
