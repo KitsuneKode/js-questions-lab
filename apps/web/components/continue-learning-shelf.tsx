@@ -2,20 +2,31 @@
 
 import { IconArrowRight as ArrowRight, IconPlayerPlay as Play } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { QuestionSummary } from '@/lib/content/types';
-import { useAnalytics } from '@/lib/progress/use-analytics';
+import {
+  computeOverallStats,
+  getContinueLearningSuggestion,
+  type QuestionRef,
+} from '@/lib/progress/analytics';
+import { useProgress } from '@/lib/progress/progress-context';
 
 interface ContinueLearningShelfProps {
-  questions: QuestionSummary[];
+  questionRefs: QuestionRef[];
   locale: string;
 }
 
-export function ContinueLearningShelf({ questions, locale }: ContinueLearningShelfProps) {
+export function ContinueLearningShelf({ questionRefs, locale }: ContinueLearningShelfProps) {
   const t = useTranslations('landing');
-  const { ready, continueLearning, overall } = useAnalytics(questions);
+  const { state, ready } = useProgress();
+
+  const overall = useMemo(() => computeOverallStats(state), [state]);
+  const continueLearning = useMemo(
+    () => getContinueLearningSuggestion(state, questionRefs),
+    [questionRefs, state],
+  );
 
   if (!ready || overall.totalAnswered === 0 || !continueLearning.question) {
     return null;

@@ -355,9 +355,26 @@ function parseLocale(locale) {
     },
   };
 
+  const outIndex = path.join(outDir, 'question-index.v1.json');
+  const tagCounts = {};
+  const byId = {};
+  for (const q of questions) {
+    byId[String(q.id)] = { tags: q.tags ?? [] };
+    for (const tag of q.tags ?? []) {
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    }
+  }
+  const questionIndex = {
+    schemaVersion: 1,
+    locale: locale.code,
+    byId,
+    tagCounts,
+  };
+
   ensureDir(outQuestions);
   fs.writeFileSync(outQuestions, `${JSON.stringify(questions, null, 2)}\n`, 'utf8');
   fs.writeFileSync(outManifest, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+  fs.writeFileSync(outIndex, `${JSON.stringify(questionIndex, null, 2)}\n`, 'utf8');
 
   console.log(
     `  [+] ${locale.code}: ${questions.length} questions → content/generated/locales/${locale.code}/`,

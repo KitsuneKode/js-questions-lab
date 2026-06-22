@@ -1,23 +1,13 @@
 import type { Metadata } from 'next';
-import { Noto_Sans_JP } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
-
-import { Provider } from '@/app/provider';
+import { JaFontLoader } from '@/components/i18n/ja-font-loader';
 import { SiteJsonLd } from '@/components/seo/site-json-ld';
 import { isValidLocale, LOCALE_DIRS, type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { getAlternateLanguages, getBaseUrl, getCanonicalUrl } from '@/lib/seo/config';
 import { siteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
-
-// Japanese CJK fallback font — only loaded for ja locale
-const notoSansJP = Noto_Sans_JP({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-noto-sans-jp',
-  display: 'swap',
-});
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -62,7 +52,6 @@ export async function generateMetadata({
       creator: siteConfig.creator.displayHandle,
     },
     other: {
-      // next-intl reads lang from here; root layout sets the html tag
       'x-locale': locale,
       'og:logo': `${getBaseUrl()}/icon`,
     },
@@ -82,13 +71,17 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const isJapanese = locale === 'ja';
 
   return (
-    // next-intl's plugin handles setting html lang/dir via the root layout.
-    // We wrap content only.
-    <div lang={locale} dir={dir} className={cn('contents', isJapanese && notoSansJP.variable)}>
+    <div
+      lang={locale}
+      dir={dir}
+      className={cn(
+        'contents',
+        isJapanese && 'ja-locale font-[family-name:var(--font-ja-fallback)]',
+      )}
+    >
+      <JaFontLoader locale={locale} />
       <SiteJsonLd />
-      <NextIntlClientProvider messages={messages}>
-        <Provider>{children}</Provider>
-      </NextIntlClientProvider>
+      <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
     </div>
   );
 }

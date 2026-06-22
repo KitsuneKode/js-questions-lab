@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import QuestionDetailLoading from '@/app/[locale]/questions/[id]/loading';
+import QuestionDetailLoading from '@/app/[locale]/(app)/questions/[id]/loading';
 
 export const QuestionIDEDynamic = dynamic(
   () =>
