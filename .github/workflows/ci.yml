@@ -3,6 +3,11 @@ name: CI
 on:
   push:
     branches: [dev]
+    paths-ignore:
+      - CHANGELOG.md
+      - .release-please-manifest.json
+      - package.json
+      - apps/web/package.json
   pull_request:
     branches: [dev, main]
 
@@ -22,17 +27,29 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       e2e: ${{ steps.filter.outputs.e2e }}
+      metadata_only: ${{ steps.meta.outputs.metadata_only }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Detect E2E-relevant changes
+      - name: Detect change scope
         id: filter
         uses: dorny/paths-filter@v4
         with:
           filters: |
+            metadata:
+              - CHANGELOG.md
+              - .release-please-manifest.json
+              - package.json
+              - apps/web/package.json
+            substantive:
+              - '**'
+              - '!CHANGELOG.md'
+              - '!.release-please-manifest.json'
+              - '!package.json'
+              - '!apps/web/package.json'
             e2e:
               - 'apps/web/app/**'
               - 'apps/web/components/**'
@@ -43,23 +60,48 @@ jobs:
               - 'apps/web/playwright.config.ts'
               - 'content/**'
               - 'scripts/**'
-              - 'package.json'
               - 'bun.lock'
+
+      - name: Classify metadata-only changes
+        id: meta
+        run: |
+          if [ "${{ steps.filter.outputs.metadata }}" = "true" ] && [ "${{ steps.filter.outputs.substantive }}" != "true" ]; then
+            echo "metadata_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "metadata_only=false" >> "$GITHUB_OUTPUT"
+          fi
 
   typecheck:
     name: Typecheck
+    needs: [changes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Metadata-only fast path
+        if: needs.changes.outputs.metadata_only == 'true'
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for (const file of ['.release-please-manifest.json', 'package.json', 'apps/web/package.json']) {
+            JSON.parse(fs.readFileSync(file, 'utf8'));
+          }
+          if (!fs.readFileSync('CHANGELOG.md', 'utf8').trim()) {
+            throw new Error('CHANGELOG.md is empty');
+          }
+          console.log('Release metadata files validated.');
+          "
+
       - name: Setup Bun
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.9"
 
       - name: Cache Bun install artifacts
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/cache@v5
         with:
           path: ~/.bun/install/cache
@@ -68,31 +110,41 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Enable Turborepo remote cache
-        if: ${{ vars.TURBO_TEAM != '' }}
+        if: needs.changes.outputs.metadata_only != 'true' && vars.TURBO_TEAM != ''
         run: |
           echo "TURBO_TEAM=${{ vars.TURBO_TEAM }}" >> "$GITHUB_ENV"
           echo "TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Typecheck
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun run typecheck
 
   test:
     name: Test
+    needs: [changes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Metadata-only fast path
+        if: needs.changes.outputs.metadata_only == 'true'
+        run: echo "Release metadata only — skipping tests."
+
       - name: Checkout
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/checkout@v6
 
       - name: Setup Bun
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.9"
 
       - name: Cache Bun install artifacts
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/cache@v5
         with:
           path: ~/.bun/install/cache
@@ -101,31 +153,41 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Enable Turborepo remote cache
-        if: ${{ vars.TURBO_TEAM != '' }}
+        if: needs.changes.outputs.metadata_only != 'true' && vars.TURBO_TEAM != ''
         run: |
           echo "TURBO_TEAM=${{ vars.TURBO_TEAM }}" >> "$GITHUB_ENV"
           echo "TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Test
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun run test
 
   lint:
     name: Lint
+    needs: [changes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Metadata-only fast path
+        if: needs.changes.outputs.metadata_only == 'true'
+        run: echo "Release metadata only — skipping lint."
+
       - name: Checkout
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/checkout@v6
 
       - name: Setup Bun
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.9"
 
       - name: Cache Bun install artifacts
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/cache@v5
         with:
           path: ~/.bun/install/cache
@@ -134,16 +196,18 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Install dependencies
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Lint
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun run lint
 
   e2e:
     name: E2E
     runs-on: ubuntu-latest
     needs: [changes]
-    if: needs.changes.outputs.e2e == 'true'
+    if: needs.changes.outputs.e2e == 'true' && needs.changes.outputs.metadata_only != 'true'
     timeout-minutes: 25
     steps:
       - name: Checkout
@@ -199,19 +263,26 @@ jobs:
 
   build:
     name: Build
+    needs: [changes, typecheck, test, lint]
     runs-on: ubuntu-latest
-    needs: [typecheck, test, lint]
     timeout-minutes: 20
     steps:
+      - name: Metadata-only fast path
+        if: needs.changes.outputs.metadata_only == 'true'
+        run: echo "Release metadata only — skipping build."
+
       - name: Checkout
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/checkout@v6
 
       - name: Setup Bun
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.9"
 
       - name: Cache Bun install artifacts
+        if: needs.changes.outputs.metadata_only != 'true'
         uses: actions/cache@v5
         with:
           path: ~/.bun/install/cache
@@ -220,15 +291,17 @@ jobs:
             bun-${{ runner.os }}-
 
       - name: Enable Turborepo remote cache
-        if: ${{ vars.TURBO_TEAM != '' }}
+        if: needs.changes.outputs.metadata_only != 'true' && vars.TURBO_TEAM != ''
         run: |
           echo "TURBO_TEAM=${{ vars.TURBO_TEAM }}" >> "$GITHUB_ENV"
           echo "TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Build
+        if: needs.changes.outputs.metadata_only != 'true'
         run: bun run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
