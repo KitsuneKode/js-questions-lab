@@ -17,6 +17,7 @@
     "github:protect-branches": "node scripts/github/apply-branch-protection.mjs",
     "github:check-release-train": "node scripts/github/check-release-train.mjs",
     "content:refresh": "bun run sync:upstream && bun run parse:questions",
+    "content:check-sync-diff": "node scripts/content/check-sync-diff.mjs",
     "clean": "find . -name node_modules -o -name .next -o -name .turbo -o -name dist -type d -prune | xargs rm -rf",
     "dev": "turbo run dev",
     "build": "turbo run build",

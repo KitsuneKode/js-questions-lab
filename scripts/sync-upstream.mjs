@@ -10,9 +10,19 @@ const ROOT = process.cwd();
 const LOCALES_BASE = path.join(ROOT, 'content/source/locales');
 const UPSTREAM_RAW_BASE =
   'https://raw.githubusercontent.com/lydiahallie/javascript-questions/master';
+const UPSTREAM_META_PATH = path.join(ROOT, 'content/source/upstream-meta.json');
 
 function sha256(input) {
   return crypto.createHash('sha256').update(input, 'utf8').digest('hex');
+}
+
+function readUpstreamMeta() {
+  if (!fs.existsSync(UPSTREAM_META_PATH)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(UPSTREAM_META_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
 }
 
 async function syncLocale(locale) {
@@ -31,7 +41,13 @@ async function syncLocale(locale) {
 
     if (!response.ok) {
       console.error(`  [!] Failed to fetch ${locale.code} README (${response.status})`);
-      return;
+      return {
+        code: locale.code,
+        upstreamPath: locale.upstreamPath,
+        localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+        changed: false,
+        error: `HTTP ${response.status}`,
+      };
     }
 
     const incoming = (await response.text()).replace(/\r\n/g, '\n');
@@ -44,7 +60,13 @@ async function syncLocale(locale) {
 
     if (before === after) {
       console.log(`  [=] No changes detected for ${locale.code}.`);
-      return;
+      return {
+        code: locale.code,
+        upstreamPath: locale.upstreamPath,
+        localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+        changed: false,
+        sha256: after,
+      };
     }
 
     fs.mkdirSync(path.dirname(localPath), { recursive: true });
@@ -53,8 +75,23 @@ async function syncLocale(locale) {
     console.log(`  [+] Updated ${locale.code} README at ${localPath}`);
     console.log(`      old=${before.slice(0, 8)}...`);
     console.log(`      new=${after.slice(0, 8)}...`);
+
+    return {
+      code: locale.code,
+      upstreamPath: locale.upstreamPath,
+      localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+      changed: true,
+      sha256: after,
+    };
   } catch (err) {
     console.error(`  [!] Error syncing ${locale.code}:`, err.message);
+    return {
+      code: locale.code,
+      upstreamPath: locale.upstreamPath,
+      localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+      changed: false,
+      error: err.message,
+    };
   }
 }
 
@@ -84,17 +121,43 @@ async function fetchUpstreamCommit() {
 }
 
 async function main() {
-  for (const locale of PILOT_LOCALES) {
-    await syncLocale(locale);
+  const existingMeta = readUpstreamMeta();
+  const commit = await fetchUpstreamCommit();
+
+  if (!commit) {
+    throw new Error(
+      'Unable to determine upstream commit SHA; aborting to avoid stale upstream metadata.',
+    );
   }
 
-  const commit = await fetchUpstreamCommit();
-  const metaPath = path.join(ROOT, 'content/source/upstream-meta.json');
+  if (existingMeta.commit === commit) {
+    console.log('  [=] Upstream commit unchanged; skipping source refresh.');
+    return;
+  }
+
+  const locales = [];
+  for (const locale of PILOT_LOCALES) {
+    const result = (await syncLocale(locale)) ?? {
+      code: locale.code,
+      upstreamPath: locale.upstreamPath,
+      localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+      changed: false,
+      error: 'sync returned no result',
+    };
+    locales.push(result);
+  }
+
+  const failedLocales = locales.filter((locale) => locale.error);
+  if (failedLocales.length > 0) {
+    const codes = failedLocales.map((locale) => locale.code).join(', ');
+    throw new Error(`Failed to sync upstream locale(s): ${codes}`);
+  }
+
   const meta = {
     commit,
-    fetchedAt: new Date().toISOString(),
+    locales,
   };
-  fs.writeFileSync(metaPath, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
+  fs.writeFileSync(UPSTREAM_META_PATH, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
   console.log(`  [+] Wrote upstream meta → content/source/upstream-meta.json`);
 }
 

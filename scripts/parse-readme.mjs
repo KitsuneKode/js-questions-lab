@@ -303,6 +303,51 @@ function ensureDir(filePath) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+function readStableGeneratedAt(manifestPath, sourceHash, questionCount, fallback) {
+  if (!fs.existsSync(manifestPath)) return fallback;
+
+  try {
+    const existing = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (
+      existing?.source?.sha256 === sourceHash &&
+      existing?.totals?.questions === questionCount &&
+      existing?.generatedAt
+    ) {
+      return existing.generatedAt;
+    }
+  } catch {
+    return fallback;
+  }
+
+  return fallback;
+}
+
+function localeStableKey(locale) {
+  return `${locale.code}:${locale.sourceHash}:${locale.questionCount}`;
+}
+
+function readStableRootGeneratedAt(indexPath, availableLocales, fallback) {
+  if (!fs.existsSync(indexPath)) return fallback;
+
+  try {
+    const existing = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    const existingAvailable = existing.available ?? [];
+    const existingKeys = existingAvailable.map(localeStableKey).sort();
+    const currentKeys = availableLocales.map(localeStableKey).sort();
+    const unchanged =
+      existingKeys.length === currentKeys.length &&
+      existingKeys.every((key, index) => key === currentKeys[index]);
+
+    if (unchanged && existing?.generatedAt) {
+      return existing.generatedAt;
+    }
+  } catch {
+    return fallback;
+  }
+
+  return fallback;
+}
+
 // ---------------------------------------------------------------------------
 // Per-locale parse
 // ---------------------------------------------------------------------------
@@ -325,10 +370,16 @@ function parseLocale(locale) {
   const outManifest = path.join(outDir, 'manifest.v1.json');
 
   const upstreamMeta = readUpstreamMeta();
+  const generatedAt = readStableGeneratedAt(
+    outManifest,
+    sourceHash,
+    questions.length,
+    new Date(sourceStats.mtimeMs).toISOString(),
+  );
 
   const manifest = {
     schemaVersion: 2,
-    generatedAt: new Date(sourceStats.mtimeMs).toISOString(),
+    generatedAt,
     locale: {
       code: locale.code,
       label: locale.label,
@@ -395,9 +446,16 @@ function parseLocale(locale) {
 
 function writeRootManifest(availableLocales) {
   const outPath = path.join(ROOT, 'content/generated/locales/index.json');
+  const latestLocaleGeneratedAt =
+    availableLocales
+      .map((locale) => locale.generatedAt)
+      .filter(Boolean)
+      .sort()
+      .at(-1) ?? '1970-01-01T00:00:00.000Z';
+  const generatedAt = readStableRootGeneratedAt(outPath, availableLocales, latestLocaleGeneratedAt);
   const index = {
     schemaVersion: 2,
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     supported: PILOT_LOCALES.map((l) => l.code),
     default: DEFAULT_LOCALE,
     available: availableLocales,
