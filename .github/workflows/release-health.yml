@@ -13,6 +13,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  administration: read
 
 jobs:
   check_release_train:
@@ -24,5 +25,5 @@ jobs:
       - name: Check release train invariants
         env:
           AUTOMATION_PAT: ${{ secrets.AUTOMATION_PAT }}
-          GH_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/github/check-release-train.mjs --require-automation-pat
