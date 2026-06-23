@@ -41,7 +41,13 @@ async function syncLocale(locale) {
 
     if (!response.ok) {
       console.error(`  [!] Failed to fetch ${locale.code} README (${response.status})`);
-      return;
+      return {
+        code: locale.code,
+        upstreamPath: locale.upstreamPath,
+        localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+        changed: false,
+        error: `HTTP ${response.status}`,
+      };
     }
 
     const incoming = (await response.text()).replace(/\r\n/g, '\n');
@@ -118,15 +124,27 @@ async function main() {
   const existingMeta = readUpstreamMeta();
   const commit = await fetchUpstreamCommit();
 
-  if (commit && existingMeta.commit === commit) {
+  if (!commit) {
+    throw new Error(
+      'Unable to determine upstream commit SHA; aborting to avoid stale upstream metadata.',
+    );
+  }
+
+  if (existingMeta.commit === commit) {
     console.log('  [=] Upstream commit unchanged; skipping source refresh.');
     return;
   }
 
   const locales = [];
   for (const locale of PILOT_LOCALES) {
-    const result = await syncLocale(locale);
-    if (result) locales.push(result);
+    const result = (await syncLocale(locale)) ?? {
+      code: locale.code,
+      upstreamPath: locale.upstreamPath,
+      localPath: `content/source/locales/${locale.code}/README.upstream.md`,
+      changed: false,
+      error: 'sync returned no result',
+    };
+    locales.push(result);
   }
 
   const failedLocales = locales.filter((locale) => locale.error);
@@ -136,7 +154,7 @@ async function main() {
   }
 
   const meta = {
-    commit: commit ?? existingMeta.commit ?? null,
+    commit,
     locales,
   };
   fs.writeFileSync(UPSTREAM_META_PATH, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');

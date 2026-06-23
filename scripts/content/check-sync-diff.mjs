@@ -23,10 +23,17 @@ function runGit(args, options = {}) {
 }
 
 function changedFiles() {
-  return runGit(['diff', '--name-only'])
+  const tracked = runGit(['diff', '--name-only', 'HEAD'])
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+
+  const untracked = runGit(['ls-files', '--others', '--exclude-standard'])
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return [...new Set([...tracked, ...untracked])];
 }
 
 function filePatch(file) {

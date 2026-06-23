@@ -30,6 +30,7 @@ jobs:
         with:
           ref: dev
           token: ${{ secrets.AUTOMATION_PAT }}
+          persist-credentials: false
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
