@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.6...js-questions-lab-v0.1.7) (2026-06-23)
+
+
+### Fixed
+
+* **ci:** use GITHUB_TOKEN for release-health branch protection reads ([#67](https://github.com/KitsuneKode/js-questions-lab/issues/67)) ([a414b0a](https://github.com/KitsuneKode/js-questions-lab/commit/a414b0a968a8408836ccd431a93e83c1fdb2803f))
+
 ## [0.1.6](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.5...js-questions-lab-v0.1.6) (2026-06-23)
 
 
