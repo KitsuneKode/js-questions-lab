@@ -42,9 +42,8 @@ jobs:
           PR_NUMBER=$(gh pr list \
             --state open \
             --base main \
-            --head release-please--branches--main \
-            --json number \
-            --jq '.[0].number // empty')
+            --json number,headRefName \
+            --jq '[.[] | select(.headRefName | startswith("release-please--branches--main"))][0].number // empty')
 
           if [ -z "$PR_NUMBER" ]; then
             echo "No open Release PR to auto-merge."
