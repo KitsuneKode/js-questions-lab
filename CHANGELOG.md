@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.3...js-questions-lab-v0.1.4) (2026-06-23)
+
+
+### Fixed
+
+* **ci:** match component release PR branch in auto-merge lookup ([#55](https://github.com/KitsuneKode/js-questions-lab/issues/55)) ([88efd67](https://github.com/KitsuneKode/js-questions-lab/commit/88efd670f1778dd7988fcc552a7907bdd6e192f3))
+
 ## [0.1.3](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.2...js-questions-lab-v0.1.3) (2026-06-23)
 
 
