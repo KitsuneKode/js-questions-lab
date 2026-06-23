@@ -34,29 +34,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detect change scope
+      - name: Detect E2E-relevant changes
         id: filter
         uses: dorny/paths-filter@v4
         with:
           filters: |
-            metadata:
-              - CHANGELOG.md
-              - .release-please-manifest.json
-              - package.json
-              - apps/web/package.json
-            substantive:
-              - '**'
-              - '!CHANGELOG.md'
-              - '!.release-please-manifest.json'
-              - '!package.json'
-              - '!apps/web/package.json'
             e2e:
               - 'apps/web/app/**'
               - 'apps/web/components/**'
               - 'apps/web/e2e/**'
               - 'apps/web/lib/**'
               - 'apps/web/messages/**'
-              - 'apps/web/package.json'
               - 'apps/web/playwright.config.ts'
               - 'content/**'
               - 'scripts/**'
@@ -65,7 +53,38 @@ jobs:
       - name: Classify metadata-only changes
         id: meta
         run: |
-          if [ "${{ steps.filter.outputs.metadata }}" = "true" ] && [ "${{ steps.filter.outputs.substantive }}" != "true" ]; then
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            mapfile -t changed < <(
+              git diff --name-only \
+                "${{ github.event.pull_request.base.sha }}"..."${{ github.event.pull_request.head.sha }}"
+            )
+          else
+            if [ -z "${{ github.event.before }}" ] || [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+              echo "metadata_only=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            mapfile -t changed < <(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")
+          fi
+
+          if [ "${#changed[@]}" -eq 0 ]; then
+            echo "metadata_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          metadata_only=true
+          for file in "${changed[@]}"; do
+            case "$file" in
+              CHANGELOG.md|.release-please-manifest.json|package.json|apps/web/package.json) ;;
+              *)
+                metadata_only=false
+                break
+                ;;
+            esac
+          done
+
+          if [ "$metadata_only" = "true" ]; then
             echo "metadata_only=true" >> "$GITHUB_OUTPUT"
           else
             echo "metadata_only=false" >> "$GITHUB_OUTPUT"
