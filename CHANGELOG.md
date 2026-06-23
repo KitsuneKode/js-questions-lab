@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.5...js-questions-lab-v0.1.6) (2026-06-23)
+
+
+### Fixed
+
+* **ci:** use git allowlist for metadata-only fast path detection ([#63](https://github.com/KitsuneKode/js-questions-lab/issues/63)) ([edc3893](https://github.com/KitsuneKode/js-questions-lab/commit/edc3893b0200ca5df571e5ba80e39c172239304c))
+
 ## [0.1.5](https://github.com/KitsuneKode/js-questions-lab/compare/js-questions-lab-v0.1.4...js-questions-lab-v0.1.5) (2026-06-23)
 
 
