@@ -205,7 +205,17 @@
     "savedCount": "{count} guardadas",
     "viewAllSaved": "Ver las {count} guardadas",
     "xpToNextLevel": "{count} XP para el Nivel {next}",
-    "maxLevel": "Nivel máximo alcanzado"
+    "maxLevel": "Nivel máximo alcanzado",
+    "masteryTitle": "Dominio por tema",
+    "masterySubtitle": "Avanza en cada concepto desde bloqueado hasta dominado.",
+    "masteryProgress": "{answered} de {total} preguntas tocadas",
+    "mastery": {
+      "locked": "Bloqueado",
+      "exploring": "Explorando",
+      "developing": "En desarrollo",
+      "proficient": "Competente",
+      "mastered": "Dominado"
+    }
   },
   "accountDashboard": {
     "eyebrow": "Cuenta",

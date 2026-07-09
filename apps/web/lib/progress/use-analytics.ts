@@ -15,7 +15,9 @@ import {
   type PracticeSuggestion,
   type TagStats,
 } from '@/lib/progress/analytics';
+import { computeTopicMastery, type TopicMastery } from '@/lib/progress/mastery';
 import { useProgress } from '@/lib/progress/progress-context';
+import { getTagQuestionCounts } from '@/lib/progress/tag-metadata';
 
 export function useAnalytics(questions: QuestionSummary[]) {
   const { state, ready } = useProgress();
@@ -27,6 +29,12 @@ export function useAnalytics(questions: QuestionSummary[]) {
   const dailyActivity = useMemo<DailyActivity[]>(() => computeDailyActivity(state), [state]);
 
   const weakestTopics = useMemo<TagStats[]>(() => getWeakestTopics(tagStats), [tagStats]);
+
+  const topicMastery = useMemo<TopicMastery[]>(() => {
+    const catalog = getTagQuestionCounts();
+    const questionTags = new Map(questions.map((q) => [q.id, q.tags]));
+    return computeTopicMastery(tagStats, catalog, state, questionTags);
+  }, [questions, state, tagStats]);
 
   const reviewQueue = useMemo<QuestionSummary[]>(
     () => getReviewQueue(state, questions),
@@ -49,6 +57,7 @@ export function useAnalytics(questions: QuestionSummary[]) {
     tagStats,
     dailyActivity,
     weakestTopics,
+    topicMastery,
     reviewQueue,
     continueLearning,
     recommended,

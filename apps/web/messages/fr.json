@@ -205,7 +205,17 @@
     "savedCount": "{count} enregistrées",
     "viewAllSaved": "Voir les {count} enregistrées",
     "xpToNextLevel": "{count} XP jusqu’au niveau {next}",
-    "maxLevel": "Niveau maximum atteint"
+    "maxLevel": "Niveau maximum atteint",
+    "masteryTitle": "Maîtrise par thème",
+    "masterySubtitle": "Progressez sur chaque concept, du verrouillé au maîtrisé.",
+    "masteryProgress": "{answered} sur {total} questions abordées",
+    "mastery": {
+      "locked": "Verrouillé",
+      "exploring": "Exploration",
+      "developing": "En cours",
+      "proficient": "Compétent",
+      "mastered": "Maîtrisé"
+    }
   },
   "accountDashboard": {
     "eyebrow": "Compte",

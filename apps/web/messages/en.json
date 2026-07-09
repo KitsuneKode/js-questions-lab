@@ -166,6 +166,16 @@
     "xpToNextLevel": "{count} XP to Level {next}",
     "maxLevel": "Max level reached",
     "keepPushing": "Keep pushing.",
+    "masteryTitle": "Topic mastery",
+    "masterySubtitle": "Progress through each concept from locked to mastered.",
+    "masteryProgress": "{answered} of {total} questions touched",
+    "mastery": {
+      "locked": "Locked",
+      "exploring": "Exploring",
+      "developing": "Developing",
+      "proficient": "Proficient",
+      "mastered": "Mastered"
+    },
     "activeStreak": "Active",
     "streakFire": "You are on fire! Practice tomorrow to keep it going.",
     "noStreak": "Practice today to start a new streak.",

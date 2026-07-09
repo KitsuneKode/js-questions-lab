@@ -205,7 +205,17 @@
     "savedCount": "{count}件保存済み",
     "viewAllSaved": "保存された{count}件をすべて見る",
     "xpToNextLevel": "レベル {next} まであと {count} XP",
-    "maxLevel": "最高レベルに到達"
+    "maxLevel": "最高レベルに到達",
+    "masteryTitle": "トピック習熟度",
+    "masterySubtitle": "ロックからマスターまで、各概念の進捗を確認。",
+    "masteryProgress": "{total} 問中 {answered} 問に着手",
+    "mastery": {
+      "locked": "ロック",
+      "exploring": "探索中",
+      "developing": "成長中",
+      "proficient": "習熟",
+      "mastered": "マスター"
+    }
   },
   "accountDashboard": {
     "eyebrow": "アカウント",
