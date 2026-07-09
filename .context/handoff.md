@@ -1,57 +1,57 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
-context_pressure: low
+updated: 2026-07-09T13:10:00Z
+branch: cursor/convex-foundation-2df2
+session_name: product-audit-implementation
+context_pressure: medium
 ---
 
 # Session Handoff
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+- Product audit doc (#71) + five implementation PRs stacked on each other:
+  1. #72 AttemptRecord v2 + IDE hydrate
+  2. #73 Guest XP/SRS/streak merge on sign-in
+  3. #74 Leaderboard product + dashboard XP/streak unify
+  4. #75 Topic mastery paths grid
+  5. #76 Convex foundation (schema only; Supabase still live)
+- All web unit tests green: 191 passed
+- Typecheck green
 
 ## In Progress
 
-- None - all work complete
+- None for this session
 
 ## Blocked
 
-- None
+- Convex `dev`/codegen needs dashboard credentials (not available in this agent env)
+- Leaderboard display-name SQL migration must be applied on Supabase staging/prod
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+- Merge stack in order: #72 → #73 → #74 → #75 → #76 (or squash/rebase onto `dev`)
+- Apply `20260709003000_leaderboard_display_names.sql`
+- Phase 2: Convex shadow dual-write for `recordAttempt`
+- Optional: user_profiles UI + anonymous toggle
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
+- Stacked PRs (each depends on previous) for reviewable slices
+- Mastery derived from tagStats + SRS — no second write path
+- Convex foundation without cutover — avoid mid-flight dual backends until shadow writes ready
+- Guest merge clears localStorage only after successful server import
 
 ## Key Files
 
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
+- `.context/docs/product-audit-2026-07.md`
+- `.context/docs/convex-migration.md`
+- `apps/web/lib/progress/storage.ts` — AttemptRecord v2
+- `apps/web/lib/progress/guest-merge.ts`
+- `apps/web/lib/progress/mastery.ts`
+- `apps/web/lib/engagement/leaderboard.ts`
+- `apps/web/convex/schema.ts`
 
 ## Test Summary
 
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- Vitest: 191 passing across 37 files
+- `bun run typecheck`: pass
