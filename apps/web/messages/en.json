@@ -402,6 +402,8 @@
     "gradeHard": "Hard",
     "gradeGood": "Good",
     "gradeEasy": "Easy",
+    "tryAgain": "Try again",
+    "previousGrade": "Previously graded: {grade}",
     "practice": "Practice",
     "domEventSimulator": "DOM Event Simulator",
     "domReplayTitle": "Replay target and bubbling without a fake browser runtime",

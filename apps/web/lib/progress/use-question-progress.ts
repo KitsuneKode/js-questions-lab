@@ -4,7 +4,12 @@ import { useMemo } from 'react';
 import type { Difficulty } from '@/lib/content/types';
 import { useProgress } from '@/lib/progress/progress-context';
 import type { Grade } from '@/lib/progress/srs';
-import type { AnswerStatus, ProgressItem } from '@/lib/progress/storage';
+import type {
+  AnswerStatus,
+  AttemptErrorType,
+  AttemptMode,
+  ProgressItem,
+} from '@/lib/progress/storage';
 
 function ensureItem(questions: Record<string, ProgressItem>, questionId: number): ProgressItem {
   return (
@@ -28,9 +33,17 @@ export function useQuestionProgress(questionId: number) {
     saveAttempt: (
       selected: 'A' | 'B' | 'C' | 'D' | null,
       status: AnswerStatus,
-      options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+      options?: {
+        difficulty?: Difficulty;
+        recallAnswer?: string;
+        locale?: string;
+        mode?: AttemptMode;
+        timeMs?: number;
+        errorType?: AttemptErrorType;
+      },
     ) => saveAttempt(questionId, selected, status, options),
-    saveSelfGrade: (grade: Grade) => saveSelfGrade(questionId, grade),
+    saveSelfGrade: (grade: Grade, errorType?: AttemptErrorType) =>
+      saveSelfGrade(questionId, grade, errorType),
     toggleBookmark: () => toggleBookmark(questionId),
   };
 }

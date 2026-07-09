@@ -68,7 +68,7 @@ import {
 import type { QuestionDiscoveryItem, QuestionRecord } from '@/lib/content/types';
 import { useQuestionKeyboard } from '@/lib/keyboard/use-question-keyboard';
 import { useProgress } from '@/lib/progress/progress-context';
-import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
+import { getLastAttempt, isAttemptErrorType } from '@/lib/progress/storage';
 import { useQuestionProgress } from '@/lib/progress/use-question-progress';
 import { runJavaScript } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
@@ -160,10 +160,9 @@ export function QuestionIDEClient({
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [errorType, setErrorType] = useState('');
+  const [sessionStartedAt, setSessionStartedAt] = useState(() => Date.now());
+  const hydratedQuestionRef = useRef<number | null>(null);
 
-  const updateSection = useSectionProgressStore((state) => state.updateSection);
-  const markQuestionAnswered = useSectionProgressStore((state) => state.markQuestionAnswered);
-  const primaryTag = question.tags[0];
   const t = useTranslations('ide');
   const tCommon = useTranslations('common');
   const tQuestion = useTranslations('question');
@@ -205,7 +204,13 @@ export function QuestionIDEClient({
   const [debuggerMode, setDebuggerMode] = useState<'timeline' | 'visual' | null>(null);
   const pendingAutorunRef = useRef<number | null>(null);
 
-  const { item, saveAttempt, toggleBookmark, saveSelfGrade } = useQuestionProgress(question.id);
+  const {
+    item,
+    ready: questionProgressReady,
+    saveAttempt,
+    toggleBookmark,
+    saveSelfGrade,
+  } = useQuestionProgress(question.id);
   const [frozenStatusScope, setFrozenStatusScope] = useState<{
     key: string;
     ids: number[];
@@ -213,7 +218,10 @@ export function QuestionIDEClient({
 
   const isAnswered = selected !== null || hasSubmittedRecall;
   const isCorrect =
-    selected !== null ? selected === question.correctOption : isRecallCorrect === true;
+    selected !== null
+      ? selected === question.correctOption
+      : isRecallCorrect === true ||
+        (hasSubmittedRecall && getLastAttempt(item.attempts)?.status === 'correct');
 
   const hasAsyncEvents = useMemo(() => {
     return (
@@ -222,16 +230,52 @@ export function QuestionIDEClient({
     );
   }, [isJavascriptRuntime, timeline]);
 
-  // Compute question counts per tag from questionIndex for progress tracking
-  const tagQuestionCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    questionIndex.forEach((q) => {
-      (q.tags || []).forEach((tag) => {
-        counts[tag] = (counts[tag] || 0) + 1;
-      });
-    });
-    return counts;
-  }, [questionIndex]);
+  const elapsedTimeMs = useCallback(
+    () => Math.max(0, Date.now() - sessionStartedAt),
+    [sessionStartedAt],
+  );
+
+  const resetPracticeSession = useCallback(() => {
+    setSelected(null);
+    setRecallAnswer('');
+    setHasSubmittedRecall(false);
+    setIsRecallCorrect(null);
+    setSelfGrade(null);
+    setErrorType('');
+    setSessionStartedAt(Date.now());
+    setExplanationVisible(true);
+  }, []);
+
+  // Hydrate answered UI from the latest stored attempt so revisits show feedback.
+  useEffect(() => {
+    if (!questionProgressReady) return;
+    if (hydratedQuestionRef.current === question.id) return;
+
+    hydratedQuestionRef.current = question.id;
+    const last = getLastAttempt(item.attempts);
+    if (!last) {
+      resetPracticeSession();
+      return;
+    }
+
+    if (last.mode === 'recall' || last.selected === null) {
+      setPreferredMode('hard');
+      setHasSubmittedRecall(true);
+      setIsRecallCorrect(last.status === 'correct');
+      setRecallAnswer(last.responseText ?? '');
+      setSelected(null);
+    } else {
+      setPreferredMode('quiz');
+      setSelected(last.selected);
+      setHasSubmittedRecall(false);
+      setIsRecallCorrect(null);
+      setRecallAnswer('');
+    }
+
+    setSelfGrade(last.selfGrade ?? null);
+    setErrorType(last.errorType ?? '');
+    setSessionStartedAt(Date.now());
+  }, [item.attempts, question.id, questionProgressReady, resetPracticeSession]);
 
   const clearPendingAutorun = useCallback(() => {
     if (pendingAutorunRef.current === null) {
@@ -299,8 +343,18 @@ export function QuestionIDEClient({
 
   const handleRecallSubmit = useCallback(() => {
     if (!recallAnswer.trim()) return;
+
+    // Open-ended / code-output questions: still record the attempt for history.
     if (!question.correctOption) {
       setHasSubmittedRecall(true);
+      setIsRecallCorrect(null);
+      saveAttempt(null, 'incorrect', {
+        difficulty: question.difficulty,
+        recallAnswer,
+        locale,
+        mode: 'recall',
+        timeMs: elapsedTimeMs(),
+      });
       scheduleAnswerAutorun();
       return;
     }
@@ -321,16 +375,10 @@ export function QuestionIDEClient({
       difficulty: question.difficulty,
       recallAnswer,
       locale,
+      mode: 'recall',
+      timeMs: elapsedTimeMs(),
     });
 
-    // Update section progress
-    if (primaryTag) {
-      const existing = useSectionProgressStore.getState().sections[primaryTag];
-      if (!existing || existing.totalQuestions === 0) {
-        updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
-      }
-      markQuestionAnswered(primaryTag, isStrictMatch);
-    }
     scheduleAnswerAutorun();
   }, [
     recallAnswer,
@@ -338,20 +386,18 @@ export function QuestionIDEClient({
     question.options,
     question.difficulty,
     saveAttempt,
-    primaryTag,
-    updateSection,
-    markQuestionAnswered,
     scheduleAnswerAutorun,
-    tagQuestionCounts,
     locale,
+    elapsedTimeMs,
   ]);
 
   const handleSelfGrade = useCallback(
     (grade: 'hard' | 'good' | 'easy') => {
       setSelfGrade(grade);
-      saveSelfGrade(grade);
+      const typedError = isAttemptErrorType(errorType) ? errorType : undefined;
+      saveSelfGrade(grade, typedError);
     },
-    [saveSelfGrade],
+    [errorType, saveSelfGrade],
   );
 
   const handleOptionSelect = useCallback(
@@ -359,21 +405,13 @@ export function QuestionIDEClient({
       if (isAnswered) return;
       const optionKey = key as 'A' | 'B' | 'C' | 'D';
       setSelected(optionKey);
-      const isCorrect = key === question.correctOption;
-      saveAttempt(optionKey, isCorrect ? 'correct' : 'incorrect', {
+      const optionCorrect = key === question.correctOption;
+      saveAttempt(optionKey, optionCorrect ? 'correct' : 'incorrect', {
         difficulty: question.difficulty,
         locale,
+        mode: 'quiz',
+        timeMs: elapsedTimeMs(),
       });
-      // Update section progress using markQuestionAnswered for proper incrementing
-      if (primaryTag) {
-        // Initialize totalQuestions if first answer in this tag
-        const existing = useSectionProgressStore.getState().sections[primaryTag];
-        if (!existing || existing.totalQuestions === 0) {
-          updateSection(primaryTag, { totalQuestions: tagQuestionCounts[primaryTag] || 1 });
-        }
-        // Increment answered/correct counts
-        markQuestionAnswered(primaryTag, isCorrect);
-      }
       scheduleAnswerAutorun();
     },
     [
@@ -381,12 +419,9 @@ export function QuestionIDEClient({
       question.correctOption,
       question.difficulty,
       saveAttempt,
-      primaryTag,
-      updateSection,
-      markQuestionAnswered,
       scheduleAnswerAutorun,
-      tagQuestionCounts,
       locale,
+      elapsedTimeMs,
     ],
   );
 
@@ -895,16 +930,27 @@ export function QuestionIDEClient({
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   {isRecallMode ? t('activeRecall') : t('selectAnswer')}
                 </h3>
-                {!isAnswered && (
-                  <button
-                    type="button"
-                    onClick={() => setPreferredMode(isRecallMode ? 'quiz' : 'hard')}
-                    className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary/80 hover:text-primary transition-colors"
-                  >
-                    <Zap className="h-3 w-3" />
-                    {isRecallMode ? t('quizMode') : t('hardMode')}
-                  </button>
-                )}
+                <div className="flex items-center gap-3">
+                  {isAnswered && (
+                    <button
+                      type="button"
+                      onClick={resetPracticeSession}
+                      className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {t('tryAgain')}
+                    </button>
+                  )}
+                  {!isAnswered && (
+                    <button
+                      type="button"
+                      onClick={() => setPreferredMode(isRecallMode ? 'quiz' : 'hard')}
+                      className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary/80 hover:text-primary transition-colors"
+                    >
+                      <Zap className="h-3 w-3" />
+                      {isRecallMode ? t('quizMode') : t('hardMode')}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex-1 p-6 overflow-y-auto">
@@ -1061,29 +1107,37 @@ export function QuestionIDEClient({
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-2">
-                      {(['hard', 'good', 'easy'] as const).map((grade) => (
-                        <button
-                          key={grade}
-                          type="button"
-                          disabled={!isCorrect && !errorType}
-                          onClick={() => handleSelfGrade(grade)}
-                          className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
-                            !isCorrect && !errorType
-                              ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
-                              : selfGrade === grade
-                                ? grade === 'hard'
-                                  ? 'border-danger/50 bg-danger/20 text-danger'
-                                  : grade === 'good'
-                                    ? 'border-warning/50 bg-warning/20 text-warning'
-                                    : 'border-success/50 bg-success/20 text-success'
-                                : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
-                          }`}
-                        >
-                          {t(selfGradeLabelKeys[grade])}
-                        </button>
-                      ))}
-                    </div>
+                    {!selfGrade && (
+                      <div className="grid grid-cols-3 gap-2">
+                        {(['hard', 'good', 'easy'] as const).map((grade) => (
+                          <button
+                            key={grade}
+                            type="button"
+                            disabled={!isCorrect && !errorType}
+                            onClick={() => handleSelfGrade(grade)}
+                            className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
+                              !isCorrect && !errorType
+                                ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
+                                : selfGrade === grade
+                                  ? grade === 'hard'
+                                    ? 'border-danger/50 bg-danger/20 text-danger'
+                                    : grade === 'good'
+                                      ? 'border-warning/50 bg-warning/20 text-warning'
+                                      : 'border-success/50 bg-success/20 text-success'
+                                  : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
+                            }`}
+                          >
+                            {t(selfGradeLabelKeys[grade])}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {selfGrade && (
+                      <p className="text-xs text-muted-foreground">
+                        {t('previousGrade', { grade: t(selfGradeLabelKeys[selfGrade]) })}
+                      </p>
+                    )}
 
                     {question.resources && question.resources.length > 0 && (
                       <ResourcesPanel resources={question.resources} />

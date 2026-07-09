@@ -402,6 +402,8 @@
     "gradeHard": "Difficile",
     "gradeGood": "Bien",
     "gradeEasy": "Facile",
+    "tryAgain": "Réessayer",
+    "previousGrade": "Note précédente : {grade}",
     "practice": "Pratiquer",
     "domEventSimulator": "Simulateur d'événements DOM",
     "domReplayTitle": "Reproduire la cible et le bubbling sans faux runtime de navigateur",

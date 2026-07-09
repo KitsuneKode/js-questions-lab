@@ -1,6 +1,14 @@
 import type { QuestionRecord } from '@/lib/content/types';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
-import type { AnswerStatus, AttemptRecord, ProgressItem } from '@/lib/progress/storage';
+import {
+  type AnswerStatus,
+  type AttemptErrorType,
+  type AttemptMode,
+  type AttemptRecord,
+  createAttemptRecord,
+  type ProgressItem,
+  patchLastAttempt,
+} from '@/lib/progress/storage';
 import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
 import { computeXP, type XPEvent } from '@/lib/xp/scoring';
 import { applyXPEvents, defaultXPState, type XPState } from '@/lib/xp/storage';
@@ -14,6 +22,9 @@ export interface AttemptInput {
   previousStreakState?: StreakState;
   selected: AttemptRecord['selected'];
   recallAnswer?: string | null;
+  mode?: AttemptMode;
+  timeMs?: number;
+  submissionId?: string;
   answeredAt?: string;
 }
 
@@ -29,6 +40,7 @@ export interface SelfGradeInput {
   questionId: number;
   previousProgress?: ProgressItem;
   grade: Grade;
+  errorType?: AttemptErrorType;
   gradedAt?: string;
 }
 
@@ -119,6 +131,9 @@ export function buildAuthoritativeAttemptResult({
   previousStreakState = defaultStreakState,
   selected,
   recallAnswer,
+  mode,
+  timeMs,
+  submissionId,
   answeredAt = new Date().toISOString(),
 }: AttemptInput): AttemptResult {
   const baseProgress = ensureProgressItem(question.id, previousProgress);
@@ -131,6 +146,9 @@ export function buildAuthoritativeAttemptResult({
     previousXPState.events,
     question.id,
   );
+  const resolvedMode: AttemptMode =
+    mode ??
+    (typeof recallAnswer === 'string' && recallAnswer.trim().length > 0 ? 'recall' : 'quiz');
 
   const xpEvents = computeXP({
     questionId: question.id,
@@ -145,11 +163,18 @@ export function buildAuthoritativeAttemptResult({
     ...baseProgress,
     attempts: [
       ...baseProgress.attempts,
-      {
+      createAttemptRecord({
         selected,
         status,
         attemptedAt: answeredAt,
-      },
+        mode: resolvedMode,
+        responseText:
+          typeof recallAnswer === 'string' && recallAnswer.trim().length > 0
+            ? recallAnswer.trim()
+            : undefined,
+        timeMs,
+        submissionId,
+      }),
     ],
     updatedAt: answeredAt,
   };
@@ -170,12 +195,17 @@ export function buildAuthoritativeSelfGradeResult({
   questionId,
   previousProgress,
   grade,
+  errorType,
   gradedAt = new Date().toISOString(),
 }: SelfGradeInput): ProgressItem {
   const baseProgress = ensureProgressItem(questionId, previousProgress);
 
   return {
     ...baseProgress,
+    attempts: patchLastAttempt(baseProgress.attempts, {
+      selfGrade: grade,
+      ...(errorType ? { errorType } : {}),
+    }),
     srsData: calculateNextReview(grade, baseProgress.srsData),
     updatedAt: gradedAt,
   };
