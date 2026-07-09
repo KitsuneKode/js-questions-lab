@@ -1,12 +1,22 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import type { NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { isClerkEnabled } from './lib/auth/clerk-key';
+import { isApiOrTrpcRequest } from './lib/auth/proxy-path';
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
+
+function handleRequest(request: NextRequest) {
+  // API/trpc must not go through next-intl localePrefix redirects.
+  if (isApiOrTrpcRequest(request)) {
+    return NextResponse.next();
+  }
+
+  return handleI18nRouting(request);
+}
 
 /**
  * Guest-first: skip Clerk middleware when the publishable key is missing/placeholder.
@@ -18,9 +28,9 @@ export const proxy = isClerkEnabled()
         await auth.protect();
       }
 
-      return handleI18nRouting(request);
+      return handleRequest(request);
     })
-  : (request: NextRequest) => handleI18nRouting(request);
+  : (request: NextRequest) => handleRequest(request);
 
 export const config = {
   matcher: [
