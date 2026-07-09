@@ -2,8 +2,11 @@
 
 import { IconTrophy } from '@tabler/icons-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import type { CurrentUserRank, LeaderboardEntry } from '@/lib/engagement/leaderboard';
-import { currentUserRankToEntry } from '@/lib/engagement/leaderboard';
+import {
+  type CurrentUserRank,
+  currentUserRankToEntry,
+  type LeaderboardEntry,
+} from '@/lib/engagement/leaderboard-types';
 import { cn } from '@/lib/utils';
 
 const RANK_STYLES: Record<number, string> = {
