@@ -2,7 +2,7 @@
 
 import { IconFlame, IconTrophy } from '@tabler/icons-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { getDisplayInitials, type LeaderboardEntry } from '@/lib/engagement/leaderboard';
+import { getDisplayInitials, type LeaderboardEntry } from '@/lib/engagement/leaderboard-shared';
 import { cn } from '@/lib/utils';
 
 const RANK_STYLES: Record<number, string> = {

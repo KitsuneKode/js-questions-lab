@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getDisplayInitials, toEntries } from '@/lib/engagement/leaderboard';
+import { getDisplayInitials, toEntries } from '@/lib/engagement/leaderboard-shared';
 
 describe('leaderboard entries', () => {
   it('uses sanitized display names from the server payload', () => {
