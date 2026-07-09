@@ -49,6 +49,8 @@ If you are working on specific domains, **you must read the relevant guide first
 - **Engagement Engine, XP, Leaderboard, Pro Tier & AI Interview**: Read `.context/docs/prd-engagement-pro.md`
 - **React Practice Platform, Resources, Bookmarks Filter & Landing Upgrade**: Read `.context/docs/prd-react-platform.md`
 - **UI/UX & Styling Guidelines**: Read `.context/docs/design-system.md`
+- **Product Audit (feedback, leaderboard, Convex)**: Read `.context/docs/product-audit-2026-07.md`
+- **Convex Migration Runbook**: Read `.context/docs/convex-migration.md`
 
 ## Architectural Decisions Already Made
 
