@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isValidClerkKey } from './auth-utils';
+import { isClerkEnabled, isValidClerkKey } from './auth/clerk-key';
 
 describe('isValidClerkKey', () => {
   test('returns true for valid keys', () => {
@@ -26,5 +26,13 @@ describe('isValidClerkKey', () => {
     expect(isValidClerkKey('pk_test_placeholder')).toBe(false);
     expect(isValidClerkKey('pk_test_PLACEHOLDER_key')).toBe(false);
     expect(isValidClerkKey('pk_live_some_PlaceHolder_key')).toBe(false);
+  });
+});
+
+describe('isClerkEnabled', () => {
+  test('mirrors isValidClerkKey for explicit keys', () => {
+    expect(isClerkEnabled('pk_test_Y2xlcmsuYWNjb3VudHMuZGV2JA')).toBe(true);
+    expect(isClerkEnabled('pk_test_placeholder')).toBe(false);
+    expect(isClerkEnabled(undefined)).toBe(false);
   });
 });

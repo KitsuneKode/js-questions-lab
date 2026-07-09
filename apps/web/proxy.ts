@@ -2,18 +2,25 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import type { NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { isClerkEnabled } from './lib/auth/clerk-key';
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-export const proxy = clerkMiddleware(async (auth, request: NextRequest) => {
-  if (isProtectedRoute(request)) {
-    await auth.protect();
-  }
+/**
+ * Guest-first: skip Clerk middleware when the publishable key is missing/placeholder.
+ * Otherwise clerkMiddleware rejects invalid keys on every request and breaks local/e2e.
+ */
+export const proxy = isClerkEnabled()
+  ? clerkMiddleware(async (auth, request: NextRequest) => {
+      if (isProtectedRoute(request)) {
+        await auth.protect();
+      }
 
-  return handleI18nRouting(request);
-});
+      return handleI18nRouting(request);
+    })
+  : (request: NextRequest) => handleI18nRouting(request);
 
 export const config = {
   matcher: [
