@@ -295,3 +295,92 @@ export async function fetchStreak(): Promise<StreakState | null> {
     lastActivityDate: data.last_activity_date ?? null,
   };
 }
+
+export interface ImportGuestXPBatch {
+  submissionId: string;
+  events: XPEvent[];
+}
+
+/**
+ * Idempotently import guest XP event batches after sign-in.
+ * Uses (user_id, submission_id, event_index) uniqueness so re-merges are safe.
+ */
+export async function importGuestXPEvents(batches: ImportGuestXPBatch[]): Promise<XPState> {
+  const { userId } = await auth();
+  if (!userId) return defaultXPState;
+
+  if (batches.length === 0) {
+    return rebuildXPState(await fetchXPEvents(userId));
+  }
+
+  const supabase = createServerSupabaseClient();
+  const rows = batches.flatMap((batch) =>
+    batch.events.map((event, index) => ({
+      user_id: userId,
+      submission_id: batch.submissionId,
+      event_index: index,
+      question_id: event.questionId,
+      event_type: event.eventType,
+      xp_delta: event.xpDelta,
+      created_at: event.timestamp,
+      metadata: { source: 'guest_merge' },
+    })),
+  );
+
+  if (rows.length > 0) {
+    const { error } = await supabase.from('xp_events').upsert(rows, {
+      onConflict: 'user_id,submission_id,event_index',
+      ignoreDuplicates: true,
+    });
+    if (error) {
+      console.error('Failed to import guest XP events:', error.message);
+      throw error;
+    }
+  }
+
+  const xpState = rebuildXPState(await fetchXPEvents(userId));
+
+  const { error: totalsError } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: xpState.totalXP,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (totalsError) {
+    console.error('Failed to upsert XP totals after guest merge:', totalsError.message);
+    throw totalsError;
+  }
+
+  if (rows.length > 0) {
+    revalidateLeaderboardCaches();
+  }
+
+  return xpState;
+}
+
+export async function upsertStreakState(streak: StreakState): Promise<StreakState> {
+  const { userId } = await auth();
+  if (!userId) return streak;
+
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from('user_streaks').upsert(
+    {
+      user_id: userId,
+      current_streak: streak.currentStreak,
+      longest_streak: streak.longestStreak,
+      last_activity_date: streak.lastActivityDate,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (error) {
+    console.error('Failed to upsert merged streak:', error.message);
+    throw error;
+  }
+
+  return streak;
+}

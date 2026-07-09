@@ -16,13 +16,20 @@ import {
   applyServerSelfGrade,
   fetchStreak,
   fetchXPState,
+  importGuestXPEvents,
   recordAttempt,
+  upsertStreakState,
 } from '@/lib/engagement/actions';
 import {
   fetchServerProgress,
   syncProgressToServer,
   upsertSingleQuestion,
 } from '@/lib/progress/actions';
+import {
+  mergeGuestProgressItems,
+  mergeGuestStreak,
+  partitionGuestXPForImport,
+} from '@/lib/progress/guest-merge';
 import { clearGuestData, getOrCreateGuestSid, rotateGuestSid } from '@/lib/progress/guest-session';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
@@ -277,9 +284,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const guestSid = guestSidRef.current;
-        // Read guest progress before fetching server data so we capture
-        // exactly what was accumulated in this guest session.
+        // Capture guest session data before fetching server state.
         const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
+        const guestXP = guestSid ? readXP(guestSid) : defaultXPState;
+        const guestStreak = guestSid ? readStreak(guestSid) : defaultStreakState;
 
         const [serverItems, serverXP, serverStreak] = await Promise.all([
           fetchServerProgress(),
@@ -287,28 +295,34 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           fetchStreak(),
         ]);
 
+        if (cancelled) return;
+
+        // 1) Progress: merge guest SRS + newer attempts onto server
+        const localNewer = mergeGuestProgressItems(
+          Object.values(guestProgress.questions),
+          serverItems,
+        );
+        if (localNewer.length > 0) {
+          await syncProgressToServer(localNewer);
+        }
+
+        // 2) XP: replay novel guest events with idempotent submission ids
+        const xpBatches = partitionGuestXPForImport(guestXP.events, serverXP.events);
+        const mergedXP = xpBatches.length > 0 ? await importGuestXPEvents(xpBatches) : serverXP;
+
+        // 3) Streak: prefer more recent activity; keep max longest
+        const mergedStreak = mergeGuestStreak(guestStreak, serverStreak ?? defaultStreakState);
+        await upsertStreakState(mergedStreak);
+
+        // Refresh progress after upserts so in-memory state includes guest SRS
+        const refreshedProgress = localNewer.length > 0 ? await fetchServerProgress() : serverItems;
+
         if (!cancelled) {
-          dispatch({ type: 'merge', serverItems });
-          setXPState(serverXP);
-          // Streak: server is authoritative for authenticated state
-          const authoritativeStreak = serverStreak ?? defaultStreakState;
-          setStreakState(authoritativeStreak);
+          dispatch({ type: 'merge', serverItems: refreshedProgress });
+          setXPState(mergedXP);
+          setStreakState(mergedStreak);
 
-          // Push any guest progress that is newer than what's on the server
-          const localNewer: ProgressItem[] = [];
-          for (const localItem of Object.values(guestProgress.questions)) {
-            const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
-            if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
-              localNewer.push(localItem);
-            }
-          }
-
-          if (localNewer.length > 0) {
-            await syncProgressToServer(localNewer);
-          }
-
-          // Consume the guest session: delete its data and rotate to a fresh SID.
-          // Any future sign-out will start with a clean guest session.
+          // Consume the guest session only after a successful merge.
           if (guestSid) {
             clearGuestData(guestSid);
             const newSid = rotateGuestSid();

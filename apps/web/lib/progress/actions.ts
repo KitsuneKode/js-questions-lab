@@ -98,7 +98,9 @@ export async function syncProgressToServer(items: ProgressItem[]): Promise<void>
     question_id: item.questionId,
     attempts: item.attempts,
     bookmarked: item.bookmarked,
-    srs_data: existingSrsByQuestionId.get(item.questionId) ?? null,
+    // Prefer the item's SRS (guest merge may carry guest schedules). Fall back
+    // to existing server SRS only when the payload has none.
+    srs_data: item.srsData ?? existingSrsByQuestionId.get(item.questionId) ?? null,
     updated_at: item.updatedAt,
   }));
 
