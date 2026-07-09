@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { currentUserRankToEntry, toEntries } from '@/lib/engagement/leaderboard';
+import { currentUserRankToEntry, toEntries } from '@/lib/engagement/leaderboard-types';
 
 describe('leaderboard entries', () => {
   it('uses sanitized display names from the server payload', () => {
