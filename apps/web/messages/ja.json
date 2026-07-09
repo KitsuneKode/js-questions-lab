@@ -203,7 +203,9 @@
     "labelSaved": "保存された問題",
     "savedSub": "後で復習するために取っておいた問題。",
     "savedCount": "{count}件保存済み",
-    "viewAllSaved": "保存された{count}件をすべて見る"
+    "viewAllSaved": "保存された{count}件をすべて見る",
+    "xpToNextLevel": "レベル {next} まであと {count} XP",
+    "maxLevel": "最高レベルに到達"
   },
   "accountDashboard": {
     "eyebrow": "アカウント",
@@ -483,6 +485,11 @@
     "allTimeTitle": "全期間",
     "resetsMonday": "毎週月曜日にリセット",
     "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
-    "you": "あなた"
+    "you": "あなた",
+    "loadError": "ランキングを読み込めませんでした。もう一度お試しください。",
+    "outsideTop": "現在 #{position} 位です。トップ {limit} に入るにはXPを稼ぎ続けましょう。",
+    "guestCtaTitle": "ランキングに参加",
+    "guestCtaBody": "サインアップしてXPを同期し、週間・総合ランクを確認しましょう。",
+    "guestCtaAction": "無料で登録"
   }
 }

@@ -10,24 +10,26 @@ import {
 import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import type { OverallStats } from '@/lib/progress/analytics';
+import { useProgress } from '@/lib/progress/progress-context';
 import { cn } from '@/lib/utils';
+import { getLevelInfo } from '@/lib/xp/levels';
 
 interface OverviewCardsProps {
   overall: OverallStats;
+  totalQuestions: number;
 }
 
-export function OverviewCards({ overall }: OverviewCardsProps) {
+export function OverviewCards({ overall, totalQuestions }: OverviewCardsProps) {
   const t = useTranslations('dashboard');
-  const totalQuestions = 155; // Hardcoded or passed down
-  const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
+  const { xpState, streakState } = useProgress();
+  const level = getLevelInfo(xpState.totalXP);
+  const xpToNext = level.level < 6 ? Math.max(0, level.bandWidth - level.currentBandXP) : 0;
+  const nextLevel = level.level < 6 ? level.level + 1 : level.level;
+
+  const safeTotal = Math.max(1, totalQuestions);
+  const progressPercent = Math.min(100, Math.round((overall.totalAnswered / safeTotal) * 100));
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
-  // Level Calculation (Every 15 questions = 1 Level up)
-  const currentLevel = Math.floor(overall.totalAnswered / 15) + 1;
-  const nextLevelRequirement = currentLevel * 15;
-  const questionsToNextLevel = nextLevelRequirement - overall.totalAnswered;
-
-  // Trend indicator based on a naive metric for demo purposes
   const accuracyTrend = accuracyPercent > 60 ? 'up' : accuracyPercent < 40 ? 'down' : 'neutral';
   const accuracyColor =
     accuracyTrend === 'up'
@@ -36,11 +38,12 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         ? 'text-status-wrong'
         : 'text-[#F59E0B]';
 
-  const hasActiveStreak = overall.currentStreak > 0;
+  const currentStreak = streakState.currentStreak;
+  const longestStreak = streakState.longestStreak;
+  const hasActiveStreak = currentStreak > 0;
 
   return (
     <div className="grid gap-5 sm:grid-cols-3">
-      {/* Journey Card with Progress Ring */}
       <div className="col-span-1 rounded-2xl border border-border-subtle bg-surface p-6 flex flex-col justify-between relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <Compass className="w-24 h-24 text-primary" />
@@ -51,7 +54,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               {t('labelJourney')}
             </p>
             <div className="inline-flex items-center gap-1 rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-              Level {currentLevel}
+              Lv.{level.level} {level.name}
             </div>
           </div>
           <p className="font-display text-3xl text-foreground mt-1">
@@ -93,7 +96,9 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           </div>
           <p className="text-xs text-secondary leading-snug">
             <strong className="text-foreground">
-              {t('levelRequirement', { count: questionsToNextLevel, next: currentLevel + 1 })}
+              {level.level < 6
+                ? t('xpToNextLevel', { count: xpToNext, next: nextLevel })
+                : t('maxLevel')}
             </strong>
             <br />
             {t('keepPushing')}
@@ -101,7 +106,6 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         </div>
       </div>
 
-      {/* Accuracy Card */}
       <div className="col-span-1 rounded-2xl border border-border-subtle bg-surface p-6 flex flex-col justify-between relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <Target className="w-24 h-24 text-primary" />
@@ -140,7 +144,6 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         </div>
       </div>
 
-      {/* Time Invested / Streak */}
       <div className="col-span-1 rounded-2xl border border-border-subtle bg-surface p-6 flex flex-col justify-between relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <Activity className="w-24 h-24 text-primary" />
@@ -167,13 +170,13 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               hasActiveStreak ? 'text-[#F59E0B]' : 'text-foreground',
             )}
           >
-            {overall.currentStreak} <span className="text-lg text-secondary">days</span>
+            {currentStreak} <span className="text-lg text-secondary">days</span>
           </p>
         </div>
 
         <div className="mt-6">
           <p className="text-xs text-secondary leading-snug">
-            Best streak: <strong className="text-foreground">{overall.longestStreak} days</strong>.
+            Best streak: <strong className="text-foreground">{longestStreak} days</strong>.
             <br />
             {hasActiveStreak ? t('streakFire') : t('noStreak')}
           </p>

@@ -203,7 +203,9 @@
     "labelSaved": "Gespeicherte Fragen",
     "savedSub": "Fragen, die Sie für eine spätere Wiederholung beiseite gelegt haben.",
     "savedCount": "{count} gespeichert",
-    "viewAllSaved": "Alle {count} gespeicherten ansehen"
+    "viewAllSaved": "Alle {count} gespeicherten ansehen",
+    "xpToNextLevel": "{count} XP bis Level {next}",
+    "maxLevel": "Maximales Level erreicht"
   },
   "accountDashboard": {
     "eyebrow": "Konto",
@@ -483,6 +485,11 @@
     "allTimeTitle": "Alle Zeiten",
     "resetsMonday": "Zurückgesetzt montags",
     "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
-    "you": "Du"
+    "you": "Du",
+    "loadError": "Ranglisten konnten nicht geladen werden. Bitte erneut versuchen.",
+    "outsideTop": "Du bist auf Platz #{position} — verdiene weiter XP für die Top {limit}.",
+    "guestCtaTitle": "Tritt der Rangliste bei",
+    "guestCtaBody": "Registriere dich, um XP zu synchronisieren und deinen Rang zu sehen.",
+    "guestCtaAction": "Kostenlos registrieren"
   }
 }

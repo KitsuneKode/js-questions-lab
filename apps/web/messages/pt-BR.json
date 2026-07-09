@@ -203,7 +203,9 @@
     "labelSaved": "Questões Salvas",
     "savedSub": "Questões que você reservou para revisão posterior.",
     "savedCount": "{count} salvas",
-    "viewAllSaved": "Ver todas as {count} salvas"
+    "viewAllSaved": "Ver todas as {count} salvas",
+    "xpToNextLevel": "{count} XP para o Nível {next}",
+    "maxLevel": "Nível máximo alcançado"
   },
   "accountDashboard": {
     "eyebrow": "Conta",
@@ -483,6 +485,11 @@
     "allTimeTitle": "Todos os Tempos",
     "resetsMonday": "Reseta às segundas",
     "empty": "Nenhuma entrada ainda. Seja o primeiro a ganhar XP!",
-    "you": "Você"
+    "you": "Você",
+    "loadError": "Não foi possível carregar o ranking. Tente novamente.",
+    "outsideTop": "Você está em #{position} — continue ganhando XP para entrar no top {limit}.",
+    "guestCtaTitle": "Entre no ranking",
+    "guestCtaBody": "Cadastre-se para sincronizar XP e ver sua posição semanal e de todos os tempos.",
+    "guestCtaAction": "Cadastre-se grátis"
   }
 }

@@ -163,6 +163,8 @@
     "labelAccuracy": "Accuracy",
     "labelConsistency": "Consistency",
     "levelRequirement": "{count} questions to Level {next}",
+    "xpToNextLevel": "{count} XP to Level {next}",
+    "maxLevel": "Max level reached",
     "keepPushing": "Keep pushing.",
     "activeStreak": "Active",
     "streakFire": "You are on fire! Practice tomorrow to keep it going.",
@@ -483,6 +485,11 @@
     "allTimeTitle": "All Time",
     "resetsMonday": "Resets Monday",
     "empty": "No entries yet. Be the first to earn XP!",
-    "you": "You"
+    "you": "You",
+    "loadError": "Couldn't load rankings right now. Try again in a moment.",
+    "outsideTop": "You're ranked #{position} — keep earning XP to enter the top {limit}.",
+    "guestCtaTitle": "Join the rankings",
+    "guestCtaBody": "Sign up to sync XP and see your rank on the weekly and all-time boards.",
+    "guestCtaAction": "Sign up free"
   }
 }

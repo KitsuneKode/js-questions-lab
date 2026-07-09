@@ -100,7 +100,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
       </header>
 
       {/* Stats overview */}
-      <OverviewCards overall={overall} />
+      <OverviewCards overall={overall} totalQuestions={questions.length} />
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (

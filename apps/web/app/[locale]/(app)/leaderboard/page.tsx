@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/container';
+import { LeaderboardGuestCta } from '@/components/leaderboard/leaderboard-guest-cta';
 import { LeaderboardTable } from '@/components/leaderboard/leaderboard-table';
+import { getViewerDisplayName } from '@/lib/auth/clerk-display';
 import {
-  getAllTimeCurrentUserPosition,
+  getAllTimeCurrentUserRank,
   getAllTimeLeaderboard,
-  getWeeklyCurrentUserPosition,
+  getWeeklyCurrentUserRank,
   getWeeklyLeaderboard,
 } from '@/lib/engagement/leaderboard';
 import type { LocaleCode } from '@/lib/i18n/config';
@@ -29,6 +31,8 @@ export async function generateMetadata({
 
 export const dynamic = 'force-dynamic';
 
+const BOARD_LIMIT = 50;
+
 export default async function LeaderboardPage({
   params,
 }: {
@@ -37,13 +41,13 @@ export default async function LeaderboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [weekly, allTime, weeklyCurrentUserPosition, allTimeCurrentUserPosition] =
-    await Promise.all([
-      getWeeklyLeaderboard(50),
-      getAllTimeLeaderboard(50),
-      getWeeklyCurrentUserPosition(),
-      getAllTimeCurrentUserPosition(),
-    ]);
+  const [weekly, allTime, weeklyRank, allTimeRank, viewerDisplayName] = await Promise.all([
+    getWeeklyLeaderboard(BOARD_LIMIT),
+    getAllTimeLeaderboard(BOARD_LIMIT),
+    getWeeklyCurrentUserRank(),
+    getAllTimeCurrentUserRank(),
+    getViewerDisplayName(),
+  ]);
 
   const t = await getTranslations({ locale, namespace: 'leaderboard' });
 
@@ -51,7 +55,6 @@ export default async function LeaderboardPage({
     <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40">
       <Container>
         <div className="max-w-2xl mx-auto space-y-12">
-          {/* Header */}
           <header className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <span className="uppercase tracking-widest font-bold">{t('eyebrow')}</span>
@@ -60,9 +63,9 @@ export default async function LeaderboardPage({
               {t('title')}
             </h1>
             <p className="text-secondary text-lg">{t('subtitle')}</p>
+            <LeaderboardGuestCta />
           </header>
 
-          {/* Weekly */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
@@ -70,15 +73,26 @@ export default async function LeaderboardPage({
               </h2>
               <span className="text-[10px] text-tertiary font-mono">{t('resetsMonday')}</span>
             </div>
-            <LeaderboardTable entries={weekly} currentUserPosition={weeklyCurrentUserPosition} />
+            <LeaderboardTable
+              entries={weekly.entries}
+              currentUser={weeklyRank.rank}
+              currentUserDisplayName={viewerDisplayName}
+              error={weekly.ok ? null : weekly.error}
+              limit={BOARD_LIMIT}
+            />
           </section>
 
-          {/* All-time */}
           <section className="space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-widest text-tertiary">
               {t('allTimeTitle')}
             </h2>
-            <LeaderboardTable entries={allTime} currentUserPosition={allTimeCurrentUserPosition} />
+            <LeaderboardTable
+              entries={allTime.entries}
+              currentUser={allTimeRank.rank}
+              currentUserDisplayName={viewerDisplayName}
+              error={allTime.ok ? null : allTime.error}
+              limit={BOARD_LIMIT}
+            />
           </section>
         </div>
       </Container>
