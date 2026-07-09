@@ -14,12 +14,13 @@ import { cn } from '@/lib/utils';
 
 interface OverviewCardsProps {
   overall: OverallStats;
+  totalQuestions: number;
 }
 
-export function OverviewCards({ overall }: OverviewCardsProps) {
+export function OverviewCards({ overall, totalQuestions }: OverviewCardsProps) {
   const t = useTranslations('dashboard');
-  const totalQuestions = 155; // Hardcoded or passed down
-  const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
+  const safeTotal = Math.max(totalQuestions, 1);
+  const progressPercent = Math.round((overall.totalAnswered / safeTotal) * 100);
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
   // Level Calculation (Every 15 questions = 1 Level up)
@@ -55,8 +56,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
             </div>
           </div>
           <p className="font-display text-3xl text-foreground mt-1">
-            {overall.totalAnswered}{' '}
-            <span className="text-lg text-secondary">/ {totalQuestions}</span>
+            {overall.totalAnswered} <span className="text-lg text-secondary">/ {safeTotal}</span>
           </p>
         </div>
 

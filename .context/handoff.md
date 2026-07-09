@@ -1,29 +1,29 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
-context_pressure: low
+updated: 2026-07-09T20:45:00Z
+branch: cursor/practice-ux-improvements-52e0
+session_name: practice-ux-improvements
+context_pressure: medium
 ---
 
 # Session Handoff
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+- Fixed sticky/fixed navbar on question pages: chrome auto-hides on `/questions/[id]` (nested IDE scroll), shared hysteresis helper, aligned viewport height to `100dvh`
+- Scratchpad: localStorage persistence + copy / download / import toolbar actions
+- Mobile Question IDE: Prompt / Code / Answer tabs below `md`, compact header, loading skeleton match
+- Leaderboard polish: avatar initials, optional streak/Pro fields, guest sign-in CTA
+- Enriched `/dashboard` with review, leaderboard, saved, and paths links
+- Populated `content/resources.json` for high-traffic questions
+- Daily review CTA on `/progress` dashboard shell
+- Guided practice paths at `/paths` with curated topic sequences
+- Removed hardcoded `totalQuestions = 155` (uses corpus length)
+- IDE i18n: moved hardcoded English strings to message catalogs
+- Keyboard hint bar uses translated scratchpad label; hidden on mobile
 
 ## In Progress
 
-- None - all work complete
+- None — Wave 1–3 practice/retention/content depth items from the roadmap are implemented in this branch
 
 ## Blocked
 
@@ -31,27 +31,25 @@ context_pressure: low
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+- Run `bun run typecheck` + `bun run test` before merge
+- Manual check: question page chrome hide, phone-width IDE tabs, scratchpad import/export
+- Future: Pro/payments/AI (Wave 4), React Sandpack platform content pipeline
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
+- Question detail routes hide global chrome while IDE fills the viewport; reveal after below-fold scroll
+- Scratchpad persistence is guest-local only (no cloud sync yet)
+- Practice paths are curated ID lists over the existing Lydia corpus (no new content format)
+- Leaderboard social fields are optional until RPCs expose streak/pro/avatar
 
 ## Key Files
 
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
-
-## Test Summary
-
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- `apps/web/lib/chrome/scroll-hide.ts`
+- `apps/web/lib/scratchpad/storage.ts`
+- `apps/web/components/ide/question-ide-client.tsx`
+- `apps/web/components/scratchpad/*`
+- `apps/web/lib/content/practice-paths.ts`
+- `apps/web/app/[locale]/(app)/paths/page.tsx`
+- `content/resources.json`
+- `apps/web/components/dashboard/dashboard-shell.tsx`
+- `apps/web/components/leaderboard/leaderboard-table.tsx`

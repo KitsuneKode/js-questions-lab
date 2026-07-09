@@ -47,7 +47,7 @@ export function KeyboardHintBar({
 
   const shortcuts = isAnswered
     ? postAnswerShortcuts
-    : [...preAnswerShortcuts, { keys: ['K'], label: 'scratchpad', active: true }];
+    : [...preAnswerShortcuts, { keys: ['K'], label: t('scratchpad'), active: true }];
 
   return (
     <div className="flex h-7 items-center gap-4 border-t border-border/30 bg-void/80 px-4 shrink-0 overflow-x-auto scrollbar-none">

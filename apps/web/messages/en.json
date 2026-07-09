@@ -12,7 +12,8 @@
     "contact": "Contact",
     "shortcuts": "Shortcuts",
     "signIn": "Sign In",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "paths": "Paths"
   },
   "questions": {
     "title": "Question Library",
@@ -203,7 +204,11 @@
     "labelSaved": "Saved Questions",
     "savedSub": "Questions you've set aside for later review.",
     "savedCount": "{count} saved",
-    "viewAllSaved": "View all {count} saved"
+    "viewAllSaved": "View all {count} saved",
+    "browseAll": "Browse all",
+    "dailyReviewTitle": "Today's review",
+    "dailyReviewEmpty": "You're caught up. Keep practicing to grow your review queue.",
+    "dailyReviewCta": "Start today's reviews"
   },
   "accountDashboard": {
     "eyebrow": "Account",
@@ -215,7 +220,17 @@
     "syncTitle": "Sync Identity",
     "syncBody": "This private area is reserved for account-aware flows like sync status and signed-in access. Your learning flow still works without auth.",
     "memberIdLabel": "Member ID",
-    "memberIdUnavailable": "Unavailable"
+    "memberIdUnavailable": "Unavailable",
+    "reviewTitle": "Reviews due",
+    "reviewBody": "Jump into spaced-repetition reviews from your progress hub. Sync keeps bookmarks and attempts available across devices.",
+    "openReviews": "Open review queue",
+    "leaderboardTitle": "Climb the ranks",
+    "leaderboardBody": "Signed-in practice earns XP on the public leaderboard. Guests can browse rankings anytime.",
+    "openLeaderboard": "View leaderboard",
+    "savedTitle": "Saved questions",
+    "savedBody": "Bookmarks sync with your account. Practice them from the library Saved filter or the progress hub.",
+    "openSaved": "Browse saved",
+    "openPaths": "Browse guided paths"
   },
   "credits": {
     "label": "Credits & Attribution",
@@ -424,7 +439,41 @@
     "propagationReplayDesc": "Each row shows the current node handling the click as bubbling moves outward.",
     "clickToInspect": "Click a node to inspect the propagated console output.",
     "clickable": "Clickable",
-    "resourcesHeader": "References"
+    "resourcesHeader": "References",
+    "runCode": "Run Code",
+    "running": "Running...",
+    "correct": "Correct!",
+    "answerLabel": "Answer: {option}",
+    "questionCode": "Question Code",
+    "questionHtml": "Question HTML",
+    "questionSnippet": "Question Snippet",
+    "runtimeInspectors": "Runtime Inspectors",
+    "runtimeInspectorsDesc": "Replay the event loop or step through the traced execution state.",
+    "inspect": "Inspect",
+    "eventLoopReplay": "Event Loop Replay",
+    "eventLoopReplayDesc": "Watch tasks, microtasks, and console output move through the loop.",
+    "eventLoopReplayHint": "Best for timing, queue order, and callback sequencing.",
+    "replay": "Replay",
+    "visualDebugger": "Visual Debugger",
+    "visualDebuggerDesc": "Inspect expression-level flow, queue transitions, and snapshots.",
+    "visualDebuggerHint": "Best for deeper step-through debugging once the timeline looks odd.",
+    "trace": "Trace",
+    "needLowerTrace": "Need the lower-level trace too?",
+    "jumpVisualDebugger": "Jump into the Visual Debugger to inspect the same run in more detail.",
+    "openVisualDebugger": "Open Visual Debugger",
+    "openEventLoopReplay": "Open Event Loop Replay",
+    "eventLoopReplayDialogDesc": "Replay the recorded macro and microtask timeline for this snippet.",
+    "visualDebuggerDialogDesc": "Step through expression-level execution, queues, and logs for this snippet.",
+    "runFailed": "Last run failed: {error}",
+    "scratchpadHint": "Run the snippet here or send it to Scratchpad to experiment without losing the original.",
+    "domReplayBadge": "DOM Replay",
+    "staticBadge": "Static",
+    "tabPrompt": "Prompt",
+    "tabCode": "Code",
+    "tabAnswer": "Answer",
+    "searchPlaceholder": "Type a keyword, concept, or question number...",
+    "noResults": "No results found.",
+    "groupQuestions": "Questions"
   },
   "scratchpad": {
     "title": "Scratchpad",
@@ -440,7 +489,15 @@
     "javaScript": "JavaScript",
     "output": "Output",
     "keyboardShortcut": "Cmd/Ctrl + Enter",
-    "resetTooltip": "Reset (⌘⇧⌫)"
+    "resetTooltip": "Reset (⌘⇧⌫)",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyFailed": "Could not copy to clipboard",
+    "export": "Export",
+    "downloaded": "Downloaded scratchpad.js",
+    "import": "Import",
+    "imported": "File imported",
+    "importFailed": "Could not import file"
   },
   "debugger": {
     "visualizer": "JavaScript Execution Visualizer",
@@ -481,6 +538,27 @@
     "allTimeTitle": "All Time",
     "resetsMonday": "Resets Monday",
     "empty": "No entries yet. Be the first to earn XP!",
-    "you": "You"
+    "you": "You",
+    "guestCtaTitle": "Join the board",
+    "guestCtaBody": "Sign in to earn XP, keep your streak, and appear on the weekly rankings.",
+    "guestCtaButton": "Sign in to compete",
+    "streakLabel": "{count} day streak",
+    "proBadge": "Pro"
+  },
+  "paths": {
+    "eyebrow": "Guided Paths",
+    "title": "Practice paths",
+    "subtitle": "Follow a focused topic sequence instead of browsing at random.",
+    "start": "Start path",
+    "questions": "{count} questions",
+    "progress": "{done}/{total} done",
+    "pathScopeTitle": "Scope & Closures",
+    "pathScopeDesc": "Build a foundation in lexical scope, hoisting, and closure behavior.",
+    "pathPrototypesTitle": "Prototypes & Objects",
+    "pathPrototypesDesc": "Practice prototype chains, object identity, and inheritance patterns.",
+    "pathAsyncTitle": "Async & Event Loop",
+    "pathAsyncDesc": "Trace promises, timers, and the event loop with runnable snippets.",
+    "pathArraysTitle": "Arrays & Types",
+    "pathArraysDesc": "Sharpen array methods, coercion, and type quirks that show up in interviews."
   }
 }

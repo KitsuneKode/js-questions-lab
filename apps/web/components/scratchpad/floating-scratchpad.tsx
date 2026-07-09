@@ -3,12 +3,16 @@
 import type { OnMount } from '@monaco-editor/react';
 import {
   IconActivity as Activity,
+  IconCopy as Copy,
+  IconDownload as Download,
   IconPlayerPlay as Play,
   IconRotateClockwise2 as RotateCcw,
   IconSparkles as Sparkles,
+  IconUpload as Upload,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { MonacoCodeEditor } from '@/components/editor/monaco-code-editor';
 import { TerminalOutput } from '@/components/terminal/terminal-output';
 import { Button } from '@/components/ui/button';
@@ -32,6 +36,11 @@ import { runJavaScript } from '@/lib/run/sandbox';
 import type { TerminalLogEntry } from '@/lib/run/terminal';
 import { toTerminalLogEntries } from '@/lib/run/terminal';
 import type { TimelineEvent } from '@/lib/run/types';
+import {
+  copyScratchpadCode,
+  downloadScratchpadFile,
+  readImportedScratchpadFile,
+} from '@/lib/scratchpad/storage';
 import { useScratchpad } from './scratchpad-context';
 
 function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
@@ -53,14 +62,15 @@ function ShortcutHint({ keys, label }: { keys: string[]; label: string }) {
 }
 
 export function FloatingScratchpad() {
-  const { isOpen, closeScratchpad, code, setCode } = useScratchpad();
+  const { isOpen, closeScratchpad, code, setCode, resetCode: resetPersisted } = useScratchpad();
   const t = useTranslations('scratchpad');
   const [logs, setLogs] = useState<TerminalLogEntry[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const [copied, setCopied] = useState(false);
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Re-focus editor whenever the sheet opens
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => editorRef.current?.focus(), 50);
@@ -89,10 +99,47 @@ export function FloatingScratchpad() {
   }, [code]);
 
   const resetCode = useCallback(() => {
-    setCode('');
+    resetPersisted();
     setLogs([]);
     setTimeline([]);
-  }, [setCode]);
+  }, [resetPersisted]);
+
+  const handleCopy = useCallback(async () => {
+    const ok = await copyScratchpadCode(code);
+    if (ok) {
+      setCopied(true);
+      toast.success(t('copied'));
+      setTimeout(() => setCopied(false), 1500);
+    } else {
+      toast.error(t('copyFailed'));
+    }
+  }, [code, t]);
+
+  const handleDownload = useCallback(() => {
+    downloadScratchpadFile(code);
+    toast.success(t('downloaded'));
+  }, [code, t]);
+
+  const handleImportClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleImportChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) return;
+
+      try {
+        const text = await readImportedScratchpadFile(file);
+        setCode(text);
+        toast.success(t('imported'));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : t('importFailed'));
+      }
+    },
+    [setCode, t],
+  );
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeScratchpad()}>
@@ -122,6 +169,51 @@ export function FloatingScratchpad() {
                 <ShortcutHint keys={['⌘', '↵']} label={t('run')} />
                 <ShortcutHint keys={['⌘', '⇧', '⌫']} label={t('reset')} />
               </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".js,.ts,.tsx,.jsx,.mjs,.cjs,.txt,text/javascript,text/plain"
+                className="hidden"
+                onChange={handleImportChange}
+                data-testid="scratchpad-import-input"
+              />
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleImportClick}
+                title={t('import')}
+                className="h-8 gap-1.5 text-[11px] text-secondary hover:text-primary px-2 sm:px-3"
+                data-testid="scratchpad-import"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t('import')}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDownload}
+                title={t('export')}
+                className="h-8 gap-1.5 text-[11px] text-secondary hover:text-primary px-2 sm:px-3"
+                data-testid="scratchpad-export"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t('export')}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  void handleCopy();
+                }}
+                title={t('copy')}
+                className="h-8 gap-1.5 text-[11px] text-secondary hover:text-primary px-2 sm:px-3"
+                data-testid="scratchpad-copy"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
+              </Button>
 
               <Dialog>
                 <DialogTrigger asChild>
@@ -188,7 +280,6 @@ export function FloatingScratchpad() {
         </SheetHeader>
 
         <div className="flex flex-1 flex-col overflow-hidden bg-void divide-y divide-border-subtle">
-          {/* Editor Section */}
           <section className="flex flex-col flex-1 min-h-[40vh]">
             <div className="flex items-center justify-between border-b border-border-subtle px-4 py-2 text-[10px] uppercase tracking-widest text-tertiary bg-surface/50 font-mono shrink-0">
               <span>{t('editor')}</span>
@@ -211,7 +302,6 @@ export function FloatingScratchpad() {
             </div>
           </section>
 
-          {/* Results Area */}
           <section className="flex flex-col flex-1 overflow-hidden bg-surface max-h-[40vh]">
             <div className="border-b border-border-subtle px-4 py-2 text-[10px] uppercase tracking-widest text-tertiary bg-surface/50 font-mono flex items-center justify-between shrink-0">
               <span>{t('output')}</span>
