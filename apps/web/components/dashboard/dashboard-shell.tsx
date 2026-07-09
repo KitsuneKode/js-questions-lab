@@ -9,6 +9,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
 import { BookmarkedList } from '@/components/dashboard/bookmarked-list';
+import { MasteryPathsGrid } from '@/components/dashboard/mastery-paths-grid';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { ReviewQueue } from '@/components/dashboard/review-queue';
@@ -38,6 +39,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
     tagStats,
     dailyActivity,
     weakestTopics,
+    topicMastery,
     reviewQueue,
     continueLearning,
     recommended,
@@ -107,6 +109,8 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
         totalQuestions={questions.length}
         totalXP={xpState.totalXP}
       />
+
+      <MasteryPathsGrid topics={topicMastery} locale={locale} />
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (
