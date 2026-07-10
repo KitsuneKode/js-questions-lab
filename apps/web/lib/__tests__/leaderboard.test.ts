@@ -8,7 +8,7 @@ describe('leaderboard entries', () => {
     ]);
 
     expect(entries[0]?.displayName).toBe('Anonymous');
-    expect(entries[0]?.currentStreak).toBe(0);
+    expect(entries[0]?.streakDays).toBeUndefined();
   });
 
   it('maps current streak from the server payload', () => {
@@ -16,13 +16,13 @@ describe('leaderboard entries', () => {
       { position: 1, rank: 1, display_name: 'Ace', total_xp: 500, current_streak: 7 },
     ]);
 
-    expect(entries[0]?.currentStreak).toBe(7);
+    expect(entries[0]?.streakDays).toBe(7);
   });
 
-  it('defaults missing streak to zero', () => {
+  it('omits streakDays when streak is missing or zero', () => {
     const entries = toEntries([{ position: 1, rank: 1, display_name: 'Ace', total_xp: 500 }]);
 
-    expect(entries[0]?.currentStreak).toBe(0);
+    expect(entries[0]?.streakDays).toBeUndefined();
   });
 
   it('preserves stable positions and competition ranks from the server payload', () => {

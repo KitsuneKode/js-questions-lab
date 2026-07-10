@@ -32,9 +32,23 @@ const baseOverall: OverallStats = {
   longestStreak: 5,
 };
 
+const baseStreak = {
+  version: 1 as const,
+  currentStreak: 3,
+  longestStreak: 5,
+  lastActivityDate: '2026-07-10',
+};
+
 describe('OverviewCards', () => {
   it('shows Apprentice at level 1, uses totalQuestions prop, and not hardcoded 155', () => {
-    render(<OverviewCards overall={baseOverall} totalQuestions={200} totalXP={0} />);
+    render(
+      <OverviewCards
+        overall={baseOverall}
+        totalQuestions={200}
+        totalXP={0}
+        streakState={baseStreak}
+      />,
+    );
 
     expect(screen.getByText(/Level 1 · Apprentice/)).toBeInTheDocument();
     expect(screen.getByText(/\/ 200/)).toBeInTheDocument();
@@ -43,7 +57,14 @@ describe('OverviewCards', () => {
   });
 
   it('shows Practitioner at level 2 when totalXP is 500', () => {
-    render(<OverviewCards overall={baseOverall} totalQuestions={200} totalXP={500} />);
+    render(
+      <OverviewCards
+        overall={baseOverall}
+        totalQuestions={200}
+        totalXP={500}
+        streakState={baseStreak}
+      />,
+    );
 
     expect(screen.getByText(/Level 2 · Practitioner/)).toBeInTheDocument();
     expect(screen.getByText('1000 XP to Engineer')).toBeInTheDocument();

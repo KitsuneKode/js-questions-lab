@@ -1153,28 +1153,45 @@ export function QuestionIDEClient({
                         </div>
                       )}
 
-                      <div className="grid grid-cols-3 gap-2">
-                        {(['hard', 'good', 'easy'] as const).map((grade) => (
-                          <button
-                            key={grade}
-                            type="button"
-                            disabled={!isCorrect && !errorType}
-                            onClick={() => handleSelfGrade(grade)}
-                            className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
-                              !isCorrect && !errorType
-                                ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
-                                : selfGrade === grade
-                                  ? grade === 'hard'
-                                    ? 'border-danger/50 bg-danger/20 text-danger'
-                                    : grade === 'good'
-                                      ? 'border-warning/50 bg-warning/20 text-warning'
-                                      : 'border-success/50 bg-success/20 text-success'
-                                  : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
-                            }`}
-                          >
-                            {t(selfGradeLabelKeys[grade])}
-                          </button>
-                        ))}
+                      <div
+                        className={`rounded-xl p-3 ${
+                          showReviewGradeEmphasis ? 'border border-primary/40 bg-primary/5' : ''
+                        }`}
+                      >
+                        {showReviewGradeEmphasis && !selfGrade && (
+                          <p className="mb-2 text-center text-xs text-primary/80">
+                            {t('reviewGradeHint')}
+                          </p>
+                        )}
+                        {!selfGrade ? (
+                          <div className="grid grid-cols-3 gap-2">
+                            {(['hard', 'good', 'easy'] as const).map((grade) => (
+                              <button
+                                key={grade}
+                                type="button"
+                                disabled={!isCorrect && !errorType}
+                                onClick={() => handleSelfGrade(grade)}
+                                className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
+                                  !isCorrect && !errorType
+                                    ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
+                                    : selfGrade === grade
+                                      ? grade === 'hard'
+                                        ? 'border-danger/50 bg-danger/20 text-danger'
+                                        : grade === 'good'
+                                          ? 'border-warning/50 bg-warning/20 text-warning'
+                                          : 'border-success/50 bg-success/20 text-success'
+                                      : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
+                                }`}
+                              >
+                                {t(selfGradeLabelKeys[grade])}
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">
+                            {t('previousGrade', { grade: t(selfGradeLabelKeys[selfGrade]) })}
+                          </p>
+                        )}
                       </div>
 
                       {question.resources && question.resources.length > 0 && (
