@@ -18,9 +18,12 @@ import {
 import { useProgress } from '@/lib/progress/progress-context';
 
 export function useAnalytics(questions: QuestionSummary[]) {
-  const { state, ready } = useProgress();
+  const { state, ready, streakState } = useProgress();
 
-  const overall = useMemo<OverallStats>(() => computeOverallStats(state), [state]);
+  const overall = useMemo<OverallStats>(
+    () => computeOverallStats(state, streakState),
+    [state, streakState],
+  );
 
   const tagStats = useMemo<TagStats[]>(() => computeTagStats(state, questions), [state, questions]);
 

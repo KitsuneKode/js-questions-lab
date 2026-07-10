@@ -102,6 +102,28 @@ describe('progress analytics', () => {
     expect(overall.totalAnswered).toBe(2);
     expect(overall.totalAttempts).toBe(3);
     expect(overall.bookmarkedCount).toBe(1);
+    expect(overall.currentStreak).toBe(3);
+    expect(overall.longestStreak).toBe(3);
+  });
+
+  it('uses streak override instead of attempt-derived streak', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-29T12:00:00.000Z'));
+
+    const progress = createProgressState();
+    const attemptDerived = computeStreak(progress);
+
+    expect(attemptDerived).toEqual({ current: 3, longest: 3 });
+
+    const overall = computeOverallStats(progress, {
+      currentStreak: 7,
+      longestStreak: 14,
+    });
+
+    expect(overall.currentStreak).toBe(7);
+    expect(overall.longestStreak).toBe(14);
+    expect(overall.totalAnswered).toBe(2);
+    expect(overall.totalAttempts).toBe(3);
   });
 
   it('aggregates tag accuracy across question attempts', () => {

@@ -1,5 +1,6 @@
 import type { QuestionSummary } from '@/lib/content/types';
 import type { ProgressItem, ProgressState } from '@/lib/progress/storage';
+import type { StreakState } from '@/lib/streaks/calculator';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -103,7 +104,10 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
     .sort((a, b) => b.totalAttempts - a.totalAttempts);
 }
 
-export function computeOverallStats(progress: ProgressState): OverallStats {
+export function computeOverallStats(
+  progress: ProgressState,
+  streakOverride?: Pick<StreakState, 'currentStreak' | 'longestStreak'>,
+): OverallStats {
   const items = Object.values(progress.questions);
   let totalAttempts = 0;
   let totalCorrect = 0;
@@ -119,7 +123,9 @@ export function computeOverallStats(progress: ProgressState): OverallStats {
     if (item.bookmarked) bookmarkedCount++;
   }
 
-  const { current, longest } = computeStreak(progress);
+  const streak = streakOverride
+    ? { current: streakOverride.currentStreak, longest: streakOverride.longestStreak }
+    : computeStreak(progress);
 
   return {
     totalAnswered,
@@ -127,8 +133,8 @@ export function computeOverallStats(progress: ProgressState): OverallStats {
     totalAttempts,
     overallAccuracy: totalAttempts > 0 ? totalCorrect / totalAttempts : 0,
     bookmarkedCount,
-    currentStreak: current,
-    longestStreak: longest,
+    currentStreak: streak.current,
+    longestStreak: streak.longest,
   };
 }
 
