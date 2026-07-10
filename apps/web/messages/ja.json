@@ -409,6 +409,7 @@
     "gradeHard": "難しい",
     "gradeGood": "普通",
     "gradeEasy": "簡単",
+    "reviewGradeHint": "復習を評価してスケジュールを更新してください",
     "practice": "練習する",
     "domEventSimulator": "DOMイベントシミュレーター",
     "domReplayTitle": "偽のブラウザランタイムなしでターゲットとバブリングをリプレイ",

@@ -409,6 +409,7 @@
     "gradeHard": "Difícil",
     "gradeGood": "Bien",
     "gradeEasy": "Fácil",
+    "reviewGradeHint": "Califica esta repaso para actualizar tu horario",
     "practice": "Practicar",
     "domEventSimulator": "Simulador de eventos DOM",
     "domReplayTitle": "Repetir objetivo y bubbling sin tiempo de ejecución falso de navegador",

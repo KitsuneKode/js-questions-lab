@@ -409,6 +409,7 @@
     "gradeHard": "Schwer",
     "gradeGood": "Gut",
     "gradeEasy": "Einfach",
+    "reviewGradeHint": "Bewerte diese Wiederholung, um deinen Zeitplan zu aktualisieren",
     "practice": "Üben",
     "domEventSimulator": "DOM-Ereignissimulator",
     "domReplayTitle": "Ziel und Bubbling ohne gefälschten Browser-Laufzeit wiedergeben",
