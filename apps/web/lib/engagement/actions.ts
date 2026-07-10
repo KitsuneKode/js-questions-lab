@@ -8,6 +8,7 @@ import {
   buildAuthoritativeSelfGradeResult,
   rebuildXPState,
 } from '@/lib/engagement/engine';
+import type { GuestAttemptReplay } from '@/lib/engagement/guest-replay';
 import { revalidateLeaderboardCaches } from '@/lib/engagement/leaderboard-cache';
 import { DEFAULT_LOCALE, isValidLocale, type LocaleCode } from '@/lib/i18n/config';
 import type { Grade } from '@/lib/progress/srs';
@@ -282,4 +283,56 @@ export async function fetchStreak(): Promise<StreakState | null> {
     longestStreak: data.longest_streak,
     lastActivityDate: data.last_activity_date ?? null,
   };
+}
+
+export async function upsertStreak(state: StreakState): Promise<StreakState | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from('user_streaks').upsert(
+    {
+      user_id: userId,
+      current_streak: state.currentStreak,
+      longest_streak: state.longestStreak,
+      last_activity_date: state.lastActivityDate,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (error) {
+    console.error('Failed to upsert streak:', error.message);
+    throw error;
+  }
+
+  return state;
+}
+
+export async function replayGuestAttempts(
+  attempts: GuestAttemptReplay[],
+  locale?: string,
+): Promise<{ xpState: XPState; streakState: StreakState } | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  let last: RecordAttemptResult | null = null;
+  for (const attempt of attempts) {
+    last = await recordAttempt({
+      questionId: attempt.questionId,
+      selected: attempt.selected,
+      submissionId: attempt.submissionId,
+      locale,
+    });
+  }
+
+  if (!last) {
+    const [xpState, streakState] = await Promise.all([fetchXPState(), fetchStreak()]);
+    return {
+      xpState,
+      streakState: streakState ?? defaultStreakState,
+    };
+  }
+
+  return { xpState: last.xpState, streakState: last.streakState };
 }

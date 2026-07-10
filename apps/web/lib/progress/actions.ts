@@ -98,7 +98,7 @@ export async function syncProgressToServer(items: ProgressItem[]): Promise<void>
     question_id: item.questionId,
     attempts: item.attempts,
     bookmarked: item.bookmarked,
-    srs_data: existingSrsByQuestionId.get(item.questionId) ?? null,
+    srs_data: item.srsData ?? existingSrsByQuestionId.get(item.questionId) ?? null,
     updated_at: item.updatedAt,
   }));
 
