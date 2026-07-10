@@ -158,9 +158,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                     <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
                       <IntentPrefetchLink
                         href={
-                          suggestion.question
-                            ? withLocale(locale, `/questions/${suggestion.question.id}`)
-                            : questionsHref
+                          suggestion.isUrgent
+                            ? withLocale(locale, '/review')
+                            : suggestion.question
+                              ? withLocale(locale, `/questions/${suggestion.question.id}`)
+                              : questionsHref
                         }
                       >
                         <Button

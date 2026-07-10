@@ -29,6 +29,7 @@ export const siteLinks = {
   releaseNotes: '/release-notes',
   questions: '/questions',
   progress: '/progress',
+  review: '/review',
   dashboard: '/dashboard',
   leaderboard: '/leaderboard',
   contact: '/contact',

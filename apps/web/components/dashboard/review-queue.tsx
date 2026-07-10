@@ -6,6 +6,7 @@ import {
 } from '@tabler/icons-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
+import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
 import { withLocale } from '@/lib/locale-paths';
 
@@ -24,18 +25,24 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
         <RotateCcw className="w-32 h-32 text-primary" />
       </div>
 
-      <div className="mb-6 relative z-10 flex items-center justify-between">
+      <div className="mb-6 relative z-10 flex items-center justify-between gap-4">
         <div>
           <h3 className="font-display text-xl text-foreground">{t('labelReviewQueue')}</h3>
           <p className="text-xs text-secondary mt-1">{t('reviewQueueSub')}</p>
         </div>
+        <IntentPrefetchLink href={withLocale(locale, '/review')}>
+          <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold shrink-0">
+            {t('startReview')}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        </IntentPrefetchLink>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 relative z-10">
         {questions.slice(0, 6).map((q) => (
           <IntentPrefetchLink
             key={q.id}
-            href={withLocale(locale, `/questions/${q.id}`)}
+            href={withLocale(locale, `/questions/${q.id}?status=review`)}
             className="group/item flex flex-col justify-between rounded-xl border border-border-subtle bg-background p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-glow min-h-[110px]"
           >
             <div>
