@@ -60,6 +60,7 @@ import {
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import {
+  applyReviewFilter,
   applyServerFilters,
   applyStatusFilter,
   buildQuestionScopeQuery,
@@ -402,13 +403,17 @@ export function QuestionIDEClient({
     () => staticScopedQuestions.map((scopedQuestion) => scopedQuestion.id),
     [staticScopedQuestions],
   );
-  const liveStatusScopedIds = useMemo(
-    () =>
-      applyStatusFilter(staticScopedQuestions, scope.status, progress.questions).map(
+  const liveStatusScopedIds = useMemo(() => {
+    if (scope.status === 'review') {
+      return applyReviewFilter(staticScopedQuestions, progress).map(
         (scopedQuestion) => scopedQuestion.id,
-      ),
-    [progress.questions, scope.status, staticScopedQuestions],
-  );
+      );
+    }
+
+    return applyStatusFilter(staticScopedQuestions, scope.status, progress.questions).map(
+      (scopedQuestion) => scopedQuestion.id,
+    );
+  }, [progress, scope.status, staticScopedQuestions]);
   const allQuestionIds = useMemo(
     () => questionIndex.map((availableQuestion) => availableQuestion.id),
     [questionIndex],

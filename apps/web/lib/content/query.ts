@@ -1,7 +1,8 @@
 import type { QuestionDiscoveryItem, QuestionRecord, QuestionSummary } from '@/lib/content/types';
+import { getReviewQueue } from '@/lib/progress/analytics';
 import type { ProgressState } from '@/lib/progress/storage';
 
-export type ListingStatus = 'all' | 'answered' | 'unanswered' | 'bookmarked';
+export type ListingStatus = 'all' | 'answered' | 'unanswered' | 'bookmarked' | 'review';
 type SearchParamValue = string | string[] | undefined;
 type SearchParamRecord = Record<string, SearchParamValue>;
 interface SearchParamsLike {
@@ -88,7 +89,12 @@ function arrayValues(params: SearchParamInput, key: string, legacyKey?: string):
 }
 
 function normalizeStatus(value: string): ListingStatus {
-  if (value === 'answered' || value === 'unanswered' || value === 'bookmarked') {
+  if (
+    value === 'answered' ||
+    value === 'unanswered' ||
+    value === 'bookmarked' ||
+    value === 'review'
+  ) {
     return value;
   }
 
@@ -192,7 +198,7 @@ export function applyStatusFilter<T extends Pick<QuestionSummary, 'id'>>(
   status: ListingStatus,
   progressQuestions: ProgressState['questions'],
 ): T[] {
-  if (status === 'all') {
+  if (status === 'all' || status === 'review') {
     return questions;
   }
 
@@ -207,6 +213,17 @@ export function applyStatusFilter<T extends Pick<QuestionSummary, 'id'>>(
 
     return true;
   });
+}
+
+export function applyReviewFilter<T extends { id: number }>(
+  questions: T[],
+  progress: ProgressState,
+): T[] {
+  const summaries = questions.map((q) => ({ id: q.id })) as QuestionSummary[];
+  const dueIds = new Set(
+    getReviewQueue(progress, summaries, Number.POSITIVE_INFINITY).map((q) => q.id),
+  );
+  return questions.filter((q) => dueIds.has(q.id));
 }
 
 export function paginate<T>(items: T[], page: number, pageSize: number) {

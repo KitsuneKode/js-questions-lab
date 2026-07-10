@@ -169,6 +169,7 @@ vi.mock('@/components/visualization/visual-debugger', () => ({
 }));
 
 vi.mock('@/lib/content/query', () => ({
+  applyReviewFilter: (items: unknown[]) => items,
   applyServerFilters: (items: unknown[]) => items,
   applyStatusFilter: (items: unknown[]) => items,
   buildQuestionScopeQuery: () => '',
