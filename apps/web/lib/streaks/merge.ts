@@ -24,7 +24,8 @@ export function mergeStreakStates(
   const byRecency = [...candidates].sort((a, b) =>
     (b.lastActivityDate ?? '').localeCompare(a.lastActivityDate ?? ''),
   );
-  const primary = byRecency[0]!;
+  const primary = byRecency[0];
+  if (!primary?.lastActivityDate) return defaultStreakState;
   const secondary = byRecency[1];
 
   let currentStreak = primary.currentStreak;
@@ -36,7 +37,7 @@ export function mergeStreakStates(
     currentStreak = secondary.currentStreak;
   }
 
-  const last = primary.lastActivityDate!;
+  const last = primary.lastActivityDate;
   const age = dayDiff(today, last);
   if (age > 1) {
     currentStreak = 0;

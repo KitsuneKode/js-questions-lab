@@ -132,9 +132,11 @@ describe('ProgressProvider sign-in merge', () => {
     ]);
 
     expect(syncProgressToServer).toHaveBeenCalledTimes(1);
-    expect(replayGuestAttempts.mock.invocationCallOrder[0]).toBeLessThan(
-      syncProgressToServer.mock.invocationCallOrder[0]!,
-    );
+    const replayOrder = replayGuestAttempts.mock.invocationCallOrder[0];
+    const syncOrder = syncProgressToServer.mock.invocationCallOrder[0];
+    expect(replayOrder).toBeDefined();
+    expect(syncOrder).toBeDefined();
+    expect(replayOrder).toBeLessThan(syncOrder as number);
 
     expect(result.current.xpState.totalXP).toBe(30);
     expect(result.current.streakState.currentStreak).toBe(5);

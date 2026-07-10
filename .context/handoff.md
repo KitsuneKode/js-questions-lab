@@ -1,7 +1,7 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
+updated: 2026-07-10T02:45:00Z
+branch: cursor/trust-habit-sprint-360d
+session_name: trust-habit-sprint-complete
 context_pressure: low
 ---
 
@@ -9,21 +9,40 @@ context_pressure: low
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+Trust + habit sprint (plan: `.context/docs/plans/2026-07-09-trust-habit-sprint.md`):
+
+### Phase 1 — Guest → sign-in engagement sync
+- `mergeStreakStates` (`apps/web/lib/streaks/merge.ts`)
+- Guest attempt replay helpers (`apps/web/lib/engagement/guest-replay.ts`)
+- `upsertStreak` + `replayGuestAttempts` (+ `answeredAt` forwarding, 200-cap)
+- Sign-in effect: **replay before sync**, merge streaks, preserve guest SRS, clear guest session
+- Integration test: `progress-context.sign-in.test.tsx`
+
+### Phase 2 — Dashboard unification
+- `computeOverallStats` accepts `streakState` override
+- OverviewCards uses real XP levels + `questions.length` (no hardcoded 155 / fake level÷15)
+
+### Phase 3 — Daily Review
+- `countDueReviews` + ReviewBadge alignment
+- `status=review` scope (`applyReviewFilter`)
+- `/review` route + dashboard CTAs
+- `srs_clear` +25 XP when due queue clears
+- Self-grade emphasis in review mode
+
+### Phase 4 — Leaderboard polish
+- Migration: `display_name` on `user_xp_totals`, streak in RPCs
+- Table shows streak + guest sign-up CTA
+
+## Verification
+
+- `bun run typecheck` — pass
+- `bun run test` — 190 passed
+- `bun run lint` — pass (warnings cleaned)
+- `bun run build` — pass (includes `/[locale]/review`)
 
 ## In Progress
 
-- None - all work complete
+- None
 
 ## Blocked
 
@@ -31,27 +50,30 @@ context_pressure: low
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+- Apply Supabase migration `20260710000000_leaderboard_display_name.sql` on staging/prod
+- Optional follow-ups from reviews:
+  - Sign-in transition guard (avoid redundant sync on every authenticated mount)
+  - Settings UI to set `user_xp_totals.display_name`
+  - Merge `/dashboard` + `/progress` IA
+- Defer: Pro tier, AI interview, streak shield
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
+- Replay guest attempts **before** `syncProgressToServer` to avoid duplicate attempt rows (`recordAttempt` appends)
+- Server engine is authoritative for XP after replay (guest local totals may differ slightly)
+- Review badge stays SRS-only; `/review` uses full `getReviewQueue` (SRS + legacy)
+- `srs_clear` uses SRS-only due count in ProgressProvider (no question list in context)
 
 ## Key Files
 
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
+- `apps/web/lib/progress/progress-context.tsx` — sign-in merge + srs_clear award
+- `apps/web/lib/engagement/actions.ts` — replay/upsert/appendXPEvents
+- `apps/web/lib/engagement/guest-replay.ts` — pure replay selection
+- `apps/web/lib/streaks/merge.ts` — streak merge
+- `apps/web/app/[locale]/(app)/review/page.tsx` — daily review entry
+- `supabase/migrations/20260710000000_leaderboard_display_name.sql`
 
 ## Test Summary
 
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- ~190 vitest tests passing
+- New coverage: streak merge, guest replay, sign-in sync, overview cards, review start, srs_clear, leaderboard streaks

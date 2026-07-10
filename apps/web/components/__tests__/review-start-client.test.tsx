@@ -64,7 +64,12 @@ describe('ReviewStartClient', () => {
   });
 
   it('shows start review CTA when queue has items', () => {
-    analyticsState.reviewQueue = [questions[0]!, questions[1]!];
+    const first = questions[0];
+    const second = questions[1];
+    expect(first).toBeDefined();
+    expect(second).toBeDefined();
+    if (!first || !second) return;
+    analyticsState.reviewQueue = [first, second];
 
     render(<ReviewStartClient locale="en" questions={questions} />);
 

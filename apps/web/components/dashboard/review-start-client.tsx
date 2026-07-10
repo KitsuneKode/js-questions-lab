@@ -37,7 +37,10 @@ export function ReviewStartClient({
     );
   }
 
-  const first = reviewQueue[0]!;
+  const first = reviewQueue[0];
+  if (!first) {
+    return null;
+  }
   const startHref = withLocale(locale, `/questions/${first.id}?status=review`);
 
   return (
