@@ -13,6 +13,7 @@ import {
 import { useSafeAuth } from '@/lib/auth-utils';
 import type { Difficulty } from '@/lib/content/types';
 import {
+  appendXPEvents,
   applyServerSelfGrade,
   fetchStreak,
   fetchXPState,
@@ -26,6 +27,7 @@ import {
   syncProgressToServer,
   upsertSingleQuestion,
 } from '@/lib/progress/actions';
+import { countDueReviews } from '@/lib/progress/analytics';
 import { clearGuestData, getOrCreateGuestSid, rotateGuestSid } from '@/lib/progress/guest-session';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
@@ -41,7 +43,7 @@ import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metada
 import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
 import { mergeStreakStates } from '@/lib/streaks/merge';
 import { readStreak, writeStreak } from '@/lib/streaks/storage';
-import { computeXP } from '@/lib/xp/scoring';
+import { buildSrsClearEvent, computeXP } from '@/lib/xp/scoring';
 import type { XPState } from '@/lib/xp/storage';
 import { applyXPEvents, defaultXPState, readXP, writeXP } from '@/lib/xp/storage';
 
@@ -415,7 +417,46 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const saveSelfGrade = useCallback(
     (questionId: number, grade: Grade) => {
+      const dueBefore = countDueReviews(stateRef.current);
+
+      const prev = ensureItem(stateRef.current, questionId);
+      const nextItem = {
+        ...prev,
+        srsData: calculateNextReview(grade, prev.srsData),
+        updatedAt: new Date().toISOString(),
+      };
+      const predictedState = {
+        ...stateRef.current,
+        questions: {
+          ...stateRef.current.questions,
+          [String(questionId)]: nextItem,
+        },
+      };
+      const dueAfter = countDueReviews(predictedState);
+      const clearedQueue = dueBefore > 0 && dueAfter === 0;
+
       dispatch({ type: 'grade', questionId, grade });
+
+      const awardClearBonus = () => {
+        if (!clearedQueue) return;
+        const event = buildSrsClearEvent(questionId);
+        if (isSignedIn) {
+          const submissionId = `srs-clear:${new Date().toISOString().slice(0, 10)}:${questionId}`;
+          appendXPEvents([event], submissionId)
+            .then((nextXP) => {
+              if (nextXP) setXPState(nextXP);
+            })
+            .catch((err) => console.error('Failed to award srs_clear XP:', err));
+          return;
+        }
+        const sid = guestSidRef.current;
+        setXPState((prevXP) => {
+          const next = applyXPEvents(prevXP, [event]);
+          if (sid) writeXP(sid, next);
+          return next;
+        });
+      };
+
       if (isSignedIn) {
         setSyncStatus('syncing');
         applyServerSelfGrade(questionId, grade)
@@ -423,6 +464,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
             if (serverItem) {
               dispatch({ type: 'replace', item: serverItem });
             }
+            awardClearBonus();
             setSyncStatus('idle');
           })
           .catch((err) => {
@@ -431,6 +473,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           });
         return;
       }
+
+      awardClearBonus();
     },
     [isSignedIn],
   );

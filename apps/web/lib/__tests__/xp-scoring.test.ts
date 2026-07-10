@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AttemptRecord } from '@/lib/progress/storage';
-import { computeXP } from '@/lib/xp/scoring';
+import { buildSrsClearEvent, computeXP } from '@/lib/xp/scoring';
 
 function createAttempt(
   status: AttemptRecord['status'],
@@ -89,6 +89,16 @@ describe('computeXP', () => {
     expect(events).toHaveLength(1);
     expect(events[0]?.eventType).toBe('mastery_cap');
     expect(events[0]?.xpDelta).toBe(2);
+  });
+
+  it('builds srs_clear event with +25', () => {
+    const event = buildSrsClearEvent(3, '2026-07-09T12:00:00.000Z');
+    expect(event).toEqual({
+      questionId: 3,
+      xpDelta: 25,
+      eventType: 'srs_clear',
+      timestamp: '2026-07-09T12:00:00.000Z',
+    });
   });
 
   it('awards base, precision, and streak bonus for an eligible correct first answer', () => {

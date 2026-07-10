@@ -226,6 +226,49 @@ export async function recordAttempt(
   return result;
 }
 
+export async function appendXPEvents(
+  events: XPEvent[],
+  submissionId: string,
+): Promise<XPState | null> {
+  const { userId } = await auth();
+  if (!userId || events.length === 0) return null;
+
+  const supabase = createServerSupabaseClient();
+  const rows = events.map((event, index) => ({
+    user_id: userId,
+    submission_id: submissionId,
+    event_index: index,
+    question_id: event.questionId,
+    event_type: event.eventType,
+    xp_delta: event.xpDelta,
+    created_at: event.timestamp,
+  }));
+
+  const existing = await fetchXPEvents(userId);
+  const next = rebuildXPState([...existing, ...events]);
+
+  const [{ error: xpError }, { error: totalsError }] = await Promise.all([
+    supabase.from('xp_events').upsert(rows, {
+      onConflict: 'user_id,submission_id,event_index',
+      ignoreDuplicates: true,
+    }),
+    supabase.from('user_xp_totals').upsert(
+      {
+        user_id: userId,
+        total_xp: next.totalXP,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id' },
+    ),
+  ]);
+
+  if (xpError) throw xpError;
+  if (totalsError) throw totalsError;
+
+  revalidateLeaderboardCaches();
+  return next;
+}
+
 export async function applyServerSelfGrade(
   questionId: number,
   grade: Grade,
