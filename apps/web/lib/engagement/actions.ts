@@ -42,6 +42,9 @@ interface RecordAttemptInput {
   recallAnswer?: string | null;
   locale?: string;
   answeredAt?: string;
+  mode?: 'quiz' | 'recall';
+  timeMs?: number;
+  errorType?: 'misread' | 'forgot' | 'wrong_concept' | 'guess';
 }
 
 export interface RecordAttemptResult {
@@ -149,6 +152,9 @@ export async function recordAttempt(
     selected: input.selected,
     recallAnswer: input.recallAnswer,
     answeredAt: input.answeredAt,
+    mode: input.mode,
+    timeMs: input.timeMs,
+    submissionId,
   });
 
   const rows = result.xpEvents.map((event, index) => ({
@@ -159,6 +165,10 @@ export async function recordAttempt(
     event_type: event.eventType,
     xp_delta: event.xpDelta,
     created_at: event.timestamp,
+    metadata: {
+      mode: input.mode ?? (input.recallAnswer ? 'recall' : 'quiz'),
+      ...(input.errorType ? { errorType: input.errorType } : {}),
+    },
   }));
   const supabase = createServerSupabaseClient();
   const [{ error: progressError }, xpInsertResult, { error: streakError }, { error: totalsError }] =
@@ -273,6 +283,7 @@ export async function appendXPEvents(
 export async function applyServerSelfGrade(
   questionId: number,
   grade: Grade,
+  errorType?: 'misread' | 'forgot' | 'wrong_concept' | 'guess',
 ): Promise<ProgressItem | null> {
   const { userId } = await auth();
   if (!userId) return null;
@@ -283,6 +294,7 @@ export async function applyServerSelfGrade(
     questionId,
     previousProgress,
     grade,
+    errorType,
   });
 
   const supabase = createServerSupabaseClient();

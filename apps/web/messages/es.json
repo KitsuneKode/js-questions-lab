@@ -417,6 +417,8 @@
     "gradeGood": "Bien",
     "gradeEasy": "Fácil",
     "reviewGradeHint": "Califica esta repaso para actualizar tu horario",
+    "tryAgain": "Intentar de nuevo",
+    "previousGrade": "Calificación anterior: {grade}",
     "practice": "Practicar",
     "domEventSimulator": "Simulador de eventos DOM",
     "domReplayTitle": "Repetir objetivo y bubbling sin tiempo de ejecución falso de navegador",

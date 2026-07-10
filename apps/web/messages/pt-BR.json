@@ -417,6 +417,8 @@
     "gradeGood": "Bom",
     "gradeEasy": "Fácil",
     "reviewGradeHint": "Avalie esta revisão para atualizar sua agenda",
+    "tryAgain": "Tentar novamente",
+    "previousGrade": "Nota anterior: {grade}",
     "practice": "Praticar",
     "domEventSimulator": "Simulador de Eventos DOM",
     "domReplayTitle": "Reproduzir alvo e bubbling sem um runtime de navegador falso",

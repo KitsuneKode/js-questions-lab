@@ -33,6 +33,9 @@ import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
 import {
   type AnswerStatus,
+  type AttemptErrorType,
+  type AttemptMode,
+  createAttemptRecord,
   defaultProgressState,
   type ProgressItem,
   type ProgressState,
@@ -58,9 +61,18 @@ type ProgressAction =
       questionId: number;
       selected: 'A' | 'B' | 'C' | 'D' | null;
       status: AnswerStatus;
+      mode?: AttemptMode;
+      responseText?: string;
+      timeMs?: number;
+      submissionId?: string;
     }
   | { type: 'bookmark'; questionId: number }
-  | { type: 'grade'; questionId: number; grade: Grade }
+  | {
+      type: 'grade';
+      questionId: number;
+      grade: Grade;
+      errorType?: AttemptErrorType;
+    }
   | { type: 'replace'; item: ProgressItem }
   | { type: 'merge'; serverItems: ProgressItem[] };
 
@@ -100,7 +112,15 @@ function progressReducer(state: ProgressState, action: ProgressAction): Progress
             ...prev,
             attempts: [
               ...prev.attempts,
-              { selected: action.selected, status: action.status, attemptedAt: now },
+              createAttemptRecord({
+                selected: action.selected,
+                status: action.status,
+                attemptedAt: now,
+                mode: action.mode,
+                responseText: action.responseText,
+                timeMs: action.timeMs,
+                submissionId: action.submissionId,
+              }),
             ],
             updatedAt: now,
           },
@@ -128,12 +148,25 @@ function progressReducer(state: ProgressState, action: ProgressAction): Progress
       const now = new Date().toISOString();
       const prev = ensureItem(state, action.questionId);
       const newSrsData = calculateNextReview(action.grade, prev.srsData);
+      const attempts =
+        prev.attempts.length === 0
+          ? prev.attempts
+          : prev.attempts.map((attempt, index) =>
+              index === prev.attempts.length - 1
+                ? createAttemptRecord({
+                    ...attempt,
+                    selfGrade: action.grade,
+                    ...(action.errorType ? { errorType: action.errorType } : {}),
+                  })
+                : attempt,
+            );
       return {
         ...state,
         questions: {
           ...state.questions,
           [String(action.questionId)]: {
             ...prev,
+            attempts,
             srsData: newSrsData,
             updatedAt: now,
           },
@@ -174,9 +207,16 @@ interface ProgressContextValue {
     questionId: number,
     selected: 'A' | 'B' | 'C' | 'D' | null,
     status: AnswerStatus,
-    options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+    options?: {
+      difficulty?: Difficulty;
+      recallAnswer?: string;
+      locale?: string;
+      mode?: AttemptMode;
+      timeMs?: number;
+      errorType?: AttemptErrorType;
+    },
   ) => void;
-  saveSelfGrade: (questionId: number, grade: Grade) => void;
+  saveSelfGrade: (questionId: number, grade: Grade, errorType?: AttemptErrorType) => void;
   toggleBookmark: (questionId: number) => void;
   xpState: XPState;
   streakState: StreakState;
@@ -364,7 +404,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       questionId: number,
       selected: 'A' | 'B' | 'C' | 'D' | null,
       status: AnswerStatus,
-      options?: { difficulty?: Difficulty; recallAnswer?: string; locale?: string },
+      options?: {
+        difficulty?: Difficulty;
+        recallAnswer?: string;
+        locale?: string;
+        mode?: AttemptMode;
+        timeMs?: number;
+        errorType?: AttemptErrorType;
+      },
     ) => {
       const now = new Date().toISOString();
       const submissionId =
@@ -372,8 +419,22 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           ? crypto.randomUUID()
           : `${questionId}:${now}:${selected ?? 'recall'}`;
       const difficulty = options?.difficulty ?? 'beginner';
+      const mode: AttemptMode =
+        options?.mode ??
+        (typeof options?.recallAnswer === 'string' && options.recallAnswer.trim().length > 0
+          ? 'recall'
+          : 'quiz');
       const prev = ensureItem(stateRef.current, questionId);
-      dispatch({ type: 'attempt', questionId, selected, status });
+      dispatch({
+        type: 'attempt',
+        questionId,
+        selected,
+        status,
+        mode,
+        responseText: options?.recallAnswer,
+        timeMs: options?.timeMs,
+        submissionId,
+      });
 
       const questionTags = getQuestionTags(questionId);
       const tagCounts = getTagQuestionCounts();
@@ -394,6 +455,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           submissionId,
           recallAnswer: options?.recallAnswer,
           locale: options?.locale,
+          mode,
+          timeMs: options?.timeMs,
+          errorType: options?.errorType,
         })
           .then((result) => {
             if (!result) return;
@@ -440,7 +504,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   );
 
   const saveSelfGrade = useCallback(
-    (questionId: number, grade: Grade) => {
+    (questionId: number, grade: Grade, errorType?: AttemptErrorType) => {
       const dueBefore = countDueReviews(stateRef.current);
 
       const prev = ensureItem(stateRef.current, questionId);
@@ -459,7 +523,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const dueAfter = countDueReviews(predictedState);
       const clearedQueue = dueBefore > 0 && dueAfter === 0;
 
-      dispatch({ type: 'grade', questionId, grade });
+      dispatch({ type: 'grade', questionId, grade, errorType });
 
       const awardClearBonus = () => {
         if (!clearedQueue) return;
@@ -483,7 +547,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
       if (isSignedIn) {
         setSyncStatus('syncing');
-        applyServerSelfGrade(questionId, grade)
+        applyServerSelfGrade(questionId, grade, errorType)
           .then((serverItem) => {
             if (serverItem) {
               dispatch({ type: 'replace', item: serverItem });

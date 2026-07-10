@@ -417,6 +417,8 @@
     "gradeGood": "Good",
     "gradeEasy": "Easy",
     "reviewGradeHint": "Grade this review to update your schedule",
+    "tryAgain": "Try again",
+    "previousGrade": "Previously graded: {grade}",
     "practice": "Practice",
     "domEventSimulator": "DOM Event Simulator",
     "domReplayTitle": "Replay target and bubbling without a fake browser runtime",

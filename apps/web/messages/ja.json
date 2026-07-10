@@ -417,6 +417,8 @@
     "gradeGood": "普通",
     "gradeEasy": "簡単",
     "reviewGradeHint": "復習を評価してスケジュールを更新してください",
+    "tryAgain": "もう一度",
+    "previousGrade": "前回の評価: {grade}",
     "practice": "練習する",
     "domEventSimulator": "DOMイベントシミュレーター",
     "domReplayTitle": "偽のブラウザランタイムなしでターゲットとバブリングをリプレイ",
