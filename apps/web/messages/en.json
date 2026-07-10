@@ -222,7 +222,14 @@
     "syncTitle": "Sync Identity",
     "syncBody": "This private area is reserved for account-aware flows like sync status and signed-in access. Your learning flow still works without auth.",
     "memberIdLabel": "Member ID",
-    "memberIdUnavailable": "Unavailable"
+    "memberIdUnavailable": "Unavailable",
+    "displayNameTitle": "Leaderboard name",
+    "displayNameBody": "This name appears on the public leaderboard. Leave blank to stay Anonymous until you set one.",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "e.g. kitsune",
+    "displayNameSave": "Save",
+    "displayNameSaved": "Saved",
+    "displayNameHint": "2–24 characters. Letters, numbers, spaces, _ . -"
   },
   "credits": {
     "label": "Credits & Attribution",

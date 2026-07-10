@@ -222,7 +222,14 @@
     "syncTitle": "Identidad sincronizada",
     "syncBody": "Esta área privada está reservada para flujos ligados a la cuenta, como el estado de sincronización y el acceso autenticado. Tu aprendizaje sigue funcionando sin iniciar sesión.",
     "memberIdLabel": "ID de miembro",
-    "memberIdUnavailable": "No disponible"
+    "memberIdUnavailable": "No disponible",
+    "displayNameTitle": "Nombre en la clasificación",
+    "displayNameBody": "Este nombre aparece en la clasificación pública. Déjalo en blanco para permanecer anónimo hasta que establezcas uno.",
+    "displayNameLabel": "Nombre para mostrar",
+    "displayNamePlaceholder": "p. ej. kitsune",
+    "displayNameSave": "Guardar",
+    "displayNameSaved": "Guardado",
+    "displayNameHint": "2–24 caracteres. Letras, números, espacios, _ . -"
   },
   "credits": {
     "label": "Créditos y atribución",

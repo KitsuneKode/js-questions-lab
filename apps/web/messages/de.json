@@ -222,7 +222,14 @@
     "syncTitle": "Synchronisierte Identität",
     "syncBody": "Dieser private Bereich ist für kontobezogene Abläufe wie Sync-Status und angemeldeten Zugriff reserviert. Dein Lernfluss funktioniert weiterhin ohne Anmeldung.",
     "memberIdLabel": "Mitglieds-ID",
-    "memberIdUnavailable": "Nicht verfügbar"
+    "memberIdUnavailable": "Nicht verfügbar",
+    "displayNameTitle": "Leaderboard-Name",
+    "displayNameBody": "Dieser Name erscheint in der öffentlichen Bestenliste. Leer lassen, um anonym zu bleiben, bis du einen Namen festlegst.",
+    "displayNameLabel": "Anzeigename",
+    "displayNamePlaceholder": "z. B. kitsune",
+    "displayNameSave": "Speichern",
+    "displayNameSaved": "Gespeichert",
+    "displayNameHint": "2–24 Zeichen. Buchstaben, Zahlen, Leerzeichen, _ . -"
   },
   "credits": {
     "label": "Credits & Mitwirkende",

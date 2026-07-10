@@ -3,6 +3,7 @@
 import { randomUUID } from 'node:crypto';
 import { auth } from '@clerk/nextjs/server';
 import { getQuestionById } from '@/lib/content/loaders';
+import { normalizeDisplayName } from '@/lib/engagement/display-name';
 import {
   buildAuthoritativeAttemptResult,
   buildAuthoritativeSelfGradeResult,
@@ -390,4 +391,62 @@ export async function replayGuestAttempts(
   }
 
   return { xpState: last.xpState, streakState: last.streakState };
+}
+
+// ---------------------------------------------------------------------------
+// Leaderboard display name
+// ---------------------------------------------------------------------------
+
+export async function fetchDisplayName(): Promise<string | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('user_xp_totals')
+    .select('display_name')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Failed to fetch display name:', error.message);
+    return null;
+  }
+
+  return data?.display_name ?? null;
+}
+
+export async function setDisplayName(
+  rawName: string,
+): Promise<{ ok: true; displayName: string } | { ok: false; error: string }> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: 'Not signed in' };
+
+  const normalized = normalizeDisplayName(rawName);
+  if (!normalized.ok) return normalized;
+
+  const supabase = createServerSupabaseClient();
+  const { data: existing } = await supabase
+    .from('user_xp_totals')
+    .select('total_xp')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const { error } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: existing?.total_xp ?? 0,
+      display_name: normalized.displayName,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (error) {
+    console.error('Failed to set display name:', error.message);
+    return { ok: false, error: 'Could not save display name' };
+  }
+
+  revalidateLeaderboardCaches();
+  return { ok: true, displayName: normalized.displayName };
 }

@@ -154,4 +154,8 @@ describe('ProgressProvider sign-in merge', () => {
       }),
     );
   });
+
+  // First mount with isSignedIn=true still runs the merge path because wasSignedInForMergeRef
+  // starts false. Subsequent effect re-runs in the same session (e.g. Strict Mode cleanup +
+  // re-setup) hydrate from server only — replay/sync/upsertStreak are skipped.
 });

@@ -222,7 +222,14 @@
     "syncTitle": "Identité synchronisée",
     "syncBody": "Cette zone privée est réservée aux flux liés au compte, comme l'état de synchronisation et l'accès authentifié. Votre apprentissage fonctionne toujours sans connexion.",
     "memberIdLabel": "Identifiant membre",
-    "memberIdUnavailable": "Indisponible"
+    "memberIdUnavailable": "Indisponible",
+    "displayNameTitle": "Nom du classement",
+    "displayNameBody": "Ce nom apparaît sur le classement public. Laissez vide pour rester anonyme jusqu'à ce que vous en définissiez un.",
+    "displayNameLabel": "Nom affiché",
+    "displayNamePlaceholder": "ex. kitsune",
+    "displayNameSave": "Enregistrer",
+    "displayNameSaved": "Enregistré",
+    "displayNameHint": "2–24 caractères. Lettres, chiffres, espaces, _ . -"
   },
   "credits": {
     "label": "Crédits et attribution",

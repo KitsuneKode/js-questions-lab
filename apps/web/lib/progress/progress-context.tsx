@@ -202,6 +202,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const { isSignedIn } = useSafeAuth();
   // Track the previous isSignedIn value to detect sign-out transitions.
   const prevSignedInRef = useRef(isSignedIn);
+  // Tracks whether sign-in merge already ran this session (hydrate on re-run, merge on false→true).
+  const wasSignedInForMergeRef = useRef(false);
 
   // ---------------------------------------------------------------------------
   // Init: load guest data from session-keyed localStorage on mount
@@ -235,13 +237,35 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // Sign-in: merge guest session into server, then consume the guest session
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (!isSignedIn || !ready) return;
+    if (!isSignedIn || !ready) {
+      if (!isSignedIn) {
+        wasSignedInForMergeRef.current = false;
+      }
+      return;
+    }
+
+    const isSignInTransition = !wasSignedInForMergeRef.current;
+    wasSignedInForMergeRef.current = true;
 
     let cancelled = false;
     setSyncStatus('syncing');
 
     (async () => {
       try {
+        if (!isSignInTransition) {
+          const [serverItems, serverXP, serverStreak] = await Promise.all([
+            fetchServerProgress(),
+            fetchXPState(),
+            fetchStreak(),
+          ]);
+          if (cancelled) return;
+          dispatch({ type: 'merge', serverItems });
+          setXPState(serverXP);
+          setStreakState(serverStreak ?? defaultStreakState);
+          setSyncStatus('idle');
+          return;
+        }
+
         const guestSid = guestSidRef.current;
         const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
         const guestXP = guestSid ? readXP(guestSid) : defaultXPState;
