@@ -32,7 +32,7 @@ interface DashboardShellProps {
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
   const tQuestions = useTranslations('questions');
-  const { xpState } = useProgress();
+  const { xpState, streakState } = useProgress();
   const {
     ready,
     overall,
@@ -108,9 +108,48 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
         overall={overall}
         totalQuestions={questions.length}
         totalXP={xpState.totalXP}
+        streakState={streakState}
       />
 
       <MasteryPathsGrid topics={topicMastery} locale={locale} />
+
+      {/* Daily review callout — always visible so "what to do today" is obvious */}
+      <section
+        className={`rounded-2xl border p-6 ${
+          reviewQueue.length > 0
+            ? 'border-primary/30 bg-primary/5'
+            : 'border-border-subtle bg-surface'
+        }`}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <Brain className={`h-3.5 w-3.5 ${reviewQueue.length > 0 ? 'animate-pulse' : ''}`} />
+              {t('dailyReviewTitle')}
+            </div>
+            <p className="text-sm text-secondary">
+              {reviewQueue.length > 0
+                ? t('reviewsDueDesc', { count: reviewQueue.length })
+                : t('dailyReviewEmpty')}
+            </p>
+          </div>
+          {reviewQueue.length > 0 && reviewQueue[0] ? (
+            <IntentPrefetchLink href={withLocale(locale, `/questions/${reviewQueue[0].id}`)}>
+              <Button className="gap-2 shrink-0">
+                {t('dailyReviewCta')}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </IntentPrefetchLink>
+          ) : (
+            <IntentPrefetchLink href={withLocale(locale, '/paths')}>
+              <Button variant="secondary" className="gap-2 shrink-0">
+                {t('tryThis')}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </IntentPrefetchLink>
+          )}
+        </div>
+      </section>
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (
@@ -187,7 +226,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                           size="sm"
                           className="h-9 text-xs font-medium text-secondary hover:text-foreground"
                         >
-                          Browse all
+                          {t('browseAll')}
                         </Button>
                       </IntentPrefetchLink>
                     </div>

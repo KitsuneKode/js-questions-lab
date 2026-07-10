@@ -7,48 +7,24 @@ context_pressure: medium
 
 # Session Handoff
 
-## Done
+## Consolidated
 
-### Product audit
-- Wrote `.context/docs/product-audit-2026-07.md` with prioritized roadmap
+- Merged #77, #71, #79, #72, #75, and #78 for a PR targeting `dev`.
+- Preserved #79 engagement data wiring: guest replay, XP levels, `streakState`, display names, review/SRS behavior, and the Convex scaffold.
+- Added #78 practice UX: question-page chrome hiding, a persistent scratchpad, responsive IDE tabs, guided paths, and mobile-safe keyboard hints.
+- Combined leaderboard identity/streak data and guest CTA behavior with optional avatars, initials, and Pro badges; Dark Forge primary styling replaces orange flame/glow chrome.
 
-### Trust + habit sprint (#79)
-- Guest XP/streak/SRS survive sign-in (replay before clear; hydrate guard)
-- Dashboard uses real XP levels + one streak source
-- Daily Review (`/review`, `?status=review`, `srs_clear` +25)
-- Leaderboard streaks + display-name settings
-- Convex engagement scaffold (not cut over) at repo-root `convex/`
+## Validation needed
 
-### Guest middleware (#77)
-- Skip Clerk middleware on placeholder keys; skip next-intl for `/api`
+1. Run `bun run typecheck` and `bun run test`.
+2. Manually verify question-page scroll chrome, phone-width IDE tabs, scratchpad import/export, review grading, and leaderboard empty/error states.
+3. Full Convex cutover remains intentionally deferred until deployment, Clerk integration, and `NEXT_PUBLIC_CONVEX_URL` are configured.
 
-## In Progress
+## Key files
 
-- Consolidating cloud PRs onto `feat/cloud-pr-consolidation` for `dev`
-- Still to land: #72 attempt hydrate, #75 mastery paths, #78 practice UX + design polish
-
-## Blocked
-
-- Full Convex cutover needs: Convex project, `bun run convex:dev`, Clerk Convex integration, `NEXT_PUBLIC_CONVEX_URL`
-
-## Next
-
-1. Cherry-pick #72 attempt-record hydrate + #75 mastery grid
-2. Merge #78 practice UX; resolve leaderboard/dashboard conflicts favoring #79 data
-3. Dark Forge/shadcn polish (display-name form, streak chrome, path eyebrows)
-4. Close superseded #73 #74 #76
-5. Typecheck/test and open PR → `dev`
-
-## Decisions
-
-- #79 is engagement source of truth; close #73/#74/#76 as superseded
-- Migrate engagement only to Convex; keep content SSG + guest localStorage + Clerk
-- Prefer shadcn Input/Label/Button over raw form controls; no orange-400 flame chrome
-
-## Key Files
-
-- `.context/docs/product-audit-2026-07.md`
-- `apps/web/lib/progress/progress-context.tsx`
-- `apps/web/components/dashboard/display-name-form.tsx`
+- `apps/web/components/ide/question-ide-client.tsx`
+- `apps/web/components/dashboard/dashboard-shell.tsx`
+- `apps/web/components/leaderboard/leaderboard-table.tsx`
+- `apps/web/lib/engagement/leaderboard.ts`
+- `apps/web/lib/engagement/leaderboard-shared.ts`
 - `convex/schema.ts`, `convex/progress.ts`, `convex/xp.ts`
-- `.context/docs/plans/2026-07-10-supabase-to-convex.md`

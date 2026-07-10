@@ -10,6 +10,7 @@ import {
 import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import type { OverallStats } from '@/lib/progress/analytics';
+import type { StreakState } from '@/lib/streaks/calculator';
 import { cn } from '@/lib/utils';
 import { getLevelInfo, XP_LEVELS } from '@/lib/xp/levels';
 
@@ -17,13 +18,19 @@ interface OverviewCardsProps {
   overall: OverallStats;
   totalQuestions: number;
   totalXP: number;
+  streakState: StreakState;
 }
 
-export function OverviewCards({ overall, totalQuestions, totalXP }: OverviewCardsProps) {
+export function OverviewCards({
+  overall,
+  totalQuestions,
+  totalXP,
+  streakState,
+}: OverviewCardsProps) {
   const t = useTranslations('dashboard');
   const level = getLevelInfo(totalXP);
-  const progressPercent =
-    totalQuestions > 0 ? Math.round((overall.totalAnswered / totalQuestions) * 100) : 0;
+  const safeTotal = Math.max(totalQuestions, 1);
+  const progressPercent = Math.round((overall.totalAnswered / safeTotal) * 100);
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
   const nextLevel = XP_LEVELS.find((l) => l.level === level.level + 1);
@@ -38,7 +45,7 @@ export function OverviewCards({ overall, totalQuestions, totalXP }: OverviewCard
         ? 'text-status-wrong'
         : 'text-[#F59E0B]';
 
-  const hasActiveStreak = overall.currentStreak > 0;
+  const hasActiveStreak = streakState.currentStreak > 0;
 
   return (
     <div className="grid gap-5 sm:grid-cols-3">
@@ -57,8 +64,7 @@ export function OverviewCards({ overall, totalQuestions, totalXP }: OverviewCard
             </div>
           </div>
           <p className="font-display text-3xl text-foreground mt-1">
-            {overall.totalAnswered}{' '}
-            <span className="text-lg text-secondary">/ {totalQuestions}</span>
+            {overall.totalAnswered} <span className="text-lg text-secondary">/ {safeTotal}</span>
           </p>
         </div>
 
@@ -175,13 +181,13 @@ export function OverviewCards({ overall, totalQuestions, totalXP }: OverviewCard
               hasActiveStreak ? 'text-[#F59E0B]' : 'text-foreground',
             )}
           >
-            {overall.currentStreak} <span className="text-lg text-secondary">days</span>
+            {streakState.currentStreak} <span className="text-lg text-secondary">days</span>
           </p>
         </div>
 
         <div className="mt-6">
           <p className="text-xs text-secondary leading-snug">
-            Best streak: <strong className="text-foreground">{overall.longestStreak} days</strong>.
+            Best streak: <strong className="text-foreground">{streakState.longestStreak} days</strong>.
             <br />
             {hasActiveStreak ? t('streakFire') : t('noStreak')}
           </p>

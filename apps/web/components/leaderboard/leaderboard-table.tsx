@@ -3,7 +3,7 @@
 import { IconFlame, IconTrophy } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useFormatter, useTranslations } from 'next-intl';
-import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
+import { getDisplayInitials, type LeaderboardEntry } from '@/lib/engagement/leaderboard-shared';
 import { cn } from '@/lib/utils';
 
 const RANK_STYLES: Record<number, string> = {
@@ -37,18 +37,18 @@ export function LeaderboardTable({
       {entries.map((entry) => {
         const isCurrentUser = entry.position === currentUserPosition;
         const rankStyle = RANK_STYLES[entry.rank];
+        const initials = getDisplayInitials(entry.displayName);
 
         return (
           <div
             key={entry.position}
             className={cn(
-              'flex items-center gap-4 rounded-xl border px-4 py-3 transition-colors',
+              'flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:gap-4 sm:px-4',
               isCurrentUser
-                ? 'border-primary/40 bg-primary/5 shadow-[0_0_20px_rgba(245,158,11,0.08)]'
+                ? 'border-primary/40 bg-primary/5'
                 : 'border-border-subtle bg-surface hover:bg-elevated',
             )}
           >
-            {/* Rank */}
             <div
               className={cn(
                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-xs font-bold',
@@ -62,32 +62,47 @@ export function LeaderboardTable({
               )}
             </div>
 
-            {/* Name + level */}
+            <div
+              className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border-subtle bg-elevated text-[11px] font-semibold uppercase tracking-wide text-secondary"
+              aria-hidden
+            >
+              {entry.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={entry.avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                initials
+              )}
+            </div>
+
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <span
                   className={cn('text-sm font-medium truncate', isCurrentUser && 'text-primary')}
                 >
                   {isCurrentUser ? t('you') : entry.displayName}
                 </span>
-                {entry.currentStreak > 0 && (
-                  <span
-                    className="inline-flex items-center gap-0.5 text-orange-400"
-                    title={t('streakLabel', { count: entry.currentStreak })}
-                  >
-                    <IconFlame className="h-3 w-3 fill-orange-400/20" />
-                    <span className="text-[10px] font-semibold tabular-nums">
-                      {entry.currentStreak}
-                    </span>
+                {entry.isPro ? (
+                  <span className="shrink-0 rounded border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">
+                    {t('proBadge')}
                   </span>
-                )}
+                ) : null}
               </div>
-              <span className="text-[11px] text-tertiary font-mono">
-                Lv.{entry.level} {entry.levelName}
-              </span>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="text-[11px] text-tertiary font-mono">
+                  Lv.{entry.level} {entry.levelName}
+                </span>
+                {typeof entry.streakDays === 'number' ? (
+                  <span
+                    className="inline-flex items-center gap-1 text-[10px] font-medium text-primary"
+                    title={t('streakLabel', { count: entry.streakDays })}
+                  >
+                    <IconFlame className="h-3 w-3 fill-primary/20" />
+                    {t('streakLabel', { count: entry.streakDays })}
+                  </span>
+                ) : null}
+              </div>
             </div>
 
-            {/* XP */}
             <div className="text-right shrink-0">
               <div className="text-sm font-semibold font-mono text-foreground tabular-nums">
                 {format.number(entry.totalXP)}

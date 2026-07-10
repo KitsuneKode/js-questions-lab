@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { auth } from '@clerk/nextjs/server';
 import { unstable_cache } from 'next/cache';
 import {
@@ -5,27 +7,15 @@ import {
   LEADERBOARD_CACHE_TAG,
   WEEKLY_LEADERBOARD_CACHE_TAG,
 } from '@/lib/engagement/leaderboard-cache';
+import {
+  type LeaderboardEntry,
+  type LeaderboardRow,
+  toEntries,
+} from '@/lib/engagement/leaderboard-shared';
 import { createReadonlyServerSupabaseClient } from '@/lib/supabase/public-server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { getLevelInfo } from '@/lib/xp/levels';
 
-export interface LeaderboardEntry {
-  position: number;
-  displayName: string;
-  totalXP: number;
-  level: number;
-  levelName: string;
-  rank: number;
-  currentStreak: number;
-}
-
-interface LeaderboardRow {
-  position: number;
-  rank: number;
-  display_name: string;
-  total_xp: number;
-  current_streak?: number | null;
-}
+export type { LeaderboardEntry, LeaderboardRow } from '@/lib/engagement/leaderboard-shared';
 
 interface CurrentUserLeaderboardRow {
   position: number;
@@ -88,20 +78,4 @@ export async function getWeeklyCurrentUserPosition(): Promise<number | null> {
 
 export async function getAllTimeCurrentUserPosition(): Promise<number | null> {
   return getCurrentUserLeaderboardPosition('get_my_alltime_leaderboard_position');
-}
-
-export function toEntries(rows: LeaderboardRow[]): LeaderboardEntry[] {
-  return rows.map((row) => {
-    const level = getLevelInfo(row.total_xp);
-
-    return {
-      position: row.position,
-      displayName: row.display_name,
-      totalXP: Math.max(0, row.total_xp),
-      level: level.level,
-      levelName: level.name,
-      rank: row.rank,
-      currentStreak: Math.max(0, row.current_streak ?? 0),
-    };
-  });
 }

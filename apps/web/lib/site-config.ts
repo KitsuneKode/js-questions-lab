@@ -32,5 +32,6 @@ export const siteLinks = {
   review: '/review',
   dashboard: '/dashboard',
   leaderboard: '/leaderboard',
+  paths: '/paths',
   contact: '/contact',
 } as const;

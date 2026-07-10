@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { isQuestionDetailPath, nextScrollHideState } from '@/lib/chrome/scroll-hide';
 import {
   DEFAULT_LOCALE,
   LOCALE_LABELS,
@@ -34,11 +35,21 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { scrollY } = useScroll();
-  const [hidden, setHidden] = useState(false);
+  const isQuestionDetail = isQuestionDetailPath(pathname);
+  const [hidden, setHidden] = useState(isQuestionDetail);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastYRef = useRef(0);
+  const hiddenRef = useRef(isQuestionDetail);
   const { openScratchpad } = useScratchpad();
   const { KeyboardShortcutsTrigger } = useKeyboardShortcuts();
+
+  // Keep chrome hidden when landing on / leaving a question detail route
+  useEffect(() => {
+    const next = isQuestionDetail;
+    hiddenRef.current = next;
+    setHidden(next);
+    lastYRef.current = scrollY.get();
+  }, [isQuestionDetail, scrollY]);
 
   // Global K key shortcut for scratchpad (works everywhere except when typing)
   useEffect(() => {
@@ -76,6 +87,7 @@ export function SiteHeader() {
 
   const navLinks = [
     { href: withLocale(locale, siteLinks.questions), label: t('questions'), badge: false },
+    { href: withLocale(locale, siteLinks.paths), label: t('paths'), badge: false },
     { href: withLocale(locale, siteLinks.progress), label: t('progress'), badge: true },
     { href: withLocale(locale, siteLinks.leaderboard), label: t('leaderboard'), badge: false },
     { href: withLocale(locale, siteLinks.credits), label: t('credits'), badge: false },
@@ -83,12 +95,16 @@ export function SiteHeader() {
   ];
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
-    if (latest > lastYRef.current && latest > 100) {
-      setHidden(true);
-    } else {
-      setHidden(false);
+    const next = nextScrollHideState(
+      latest,
+      { hidden: hiddenRef.current, lastY: lastYRef.current },
+      { isQuestionDetail },
+    );
+    lastYRef.current = next.lastY;
+    if (next.hidden !== hiddenRef.current) {
+      hiddenRef.current = next.hidden;
+      setHidden(next.hidden);
     }
-    lastYRef.current = latest;
   });
 
   const handleLocaleSwitch = (targetLocale: LocaleCode) => {

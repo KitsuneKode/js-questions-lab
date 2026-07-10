@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toEntries } from '@/lib/engagement/leaderboard';
+import { getDisplayInitials, toEntries } from '@/lib/engagement/leaderboard-shared';
 
 describe('leaderboard entries', () => {
   it('uses sanitized display names from the server payload', () => {
@@ -37,5 +37,31 @@ describe('leaderboard entries', () => {
       [2, 1],
       [3, 3],
     ]);
+  });
+
+  it('maps optional streak, pro, and avatar fields when present', () => {
+    const entries = toEntries([
+      {
+        position: 1,
+        rank: 1,
+        display_name: 'Ada Lovelace',
+        total_xp: 500,
+        current_streak: 7,
+        is_pro: true,
+        avatar_url: 'https://example.com/a.png',
+      },
+    ]);
+
+    expect(entries[0]).toMatchObject({
+      displayName: 'Ada Lovelace',
+      streakDays: 7,
+      isPro: true,
+      avatarUrl: 'https://example.com/a.png',
+    });
+  });
+
+  it('builds initials for avatar fallbacks', () => {
+    expect(getDisplayInitials('Ada Lovelace')).toBe('AL');
+    expect(getDisplayInitials('Anonymous')).toBe('AN');
   });
 });

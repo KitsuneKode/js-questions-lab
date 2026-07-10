@@ -1,5 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
-import { IconArrowRight, IconRefresh, IconUserCircle } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconBookmark,
+  IconBrain,
+  IconRefresh,
+  IconTrophy,
+  IconUserCircle,
+} from '@tabler/icons-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -58,6 +65,9 @@ export default async function DashboardPage({
   const { userId } = await auth();
   const displayName = userId ? await fetchDisplayName() : null;
   const progressHref = withLocale(locale, '/progress');
+  const leaderboardHref = withLocale(locale, '/leaderboard');
+  const savedHref = withLocale(locale, '/questions?status=bookmarked');
+  const pathsHref = withLocale(locale, '/paths');
 
   return (
     <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40">
@@ -106,6 +116,64 @@ export default async function DashboardPage({
                 <p className="mt-2 font-mono text-sm text-foreground">
                   {userId ?? t('memberIdUnavailable')}
                 </p>
+              </div>
+            </article>
+
+            <article className="rounded-2xl border border-border-subtle bg-surface/60 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconBrain className="h-5 w-5" />
+              </div>
+              <h2 className="font-display text-2xl text-foreground">{t('reviewTitle')}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {t('reviewBody')}
+              </p>
+              <Link
+                href={progressHref}
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                {t('openReviews')}
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+
+            <article className="rounded-2xl border border-border-subtle bg-surface/60 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconTrophy className="h-5 w-5" />
+              </div>
+              <h2 className="font-display text-2xl text-foreground">{t('leaderboardTitle')}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {t('leaderboardBody')}
+              </p>
+              <Link
+                href={leaderboardHref}
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                {t('openLeaderboard')}
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+
+            <article className="rounded-2xl border border-border-subtle bg-surface/60 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                <IconBookmark className="h-5 w-5" />
+              </div>
+              <h2 className="font-display text-2xl text-foreground">{t('savedTitle')}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t('savedBody')}</p>
+              <div className="mt-6 flex flex-wrap gap-4">
+                <Link
+                  href={savedHref}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                >
+                  {t('openSaved')}
+                  <IconArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href={pathsHref}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-secondary transition-colors hover:text-foreground"
+                >
+                  {t('openPaths')}
+                  <IconArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </article>
           </section>

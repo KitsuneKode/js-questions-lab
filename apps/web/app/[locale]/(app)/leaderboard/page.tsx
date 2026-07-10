@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/container';
+import { LeaderboardGuestCta } from '@/components/leaderboard/leaderboard-guest-cta';
 import { LeaderboardTable } from '@/components/leaderboard/leaderboard-table';
 import {
   getAllTimeCurrentUserPosition,
@@ -58,7 +59,6 @@ export default async function LeaderboardPage({
     <main className="bg-void min-h-screen pt-32 pb-16 md:pt-40">
       <Container>
         <div className="max-w-2xl mx-auto space-y-12">
-          {/* Header */}
           <header className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <span className="uppercase tracking-widest font-bold">{t('eyebrow')}</span>
@@ -69,7 +69,8 @@ export default async function LeaderboardPage({
             <p className="text-secondary text-lg">{t('subtitle')}</p>
           </header>
 
-          {/* Weekly */}
+          <LeaderboardGuestCta locale={locale} signedIn={Boolean(userId)} />
+
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
@@ -85,7 +86,6 @@ export default async function LeaderboardPage({
             />
           </section>
 
-          {/* All-time */}
           <section className="space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-widest text-tertiary">
               {t('allTimeTitle')}
