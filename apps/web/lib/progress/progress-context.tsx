@@ -17,7 +17,10 @@ import {
   fetchStreak,
   fetchXPState,
   recordAttempt,
+  replayGuestAttempts,
+  upsertStreak,
 } from '@/lib/engagement/actions';
+import { listGuestAttemptsToReplay } from '@/lib/engagement/guest-replay';
 import {
   fetchServerProgress,
   syncProgressToServer,
@@ -36,6 +39,7 @@ import {
 } from '@/lib/progress/storage';
 import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
 import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
+import { mergeStreakStates } from '@/lib/streaks/merge';
 import { readStreak, writeStreak } from '@/lib/streaks/storage';
 import { computeXP } from '@/lib/xp/scoring';
 import type { XPState } from '@/lib/xp/storage';
@@ -237,9 +241,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const guestSid = guestSidRef.current;
-        // Read guest progress before fetching server data so we capture
-        // exactly what was accumulated in this guest session.
         const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
+        const guestXP = guestSid ? readXP(guestSid) : defaultXPState;
+        const guestStreak = guestSid ? readStreak(guestSid) : defaultStreakState;
 
         const [serverItems, serverXP, serverStreak] = await Promise.all([
           fetchServerProgress(),
@@ -247,36 +251,57 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           fetchStreak(),
         ]);
 
-        if (!cancelled) {
-          dispatch({ type: 'merge', serverItems });
-          setXPState(serverXP);
-          // Streak: server is authoritative for authenticated state
-          const authoritativeStreak = serverStreak ?? defaultStreakState;
-          setStreakState(authoritativeStreak);
+        if (cancelled) return;
 
-          // Push any guest progress that is newer than what's on the server
-          const localNewer: ProgressItem[] = [];
-          for (const localItem of Object.values(guestProgress.questions)) {
-            const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
-            if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
-              localNewer.push(localItem);
-            }
+        dispatch({ type: 'merge', serverItems });
+
+        const localNewer: ProgressItem[] = [];
+        for (const localItem of Object.values(guestProgress.questions)) {
+          const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
+          if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
+            localNewer.push(localItem);
           }
-
-          if (localNewer.length > 0) {
-            await syncProgressToServer(localNewer);
-          }
-
-          // Consume the guest session: delete its data and rotate to a fresh SID.
-          // Any future sign-out will start with a clean guest session.
-          if (guestSid) {
-            clearGuestData(guestSid);
-            const newSid = rotateGuestSid();
-            guestSidRef.current = newSid;
-          }
-
-          setSyncStatus('idle');
         }
+
+        // 1) Replay FIRST → authoritative XP + streak from engine (avoids duplicate attempts)
+        const toReplay = listGuestAttemptsToReplay(guestProgress, serverItems);
+        let nextXP = serverXP;
+        let nextStreak = serverStreak ?? defaultStreakState;
+
+        if (toReplay.length > 0) {
+          const replayed = await replayGuestAttempts(toReplay);
+          if (replayed) {
+            nextXP = replayed.xpState;
+            nextStreak = replayed.streakState;
+          }
+        } else if (guestXP.events.length > 0 && serverXP.events.length === 0) {
+          // Edge: guest has XP events but no replayable attempt delta (rare).
+          // Prefer server; do not invent XP without attempts.
+          nextXP = serverXP;
+        }
+
+        // 2) Sync newer progress rows AFTER replay (SRS/bookmarks/attempt arrays upsert)
+        if (localNewer.length > 0) {
+          await syncProgressToServer(localNewer);
+        }
+
+        // 3) Merge streaks (guest calendar streak vs post-replay server streak)
+        const today = new Date().toISOString().slice(0, 10);
+        const mergedStreak = mergeStreakStates(guestStreak, nextStreak, today);
+        await upsertStreak(mergedStreak);
+
+        if (cancelled) return;
+
+        setXPState(nextXP);
+        setStreakState(mergedStreak);
+
+        // 4) Consume guest session
+        if (guestSid) {
+          clearGuestData(guestSid);
+          guestSidRef.current = rotateGuestSid();
+        }
+
+        setSyncStatus('idle');
       } catch (error) {
         if (!cancelled) {
           console.error('Sign-in sync failed:', error);

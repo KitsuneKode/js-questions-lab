@@ -48,4 +48,12 @@ describe('mergeStreakStates', () => {
       defaultStreakState,
     );
   });
+
+  it('zeros currentStreak when last activity is older than yesterday', () => {
+    const guest = streak({ currentStreak: 10, longestStreak: 10, lastActivityDate: '2026-07-05' });
+    const merged = mergeStreakStates(guest, defaultStreakState, '2026-07-09');
+    expect(merged.currentStreak).toBe(0);
+    expect(merged.longestStreak).toBe(10);
+    expect(merged.lastActivityDate).toBe('2026-07-05');
+  });
 });
