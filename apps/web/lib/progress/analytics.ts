@@ -217,6 +217,18 @@ export function getWeakestTopics(tagStats: TagStats[], limit = 5): TagStats[] {
     .slice(0, limit);
 }
 
+/** Count items due for review. When questions is omitted, count SRS-due only. */
+export function countDueReviews(progress: ProgressState, questions?: QuestionSummary[]): number {
+  if (!questions) {
+    const now = Date.now();
+    return Object.values(progress.questions).filter((item) => {
+      if (!item.srsData?.nextReviewDate) return false;
+      return new Date(item.srsData.nextReviewDate).getTime() <= now;
+    }).length;
+  }
+  return getReviewQueue(progress, questions, Number.POSITIVE_INFINITY).length;
+}
+
 export function getReviewQueue(
   progress: ProgressState,
   questions: QuestionSummary[],
