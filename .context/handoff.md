@@ -1,7 +1,7 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
+updated: 2026-07-09T12:45:00Z
+branch: cursor/product-audit-convex-leaderboard-2df2
+session_name: product-audit-convex-leaderboard
 context_pressure: low
 ---
 
@@ -9,21 +9,12 @@ context_pressure: low
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+- Full product audit: feedback/response storage, leaderboard, analytics, Convex migration
+- Wrote `.context/docs/product-audit-2026-07.md` with prioritized roadmap
 
 ## In Progress
 
-- None - all work complete
+- None — audit doc only; implementation deferred to follow-up PRs
 
 ## Blocked
 
@@ -31,27 +22,26 @@ context_pressure: low
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+- P0: AttemptRecord v2 + IDE hydrate + guest XP/SRS merge
+- P0: Leaderboard identity, errors, sticky rank
+- P2: Convex foundation (do before more Supabase PRD tables)
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
+- Store rich responses (recall text, errorType, mode) — current boolean+option is too shallow
+- Migrate authenticated sync to Convex before building profiles/AI on Supabase
+- Keep SSG content + guest localStorage + worker sandbox out of Convex
+- Knowledge graph = content-side concept map + derived mastery, not a graph DB
 
 ## Key Files
 
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
+- `.context/docs/product-audit-2026-07.md` — full audit
+- `apps/web/lib/progress/storage.ts` — AttemptRecord (needs v2)
+- `apps/web/lib/engagement/leaderboard.ts` — silent empty on RPC error
+- `apps/web/lib/engagement/actions.ts` — recordAttempt (signed-in only)
+- `apps/web/lib/progress/progress-context.tsx` — guest clear without XP merge
+- `.context/docs/prd-engagement-pro.md` — target engagement product
 
 ## Test Summary
 
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- No code changes this session (docs only)
