@@ -210,7 +210,17 @@
     "labelSaved": "Gespeicherte Fragen",
     "savedSub": "Fragen, die Sie für eine spätere Wiederholung beiseite gelegt haben.",
     "savedCount": "{count} gespeichert",
-    "viewAllSaved": "Alle {count} gespeicherten ansehen"
+    "viewAllSaved": "Alle {count} gespeicherten ansehen",
+    "masteryTitle": "Themen-Meisterschaft",
+    "masterySubtitle": "Fortschritt pro Konzept von gesperrt bis gemeistert.",
+    "masteryProgress": "{answered} von {total} Fragen berührt",
+    "mastery": {
+      "locked": "Gesperrt",
+      "exploring": "Erkunden",
+      "developing": "In Entwicklung",
+      "proficient": "Kompetent",
+      "mastered": "Gemeistert"
+    }
   },
   "accountDashboard": {
     "eyebrow": "Konto",

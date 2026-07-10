@@ -210,7 +210,17 @@
     "labelSaved": "Preguntas guardadas",
     "savedSub": "Preguntas que has reservado para revisar más tarde.",
     "savedCount": "{count} guardadas",
-    "viewAllSaved": "Ver las {count} guardadas"
+    "viewAllSaved": "Ver las {count} guardadas",
+    "masteryTitle": "Dominio por tema",
+    "masterySubtitle": "Avanza en cada concepto desde bloqueado hasta dominado.",
+    "masteryProgress": "{answered} de {total} preguntas tocadas",
+    "mastery": {
+      "locked": "Bloqueado",
+      "exploring": "Explorando",
+      "developing": "En desarrollo",
+      "proficient": "Competente",
+      "mastered": "Dominado"
+    }
   },
   "accountDashboard": {
     "eyebrow": "Cuenta",
