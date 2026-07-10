@@ -1,7 +1,7 @@
 ---
-updated: 2026-07-10T02:45:00Z
+updated: 2026-07-10T03:50:00Z
 branch: cursor/trust-habit-sprint-360d
-session_name: trust-habit-sprint-complete
+session_name: trust-habit-followups-convex-scaffold
 context_pressure: low
 ---
 
@@ -9,71 +9,45 @@ context_pressure: low
 
 ## Done
 
-Trust + habit sprint (plan: `.context/docs/plans/2026-07-09-trust-habit-sprint.md`):
+### Trust + habit sprint (complete)
+See prior handoff + `.context/docs/plans/2026-07-09-trust-habit-sprint.md`.
 
-### Phase 1 — Guest → sign-in engagement sync
-- `mergeStreakStates` (`apps/web/lib/streaks/merge.ts`)
-- Guest attempt replay helpers (`apps/web/lib/engagement/guest-replay.ts`)
-- `upsertStreak` + `replayGuestAttempts` (+ `answeredAt` forwarding, 200-cap)
-- Sign-in effect: **replay before sync**, merge streaks, preserve guest SRS, clear guest session
-- Integration test: `progress-context.sign-in.test.tsx`
-
-### Phase 2 — Dashboard unification
-- `computeOverallStats` accepts `streakState` override
-- OverviewCards uses real XP levels + `questions.length` (no hardcoded 155 / fake level÷15)
-
-### Phase 3 — Daily Review
-- `countDueReviews` + ReviewBadge alignment
-- `status=review` scope (`applyReviewFilter`)
-- `/review` route + dashboard CTAs
-- `srs_clear` +25 XP when due queue clears
-- Self-grade emphasis in review mode
-
-### Phase 4 — Leaderboard polish
-- Migration: `display_name` on `user_xp_totals`, streak in RPCs
-- Table shows streak + guest sign-up CTA
+### Follow-ups (this session)
+1. **Sign-in hydrate guard** — full guest merge only on false→true; subsequent mounts hydrate from server only (`wasSignedInForMergeRef` in `progress-context.tsx`).
+2. **Leaderboard display name settings** — `normalizeDisplayName`, `fetchDisplayName` / `setDisplayName`, `DisplayNameForm` on `/dashboard`.
+3. **Convex engagement scaffold (not wired)** — schema + progress/xp/streaks/leaderboard functions + migration plan. Supabase still live.
 
 ## Verification
 
-- `bun run typecheck` — pass
-- `bun run test` — 190 passed
-- `bun run lint` — pass (warnings cleaned)
-- `bun run build` — pass (includes `/[locale]/review`)
+- typecheck ✅
+- test ✅ 195 passed
+- lint ✅ (after auth.config fix)
 
 ## In Progress
 
-- None
+- None in code. Convex activation needs human Convex project + Clerk integration.
 
 ## Blocked
 
-- None
+- Full Convex cutover needs: Convex project, `bun run convex:dev`, Clerk Convex integration, `NEXT_PUBLIC_CONVEX_URL`, dual-write adapters.
 
 ## Next
 
-- Apply Supabase migration `20260710000000_leaderboard_display_name.sql` on staging/prod
-- Optional follow-ups from reviews:
-  - Sign-in transition guard (avoid redundant sync on every authenticated mount)
-  - Settings UI to set `user_xp_totals.display_name`
-  - Merge `/dashboard` + `/progress` IA
-- Defer: Pro tier, AI interview, streak shield
+1. Apply Supabase migration `20260710000000_leaderboard_display_name.sql` on staging/prod (still needed until Convex cutover).
+2. Create Convex project → enable Clerk integration → set `CLERK_JWT_ISSUER_DOMAIN` → `bun run convex:dev`.
+3. Phase 2 dual-write behind `ENGAGEMENT_BACKEND=supabase|convex` (see `.context/docs/plans/2026-07-10-supabase-to-convex.md`).
 
 ## Decisions
 
-- Replay guest attempts **before** `syncProgressToServer` to avoid duplicate attempt rows (`recordAttempt` appends)
-- Server engine is authoritative for XP after replay (guest local totals may differ slightly)
-- Review badge stays SRS-only; `/review` uses full `getReviewQueue` (SRS + legacy)
-- `srs_clear` uses SRS-only due count in ProgressProvider (no question list in context)
+- Migrate **engagement only** to Convex; keep content SSG + guest localStorage + Clerk.
+- Do not big-bang cutover — scaffold first, then feature-flag dual-write.
+- Supabase free-tier pause is the driver; Convex free tier does not pause the same way.
 
 ## Key Files
 
-- `apps/web/lib/progress/progress-context.tsx` — sign-in merge + srs_clear award
-- `apps/web/lib/engagement/actions.ts` — replay/upsert/appendXPEvents
-- `apps/web/lib/engagement/guest-replay.ts` — pure replay selection
-- `apps/web/lib/streaks/merge.ts` — streak merge
-- `apps/web/app/[locale]/(app)/review/page.tsx` — daily review entry
-- `supabase/migrations/20260710000000_leaderboard_display_name.sql`
-
-## Test Summary
-
-- ~190 vitest tests passing
-- New coverage: streak merge, guest replay, sign-in sync, overview cards, review start, srs_clear, leaderboard streaks
+- `apps/web/lib/progress/progress-context.tsx` — hydrate vs merge
+- `apps/web/components/dashboard/display-name-form.tsx`
+- `apps/web/lib/engagement/display-name.ts` + actions
+- `convex/schema.ts`, `convex/progress.ts`, `convex/xp.ts`, `convex/streaks.ts`, `convex/leaderboard.ts`
+- `.context/docs/plans/2026-07-10-supabase-to-convex.md`
+- `apps/web/lib/backend/engagement-backend.ts` — feature flag stub
