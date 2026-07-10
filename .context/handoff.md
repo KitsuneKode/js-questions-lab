@@ -1,5 +1,5 @@
 ---
-updated: 2026-07-10T04:20:00Z
+updated: 2026-07-10T04:30:00Z
 branch: feat/cloud-pr-consolidation
 session_name: cloud-pr-consolidation
 context_pressure: medium
@@ -7,24 +7,36 @@ context_pressure: medium
 
 # Session Handoff
 
-## Consolidated
+## Done
 
-- Merged #77, #71, #79, #72, #75, and #78 for a PR targeting `dev`.
-- Preserved #79 engagement data wiring: guest replay, XP levels, `streakState`, display names, review/SRS behavior, and the Convex scaffold.
-- Added #78 practice UX: question-page chrome hiding, a persistent scratchpad, responsive IDE tabs, guided paths, and mobile-safe keyboard hints.
-- Combined leaderboard identity/streak data and guest CTA behavior with optional avatars, initials, and Pro badges; Dark Forge primary styling replaces orange flame/glow chrome.
+Consolidated Cursor Cloud PRs onto `feat/cloud-pr-consolidation` for `dev`:
 
-## Validation needed
+- #77 guest Clerk middleware skip
+- #71 product audit docs
+- #79 trust + habit + Convex scaffold (engagement SoT)
+- #72 attempt-record hydrate + Try again
+- #75 topic mastery paths grid
+- #78 practice UX (chrome hide, scratchpad I/O, mobile IDE, paths)
+- Dark Forge polish: shadcn display-name form, no orange/glow streak chrome, mono path eyebrow
 
-1. Run `bun run typecheck` and `bun run test`.
-2. Manually verify question-page scroll chrome, phone-width IDE tabs, scratchpad import/export, review grading, and leaderboard empty/error states.
-3. Full Convex cutover remains intentionally deferred until deployment, Clerk integration, and `NEXT_PUBLIC_CONVEX_URL` are configured.
+Closed as superseded (do not merge): #73, #74, #76.
 
-## Key files
+## Verification
 
-- `apps/web/components/ide/question-ide-client.tsx`
-- `apps/web/components/dashboard/dashboard-shell.tsx`
-- `apps/web/components/leaderboard/leaderboard-table.tsx`
-- `apps/web/lib/engagement/leaderboard.ts`
-- `apps/web/lib/engagement/leaderboard-shared.ts`
-- `convex/schema.ts`, `convex/progress.ts`, `convex/xp.ts`
+- `bun run typecheck` ✅
+- `bun run test` ✅ 230 passed
+
+## In Progress
+
+- Open PR → `dev` and verify on Vercel preview / local `bun run dev`
+
+## Next
+
+1. Apply Supabase migration `20260710000000_leaderboard_display_name.sql` on staging
+2. Manual smoke: guest practice → sign-in merge, `/review`, leaderboard, mobile IDE tabs, scratchpad import/export
+3. Convex project setup when ready (scaffold only; Supabase still live)
+
+## Decisions
+
+- #79 wins engagement data; #78 wins practice chrome; #72/#75 cherry-picked as unique gaps
+- Prefer shadcn Input/Label/Button; Dark Forge primary amber only
