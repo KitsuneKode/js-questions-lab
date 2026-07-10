@@ -489,6 +489,8 @@
     "allTimeTitle": "Todos los Tiempos",
     "resetsMonday": "Se reinicia los lunes",
     "empty": "Aún no hay entradas. ¡Sé el primero en ganar XP!",
-    "you": "Tú"
+    "you": "Tú",
+    "guestCta": "Inicia sesión para reclamar tu posición",
+    "streakLabel": "Racha de {count} días"
   }
 }

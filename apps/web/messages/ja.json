@@ -489,6 +489,8 @@
     "allTimeTitle": "全期間",
     "resetsMonday": "毎週月曜日にリセット",
     "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
-    "you": "あなた"
+    "you": "あなた",
+    "guestCta": "サインインしてランクを獲得しよう",
+    "streakLabel": "{count}日連続"
   }
 }

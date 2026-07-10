@@ -489,6 +489,8 @@
     "allTimeTitle": "All Time",
     "resetsMonday": "Resets Monday",
     "empty": "No entries yet. Be the first to earn XP!",
-    "you": "You"
+    "you": "You",
+    "guestCta": "Sign in to claim your rank",
+    "streakLabel": "{count}-day streak"
   }
 }

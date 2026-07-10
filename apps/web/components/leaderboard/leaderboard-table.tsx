@@ -1,6 +1,7 @@
 'use client';
 
-import { IconTrophy } from '@tabler/icons-react';
+import { IconFlame, IconTrophy } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { LeaderboardEntry } from '@/lib/engagement/leaderboard';
 import { cn } from '@/lib/utils';
@@ -14,9 +15,16 @@ const RANK_STYLES: Record<number, string> = {
 interface LeaderboardTableProps {
   entries: LeaderboardEntry[];
   currentUserPosition?: number | null;
+  showGuestCta?: boolean;
+  signUpHref?: string;
 }
 
-export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  entries,
+  currentUserPosition,
+  showGuestCta,
+  signUpHref,
+}: LeaderboardTableProps) {
   const t = useTranslations('leaderboard');
   const format = useFormatter();
 
@@ -62,6 +70,17 @@ export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTa
                 >
                   {isCurrentUser ? t('you') : entry.displayName}
                 </span>
+                {entry.currentStreak > 0 && (
+                  <span
+                    className="inline-flex items-center gap-0.5 text-orange-400"
+                    title={t('streakLabel', { count: entry.currentStreak })}
+                  >
+                    <IconFlame className="h-3 w-3 fill-orange-400/20" />
+                    <span className="text-[10px] font-semibold tabular-nums">
+                      {entry.currentStreak}
+                    </span>
+                  </span>
+                )}
               </div>
               <span className="text-[11px] text-tertiary font-mono">
                 Lv.{entry.level} {entry.levelName}
@@ -78,6 +97,17 @@ export function LeaderboardTable({ entries, currentUserPosition }: LeaderboardTa
           </div>
         );
       })}
+
+      {showGuestCta && signUpHref && (
+        <div className="pt-2 text-center">
+          <Link
+            href={signUpHref}
+            className="text-sm text-primary hover:text-primary/80 transition-colors no-underline"
+          >
+            {t('guestCta')}
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

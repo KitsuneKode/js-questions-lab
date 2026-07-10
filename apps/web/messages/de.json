@@ -489,6 +489,8 @@
     "allTimeTitle": "Alle Zeiten",
     "resetsMonday": "Zurückgesetzt montags",
     "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
-    "you": "Du"
+    "you": "Du",
+    "guestCta": "Melde dich an, um deinen Rang zu beanspruchen",
+    "streakLabel": "{count}-Tage-Serie"
   }
 }
