@@ -20,6 +20,7 @@ import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
 import { withLocale } from '@/lib/locale-paths';
+import { useProgress } from '@/lib/progress/progress-context';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface DashboardShellProps {
@@ -30,6 +31,7 @@ interface DashboardShellProps {
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
   const tQuestions = useTranslations('questions');
+  const { xpState } = useProgress();
   const {
     ready,
     overall,
@@ -100,7 +102,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
       </header>
 
       {/* Stats overview */}
-      <OverviewCards overall={overall} />
+      <OverviewCards
+        overall={overall}
+        totalQuestions={questions.length}
+        totalXP={xpState.totalXP}
+      />
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (

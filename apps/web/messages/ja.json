@@ -163,6 +163,8 @@
     "labelAccuracy": "正解率",
     "labelConsistency": "継続性",
     "levelRequirement": "レベル{next}まであと{count}問",
+    "xpLevelRequirement": "{name}まであと{count} XP",
+    "xpLevelMax": "最大レベルに到達",
     "keepPushing": "その調子です。",
     "activeStreak": "アクティブ",
     "streakFire": "絶好調ですね！明日も練習して継続しましょう。",

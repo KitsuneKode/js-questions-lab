@@ -163,6 +163,8 @@
     "labelAccuracy": "Precisión",
     "labelConsistency": "Consistencia",
     "levelRequirement": "{count} preguntas para el Nivel {next}",
+    "xpLevelRequirement": "{count} XP para {name}",
+    "xpLevelMax": "Nivel máximo alcanzado",
     "keepPushing": "Sigue adelante.",
     "activeStreak": "Activo",
     "streakFire": "¡Estás en racha! Practica mañana para mantenerla.",
