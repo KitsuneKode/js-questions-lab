@@ -40,6 +40,7 @@ interface RecordAttemptInput {
   submissionId?: string;
   recallAnswer?: string | null;
   locale?: string;
+  answeredAt?: string;
 }
 
 export interface RecordAttemptResult {
@@ -146,6 +147,7 @@ export async function recordAttempt(
     previousStreakState: streakState ?? defaultStreakState,
     selected: input.selected,
     recallAnswer: input.recallAnswer,
+    answeredAt: input.answeredAt,
   });
 
   const rows = result.xpEvents.map((event, index) => ({
@@ -309,6 +311,7 @@ export async function upsertStreak(state: StreakState): Promise<StreakState | nu
   return state;
 }
 
+// Callers should replay BEFORE syncProgressToServer, or sync after replay, to avoid duplicate attempts (recordAttempt appends).
 export async function replayGuestAttempts(
   attempts: GuestAttemptReplay[],
   locale?: string,
@@ -316,13 +319,22 @@ export async function replayGuestAttempts(
   const { userId } = await auth();
   if (!userId) return null;
 
+  let toReplay = attempts;
+  if (attempts.length > 200) {
+    console.warn(
+      `replayGuestAttempts: truncating ${attempts.length - 200} attempts (cap 200); full arrays still sync via progress`,
+    );
+    toReplay = attempts.slice(0, 200);
+  }
+
   let last: RecordAttemptResult | null = null;
-  for (const attempt of attempts) {
+  for (const attempt of toReplay) {
     last = await recordAttempt({
       questionId: attempt.questionId,
       selected: attempt.selected,
       submissionId: attempt.submissionId,
       locale,
+      answeredAt: attempt.attemptedAt,
     });
   }
 
