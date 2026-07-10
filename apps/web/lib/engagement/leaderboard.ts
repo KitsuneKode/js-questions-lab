@@ -16,6 +16,7 @@ export interface LeaderboardEntry {
   level: number;
   levelName: string;
   rank: number;
+  currentStreak: number;
 }
 
 interface LeaderboardRow {
@@ -23,6 +24,7 @@ interface LeaderboardRow {
   rank: number;
   display_name: string;
   total_xp: number;
+  current_streak?: number | null;
 }
 
 interface CurrentUserLeaderboardRow {
@@ -99,6 +101,7 @@ export function toEntries(rows: LeaderboardRow[]): LeaderboardEntry[] {
       level: level.level,
       levelName: level.name,
       rank: row.rank,
+      currentStreak: Math.max(0, row.current_streak ?? 0),
     };
   });
 }

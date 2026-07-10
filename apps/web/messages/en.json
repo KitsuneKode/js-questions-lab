@@ -163,6 +163,8 @@
     "labelAccuracy": "Accuracy",
     "labelConsistency": "Consistency",
     "levelRequirement": "{count} questions to Level {next}",
+    "xpLevelRequirement": "{count} XP to {name}",
+    "xpLevelMax": "Max level reached",
     "keepPushing": "Keep pushing.",
     "activeStreak": "Active",
     "streakFire": "You are on fire! Practice tomorrow to keep it going.",
@@ -176,6 +178,11 @@
     "reviewsDue": "Reviews Due",
     "reviewsDueDesc": "You have {count} question(s) due for spaced repetition review. Master your concepts.",
     "reviewNow": "Review Now",
+    "reviewPageTitle": "Daily Review",
+    "reviewPageDescription": "Practice questions due for spaced repetition review.",
+    "reviewEmpty": "Nothing due right now. Keep practicing and reviews will show up here.",
+    "browseQuestions": "Browse questions",
+    "startReview": "Start review",
     "resume": "Resume",
     "tryThis": "Try this",
     "startFirst": "Start your first question",
@@ -215,7 +222,14 @@
     "syncTitle": "Sync Identity",
     "syncBody": "This private area is reserved for account-aware flows like sync status and signed-in access. Your learning flow still works without auth.",
     "memberIdLabel": "Member ID",
-    "memberIdUnavailable": "Unavailable"
+    "memberIdUnavailable": "Unavailable",
+    "displayNameTitle": "Leaderboard name",
+    "displayNameBody": "This name appears on the public leaderboard. Leave blank to stay Anonymous until you set one.",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "e.g. kitsune",
+    "displayNameSave": "Save",
+    "displayNameSaved": "Saved",
+    "displayNameHint": "2–24 characters. Letters, numbers, spaces, _ . -"
   },
   "credits": {
     "label": "Credits & Attribution",
@@ -402,6 +416,7 @@
     "gradeHard": "Hard",
     "gradeGood": "Good",
     "gradeEasy": "Easy",
+    "reviewGradeHint": "Grade this review to update your schedule",
     "practice": "Practice",
     "domEventSimulator": "DOM Event Simulator",
     "domReplayTitle": "Replay target and bubbling without a fake browser runtime",
@@ -481,6 +496,8 @@
     "allTimeTitle": "All Time",
     "resetsMonday": "Resets Monday",
     "empty": "No entries yet. Be the first to earn XP!",
-    "you": "You"
+    "you": "You",
+    "guestCta": "Sign in to claim your rank",
+    "streakLabel": "{count}-day streak"
   }
 }

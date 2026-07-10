@@ -11,21 +11,23 @@ import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import type { OverallStats } from '@/lib/progress/analytics';
 import { cn } from '@/lib/utils';
+import { getLevelInfo, XP_LEVELS } from '@/lib/xp/levels';
 
 interface OverviewCardsProps {
   overall: OverallStats;
+  totalQuestions: number;
+  totalXP: number;
 }
 
-export function OverviewCards({ overall }: OverviewCardsProps) {
+export function OverviewCards({ overall, totalQuestions, totalXP }: OverviewCardsProps) {
   const t = useTranslations('dashboard');
-  const totalQuestions = 155; // Hardcoded or passed down
-  const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
+  const level = getLevelInfo(totalXP);
+  const progressPercent =
+    totalQuestions > 0 ? Math.round((overall.totalAnswered / totalQuestions) * 100) : 0;
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
-  // Level Calculation (Every 15 questions = 1 Level up)
-  const currentLevel = Math.floor(overall.totalAnswered / 15) + 1;
-  const nextLevelRequirement = currentLevel * 15;
-  const questionsToNextLevel = nextLevelRequirement - overall.totalAnswered;
+  const nextLevel = XP_LEVELS.find((l) => l.level === level.level + 1);
+  const xpRemaining = nextLevel ? nextLevel.minXP - totalXP : 0;
 
   // Trend indicator based on a naive metric for demo purposes
   const accuracyTrend = accuracyPercent > 60 ? 'up' : accuracyPercent < 40 ? 'down' : 'neutral';
@@ -51,7 +53,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               {t('labelJourney')}
             </p>
             <div className="inline-flex items-center gap-1 rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-              Level {currentLevel}
+              Level {level.level} · {level.name}
             </div>
           </div>
           <p className="font-display text-3xl text-foreground mt-1">
@@ -93,7 +95,13 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           </div>
           <p className="text-xs text-secondary leading-snug">
             <strong className="text-foreground">
-              {t('levelRequirement', { count: questionsToNextLevel, next: currentLevel + 1 })}
+              {nextLevel
+                ? t('xpLevelRequirement', {
+                    count: xpRemaining,
+                    next: nextLevel.level,
+                    name: nextLevel.name,
+                  })
+                : t('xpLevelMax')}
             </strong>
             <br />
             {t('keepPushing')}

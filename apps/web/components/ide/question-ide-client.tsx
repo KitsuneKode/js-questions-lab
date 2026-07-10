@@ -60,6 +60,7 @@ import {
 import { TimelineChart } from '@/components/visualization/timeline-chart';
 import { VisualDebugger } from '@/components/visualization/visual-debugger';
 import {
+  applyReviewFilter,
   applyServerFilters,
   applyStatusFilter,
   buildQuestionScopeQuery,
@@ -212,6 +213,9 @@ export function QuestionIDEClient({
   } | null>(null);
 
   const isAnswered = selected !== null || hasSubmittedRecall;
+  const isReviewMode = scope.status === 'review';
+  const showReviewGradeEmphasis = isReviewMode && isAnswered;
+  const showReviewGradeReminder = showReviewGradeEmphasis && selfGrade === null;
   const isCorrect =
     selected !== null ? selected === question.correctOption : isRecallCorrect === true;
 
@@ -402,13 +406,17 @@ export function QuestionIDEClient({
     () => staticScopedQuestions.map((scopedQuestion) => scopedQuestion.id),
     [staticScopedQuestions],
   );
-  const liveStatusScopedIds = useMemo(
-    () =>
-      applyStatusFilter(staticScopedQuestions, scope.status, progress.questions).map(
+  const liveStatusScopedIds = useMemo(() => {
+    if (scope.status === 'review') {
+      return applyReviewFilter(staticScopedQuestions, progress).map(
         (scopedQuestion) => scopedQuestion.id,
-      ),
-    [progress.questions, scope.status, staticScopedQuestions],
-  );
+      );
+    }
+
+    return applyStatusFilter(staticScopedQuestions, scope.status, progress.questions).map(
+      (scopedQuestion) => scopedQuestion.id,
+    );
+  }, [progress, scope.status, staticScopedQuestions]);
   const allQuestionIds = useMemo(
     () => questionIndex.map((availableQuestion) => availableQuestion.id),
     [questionIndex],
@@ -577,16 +585,23 @@ export function QuestionIDEClient({
             {item.bookmarked ? tQuestion('saved') : tQuestion('save')}
           </Button>
           {nextId && (
-            <IntentPrefetchLink href={nextHref ?? '#'}>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="h-9 gap-2 px-4 text-xs font-medium active:scale-[0.97] transition-all"
-              >
-                {tQuestion('next')}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </IntentPrefetchLink>
+            <div className="flex items-center gap-2">
+              {showReviewGradeReminder && (
+                <span className="hidden text-[10px] text-muted-foreground/70 sm:inline">
+                  {t('reviewGradeHint')}
+                </span>
+              )}
+              <IntentPrefetchLink href={nextHref ?? '#'}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="h-9 gap-2 px-4 text-xs font-medium active:scale-[0.97] transition-all"
+                >
+                  {tQuestion('next')}
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </IntentPrefetchLink>
+            </div>
           )}
         </div>
       </div>
@@ -1061,28 +1076,41 @@ export function QuestionIDEClient({
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-2">
-                      {(['hard', 'good', 'easy'] as const).map((grade) => (
-                        <button
-                          key={grade}
-                          type="button"
-                          disabled={!isCorrect && !errorType}
-                          onClick={() => handleSelfGrade(grade)}
-                          className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
-                            !isCorrect && !errorType
-                              ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
-                              : selfGrade === grade
-                                ? grade === 'hard'
-                                  ? 'border-danger/50 bg-danger/20 text-danger'
-                                  : grade === 'good'
-                                    ? 'border-warning/50 bg-warning/20 text-warning'
-                                    : 'border-success/50 bg-success/20 text-success'
-                                : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
-                          }`}
-                        >
-                          {t(selfGradeLabelKeys[grade])}
-                        </button>
-                      ))}
+                    <div
+                      className={`rounded-xl p-3 ${
+                        showReviewGradeEmphasis
+                          ? 'border border-primary/40 bg-primary/5 ring-1 ring-primary/40'
+                          : ''
+                      }`}
+                    >
+                      {showReviewGradeEmphasis && (
+                        <p className="mb-2 text-center text-xs text-primary/80">
+                          {t('reviewGradeHint')}
+                        </p>
+                      )}
+                      <div className="grid grid-cols-3 gap-2">
+                        {(['hard', 'good', 'easy'] as const).map((grade) => (
+                          <button
+                            key={grade}
+                            type="button"
+                            disabled={!isCorrect && !errorType}
+                            onClick={() => handleSelfGrade(grade)}
+                            className={`rounded-lg border p-2 text-center text-xs font-medium uppercase transition-all ${
+                              !isCorrect && !errorType
+                                ? 'opacity-50 cursor-not-allowed border-border/20 bg-muted/20 text-muted-foreground'
+                                : selfGrade === grade
+                                  ? grade === 'hard'
+                                    ? 'border-danger/50 bg-danger/20 text-danger'
+                                    : grade === 'good'
+                                      ? 'border-warning/50 bg-warning/20 text-warning'
+                                      : 'border-success/50 bg-success/20 text-success'
+                                  : 'border-border/40 bg-card hover:bg-muted/40 text-muted-foreground'
+                            }`}
+                          >
+                            {t(selfGradeLabelKeys[grade])}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
                     {question.resources && question.resources.length > 0 && (

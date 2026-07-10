@@ -163,6 +163,8 @@
     "labelAccuracy": "Precisión",
     "labelConsistency": "Consistencia",
     "levelRequirement": "{count} preguntas para el Nivel {next}",
+    "xpLevelRequirement": "{count} XP para {name}",
+    "xpLevelMax": "Nivel máximo alcanzado",
     "keepPushing": "Sigue adelante.",
     "activeStreak": "Activo",
     "streakFire": "¡Estás en racha! Practica mañana para mantenerla.",
@@ -176,6 +178,11 @@
     "reviewsDue": "Revisiones pendientes",
     "reviewsDueDesc": "Tienes {count} pregunta(s) pendientes de revisión por repetición espaciada. Domina tus conceptos.",
     "reviewNow": "Revisar ahora",
+    "reviewPageTitle": "Repaso diario",
+    "reviewPageDescription": "Practica preguntas pendientes de repaso con repetición espaciada.",
+    "reviewEmpty": "No hay nada pendiente. Sigue practicando y las revisiones aparecerán aquí.",
+    "browseQuestions": "Explorar preguntas",
+    "startReview": "Iniciar repaso",
     "resume": "Continuar",
     "tryThis": "Intentar",
     "startFirst": "Comienza tu primera pregunta",
@@ -215,7 +222,14 @@
     "syncTitle": "Identidad sincronizada",
     "syncBody": "Esta área privada está reservada para flujos ligados a la cuenta, como el estado de sincronización y el acceso autenticado. Tu aprendizaje sigue funcionando sin iniciar sesión.",
     "memberIdLabel": "ID de miembro",
-    "memberIdUnavailable": "No disponible"
+    "memberIdUnavailable": "No disponible",
+    "displayNameTitle": "Nombre en la clasificación",
+    "displayNameBody": "Este nombre aparece en la clasificación pública. Déjalo en blanco para permanecer anónimo hasta que establezcas uno.",
+    "displayNameLabel": "Nombre para mostrar",
+    "displayNamePlaceholder": "p. ej. kitsune",
+    "displayNameSave": "Guardar",
+    "displayNameSaved": "Guardado",
+    "displayNameHint": "2–24 caracteres. Letras, números, espacios, _ . -"
   },
   "credits": {
     "label": "Créditos y atribución",
@@ -402,6 +416,7 @@
     "gradeHard": "Difícil",
     "gradeGood": "Bien",
     "gradeEasy": "Fácil",
+    "reviewGradeHint": "Califica esta repaso para actualizar tu horario",
     "practice": "Practicar",
     "domEventSimulator": "Simulador de eventos DOM",
     "domReplayTitle": "Repetir objetivo y bubbling sin tiempo de ejecución falso de navegador",
@@ -481,6 +496,8 @@
     "allTimeTitle": "Todos los Tiempos",
     "resetsMonday": "Se reinicia los lunes",
     "empty": "Aún no hay entradas. ¡Sé el primero en ganar XP!",
-    "you": "Tú"
+    "you": "Tú",
+    "guestCta": "Inicia sesión para reclamar tu posición",
+    "streakLabel": "Racha de {count} días"
   }
 }

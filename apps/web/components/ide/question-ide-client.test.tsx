@@ -5,6 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const terminalLogKeys = new WeakMap<object, string>();
 let terminalLogKeySeed = 0;
 
+const mockSearchParams = vi.hoisted(() => ({
+  value: new URLSearchParams(),
+}));
+
 function getTerminalLogKey(log: { content: string }) {
   const existingKey = terminalLogKeys.get(log);
   if (existingKey) {
@@ -22,7 +26,7 @@ vi.mock('next/navigation', () => ({
     prefetch: vi.fn(),
     push: vi.fn(),
   }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => mockSearchParams.value,
 }));
 
 vi.mock('next-intl', () => ({
@@ -169,12 +173,17 @@ vi.mock('@/components/visualization/visual-debugger', () => ({
 }));
 
 vi.mock('@/lib/content/query', () => ({
+  applyReviewFilter: (items: unknown[]) => items,
   applyServerFilters: (items: unknown[]) => items,
   applyStatusFilter: (items: unknown[]) => items,
   buildQuestionScopeQuery: () => '',
-  parseQuestionScope: () => ({
-    status: 'all',
-  }),
+  parseQuestionScope: (params: Record<string, string | string[]>) => {
+    const status = params.status;
+    const normalizedStatus = Array.isArray(status) ? status[0] : status;
+    return {
+      status: normalizedStatus === 'review' ? 'review' : 'all',
+    };
+  },
 }));
 
 vi.mock('@/lib/keyboard/use-question-keyboard', () => ({
@@ -281,6 +290,7 @@ for (let i = 0; i < 3; i++) {
 
 describe('QuestionIDEClient autorun', () => {
   beforeEach(() => {
+    mockSearchParams.value = new URLSearchParams();
     runJavaScriptMock.mockReset();
     runJavaScriptMock.mockResolvedValue({
       logs: ['3', '3', '3', '0', '1', '2'],
@@ -321,5 +331,21 @@ describe('QuestionIDEClient autorun', () => {
     expect(runJavaScriptMock).toHaveBeenCalledWith(baseQuestion.codeBlocks[0]?.code, {
       enableTracing: true,
     });
+  });
+
+  it('emphasizes self-grade panel during review sessions after answering', async () => {
+    mockSearchParams.value = new URLSearchParams('status=review');
+
+    render(<QuestionIDEClient question={baseQuestion} locale="en" />);
+
+    fireEvent.click(screen.getByRole('button', { name: /3 3 3 and 0 1 2/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('reviewGradeHint')).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: 'gradeHard' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'gradeGood' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'gradeEasy' })).toBeInTheDocument();
   });
 });

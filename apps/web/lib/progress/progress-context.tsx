@@ -13,16 +13,21 @@ import {
 import { useSafeAuth } from '@/lib/auth-utils';
 import type { Difficulty } from '@/lib/content/types';
 import {
+  appendXPEvents,
   applyServerSelfGrade,
   fetchStreak,
   fetchXPState,
   recordAttempt,
+  replayGuestAttempts,
+  upsertStreak,
 } from '@/lib/engagement/actions';
+import { listGuestAttemptsToReplay } from '@/lib/engagement/guest-replay';
 import {
   fetchServerProgress,
   syncProgressToServer,
   upsertSingleQuestion,
 } from '@/lib/progress/actions';
+import { countDueReviews } from '@/lib/progress/analytics';
 import { clearGuestData, getOrCreateGuestSid, rotateGuestSid } from '@/lib/progress/guest-session';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
@@ -36,8 +41,9 @@ import {
 } from '@/lib/progress/storage';
 import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
 import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
+import { mergeStreakStates } from '@/lib/streaks/merge';
 import { readStreak, writeStreak } from '@/lib/streaks/storage';
-import { computeXP } from '@/lib/xp/scoring';
+import { buildSrsClearEvent, computeXP } from '@/lib/xp/scoring';
 import type { XPState } from '@/lib/xp/storage';
 import { applyXPEvents, defaultXPState, readXP, writeXP } from '@/lib/xp/storage';
 
@@ -196,6 +202,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const { isSignedIn } = useSafeAuth();
   // Track the previous isSignedIn value to detect sign-out transitions.
   const prevSignedInRef = useRef(isSignedIn);
+  // Tracks whether sign-in merge already ran this session (hydrate on re-run, merge on false→true).
+  const wasSignedInForMergeRef = useRef(false);
 
   // ---------------------------------------------------------------------------
   // Init: load guest data from session-keyed localStorage on mount
@@ -229,17 +237,39 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // Sign-in: merge guest session into server, then consume the guest session
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (!isSignedIn || !ready) return;
+    if (!isSignedIn || !ready) {
+      if (!isSignedIn) {
+        wasSignedInForMergeRef.current = false;
+      }
+      return;
+    }
+
+    const isSignInTransition = !wasSignedInForMergeRef.current;
+    wasSignedInForMergeRef.current = true;
 
     let cancelled = false;
     setSyncStatus('syncing');
 
     (async () => {
       try {
+        if (!isSignInTransition) {
+          const [serverItems, serverXP, serverStreak] = await Promise.all([
+            fetchServerProgress(),
+            fetchXPState(),
+            fetchStreak(),
+          ]);
+          if (cancelled) return;
+          dispatch({ type: 'merge', serverItems });
+          setXPState(serverXP);
+          setStreakState(serverStreak ?? defaultStreakState);
+          setSyncStatus('idle');
+          return;
+        }
+
         const guestSid = guestSidRef.current;
-        // Read guest progress before fetching server data so we capture
-        // exactly what was accumulated in this guest session.
         const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
+        const guestXP = guestSid ? readXP(guestSid) : defaultXPState;
+        const guestStreak = guestSid ? readStreak(guestSid) : defaultStreakState;
 
         const [serverItems, serverXP, serverStreak] = await Promise.all([
           fetchServerProgress(),
@@ -247,36 +277,57 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           fetchStreak(),
         ]);
 
-        if (!cancelled) {
-          dispatch({ type: 'merge', serverItems });
-          setXPState(serverXP);
-          // Streak: server is authoritative for authenticated state
-          const authoritativeStreak = serverStreak ?? defaultStreakState;
-          setStreakState(authoritativeStreak);
+        if (cancelled) return;
 
-          // Push any guest progress that is newer than what's on the server
-          const localNewer: ProgressItem[] = [];
-          for (const localItem of Object.values(guestProgress.questions)) {
-            const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
-            if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
-              localNewer.push(localItem);
-            }
+        dispatch({ type: 'merge', serverItems });
+
+        const localNewer: ProgressItem[] = [];
+        for (const localItem of Object.values(guestProgress.questions)) {
+          const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
+          if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
+            localNewer.push(localItem);
           }
-
-          if (localNewer.length > 0) {
-            await syncProgressToServer(localNewer);
-          }
-
-          // Consume the guest session: delete its data and rotate to a fresh SID.
-          // Any future sign-out will start with a clean guest session.
-          if (guestSid) {
-            clearGuestData(guestSid);
-            const newSid = rotateGuestSid();
-            guestSidRef.current = newSid;
-          }
-
-          setSyncStatus('idle');
         }
+
+        // 1) Replay FIRST → authoritative XP + streak from engine (avoids duplicate attempts)
+        const toReplay = listGuestAttemptsToReplay(guestProgress, serverItems);
+        let nextXP = serverXP;
+        let nextStreak = serverStreak ?? defaultStreakState;
+
+        if (toReplay.length > 0) {
+          const replayed = await replayGuestAttempts(toReplay);
+          if (replayed) {
+            nextXP = replayed.xpState;
+            nextStreak = replayed.streakState;
+          }
+        } else if (guestXP.events.length > 0 && serverXP.events.length === 0) {
+          // Edge: guest has XP events but no replayable attempt delta (rare).
+          // Prefer server; do not invent XP without attempts.
+          nextXP = serverXP;
+        }
+
+        // 2) Sync newer progress rows AFTER replay (SRS/bookmarks/attempt arrays upsert)
+        if (localNewer.length > 0) {
+          await syncProgressToServer(localNewer);
+        }
+
+        // 3) Merge streaks (guest calendar streak vs post-replay server streak)
+        const today = new Date().toISOString().slice(0, 10);
+        const mergedStreak = mergeStreakStates(guestStreak, nextStreak, today);
+        await upsertStreak(mergedStreak);
+
+        if (cancelled) return;
+
+        setXPState(nextXP);
+        setStreakState(mergedStreak);
+
+        // 4) Consume guest session
+        if (guestSid) {
+          clearGuestData(guestSid);
+          guestSidRef.current = rotateGuestSid();
+        }
+
+        setSyncStatus('idle');
       } catch (error) {
         if (!cancelled) {
           console.error('Sign-in sync failed:', error);
@@ -390,7 +441,46 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const saveSelfGrade = useCallback(
     (questionId: number, grade: Grade) => {
+      const dueBefore = countDueReviews(stateRef.current);
+
+      const prev = ensureItem(stateRef.current, questionId);
+      const nextItem = {
+        ...prev,
+        srsData: calculateNextReview(grade, prev.srsData),
+        updatedAt: new Date().toISOString(),
+      };
+      const predictedState = {
+        ...stateRef.current,
+        questions: {
+          ...stateRef.current.questions,
+          [String(questionId)]: nextItem,
+        },
+      };
+      const dueAfter = countDueReviews(predictedState);
+      const clearedQueue = dueBefore > 0 && dueAfter === 0;
+
       dispatch({ type: 'grade', questionId, grade });
+
+      const awardClearBonus = () => {
+        if (!clearedQueue) return;
+        const event = buildSrsClearEvent(questionId);
+        if (isSignedIn) {
+          const submissionId = `srs-clear:${new Date().toISOString().slice(0, 10)}:${questionId}`;
+          appendXPEvents([event], submissionId)
+            .then((nextXP) => {
+              if (nextXP) setXPState(nextXP);
+            })
+            .catch((err) => console.error('Failed to award srs_clear XP:', err));
+          return;
+        }
+        const sid = guestSidRef.current;
+        setXPState((prevXP) => {
+          const next = applyXPEvents(prevXP, [event]);
+          if (sid) writeXP(sid, next);
+          return next;
+        });
+      };
+
       if (isSignedIn) {
         setSyncStatus('syncing');
         applyServerSelfGrade(questionId, grade)
@@ -398,6 +488,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
             if (serverItem) {
               dispatch({ type: 'replace', item: serverItem });
             }
+            awardClearBonus();
             setSyncStatus('idle');
           })
           .catch((err) => {
@@ -406,6 +497,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           });
         return;
       }
+
+      awardClearBonus();
     },
     [isSignedIn],
   );

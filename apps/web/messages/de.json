@@ -163,6 +163,8 @@
     "labelAccuracy": "Genauigkeit",
     "labelConsistency": "Beständigkeit",
     "levelRequirement": "{count} Fragen bis Level {next}",
+    "xpLevelRequirement": "{count} XP bis {name}",
+    "xpLevelMax": "Maximales Level erreicht",
     "keepPushing": "Bleib dran.",
     "activeStreak": "Aktiv",
     "streakFire": "Du bist in Bestform! Übe morgen weiter, um dranzubleiben.",
@@ -176,6 +178,11 @@
     "reviewsDue": "Wiederholungen fällig",
     "reviewsDueDesc": "Du hast {count} Frage(n) zur zeitversetzten Wiederholung fällig. Meistern Sie Ihre Konzepte.",
     "reviewNow": "Jetzt wiederholen",
+    "reviewPageTitle": "Tägliche Wiederholung",
+    "reviewPageDescription": "Übe Fragen, die für die Wiederholung durch verteiltes Lernen fällig sind.",
+    "reviewEmpty": "Derzeit nichts fällig. Übe weiter und Wiederholungen erscheinen hier.",
+    "browseQuestions": "Fragen durchsuchen",
+    "startReview": "Wiederholung starten",
     "resume": "Fortsetzen",
     "tryThis": "Probieren",
     "startFirst": "Starte deine erste Frage",
@@ -215,7 +222,14 @@
     "syncTitle": "Synchronisierte Identität",
     "syncBody": "Dieser private Bereich ist für kontobezogene Abläufe wie Sync-Status und angemeldeten Zugriff reserviert. Dein Lernfluss funktioniert weiterhin ohne Anmeldung.",
     "memberIdLabel": "Mitglieds-ID",
-    "memberIdUnavailable": "Nicht verfügbar"
+    "memberIdUnavailable": "Nicht verfügbar",
+    "displayNameTitle": "Leaderboard-Name",
+    "displayNameBody": "Dieser Name erscheint in der öffentlichen Bestenliste. Leer lassen, um anonym zu bleiben, bis du einen Namen festlegst.",
+    "displayNameLabel": "Anzeigename",
+    "displayNamePlaceholder": "z. B. kitsune",
+    "displayNameSave": "Speichern",
+    "displayNameSaved": "Gespeichert",
+    "displayNameHint": "2–24 Zeichen. Buchstaben, Zahlen, Leerzeichen, _ . -"
   },
   "credits": {
     "label": "Credits & Mitwirkende",
@@ -402,6 +416,7 @@
     "gradeHard": "Schwer",
     "gradeGood": "Gut",
     "gradeEasy": "Einfach",
+    "reviewGradeHint": "Bewerte diese Wiederholung, um deinen Zeitplan zu aktualisieren",
     "practice": "Üben",
     "domEventSimulator": "DOM-Ereignissimulator",
     "domReplayTitle": "Ziel und Bubbling ohne gefälschten Browser-Laufzeit wiedergeben",
@@ -481,6 +496,8 @@
     "allTimeTitle": "Alle Zeiten",
     "resetsMonday": "Zurückgesetzt montags",
     "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
-    "you": "Du"
+    "you": "Du",
+    "guestCta": "Melde dich an, um deinen Rang zu beanspruchen",
+    "streakLabel": "{count}-Tage-Serie"
   }
 }

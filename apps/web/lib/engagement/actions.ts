@@ -3,11 +3,13 @@
 import { randomUUID } from 'node:crypto';
 import { auth } from '@clerk/nextjs/server';
 import { getQuestionById } from '@/lib/content/loaders';
+import { normalizeDisplayName } from '@/lib/engagement/display-name';
 import {
   buildAuthoritativeAttemptResult,
   buildAuthoritativeSelfGradeResult,
   rebuildXPState,
 } from '@/lib/engagement/engine';
+import type { GuestAttemptReplay } from '@/lib/engagement/guest-replay';
 import { revalidateLeaderboardCaches } from '@/lib/engagement/leaderboard-cache';
 import { DEFAULT_LOCALE, isValidLocale, type LocaleCode } from '@/lib/i18n/config';
 import type { Grade } from '@/lib/progress/srs';
@@ -39,6 +41,7 @@ interface RecordAttemptInput {
   submissionId?: string;
   recallAnswer?: string | null;
   locale?: string;
+  answeredAt?: string;
 }
 
 export interface RecordAttemptResult {
@@ -145,6 +148,7 @@ export async function recordAttempt(
     previousStreakState: streakState ?? defaultStreakState,
     selected: input.selected,
     recallAnswer: input.recallAnswer,
+    answeredAt: input.answeredAt,
   });
 
   const rows = result.xpEvents.map((event, index) => ({
@@ -223,6 +227,49 @@ export async function recordAttempt(
   return result;
 }
 
+export async function appendXPEvents(
+  events: XPEvent[],
+  submissionId: string,
+): Promise<XPState | null> {
+  const { userId } = await auth();
+  if (!userId || events.length === 0) return null;
+
+  const supabase = createServerSupabaseClient();
+  const rows = events.map((event, index) => ({
+    user_id: userId,
+    submission_id: submissionId,
+    event_index: index,
+    question_id: event.questionId,
+    event_type: event.eventType,
+    xp_delta: event.xpDelta,
+    created_at: event.timestamp,
+  }));
+
+  const existing = await fetchXPEvents(userId);
+  const next = rebuildXPState([...existing, ...events]);
+
+  const [{ error: xpError }, { error: totalsError }] = await Promise.all([
+    supabase.from('xp_events').upsert(rows, {
+      onConflict: 'user_id,submission_id,event_index',
+      ignoreDuplicates: true,
+    }),
+    supabase.from('user_xp_totals').upsert(
+      {
+        user_id: userId,
+        total_xp: next.totalXP,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id' },
+    ),
+  ]);
+
+  if (xpError) throw xpError;
+  if (totalsError) throw totalsError;
+
+  revalidateLeaderboardCaches();
+  return next;
+}
+
 export async function applyServerSelfGrade(
   questionId: number,
   grade: Grade,
@@ -282,4 +329,124 @@ export async function fetchStreak(): Promise<StreakState | null> {
     longestStreak: data.longest_streak,
     lastActivityDate: data.last_activity_date ?? null,
   };
+}
+
+export async function upsertStreak(state: StreakState): Promise<StreakState | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from('user_streaks').upsert(
+    {
+      user_id: userId,
+      current_streak: state.currentStreak,
+      longest_streak: state.longestStreak,
+      last_activity_date: state.lastActivityDate,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (error) {
+    console.error('Failed to upsert streak:', error.message);
+    throw error;
+  }
+
+  return state;
+}
+
+// Callers should replay BEFORE syncProgressToServer, or sync after replay, to avoid duplicate attempts (recordAttempt appends).
+export async function replayGuestAttempts(
+  attempts: GuestAttemptReplay[],
+  locale?: string,
+): Promise<{ xpState: XPState; streakState: StreakState } | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  let toReplay = attempts;
+  if (attempts.length > 200) {
+    console.warn(
+      `replayGuestAttempts: truncating ${attempts.length - 200} attempts (cap 200); full arrays still sync via progress`,
+    );
+    toReplay = attempts.slice(0, 200);
+  }
+
+  let last: RecordAttemptResult | null = null;
+  for (const attempt of toReplay) {
+    last = await recordAttempt({
+      questionId: attempt.questionId,
+      selected: attempt.selected,
+      submissionId: attempt.submissionId,
+      locale,
+      answeredAt: attempt.attemptedAt,
+    });
+  }
+
+  if (!last) {
+    const [xpState, streakState] = await Promise.all([fetchXPState(), fetchStreak()]);
+    return {
+      xpState,
+      streakState: streakState ?? defaultStreakState,
+    };
+  }
+
+  return { xpState: last.xpState, streakState: last.streakState };
+}
+
+// ---------------------------------------------------------------------------
+// Leaderboard display name
+// ---------------------------------------------------------------------------
+
+export async function fetchDisplayName(): Promise<string | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('user_xp_totals')
+    .select('display_name')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Failed to fetch display name:', error.message);
+    return null;
+  }
+
+  return data?.display_name ?? null;
+}
+
+export async function setDisplayName(
+  rawName: string,
+): Promise<{ ok: true; displayName: string } | { ok: false; error: string }> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: 'Not signed in' };
+
+  const normalized = normalizeDisplayName(rawName);
+  if (!normalized.ok) return normalized;
+
+  const supabase = createServerSupabaseClient();
+  const { data: existing } = await supabase
+    .from('user_xp_totals')
+    .select('total_xp')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const { error } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: existing?.total_xp ?? 0,
+      display_name: normalized.displayName,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+
+  if (error) {
+    console.error('Failed to set display name:', error.message);
+    return { ok: false, error: 'Could not save display name' };
+  }
+
+  revalidateLeaderboardCaches();
+  return { ok: true, displayName: normalized.displayName };
 }

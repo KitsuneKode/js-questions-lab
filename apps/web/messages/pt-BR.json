@@ -163,6 +163,8 @@
     "labelAccuracy": "Precisão",
     "labelConsistency": "Consistência",
     "levelRequirement": "{count} perguntas para o Nível {next}",
+    "xpLevelRequirement": "{count} XP para {name}",
+    "xpLevelMax": "Nível máximo alcançado",
     "keepPushing": "Continue se esforçando.",
     "activeStreak": "Ativo",
     "streakFire": "Você está arrasando! Pratique amanhã para manter o ritmo.",
@@ -176,6 +178,11 @@
     "reviewsDue": "Revisões pendentes",
     "reviewsDueDesc": "Você tem {count} questão(ões) pendente(s) de revisão por repetição espaçada. Domine seus conceitos.",
     "reviewNow": "Revisar agora",
+    "reviewPageTitle": "Revisão diária",
+    "reviewPageDescription": "Pratique questões pendentes para revisão com repetição espaçada.",
+    "reviewEmpty": "Nada pendente agora. Continue praticando e as revisões aparecerão aqui.",
+    "browseQuestions": "Explorar questões",
+    "startReview": "Iniciar revisão",
     "resume": "Continuar",
     "tryThis": "Tentar",
     "startFirst": "Comece sua primeira questão",
@@ -215,7 +222,14 @@
     "syncTitle": "Identidade sincronizada",
     "syncBody": "Esta área privada é reservada para fluxos ligados à conta, como status de sincronização e acesso autenticado. Seu fluxo de aprendizado continua funcionando sem login.",
     "memberIdLabel": "ID do membro",
-    "memberIdUnavailable": "Indisponível"
+    "memberIdUnavailable": "Indisponível",
+    "displayNameTitle": "Nome no ranking",
+    "displayNameBody": "Este nome aparece no ranking público. Deixe em branco para permanecer anônimo até definir um.",
+    "displayNameLabel": "Nome de exibição",
+    "displayNamePlaceholder": "ex.: kitsune",
+    "displayNameSave": "Salvar",
+    "displayNameSaved": "Salvo",
+    "displayNameHint": "2–24 caracteres. Letras, números, espaços, _ . -"
   },
   "credits": {
     "label": "Créditos e Atribuição",
@@ -402,6 +416,7 @@
     "gradeHard": "Difícil",
     "gradeGood": "Bom",
     "gradeEasy": "Fácil",
+    "reviewGradeHint": "Avalie esta revisão para atualizar sua agenda",
     "practice": "Praticar",
     "domEventSimulator": "Simulador de Eventos DOM",
     "domReplayTitle": "Reproduzir alvo e bubbling sem um runtime de navegador falso",
@@ -481,6 +496,8 @@
     "allTimeTitle": "Todos os Tempos",
     "resetsMonday": "Reseta às segundas",
     "empty": "Nenhuma entrada ainda. Seja o primeiro a ganhar XP!",
-    "you": "Você"
+    "you": "Você",
+    "guestCta": "Entre para reivindicar sua posição",
+    "streakLabel": "Sequência de {count} dias"
   }
 }

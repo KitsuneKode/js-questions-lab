@@ -163,6 +163,8 @@
     "labelAccuracy": "正解率",
     "labelConsistency": "継続性",
     "levelRequirement": "レベル{next}まであと{count}問",
+    "xpLevelRequirement": "{name}まであと{count} XP",
+    "xpLevelMax": "最大レベルに到達",
     "keepPushing": "その調子です。",
     "activeStreak": "アクティブ",
     "streakFire": "絶好調ですね！明日も練習して継続しましょう。",
@@ -176,6 +178,11 @@
     "reviewsDue": "復習が必要",
     "reviewsDueDesc": "間隔反復による復習が必要な問題が{count}件あります。コンセプトをマスターしましょう。",
     "reviewNow": "今すぐ復習する",
+    "reviewPageTitle": "デイリーレビュー",
+    "reviewPageDescription": "間隔反復で復習が必要な問題を練習します。",
+    "reviewEmpty": "今は復習する項目がありません。練習を続けると、ここに復習が表示されます。",
+    "browseQuestions": "問題を探す",
+    "startReview": "復習を始める",
     "resume": "再開",
     "tryThis": "チャレンジ",
     "startFirst": "最初の問題を始めましょう",
@@ -215,7 +222,14 @@
     "syncTitle": "同期されたアカウント情報",
     "syncBody": "この非公開エリアは、同期状態やサインイン済みアクセスのようなアカウント連携フロー専用です。学習体験そのものは認証なしでも使えます。",
     "memberIdLabel": "メンバーID",
-    "memberIdUnavailable": "利用できません"
+    "memberIdUnavailable": "利用できません",
+    "displayNameTitle": "リーダーボード名",
+    "displayNameBody": "この名前は公開リーダーボードに表示されます。設定するまで空白のままにすると匿名のままです。",
+    "displayNameLabel": "表示名",
+    "displayNamePlaceholder": "例: kitsune",
+    "displayNameSave": "保存",
+    "displayNameSaved": "保存しました",
+    "displayNameHint": "2〜24文字。文字、数字、スペース、_ . -"
   },
   "credits": {
     "label": "クレジットと帰属",
@@ -402,6 +416,7 @@
     "gradeHard": "難しい",
     "gradeGood": "普通",
     "gradeEasy": "簡単",
+    "reviewGradeHint": "復習を評価してスケジュールを更新してください",
     "practice": "練習する",
     "domEventSimulator": "DOMイベントシミュレーター",
     "domReplayTitle": "偽のブラウザランタイムなしでターゲットとバブリングをリプレイ",
@@ -481,6 +496,8 @@
     "allTimeTitle": "全期間",
     "resetsMonday": "毎週月曜日にリセット",
     "empty": "まだエントリーがありません。最初にXPを獲得しよう！",
-    "you": "あなた"
+    "you": "あなた",
+    "guestCta": "サインインしてランクを獲得しよう",
+    "streakLabel": "{count}日連続"
   }
 }

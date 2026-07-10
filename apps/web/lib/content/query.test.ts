@@ -1,9 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { QuestionRecord } from '@/lib/content/types';
 import type { ProgressState } from '@/lib/progress/storage';
 
 import {
+  applyReviewFilter,
   applyServerFilters,
   applyStatusFilter,
   buildQuestionScopeQuery,
@@ -42,7 +43,54 @@ function createQuestion(overrides: Partial<QuestionFixture>): QuestionRecord {
   } as QuestionRecord;
 }
 
+function createProgressState(): ProgressState {
+  return {
+    version: 2,
+    questions: {
+      '1': {
+        questionId: 1,
+        bookmarked: true,
+        updatedAt: '2026-03-28T10:00:00.000Z',
+        attempts: [
+          {
+            selected: 'A',
+            status: 'correct',
+            attemptedAt: '2026-03-27T10:00:00.000Z',
+          },
+          {
+            selected: 'A',
+            status: 'incorrect',
+            attemptedAt: '2026-03-28T10:00:00.000Z',
+          },
+        ],
+      },
+      '2': {
+        questionId: 2,
+        bookmarked: false,
+        updatedAt: '2026-03-29T10:00:00.000Z',
+        attempts: [
+          {
+            selected: 'B',
+            status: 'correct',
+            attemptedAt: '2026-03-29T10:00:00.000Z',
+          },
+        ],
+        srsData: {
+          repetition: 2,
+          interval: 6,
+          easeFactor: 2.5,
+          nextReviewDate: '2026-03-25T10:00:00.000Z',
+        },
+      },
+    },
+  };
+}
+
 describe('content query helpers', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const questions = [
     createQuestion({
       id: 1,
@@ -108,6 +156,22 @@ describe('content query helpers', () => {
     expect(
       applyStatusFilter(questions, 'bookmarked', progressQuestions).map((question) => question.id),
     ).toEqual([2]);
+  });
+
+  it('parses status=review into the review listing scope', () => {
+    const scope = parseQuestionScope({ status: 'review' });
+
+    expect(scope.status).toBe('review');
+    expect(buildQuestionScopeQuery(scope)).toBe('status=review');
+  });
+
+  it('applyReviewFilter returns only due questions given progress with SRS overdue', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-29T12:00:00.000Z'));
+
+    const progress = createProgressState();
+
+    expect(applyReviewFilter(questions, progress).map((question) => question.id)).toEqual([1, 2]);
   });
 
   it('parses and serializes a normalized question scope', () => {

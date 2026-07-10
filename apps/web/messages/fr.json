@@ -163,6 +163,8 @@
     "labelAccuracy": "Précision",
     "labelConsistency": "Cohérence",
     "levelRequirement": "{count} questions pour le Niveau {next}",
+    "xpLevelRequirement": "{count} XP pour {name}",
+    "xpLevelMax": "Niveau maximum atteint",
     "keepPushing": "Continuez vos efforts.",
     "activeStreak": "Actif",
     "streakFire": "Vous assurez ! Pratiquez demain pour continuer.",
@@ -176,6 +178,11 @@
     "reviewsDue": "Révisions prévues",
     "reviewsDueDesc": "Vous avez {count} question(s) à réviser par répétition espacée. Maîtrisez vos concepts.",
     "reviewNow": "Réviser maintenant",
+    "reviewPageTitle": "Révision quotidienne",
+    "reviewPageDescription": "Entraînez-vous sur les questions à réviser avec la répétition espacée.",
+    "reviewEmpty": "Rien à réviser pour le moment. Continuez à pratiquer et les révisions apparaîtront ici.",
+    "browseQuestions": "Parcourir les questions",
+    "startReview": "Commencer la révision",
     "resume": "Reprendre",
     "tryThis": "Essayer",
     "startFirst": "Commencez votre première question",
@@ -215,7 +222,14 @@
     "syncTitle": "Identité synchronisée",
     "syncBody": "Cette zone privée est réservée aux flux liés au compte, comme l'état de synchronisation et l'accès authentifié. Votre apprentissage fonctionne toujours sans connexion.",
     "memberIdLabel": "Identifiant membre",
-    "memberIdUnavailable": "Indisponible"
+    "memberIdUnavailable": "Indisponible",
+    "displayNameTitle": "Nom du classement",
+    "displayNameBody": "Ce nom apparaît sur le classement public. Laissez vide pour rester anonyme jusqu'à ce que vous en définissiez un.",
+    "displayNameLabel": "Nom affiché",
+    "displayNamePlaceholder": "ex. kitsune",
+    "displayNameSave": "Enregistrer",
+    "displayNameSaved": "Enregistré",
+    "displayNameHint": "2–24 caractères. Lettres, chiffres, espaces, _ . -"
   },
   "credits": {
     "label": "Crédits et attribution",
@@ -402,6 +416,7 @@
     "gradeHard": "Difficile",
     "gradeGood": "Bien",
     "gradeEasy": "Facile",
+    "reviewGradeHint": "Évaluez cette révision pour mettre à jour votre planning",
     "practice": "Pratiquer",
     "domEventSimulator": "Simulateur d'événements DOM",
     "domReplayTitle": "Reproduire la cible et le bubbling sans faux runtime de navigateur",
@@ -481,6 +496,8 @@
     "allTimeTitle": "Tous les temps",
     "resetsMonday": "Remis à zéro le lundi",
     "empty": "Aucune entrée pour le moment. Soyez le premier à gagner des XP !",
-    "you": "Vous"
+    "you": "Vous",
+    "guestCta": "Connectez-vous pour réclamer votre rang",
+    "streakLabel": "Série de {count} jours"
   }
 }

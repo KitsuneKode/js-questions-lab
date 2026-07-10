@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { PaginationNav } from '@/components/pagination-nav';
 import { QuestionCard } from '@/components/question-card';
 import {
+  applyReviewFilter,
   applyStatusFilter,
   buildQuestionScopeQuery,
   paginate,
@@ -35,8 +36,12 @@ export function QuestionsResults({
       return null;
     }
 
+    if (scope.status === 'review') {
+      return applyReviewFilter(questions, progress);
+    }
+
     return applyStatusFilter(questions, scope.status, progress.questions);
-  }, [questions, scope.status, progress.questions, ready]);
+  }, [questions, scope.status, progress, ready]);
 
   const paged = useMemo(() => {
     if (!scopedQuestions) {

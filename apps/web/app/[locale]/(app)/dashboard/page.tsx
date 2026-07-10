@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
+import { DisplayNameForm } from '@/components/dashboard/display-name-form';
+import { fetchDisplayName } from '@/lib/engagement/actions';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { withLocale } from '@/lib/locale-paths';
 import { getCanonicalUrl } from '@/lib/seo/config';
@@ -54,6 +56,7 @@ export default async function DashboardPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'accountDashboard' });
   const { userId } = await auth();
+  const displayName = userId ? await fetchDisplayName() : null;
   const progressHref = withLocale(locale, '/progress');
 
   return (
@@ -106,6 +109,8 @@ export default async function DashboardPage({
               </div>
             </article>
           </section>
+
+          {userId ? <DisplayNameForm initialName={displayName} /> : null}
         </div>
       </Container>
     </main>

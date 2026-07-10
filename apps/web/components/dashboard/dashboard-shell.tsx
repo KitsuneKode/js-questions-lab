@@ -20,6 +20,7 @@ import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
 import { withLocale } from '@/lib/locale-paths';
+import { useProgress } from '@/lib/progress/progress-context';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface DashboardShellProps {
@@ -30,6 +31,7 @@ interface DashboardShellProps {
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
   const tQuestions = useTranslations('questions');
+  const { xpState } = useProgress();
   const {
     ready,
     overall,
@@ -100,7 +102,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
       </header>
 
       {/* Stats overview */}
-      <OverviewCards overall={overall} />
+      <OverviewCards
+        overall={overall}
+        totalQuestions={questions.length}
+        totalXP={xpState.totalXP}
+      />
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (
@@ -152,9 +158,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                     <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
                       <IntentPrefetchLink
                         href={
-                          suggestion.question
-                            ? withLocale(locale, `/questions/${suggestion.question.id}`)
-                            : questionsHref
+                          suggestion.isUrgent
+                            ? withLocale(locale, '/review')
+                            : suggestion.question
+                              ? withLocale(locale, `/questions/${suggestion.question.id}`)
+                              : questionsHref
                         }
                       >
                         <Button
