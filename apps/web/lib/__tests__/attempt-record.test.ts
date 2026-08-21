@@ -46,6 +46,30 @@ describe('AttemptRecord v2 helpers', () => {
     });
   });
 
+  it('preserves the unjudgeable flag for open-ended recalls', () => {
+    const attempt = createAttemptRecord({
+      selected: null,
+      status: 'incorrect',
+      attemptedAt: '2026-07-09T12:00:00.000Z',
+      mode: 'recall',
+      responseText: 'some freeform answer',
+      unjudgeable: true,
+    });
+
+    expect(attempt.unjudgeable).toBe(true);
+  });
+
+  it('omits the unjudgeable flag for scored attempts', () => {
+    const attempt = createAttemptRecord({
+      selected: null,
+      status: 'correct',
+      attemptedAt: '2026-07-09T12:00:00.000Z',
+      mode: 'recall',
+    });
+
+    expect('unjudgeable' in attempt).toBe(false);
+  });
+
   it('patches the last attempt without mutating earlier ones', () => {
     const attempts: AttemptRecord[] = [
       createAttemptRecord({

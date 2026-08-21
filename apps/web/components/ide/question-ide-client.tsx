@@ -354,7 +354,9 @@ export function QuestionIDEClient({
   const handleRecallSubmit = useCallback(() => {
     if (!recallAnswer.trim()) return;
 
-    // Open-ended / code-output questions: still record the attempt for history.
+    // Open-ended / code-output questions: still record the attempt for history
+    // and SRS self-grading, but flag it as unjudgeable so accuracy/mastery
+    // analytics are not poisoned by an arbitrary 'incorrect' status.
     if (!question.correctOption) {
       setHasSubmittedRecall(true);
       setIsRecallCorrect(null);
@@ -364,6 +366,7 @@ export function QuestionIDEClient({
         locale,
         mode: 'recall',
         timeMs: elapsedTimeMs(),
+        unjudgeable: true,
       });
       scheduleAnswerAutorun();
       return;

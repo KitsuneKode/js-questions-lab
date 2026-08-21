@@ -22,6 +22,12 @@ export interface AttemptRecord {
   timeMs?: number;
   /** Client submission id for idempotent sync / analytics joins. */
   submissionId?: string;
+  /**
+   * True when no ground truth exists to judge this attempt (open-ended recall
+   * on questions without a correct option). Excluded from accuracy/mastery
+   * scoring; kept for history and SRS self-grading.
+   */
+  unjudgeable?: boolean;
 }
 
 export interface ProgressItem {
@@ -51,6 +57,7 @@ export function createAttemptRecord(input: AttemptRecord): AttemptRecord {
     record.timeMs = Math.round(input.timeMs);
   }
   if (input.submissionId) record.submissionId = input.submissionId;
+  if (input.unjudgeable) record.unjudgeable = true;
 
   return record;
 }

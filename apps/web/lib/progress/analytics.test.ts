@@ -5,6 +5,7 @@ import type { ProgressState } from '@/lib/progress/storage';
 
 import {
   computeOverallStats,
+  computeQuestionStats,
   computeStreak,
   computeTagStats,
   countDueReviews,
@@ -207,5 +208,55 @@ describe('progress analytics', () => {
     expect(suggestion.question?.id).toBe(3);
     expect(suggestion.labelKey).toBe('questions.sharpen');
     expect(suggestion.labelParams?.topic).toBe('scope');
+  });
+});
+
+describe('unjudgeable attempt exclusion', () => {
+  const baseItem = {
+    questionId: 1,
+    bookmarked: false,
+    updatedAt: '2026-03-28T10:00:00.000Z',
+    attempts: [
+      {
+        selected: 'A' as const,
+        status: 'correct' as const,
+        attemptedAt: '2026-03-27T10:00:00.000Z',
+      },
+      {
+        selected: null,
+        status: 'incorrect' as const,
+        attemptedAt: '2026-03-27T11:00:00.000Z',
+        mode: 'recall' as const,
+        responseText: 'freeform guess',
+        unjudgeable: true,
+      },
+    ],
+  };
+
+  it('computeQuestionStats excludes unjudgeable attempts from accuracy', () => {
+    const stats = computeQuestionStats({ ...baseItem });
+
+    expect(stats.totalAttempts).toBe(1);
+    expect(stats.correctCount).toBe(1);
+    expect(stats.accuracy).toBe(1);
+  });
+
+  it('keeps unjudgeable attempts in history via lastAttempt', () => {
+    const stats = computeQuestionStats({ ...baseItem });
+
+    expect(stats.lastStatus).toBe('incorrect');
+  });
+
+  it('computeOverallStats excludes unjudgeable attempts from totals', () => {
+    const progress: ProgressState = {
+      version: 2,
+      questions: { '1': { ...baseItem } },
+    };
+
+    const overall = computeOverallStats(progress);
+
+    expect(overall.totalAnswered).toBe(1);
+    expect(overall.totalAttempts).toBe(1);
+    expect(overall.overallAccuracy).toBe(1);
   });
 });

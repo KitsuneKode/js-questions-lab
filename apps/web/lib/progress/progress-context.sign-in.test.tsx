@@ -35,12 +35,15 @@ vi.mock('@/lib/progress/actions', () => ({
 }));
 
 describe('ProgressProvider sign-in merge', () => {
-  const attemptedAt = '2026-07-09T12:00:00.000Z';
+  // Date-relative so the streak-merge assertions never go stale (a streak
+  // older than yesterday is legitimately zeroed by mergeStreakStates).
+  const yesterdayDate = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const attemptedAt = `${yesterdayDate}T12:00:00.000Z`;
 
   const replayedXP = {
     version: 1,
     totalXP: 30,
-    lastEarnedDate: '2026-07-09',
+    lastEarnedDate: yesterdayDate,
     events: [
       {
         questionId: 1,
@@ -55,7 +58,7 @@ describe('ProgressProvider sign-in merge', () => {
     version: 1,
     currentStreak: 2,
     longestStreak: 2,
-    lastActivityDate: '2026-07-09',
+    lastActivityDate: yesterdayDate,
   };
 
   beforeEach(() => {
@@ -80,13 +83,13 @@ describe('ProgressProvider sign-in merge', () => {
       version: 1,
       currentStreak: 5,
       longestStreak: 5,
-      lastActivityDate: '2026-07-09',
+      lastActivityDate: yesterdayDate,
     });
 
     writeXP(guestSid, {
       version: 1,
       totalXP: 25,
-      lastEarnedDate: '2026-07-09',
+      lastEarnedDate: yesterdayDate,
       events: [
         {
           questionId: 1,
@@ -150,7 +153,7 @@ describe('ProgressProvider sign-in merge', () => {
       expect.objectContaining({
         currentStreak: 5,
         longestStreak: 5,
-        lastActivityDate: '2026-07-09',
+        lastActivityDate: yesterdayDate,
       }),
     );
   });

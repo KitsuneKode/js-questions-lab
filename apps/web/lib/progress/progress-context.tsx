@@ -65,6 +65,7 @@ type ProgressAction =
       responseText?: string;
       timeMs?: number;
       submissionId?: string;
+      unjudgeable?: boolean;
     }
   | { type: 'bookmark'; questionId: number }
   | {
@@ -120,6 +121,7 @@ function progressReducer(state: ProgressState, action: ProgressAction): Progress
                 responseText: action.responseText,
                 timeMs: action.timeMs,
                 submissionId: action.submissionId,
+                unjudgeable: action.unjudgeable,
               }),
             ],
             updatedAt: now,
@@ -214,6 +216,7 @@ interface ProgressContextValue {
       mode?: AttemptMode;
       timeMs?: number;
       errorType?: AttemptErrorType;
+      unjudgeable?: boolean;
     },
   ) => void;
   saveSelfGrade: (questionId: number, grade: Grade, errorType?: AttemptErrorType) => void;
@@ -411,6 +414,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         mode?: AttemptMode;
         timeMs?: number;
         errorType?: AttemptErrorType;
+        unjudgeable?: boolean;
       },
     ) => {
       const now = new Date().toISOString();
@@ -434,6 +438,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         responseText: options?.recallAnswer,
         timeMs: options?.timeMs,
         submissionId,
+        unjudgeable: options?.unjudgeable,
       });
 
       const questionTags = getQuestionTags(questionId);

@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { isClerkEnabled, isValidClerkKey } from './auth/clerk-key';
+import {
+  assertClerkKeySafeForEnvironment,
+  isClerkEnabled,
+  isValidClerkKey,
+} from './auth/clerk-key';
 
 describe('isValidClerkKey', () => {
   test('returns true for valid keys', () => {
@@ -34,5 +38,33 @@ describe('isClerkEnabled', () => {
     expect(isClerkEnabled('pk_test_Y2xlcmsuYWNjb3VudHMuZGV2JA')).toBe(true);
     expect(isClerkEnabled('pk_test_placeholder')).toBe(false);
     expect(isClerkEnabled(undefined)).toBe(false);
+  });
+});
+
+describe('assertClerkKeySafeForEnvironment', () => {
+  test('passes when a valid key is present regardless of environment', () => {
+    expect(() => assertClerkKeySafeForEnvironment('production', 'pk_live_abc123')).not.toThrow();
+  });
+
+  test('passes with a placeholder key outside production', () => {
+    expect(() =>
+      assertClerkKeySafeForEnvironment('development', 'pk_test_placeholder'),
+    ).not.toThrow();
+    expect(() => assertClerkKeySafeForEnvironment('test', undefined)).not.toThrow();
+  });
+
+  test('throws in production with a missing/placeholder key', () => {
+    expect(() => assertClerkKeySafeForEnvironment('production', 'pk_test_placeholder')).toThrow(
+      /CLERK_ALLOW_PLACEHOLDER_KEY/,
+    );
+    expect(() => assertClerkKeySafeForEnvironment('production', undefined)).toThrow(
+      /CLERK_ALLOW_PLACEHOLDER_KEY/,
+    );
+  });
+
+  test('escape hatch allows placeholder keys in production for CI/local runs', () => {
+    expect(() =>
+      assertClerkKeySafeForEnvironment('production', 'pk_test_placeholder', 'true'),
+    ).not.toThrow();
   });
 });

@@ -16,7 +16,8 @@ describe('practice paths', () => {
     expect(empty.done).toBe(0);
     expect(empty.nextId).toBe(path.questionIds[0]);
 
-    const partial = getPathProgress(path, new Set([path.questionIds[0]!]));
+    const firstId = path.questionIds[0] ?? '';
+    const partial = getPathProgress(path, new Set([firstId]));
     expect(partial.done).toBe(1);
     expect(partial.nextId).toBe(path.questionIds[1]);
 

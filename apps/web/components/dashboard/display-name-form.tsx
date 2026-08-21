@@ -42,9 +42,7 @@ export function DisplayNameForm({ initialName }: DisplayNameFormProps) {
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <Label htmlFor="display-name">
-            {t('displayNameLabel')}
-          </Label>
+          <Label htmlFor="display-name">{t('displayNameLabel')}</Label>
           <Input
             id="display-name"
             type="text"

@@ -56,10 +56,21 @@ export interface PracticeSuggestion {
 // Pure computation functions
 // ---------------------------------------------------------------------------
 
+/**
+ * Attempts without ground truth (open-ended recall on questions with no
+ * correct option) are recorded for history/SRS but excluded from accuracy
+ * and mastery scoring — an arbitrary 'incorrect' status would otherwise
+ * systematically depress both.
+ */
+function isScoredAttempt(attempt: ProgressItem['attempts'][number]): boolean {
+  return attempt.unjudgeable !== true;
+}
+
 export function computeQuestionStats(item: ProgressItem): QuestionStats {
-  const totalAttempts = item.attempts.length;
-  const correctCount = item.attempts.filter((a) => a.status === 'correct').length;
-  const lastAttempt = item.attempts[totalAttempts - 1] ?? null;
+  const scored = item.attempts.filter(isScoredAttempt);
+  const totalAttempts = scored.length;
+  const correctCount = scored.filter((a) => a.status === 'correct').length;
+  const lastAttempt = item.attempts[item.attempts.length - 1] ?? null;
 
   return {
     questionId: item.questionId,
@@ -81,6 +92,7 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
 
   for (const item of Object.values(progress.questions)) {
     const tags = questionTagMap.get(item.questionId) ?? [];
+    const scored = item.attempts.filter(isScoredAttempt);
     for (const tag of tags) {
       let entry = tagMap.get(tag);
       if (!entry) {
@@ -88,8 +100,8 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
         tagMap.set(tag, entry);
       }
       entry.questions.add(item.questionId);
-      entry.attempts += item.attempts.length;
-      entry.correct += item.attempts.filter((a) => a.status === 'correct').length;
+      entry.attempts += scored.length;
+      entry.correct += scored.filter((a) => a.status === 'correct').length;
     }
   }
 
@@ -115,10 +127,11 @@ export function computeOverallStats(
   let totalAnswered = 0;
 
   for (const item of items) {
+    const scored = item.attempts.filter(isScoredAttempt);
     if (item.attempts.length > 0) {
       totalAnswered++;
-      totalAttempts += item.attempts.length;
-      totalCorrect += item.attempts.filter((a) => a.status === 'correct').length;
+      totalAttempts += scored.length;
+      totalCorrect += scored.filter((a) => a.status === 'correct').length;
     }
     if (item.bookmarked) bookmarkedCount++;
   }

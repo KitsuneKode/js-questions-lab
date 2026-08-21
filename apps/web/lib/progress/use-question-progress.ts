@@ -40,6 +40,7 @@ export function useQuestionProgress(questionId: number) {
         mode?: AttemptMode;
         timeMs?: number;
         errorType?: AttemptErrorType;
+        unjudgeable?: boolean;
       },
     ) => saveAttempt(questionId, selected, status, options),
     saveSelfGrade: (grade: Grade, errorType?: AttemptErrorType) =>

@@ -187,7 +187,8 @@ export function OverviewCards({
 
         <div className="mt-6">
           <p className="text-xs text-secondary leading-snug">
-            Best streak: <strong className="text-foreground">{streakState.longestStreak} days</strong>.
+            Best streak:{' '}
+            <strong className="text-foreground">{streakState.longestStreak} days</strong>.
             <br />
             {hasActiveStreak ? t('streakFire') : t('noStreak')}
           </p>

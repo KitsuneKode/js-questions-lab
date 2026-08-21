@@ -67,7 +67,7 @@ export function LeaderboardTable({
               aria-hidden
             >
               {entry.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
+                // biome-ignore lint/performance/noImgElement: external Clerk avatar URL, uncontrolled dimensions
                 <img src={entry.avatarUrl} alt="" className="h-full w-full object-cover" />
               ) : (
                 initials
