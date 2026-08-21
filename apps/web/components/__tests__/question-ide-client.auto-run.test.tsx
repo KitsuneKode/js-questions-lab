@@ -179,7 +179,7 @@ vi.mock('@/lib/progress/use-question-progress', () => ({
 }));
 
 vi.mock('@/lib/run/sandbox', () => ({
-  runJavaScriptInEnhancedSandbox: runSandboxMock,
+  runJavaScript: runSandboxMock,
 }));
 
 vi.mock('@/lib/run/terminal', () => ({
