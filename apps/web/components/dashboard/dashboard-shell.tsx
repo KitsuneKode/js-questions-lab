@@ -9,6 +9,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
 import { BookmarkedList } from '@/components/dashboard/bookmarked-list';
+import { MasteryPathsGrid } from '@/components/dashboard/mastery-paths-grid';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { ReviewQueue } from '@/components/dashboard/review-queue';
@@ -20,6 +21,7 @@ import { IntentPrefetchLink } from '@/components/intent-prefetch-link';
 import { Button } from '@/components/ui/button';
 import type { QuestionSummary } from '@/lib/content/types';
 import { withLocale } from '@/lib/locale-paths';
+import { useProgress } from '@/lib/progress/progress-context';
 import { useAnalytics } from '@/lib/progress/use-analytics';
 
 interface DashboardShellProps {
@@ -30,12 +32,14 @@ interface DashboardShellProps {
 export function DashboardShell({ questions, locale }: DashboardShellProps) {
   const t = useTranslations('dashboard');
   const tQuestions = useTranslations('questions');
+  const { xpState, streakState } = useProgress();
   const {
     ready,
     overall,
     tagStats,
     dailyActivity,
     weakestTopics,
+    topicMastery,
     reviewQueue,
     continueLearning,
     recommended,
@@ -100,7 +104,52 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
       </header>
 
       {/* Stats overview */}
-      <OverviewCards overall={overall} />
+      <OverviewCards
+        overall={overall}
+        totalQuestions={questions.length}
+        totalXP={xpState.totalXP}
+        streakState={streakState}
+      />
+
+      <MasteryPathsGrid topics={topicMastery} locale={locale} />
+
+      {/* Daily review callout — always visible so "what to do today" is obvious */}
+      <section
+        className={`rounded-2xl border p-6 ${
+          reviewQueue.length > 0
+            ? 'border-primary/30 bg-primary/5'
+            : 'border-border-subtle bg-surface'
+        }`}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <Brain className={`h-3.5 w-3.5 ${reviewQueue.length > 0 ? 'animate-pulse' : ''}`} />
+              {t('dailyReviewTitle')}
+            </div>
+            <p className="text-sm text-secondary">
+              {reviewQueue.length > 0
+                ? t('reviewsDueDesc', { count: reviewQueue.length })
+                : t('dailyReviewEmpty')}
+            </p>
+          </div>
+          {reviewQueue.length > 0 && reviewQueue[0] ? (
+            <IntentPrefetchLink href={withLocale(locale, `/questions/${reviewQueue[0].id}`)}>
+              <Button className="gap-2 shrink-0">
+                {t('dailyReviewCta')}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </IntentPrefetchLink>
+          ) : (
+            <IntentPrefetchLink href={withLocale(locale, '/paths')}>
+              <Button variant="secondary" className="gap-2 shrink-0">
+                {t('tryThis')}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </IntentPrefetchLink>
+          )}
+        </div>
+      </section>
 
       {/* Charts and lists — only show when there's data */}
       {hasData && (
@@ -152,9 +201,11 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                     <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-border-subtle">
                       <IntentPrefetchLink
                         href={
-                          suggestion.question
-                            ? withLocale(locale, `/questions/${suggestion.question.id}`)
-                            : questionsHref
+                          suggestion.isUrgent
+                            ? withLocale(locale, '/review')
+                            : suggestion.question
+                              ? withLocale(locale, `/questions/${suggestion.question.id}`)
+                              : questionsHref
                         }
                       >
                         <Button
@@ -175,7 +226,7 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
                           size="sm"
                           className="h-9 text-xs font-medium text-secondary hover:text-foreground"
                         >
-                          Browse all
+                          {t('browseAll')}
                         </Button>
                       </IntentPrefetchLink>
                     </div>

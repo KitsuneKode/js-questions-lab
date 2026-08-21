@@ -1,5 +1,6 @@
 import type { QuestionSummary } from '@/lib/content/types';
 import type { ProgressItem, ProgressState } from '@/lib/progress/storage';
+import type { StreakState } from '@/lib/streaks/calculator';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -55,10 +56,21 @@ export interface PracticeSuggestion {
 // Pure computation functions
 // ---------------------------------------------------------------------------
 
+/**
+ * Attempts without ground truth (open-ended recall on questions with no
+ * correct option) are recorded for history/SRS but excluded from accuracy
+ * and mastery scoring — an arbitrary 'incorrect' status would otherwise
+ * systematically depress both.
+ */
+function isScoredAttempt(attempt: ProgressItem['attempts'][number]): boolean {
+  return attempt.unjudgeable !== true;
+}
+
 export function computeQuestionStats(item: ProgressItem): QuestionStats {
-  const totalAttempts = item.attempts.length;
-  const correctCount = item.attempts.filter((a) => a.status === 'correct').length;
-  const lastAttempt = item.attempts[totalAttempts - 1] ?? null;
+  const scored = item.attempts.filter(isScoredAttempt);
+  const totalAttempts = scored.length;
+  const correctCount = scored.filter((a) => a.status === 'correct').length;
+  const lastAttempt = item.attempts[item.attempts.length - 1] ?? null;
 
   return {
     questionId: item.questionId,
@@ -80,6 +92,7 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
 
   for (const item of Object.values(progress.questions)) {
     const tags = questionTagMap.get(item.questionId) ?? [];
+    const scored = item.attempts.filter(isScoredAttempt);
     for (const tag of tags) {
       let entry = tagMap.get(tag);
       if (!entry) {
@@ -87,8 +100,8 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
         tagMap.set(tag, entry);
       }
       entry.questions.add(item.questionId);
-      entry.attempts += item.attempts.length;
-      entry.correct += item.attempts.filter((a) => a.status === 'correct').length;
+      entry.attempts += scored.length;
+      entry.correct += scored.filter((a) => a.status === 'correct').length;
     }
   }
 
@@ -103,7 +116,10 @@ export function computeTagStats(progress: ProgressState, questions: QuestionSumm
     .sort((a, b) => b.totalAttempts - a.totalAttempts);
 }
 
-export function computeOverallStats(progress: ProgressState): OverallStats {
+export function computeOverallStats(
+  progress: ProgressState,
+  streakOverride?: Pick<StreakState, 'currentStreak' | 'longestStreak'>,
+): OverallStats {
   const items = Object.values(progress.questions);
   let totalAttempts = 0;
   let totalCorrect = 0;
@@ -111,15 +127,18 @@ export function computeOverallStats(progress: ProgressState): OverallStats {
   let totalAnswered = 0;
 
   for (const item of items) {
+    const scored = item.attempts.filter(isScoredAttempt);
     if (item.attempts.length > 0) {
       totalAnswered++;
-      totalAttempts += item.attempts.length;
-      totalCorrect += item.attempts.filter((a) => a.status === 'correct').length;
+      totalAttempts += scored.length;
+      totalCorrect += scored.filter((a) => a.status === 'correct').length;
     }
     if (item.bookmarked) bookmarkedCount++;
   }
 
-  const { current, longest } = computeStreak(progress);
+  const streak = streakOverride
+    ? { current: streakOverride.currentStreak, longest: streakOverride.longestStreak }
+    : computeStreak(progress);
 
   return {
     totalAnswered,
@@ -127,8 +146,8 @@ export function computeOverallStats(progress: ProgressState): OverallStats {
     totalAttempts,
     overallAccuracy: totalAttempts > 0 ? totalCorrect / totalAttempts : 0,
     bookmarkedCount,
-    currentStreak: current,
-    longestStreak: longest,
+    currentStreak: streak.current,
+    longestStreak: streak.longest,
   };
 }
 
@@ -209,6 +228,18 @@ export function getWeakestTopics(tagStats: TagStats[], limit = 5): TagStats[] {
     .filter((t) => t.totalAttempts >= 2)
     .sort((a, b) => a.accuracy - b.accuracy)
     .slice(0, limit);
+}
+
+/** Count items due for review. When questions is omitted, count SRS-due only. */
+export function countDueReviews(progress: ProgressState, questions?: QuestionSummary[]): number {
+  if (!questions) {
+    const now = Date.now();
+    return Object.values(progress.questions).filter((item) => {
+      if (!item.srsData?.nextReviewDate) return false;
+      return new Date(item.srsData.nextReviewDate).getTime() <= now;
+    }).length;
+  }
+  return getReviewQueue(progress, questions, Number.POSITIVE_INFINITY).length;
 }
 
 export function getReviewQueue(

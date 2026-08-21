@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { countDueReviews } from '@/lib/progress/analytics';
 import { useProgress } from '@/lib/progress/progress-context';
 
 interface ReviewBadgeProps {
@@ -9,20 +10,16 @@ interface ReviewBadgeProps {
 }
 
 /**
- * Counts progress items whose SRS nextReviewDate is today or earlier.
- * Works purely from localStorage progress — no question list required.
+ * Header badge showing SRS-due review count (lightweight — no question list).
+ * The `/review` page uses the full queue via `getReviewQueue`, which also
+ * includes legacy fallbacks for items answered before SRS was implemented.
  */
 export function ReviewBadge({ className = '' }: ReviewBadgeProps) {
   const { state, ready } = useProgress();
 
   const dueCount = useMemo(() => {
     if (!ready) return 0;
-    const now = new Date();
-    return Object.values(state.questions).filter((item) => {
-      const srsData = item.srsData;
-      if (!srsData?.nextReviewDate) return false;
-      return new Date(srsData.nextReviewDate).getTime() <= now.getTime();
-    }).length;
+    return countDueReviews(state);
   }, [ready, state]);
 
   if (dueCount === 0) return null;

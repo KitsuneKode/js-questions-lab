@@ -269,6 +269,8 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
           NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: placeholder
           NEXT_PUBLIC_SITE_URL: https://placeholder.example.com
+          # CI prod-mode builds/e2e run with placeholder keys by design (see lib/auth/clerk-key.ts)
+          CLERK_ALLOW_PLACEHOLDER_KEY: 'true'
 
       - name: Upload Playwright artifacts
         if: failure()
@@ -329,3 +331,5 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
           NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: placeholder
           NEXT_PUBLIC_SITE_URL: https://placeholder.example.com
+          # CI prod-mode builds/e2e run with placeholder keys by design (see lib/auth/clerk-key.ts)
+          CLERK_ALLOW_PLACEHOLDER_KEY: 'true'

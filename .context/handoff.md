@@ -1,57 +1,42 @@
 ---
-updated: 2026-04-02T22:33:00Z
-branch: dev
-session_name: progress-bar-content-tests-complete
-context_pressure: low
+updated: 2026-07-10T04:30:00Z
+branch: feat/cloud-pr-consolidation
+session_name: cloud-pr-consolidation
+context_pressure: medium
 ---
 
 # Session Handoff
 
 ## Done
 
-- Fixed progress bar mastery calculation (`section-progress-store.ts:68-90,120-140`)
-- Fixed totalQuestions bug using question.id instead of actual counts (`question-ide-client.tsx:220-225,275-285`)
-- Integrated markQuestionAnswered() for proper incrementing (`question-ide-client.tsx`)
-- Implemented progress system sync - auto-sync question→section level (`progress-context.tsx:237-248`, `tag-metadata.ts`)
-- Refined content tag categorization - fixed dom-events false positives, added generators/template-literals/operators (`parse-readme.mjs`)
-- Added comprehensive test suite:
-  - `section-progress-store.test.ts` - 28 tests
-  - `progress-integration.test.tsx` - 1 test
-  - `review-badge.test.tsx` - 8 tests (NEW)
-- Added parser validation test (`parse-readme.test.mjs`)
-- Created content schema (`content/schema.json`)
+Consolidated Cursor Cloud PRs onto `feat/cloud-pr-consolidation` for `dev`:
+
+- #77 guest Clerk middleware skip
+- #71 product audit docs
+- #79 trust + habit + Convex scaffold (engagement SoT)
+- #72 attempt-record hydrate + Try again
+- #75 topic mastery paths grid
+- #78 practice UX (chrome hide, scratchpad I/O, mobile IDE, paths)
+- Dark Forge polish: shadcn display-name form, no orange/glow streak chrome, mono path eyebrow
+
+Closed as superseded (do not merge): #73, #74, #76.
+
+## Verification
+
+- `bun run typecheck` ✅
+- `bun run test` ✅ 230 passed
 
 ## In Progress
 
-- None - all work complete
-
-## Blocked
-
-- None
+- Open PR → `dev` and verify on Vercel preview / local `bun run dev`
 
 ## Next
 
-- Run full build to verify production readiness
-- Push commits to remote
+1. Apply Supabase migration `20260710000000_leaderboard_display_name.sql` on staging
+2. Manual smoke: guest practice → sign-in merge, `/review`, leaderboard, mobile IDE tabs, scratchpad import/export
+3. Convex project setup when ready (scaffold only; Supabase still live)
 
 ## Decisions
 
-- Mastery formula: use correctAnswers/answeredQuestions (accuracy) not correctAnswers/totalQuestions
-- Tags now: arrays, async, dom-events, fundamentals, generators, modules, objects, operators, prototypes, scope, template-literals, types
-
-## Key Files
-
-- `apps/web/lib/progress/section-progress-store.ts:68-140` - Mastery calculation
-- `apps/web/components/ide/question-ide-client.tsx:220-285` - Progress tracking
-- `apps/web/lib/progress/progress-context.tsx:237-248` - Auto-sync logic
-- `apps/web/lib/progress/tag-metadata.ts` - Tag utility
-- `scripts/parse-readme.mjs:91-113` - Tag detection
-- `content/schema.json` - Question schema
-- `apps/web/components/dashboard/review-badge.test.tsx` - NEW tests
-
-## Test Summary
-
-- Total tests: 56 passing
-- Vitest: 48 passing
-- Parser: 6 passing
-- New coverage: ReviewBadge SRS logic
+- #79 wins engagement data; #78 wins practice chrome; #72/#75 cherry-picked as unique gaps
+- Prefer shadcn Input/Label/Button; Dark Forge primary amber only

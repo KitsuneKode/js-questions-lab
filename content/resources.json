@@ -1,1 +1,122 @@
-{}
+{
+  "1": [
+    {
+      "type": "docs",
+      "title": "MDN: Closures",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+      "author": "MDN"
+    },
+    {
+      "type": "docs",
+      "title": "MDN: Lexical scoping",
+      "url": "https://developer.mozilla.org/en-US/docs/Glossary/Scope",
+      "author": "MDN"
+    }
+  ],
+  "2": [
+    {
+      "type": "docs",
+      "title": "MDN: Promise",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+      "author": "MDN"
+    },
+    {
+      "type": "blog",
+      "title": "JavaScript Visualized: Promises & Async/Await",
+      "url": "https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke",
+      "author": "Lydia Hallie"
+    }
+  ],
+  "3": [
+    {
+      "type": "docs",
+      "title": "MDN: var, let, and const",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#declarations",
+      "author": "MDN"
+    }
+  ],
+  "7": [
+    {
+      "type": "docs",
+      "title": "MDN: Inheritance and the prototype chain",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain",
+      "author": "MDN"
+    }
+  ],
+  "8": [
+    {
+      "type": "docs",
+      "title": "MDN: Object.prototype",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype",
+      "author": "MDN"
+    },
+    {
+      "type": "repo",
+      "title": "javascript-questions (upstream)",
+      "url": "https://github.com/lydiahallie/javascript-questions",
+      "author": "Lydia Hallie"
+    }
+  ],
+  "10": [
+    {
+      "type": "docs",
+      "title": "MDN: this",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this",
+      "author": "MDN"
+    }
+  ],
+  "15": [
+    {
+      "type": "docs",
+      "title": "MDN: Array",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+      "author": "MDN"
+    }
+  ],
+  "17": [
+    {
+      "type": "docs",
+      "title": "MDN: Template literals",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals",
+      "author": "MDN"
+    }
+  ],
+  "26": [
+    {
+      "type": "docs",
+      "title": "MDN: Execution model",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop",
+      "author": "MDN"
+    },
+    {
+      "type": "blog",
+      "title": "JavaScript Visualized: Event Loop",
+      "url": "https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif",
+      "author": "Lydia Hallie"
+    }
+  ],
+  "30": [
+    {
+      "type": "docs",
+      "title": "MDN: async function",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function",
+      "author": "MDN"
+    }
+  ],
+  "42": [
+    {
+      "type": "docs",
+      "title": "MDN: setInterval",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval",
+      "author": "MDN"
+    }
+  ],
+  "43": [
+    {
+      "type": "docs",
+      "title": "MDN: Equality comparisons",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness",
+      "author": "MDN"
+    }
+  ]
+}

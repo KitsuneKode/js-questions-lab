@@ -10,22 +10,31 @@ import {
 import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import type { OverallStats } from '@/lib/progress/analytics';
+import type { StreakState } from '@/lib/streaks/calculator';
 import { cn } from '@/lib/utils';
+import { getLevelInfo, XP_LEVELS } from '@/lib/xp/levels';
 
 interface OverviewCardsProps {
   overall: OverallStats;
+  totalQuestions: number;
+  totalXP: number;
+  streakState: StreakState;
 }
 
-export function OverviewCards({ overall }: OverviewCardsProps) {
+export function OverviewCards({
+  overall,
+  totalQuestions,
+  totalXP,
+  streakState,
+}: OverviewCardsProps) {
   const t = useTranslations('dashboard');
-  const totalQuestions = 155; // Hardcoded or passed down
-  const progressPercent = Math.round((overall.totalAnswered / totalQuestions) * 100);
+  const level = getLevelInfo(totalXP);
+  const safeTotal = Math.max(totalQuestions, 1);
+  const progressPercent = Math.round((overall.totalAnswered / safeTotal) * 100);
   const accuracyPercent = overall.totalAttempts > 0 ? Math.round(overall.overallAccuracy * 100) : 0;
 
-  // Level Calculation (Every 15 questions = 1 Level up)
-  const currentLevel = Math.floor(overall.totalAnswered / 15) + 1;
-  const nextLevelRequirement = currentLevel * 15;
-  const questionsToNextLevel = nextLevelRequirement - overall.totalAnswered;
+  const nextLevel = XP_LEVELS.find((l) => l.level === level.level + 1);
+  const xpRemaining = nextLevel ? nextLevel.minXP - totalXP : 0;
 
   // Trend indicator based on a naive metric for demo purposes
   const accuracyTrend = accuracyPercent > 60 ? 'up' : accuracyPercent < 40 ? 'down' : 'neutral';
@@ -36,7 +45,7 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
         ? 'text-status-wrong'
         : 'text-[#F59E0B]';
 
-  const hasActiveStreak = overall.currentStreak > 0;
+  const hasActiveStreak = streakState.currentStreak > 0;
 
   return (
     <div className="grid gap-5 sm:grid-cols-3">
@@ -51,12 +60,11 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               {t('labelJourney')}
             </p>
             <div className="inline-flex items-center gap-1 rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-              Level {currentLevel}
+              Level {level.level} · {level.name}
             </div>
           </div>
           <p className="font-display text-3xl text-foreground mt-1">
-            {overall.totalAnswered}{' '}
-            <span className="text-lg text-secondary">/ {totalQuestions}</span>
+            {overall.totalAnswered} <span className="text-lg text-secondary">/ {safeTotal}</span>
           </p>
         </div>
 
@@ -93,7 +101,13 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
           </div>
           <p className="text-xs text-secondary leading-snug">
             <strong className="text-foreground">
-              {t('levelRequirement', { count: questionsToNextLevel, next: currentLevel + 1 })}
+              {nextLevel
+                ? t('xpLevelRequirement', {
+                    count: xpRemaining,
+                    next: nextLevel.level,
+                    name: nextLevel.name,
+                  })
+                : t('xpLevelMax')}
             </strong>
             <br />
             {t('keepPushing')}
@@ -167,13 +181,14 @@ export function OverviewCards({ overall }: OverviewCardsProps) {
               hasActiveStreak ? 'text-[#F59E0B]' : 'text-foreground',
             )}
           >
-            {overall.currentStreak} <span className="text-lg text-secondary">days</span>
+            {streakState.currentStreak} <span className="text-lg text-secondary">days</span>
           </p>
         </div>
 
         <div className="mt-6">
           <p className="text-xs text-secondary leading-snug">
-            Best streak: <strong className="text-foreground">{overall.longestStreak} days</strong>.
+            Best streak:{' '}
+            <strong className="text-foreground">{streakState.longestStreak} days</strong>.
             <br />
             {hasActiveStreak ? t('streakFire') : t('noStreak')}
           </p>

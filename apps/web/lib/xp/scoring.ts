@@ -111,6 +111,20 @@ export function computeXP(params: ComputeXPParams): XPEvent[] {
   return events;
 }
 
+export const SRS_CLEAR_XP = 25;
+
+export function buildSrsClearEvent(
+  questionId: number,
+  timestamp = new Date().toISOString(),
+): XPEvent {
+  return {
+    questionId,
+    xpDelta: SRS_CLEAR_XP,
+    eventType: 'srs_clear',
+    timestamp,
+  };
+}
+
 /** Sum total XP delta from a list of events. */
 export function sumXP(events: XPEvent[]): number {
   return events.reduce((acc, e) => acc + e.xpDelta, 0);

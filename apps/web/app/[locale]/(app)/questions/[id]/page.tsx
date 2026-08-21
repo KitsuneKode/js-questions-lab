@@ -120,7 +120,7 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
   const canonicalUrl = getCanonicalUrl(locale, questionPath);
 
   return (
-    <main className="min-h-screen bg-void overflow-x-hidden pt-24 flex flex-col">
+    <main className="min-h-screen bg-void overflow-x-hidden pt-2 flex flex-col">
       <QuestionJsonLd question={question} locale={locale} />
       <BreadcrumbJsonLd
         items={[
@@ -146,8 +146,8 @@ export default async function QuestionDetailPage({ params }: QuestionDetailPageP
         </div>
       )}
 
-      {/* IDE — fixed height to fill viewport approximately, with internal scrolling */}
-      <div className="h-[calc(100vh-5rem)] min-h-[600px] flex flex-col overflow-hidden shrink-0">
+      {/* IDE fills the viewport; global chrome auto-hides on this route (nested panel scroll) */}
+      <div className="h-[100dvh] min-h-[560px] flex flex-col overflow-hidden shrink-0">
         <QuestionIDEClient
           key={question.id}
           question={question}

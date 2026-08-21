@@ -2,6 +2,9 @@
 
 import type { ReactNode } from 'react';
 import { createContext, createElement, useContext } from 'react';
+import { isClerkEnabled } from '@/lib/auth/clerk-key';
+
+export { isValidClerkKey } from '@/lib/auth/clerk-key';
 
 export interface SafeAuthState {
   isLoaded: boolean;
@@ -9,14 +12,7 @@ export interface SafeAuthState {
   userId: string | null;
 }
 
-export function isValidClerkKey(key?: string): boolean {
-  if (!key) return false;
-  return (
-    key.startsWith('pk_') && !key.includes('REPLACE') && !key.toLowerCase().includes('placeholder')
-  );
-}
-
-export const clerkEnabled = isValidClerkKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+export const clerkEnabled = isClerkEnabled();
 
 // Fail fast on the server if the publishable key is valid but the secret key is missing or is a placeholder.
 // This prevents Next.js SSR and 'next build' from breaking mysteriously with "Missing secretKey"

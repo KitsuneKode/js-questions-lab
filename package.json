@@ -30,6 +30,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy",
     "prepare": "husky"
   },
   "devDependencies": {

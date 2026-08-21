@@ -1,19 +1,41 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import type { NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { assertClerkKeySafeForEnvironment, isClerkEnabled } from './lib/auth/clerk-key';
+import { isApiOrTrpcRequest } from './lib/auth/proxy-path';
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-export const proxy = clerkMiddleware(async (auth, request: NextRequest) => {
-  if (isProtectedRoute(request)) {
-    await auth.protect();
+function handleRequest(request: NextRequest) {
+  // API/trpc must not go through next-intl localePrefix redirects.
+  if (isApiOrTrpcRequest(request)) {
+    return NextResponse.next();
   }
 
   return handleI18nRouting(request);
-});
+}
+
+/**
+ * Guest-first: skip Clerk middleware when the publishable key is missing/placeholder.
+ * Otherwise clerkMiddleware rejects invalid keys on every request and breaks local/e2e.
+ *
+ * Production builds fail closed instead: a missing key throws at boot rather than
+ * silently serving without dashboard route protection.
+ */
+assertClerkKeySafeForEnvironment();
+
+export const proxy = isClerkEnabled()
+  ? clerkMiddleware(async (auth, request: NextRequest) => {
+      if (isProtectedRoute(request)) {
+        await auth.protect();
+      }
+
+      return handleRequest(request);
+    })
+  : (request: NextRequest) => handleRequest(request);
 
 export const config = {
   matcher: [
