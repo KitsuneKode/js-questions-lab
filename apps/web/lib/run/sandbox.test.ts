@@ -12,7 +12,9 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
+import vm from 'node:vm';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { generateWorkerSource } from './worker-source';
 
 class MockWorker {
   static instances: MockWorker[] = [];
@@ -130,6 +132,161 @@ async function waitForLastWorker(): Promise<MockWorker> {
   }
 
   throw new Error('Expected sandbox worker to be created');
+}
+
+/**
+ * Runs the real blob-worker source inside a vm whose global is `self`.
+ * Network constructors exist (as they do in a page-origin Worker) so tests
+ * can prove user code is blocked rather than merely undefined.
+ */
+class ExecutingWorker {
+  static instances: ExecutingWorker[] = [];
+
+  readonly listeners = new Map<string, Array<(event: unknown) => void>>();
+  terminated = false;
+
+  private readonly messageHandlers: Array<(event: { data: unknown }) => void> = [];
+  private readonly rejectionHandlers: Array<(event: unknown) => void> = [];
+
+  constructor(
+    public readonly url: string,
+    public readonly options?: WorkerOptions,
+  ) {
+    ExecutingWorker.instances.push(this);
+
+    const proto: Record<string, unknown> = {};
+    const workerGlobal = Object.create(proto) as Record<string, unknown> & {
+      self: unknown;
+    };
+
+    workerGlobal.XMLHttpRequest = class XMLHttpRequest {};
+    workerGlobal.WebSocket = class WebSocket {};
+    workerGlobal.EventSource = class EventSource {};
+    workerGlobal.Worker = class NestedWorker {};
+    workerGlobal.SharedWorker = class SharedWorker {};
+    workerGlobal.BroadcastChannel = class BroadcastChannel {};
+    workerGlobal.importScripts = () => {};
+    workerGlobal.close = () => {};
+    workerGlobal.console = console;
+    workerGlobal.performance = performance;
+    workerGlobal.Response = Response;
+    workerGlobal.fetch = fetch;
+    workerGlobal.setTimeout = setTimeout;
+    workerGlobal.clearTimeout = clearTimeout;
+    workerGlobal.setInterval = setInterval;
+    workerGlobal.clearInterval = clearInterval;
+    workerGlobal.queueMicrotask = queueMicrotask;
+    workerGlobal.addEventListener = (type: string, handler: (event: unknown) => void) => {
+      if (type === 'message') {
+        this.messageHandlers.push(handler as (event: { data: unknown }) => void);
+      }
+      if (type === 'unhandledrejection') {
+        this.rejectionHandlers.push(handler);
+      }
+    };
+    workerGlobal.removeEventListener = (type: string, handler: (event: unknown) => void) => {
+      if (type === 'message') {
+        const index = this.messageHandlers.indexOf(handler as (event: { data: unknown }) => void);
+        if (index >= 0) {
+          this.messageHandlers.splice(index, 1);
+        }
+      }
+      if (type === 'unhandledrejection') {
+        const index = this.rejectionHandlers.indexOf(handler);
+        if (index >= 0) {
+          this.rejectionHandlers.splice(index, 1);
+        }
+      }
+    };
+    workerGlobal.postMessage = (data: unknown) => {
+      queueMicrotask(() => {
+        if (this.terminated) {
+          return;
+        }
+        this.dispatch('message', { data });
+      });
+    };
+    workerGlobal.self = workerGlobal;
+
+    vm.createContext(workerGlobal);
+    vm.runInContext(generateWorkerSource(), workerGlobal);
+  }
+
+  addEventListener(type: string, handler: (event: unknown) => void) {
+    const handlers = this.listeners.get(type) ?? [];
+    handlers.push(handler);
+    this.listeners.set(type, handlers);
+  }
+
+  postMessage(message: unknown) {
+    for (const handler of this.messageHandlers) {
+      void handler({ data: message });
+    }
+  }
+
+  terminate() {
+    this.terminated = true;
+  }
+
+  dispatch(type: string, event: unknown) {
+    for (const handler of this.listeners.get(type) ?? []) {
+      handler(event);
+    }
+  }
+}
+
+function installExecutingWorkerEnvironment() {
+  ExecutingWorker.instances = [];
+
+  const originalWorker = globalThis.Worker;
+
+  Object.defineProperty(globalThis, 'Worker', {
+    configurable: true,
+    writable: true,
+    value: ExecutingWorker,
+  });
+
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'Worker', {
+      configurable: true,
+      writable: true,
+      value: ExecutingWorker,
+    });
+  }
+
+  return () => {
+    if (typeof originalWorker === 'function') {
+      Object.defineProperty(globalThis, 'Worker', {
+        configurable: true,
+        writable: true,
+        value: originalWorker,
+      });
+
+      if (typeof window !== 'undefined') {
+        Object.defineProperty(window, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: originalWorker,
+        });
+      }
+    } else {
+      Reflect.deleteProperty(globalThis, 'Worker');
+      if (typeof window !== 'undefined') {
+        Reflect.deleteProperty(window, 'Worker');
+      }
+    }
+  };
+}
+
+function sandboxFailureText(result: {
+  error?: string;
+  errors?: Array<{ message: string }>;
+  logs: string[];
+}): string {
+  return (
+    result.error ??
+    (result.errors?.map((error) => error.message).join('\n') || result.logs.join('\n'))
+  );
 }
 
 async function waitForPostedRequest(
@@ -265,6 +422,48 @@ describe('sandbox runtime host', () => {
     } finally {
       restore();
     }
+  });
+});
+
+describe('sandbox network lockdown', () => {
+  let restore: () => void;
+
+  beforeEach(() => {
+    restore = installExecutingWorkerEnvironment();
+  });
+
+  afterEach(() => {
+    restore();
+  });
+
+  it('throws when user code constructs XMLHttpRequest', async () => {
+    const { runJavaScript } = await import('./sandbox');
+    const result = await runJavaScript('new XMLHttpRequest()');
+    expect(sandboxFailureText(result)).toMatch(/not available in sandbox/i);
+  });
+
+  it('throws when user code constructs WebSocket', async () => {
+    const { runJavaScript } = await import('./sandbox');
+    const result = await runJavaScript("new WebSocket('wss://x')");
+    expect(sandboxFailureText(result)).toMatch(/not available in sandbox/i);
+  });
+
+  it('throws when user code constructs EventSource', async () => {
+    const { runJavaScript } = await import('./sandbox');
+    const result = await runJavaScript("new EventSource('/')");
+    expect(sandboxFailureText(result)).toMatch(/not available in sandbox/i);
+  });
+
+  it('throws when user code constructs Worker', async () => {
+    const { runJavaScript } = await import('./sandbox');
+    const result = await runJavaScript("new Worker('blob:https://x')");
+    expect(sandboxFailureText(result)).toMatch(/not available in sandbox/i);
+  });
+
+  it('throws when user code constructs BroadcastChannel', async () => {
+    const { runJavaScript } = await import('./sandbox');
+    const result = await runJavaScript("new BroadcastChannel('x')");
+    expect(sandboxFailureText(result)).toMatch(/not available in sandbox/i);
   });
 });
 
@@ -595,6 +794,17 @@ describe('worker-source', () => {
     expect(source).toContain("const documentNode = createMockElement('document')");
     expect(source).toContain('const elementsById = new Map()');
     expect(source).toContain('const elementsBySelector = new Map()');
+  });
+});
+
+describe('content security policy', () => {
+  it('allows the jsDelivr origin Monaco loads from by default', async () => {
+    const source = await fs.readFile(path.join(__dirname, '../../next.config.ts'), 'utf8');
+
+    expect(source).toContain('https://cdn.jsdelivr.net');
+    expect(source).toMatch(/script-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
+    expect(source).toMatch(/worker-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
+    expect(source).toMatch(/connect-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
   });
 });
 

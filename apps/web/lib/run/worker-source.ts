@@ -60,6 +60,18 @@ BLOCKED_APIS.forEach(name => {
   }
 });
 
+const BLOCKED_NETWORK = ['XMLHttpRequest', 'WebSocket', 'EventSource', 'Worker', 'SharedWorker', 'BroadcastChannel'];
+BLOCKED_NETWORK.forEach(name => {
+  const descriptor = {
+    get() { throw new Error(name + ' is not available in sandbox'); },
+    configurable: false,
+  };
+  Object.defineProperty(runnerScope, name, descriptor);
+  if (scopeProto) {
+    Object.defineProperty(scopeProto, name, descriptor);
+  }
+});
+
 // =============================================================================
 // Browser Environment Shims
 // =============================================================================
