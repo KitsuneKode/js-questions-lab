@@ -13,6 +13,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Container } from '@/components/container';
 import { DisplayNameForm } from '@/components/dashboard/display-name-form';
+import { ProBadge } from '@/components/engagement/pro-badge';
+import { UpgradeButton } from '@/components/engagement/upgrade-button';
 import { fetchDisplayName } from '@/lib/engagement/actions';
 import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import { withLocale } from '@/lib/locale-paths';
@@ -180,6 +182,21 @@ export default async function DashboardPage({
           </section>
 
           {userId ? <DisplayNameForm initialName={displayName} /> : null}
+
+          {userId ? (
+            <article className="rounded-2xl border border-border-subtle bg-surface/60 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+              <div className="mb-4 flex items-center gap-3">
+                <h2 className="font-display text-2xl text-foreground">Pro</h2>
+                <ProBadge />
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Unlock the Pro badge on the leaderboard. Billing is handled by Dodo Payments.
+              </p>
+              <div className="mt-6">
+                <UpgradeButton />
+              </div>
+            </article>
+          ) : null}
         </div>
       </Container>
     </main>

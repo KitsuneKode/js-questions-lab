@@ -36,6 +36,7 @@
         "clsx": "^2.1.1",
         "cmdk": "^1.1.1",
         "convex": "^1.42.1",
+        "dodopayments": "^2.49.0",
         "motion": "^12.38.0",
         "next": "^16.2.3",
         "next-intl": "^4.9.1",
@@ -1161,6 +1162,8 @@
     "devlop": ["devlop@1.1.0", "", { "dependencies": { "dequal": "^2.0.0" } }, "sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA=="],
 
     "diff": ["diff@8.0.4", "", {}, "sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw=="],
+
+    "dodopayments": ["dodopayments@2.49.0", "", { "dependencies": { "standardwebhooks": "^1.0.0" }, "bin": { "dodopayments": "bin/cli" } }, "sha512-7hIdidOmrNGdWsCdv5n/8YpP9Rb2kFNvmQwrd4iYMvt6syiTXGi4UqfMzkv26/gnPc2Gq0PgmPalPWe2qw/NAQ=="],
 
     "dom-accessibility-api": ["dom-accessibility-api@0.6.3", "", {}, "sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w=="],
 
