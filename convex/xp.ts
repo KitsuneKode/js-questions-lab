@@ -1,7 +1,47 @@
 import { v } from 'convex/values';
-import { mutation, query } from './_generated/server';
+import { type MutationCtx, mutation, query } from './_generated/server';
 import { requireIdentity } from './lib/auth';
+import { normalizeDisplayName } from './lib/display-name';
 import { xpEventInputValidator, xpEventReturnValidator, xpTotalsValidator } from './lib/validators';
+
+const XP_DELTA_MIN = -50;
+const XP_DELTA_MAX = 50;
+
+async function rebuildTotalXp(ctx: MutationCtx, userId: string): Promise<number> {
+  const rows = await ctx.db
+    .query('xpEvents')
+    .withIndex('by_user_and_created', (q) => q.eq('userId', userId))
+    .collect();
+
+  return rows.reduce((sum, row) => sum + row.xpDelta, 0);
+}
+
+async function persistTotalXp(
+  ctx: MutationCtx,
+  userId: string,
+  totalXp: number,
+  nowIso: string,
+): Promise<number> {
+  const totals = await ctx.db
+    .query('userXpTotals')
+    .withIndex('by_user', (q) => q.eq('userId', userId))
+    .unique();
+
+  if (totals) {
+    await ctx.db.patch(totals._id, {
+      totalXp,
+      updatedAt: nowIso,
+    });
+  } else {
+    await ctx.db.insert('userXpTotals', {
+      userId,
+      totalXp,
+      updatedAt: nowIso,
+    });
+  }
+
+  return totalXp;
+}
 
 export const listEvents = query({
   args: {},
@@ -52,17 +92,17 @@ export const appendEvents = mutation({
   args: {
     submissionId: v.string(),
     events: v.array(xpEventInputValidator),
-    totalXp: v.number(),
     nowIso: v.string(),
   },
   returns: v.number(),
   handler: async (ctx, args) => {
     const { userId } = await requireIdentity(ctx);
-    if (args.events.length === 0) {
-      return args.totalXp;
-    }
 
     for (const [index, event] of args.events.entries()) {
+      if (event.xpDelta < XP_DELTA_MIN || event.xpDelta > XP_DELTA_MAX) {
+        throw new Error('xp_delta out of bounds');
+      }
+
       const existing = await ctx.db
         .query('xpEvents')
         .withIndex('by_user_submission', (q) =>
@@ -85,57 +125,8 @@ export const appendEvents = mutation({
       });
     }
 
-    const totals = await ctx.db
-      .query('userXpTotals')
-      .withIndex('by_user', (q) => q.eq('userId', userId))
-      .unique();
-
-    if (totals) {
-      await ctx.db.patch(totals._id, {
-        totalXp: args.totalXp,
-        updatedAt: args.nowIso,
-      });
-    } else {
-      await ctx.db.insert('userXpTotals', {
-        userId,
-        totalXp: args.totalXp,
-        updatedAt: args.nowIso,
-      });
-    }
-
-    return args.totalXp;
-  },
-});
-
-export const upsertTotals = mutation({
-  args: {
-    totalXp: v.number(),
-    nowIso: v.string(),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const { userId } = await requireIdentity(ctx);
-
-    const existing = await ctx.db
-      .query('userXpTotals')
-      .withIndex('by_user', (q) => q.eq('userId', userId))
-      .unique();
-
-    if (existing) {
-      await ctx.db.patch(existing._id, {
-        totalXp: args.totalXp,
-        updatedAt: args.nowIso,
-      });
-      return null;
-    }
-
-    await ctx.db.insert('userXpTotals', {
-      userId,
-      totalXp: args.totalXp,
-      updatedAt: args.nowIso,
-    });
-
-    return null;
+    const totalXp = await rebuildTotalXp(ctx, userId);
+    return await persistTotalXp(ctx, userId, totalXp, args.nowIso);
   },
 });
 
@@ -149,6 +140,10 @@ export const setDisplayName = mutation({
   }),
   handler: async (ctx, args) => {
     const { userId } = await requireIdentity(ctx);
+    const normalized = normalizeDisplayName(args.displayName);
+    if (!normalized.ok) {
+      throw new Error(normalized.error);
+    }
 
     const existing = await ctx.db
       .query('userXpTotals')
@@ -157,19 +152,19 @@ export const setDisplayName = mutation({
 
     if (existing) {
       await ctx.db.patch(existing._id, {
-        displayName: args.displayName,
+        displayName: normalized.displayName,
         updatedAt: args.nowIso,
       });
-      return { displayName: args.displayName };
+      return { displayName: normalized.displayName };
     }
 
     await ctx.db.insert('userXpTotals', {
       userId,
       totalXp: 0,
-      displayName: args.displayName,
+      displayName: normalized.displayName,
       updatedAt: args.nowIso,
     });
 
-    return { displayName: args.displayName };
+    return { displayName: normalized.displayName };
   },
 });

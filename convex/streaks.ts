@@ -27,6 +27,7 @@ export const getMine = query({
   },
 });
 
+// TODO(PR B): derive from xpEvents dates instead of trusting client streak numbers.
 export const upsertMine = mutation({
   args: {
     state: streakStateValidator,
