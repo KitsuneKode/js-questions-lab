@@ -4,6 +4,7 @@ import { IconFlame, IconTrophy } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useFormatter, useTranslations } from 'next-intl';
 import { getDisplayInitials, type LeaderboardEntry } from '@/lib/engagement/leaderboard-shared';
+import { useIsPro } from '@/lib/payments/pro-gate.client';
 import { cn } from '@/lib/utils';
 
 const RANK_STYLES: Record<number, string> = {
@@ -27,6 +28,7 @@ export function LeaderboardTable({
 }: LeaderboardTableProps) {
   const t = useTranslations('leaderboard');
   const format = useFormatter();
+  const currentUserIsPro = useIsPro();
 
   if (entries.length === 0) {
     return <div className="text-center py-16 text-secondary text-sm">{t('empty')}</div>;
@@ -81,7 +83,7 @@ export function LeaderboardTable({
                 >
                   {isCurrentUser ? t('you') : entry.displayName}
                 </span>
-                {entry.isPro ? (
+                {entry.isPro || (isCurrentUser && currentUserIsPro) ? (
                   <span className="shrink-0 rounded border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">
                     {t('proBadge')}
                   </span>
