@@ -135,6 +135,38 @@ function inferRuntimeKind(question: RuntimeAwareQuestion): QuestionRuntimeKind {
   return 'static';
 }
 
+function ErrorTypeSelect({
+  id,
+  value,
+  onChange,
+  t,
+}: {
+  id: string;
+  value: string;
+  onChange: (next: string) => void;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-border/50 bg-muted/10 p-4">
+      <label className="text-sm font-medium text-foreground" htmlFor={id}>
+        {t('whatWrong')}
+      </label>
+      <select
+        id={id}
+        className="w-full rounded-lg border border-border-subtle bg-background p-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all shadow-sm"
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      >
+        <option value="">{t('selectError')}</option>
+        <option value="misread">{t('errorMisread')}</option>
+        <option value="forgot">{t('errorForgot')}</option>
+        <option value="wrong_concept">{t('errorConcept')}</option>
+        <option value="guess">{t('errorGuess')}</option>
+      </select>
+    </div>
+  );
+}
+
 export function QuestionIDEClient({
   question,
   locale,
@@ -1134,26 +1166,12 @@ export function QuestionIDEClient({
                       </AnimatePresence>
 
                       {!isCorrect && !errorType && (
-                        <div className="flex flex-col gap-2 rounded-xl border border-border/50 bg-muted/10 p-4">
-                          <label
-                            className="text-sm font-medium text-foreground"
-                            htmlFor="error-type-select"
-                          >
-                            {t('whatWrong')}
-                          </label>
-                          <select
-                            id="error-type-select"
-                            className="w-full rounded-lg border border-border-subtle bg-background p-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all shadow-sm"
-                            onChange={(e) => setErrorType(e.target.value)}
-                            value={errorType}
-                          >
-                            <option value="">{t('selectError')}</option>
-                            <option value="misread">{t('errorMisread')}</option>
-                            <option value="forgot">{t('errorForgot')}</option>
-                            <option value="wrong_concept">{t('errorConcept')}</option>
-                            <option value="guess">{t('errorGuess')}</option>
-                          </select>
-                        </div>
+                        <ErrorTypeSelect
+                          id="error-type-select"
+                          value={errorType}
+                          onChange={setErrorType}
+                          t={t}
+                        />
                       )}
 
                       <div
@@ -1434,6 +1452,15 @@ export function QuestionIDEClient({
                         <Streamdown>{question.explanationMarkdown}</Streamdown>
                       </div>
                     </div>
+                  )}
+
+                  {!isCorrect && !errorType && (
+                    <ErrorTypeSelect
+                      id="mobile-error-type-select"
+                      value={errorType}
+                      onChange={setErrorType}
+                      t={t}
+                    />
                   )}
 
                   <div

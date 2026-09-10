@@ -134,7 +134,9 @@ export function DashboardShell({ questions, locale }: DashboardShellProps) {
             </p>
           </div>
           {reviewQueue.length > 0 && reviewQueue[0] ? (
-            <IntentPrefetchLink href={withLocale(locale, `/questions/${reviewQueue[0].id}`)}>
+            <IntentPrefetchLink
+              href={withLocale(locale, `/questions/${reviewQueue[0].id}?status=review`)}
+            >
               <Button className="gap-2 shrink-0">
                 {t('dailyReviewCta')}
                 <ArrowRight className="h-3.5 w-3.5" />

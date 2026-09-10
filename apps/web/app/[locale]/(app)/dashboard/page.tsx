@@ -65,6 +65,7 @@ export default async function DashboardPage({
   const { userId } = await auth();
   const displayName = userId ? await fetchDisplayName() : null;
   const progressHref = withLocale(locale, '/progress');
+  const reviewsHref = withLocale(locale, '/questions?status=review');
   const leaderboardHref = withLocale(locale, '/leaderboard');
   const savedHref = withLocale(locale, '/questions?status=bookmarked');
   const pathsHref = withLocale(locale, '/paths');
@@ -128,7 +129,7 @@ export default async function DashboardPage({
                 {t('reviewBody')}
               </p>
               <Link
-                href={progressHref}
+                href={reviewsHref}
                 className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
               >
                 {t('openReviews')}
