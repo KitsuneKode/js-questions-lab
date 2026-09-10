@@ -19,7 +19,6 @@ import {
   fetchXPState,
   recordAttempt,
   replayGuestAttempts,
-  upsertStreak,
 } from '@/lib/engagement/actions';
 import { listGuestAttemptsToReplay } from '@/lib/engagement/guest-replay';
 import {
@@ -44,7 +43,6 @@ import {
 } from '@/lib/progress/storage';
 import { getQuestionTags, getTagQuestionCounts } from '@/lib/progress/tag-metadata';
 import { defaultStreakState, type StreakState, updateStreak } from '@/lib/streaks/calculator';
-import { mergeStreakStates } from '@/lib/streaks/merge';
 import { readStreak, writeStreak } from '@/lib/streaks/storage';
 import { buildSrsClearEvent, computeXP } from '@/lib/xp/scoring';
 import type { XPState } from '@/lib/xp/storage';
@@ -311,8 +309,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
         const guestSid = guestSidRef.current;
         const guestProgress = guestSid ? readProgress(guestSid) : defaultProgressState;
-        const guestXP = guestSid ? readXP(guestSid) : defaultXPState;
-        const guestStreak = guestSid ? readStreak(guestSid) : defaultStreakState;
 
         const [serverItems, serverXP, serverStreak] = await Promise.all([
           fetchServerProgress(),
@@ -324,15 +320,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
         dispatch({ type: 'merge', serverItems });
 
-        const localNewer: ProgressItem[] = [];
-        for (const localItem of Object.values(guestProgress.questions)) {
-          const serverItem = serverItems.find((s) => s.questionId === localItem.questionId);
-          if (!serverItem || new Date(localItem.updatedAt) > new Date(serverItem.updatedAt)) {
-            localNewer.push(localItem);
-          }
-        }
-
-        // 1) Replay FIRST → authoritative XP + streak from engine (avoids duplicate attempts)
         const toReplay = listGuestAttemptsToReplay(guestProgress, serverItems);
         let nextXP = serverXP;
         let nextStreak = serverStreak ?? defaultStreakState;
@@ -343,26 +330,29 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
             nextXP = replayed.xpState;
             nextStreak = replayed.streakState;
           }
-        } else if (guestXP.events.length > 0 && serverXP.events.length === 0) {
-          // Edge: guest has XP events but no replayable attempt delta (rare).
-          // Prefer server; do not invent XP without attempts.
-          nextXP = serverXP;
         }
 
-        // 2) Sync newer progress rows AFTER replay (SRS/bookmarks/attempt arrays upsert)
-        if (localNewer.length > 0) {
-          await syncProgressToServer(localNewer);
+        const bookmarkDeltas: ProgressItem[] = [];
+        for (const localItem of Object.values(guestProgress.questions)) {
+          const serverItem = serverItems.find((item) => item.questionId === localItem.questionId);
+          if (Boolean(localItem.bookmarked) !== Boolean(serverItem?.bookmarked)) {
+            bookmarkDeltas.push({
+              questionId: localItem.questionId,
+              attempts: [],
+              bookmarked: localItem.bookmarked,
+              updatedAt: new Date().toISOString(),
+            });
+          }
         }
 
-        // 3) Merge streaks (guest calendar streak vs post-replay server streak)
-        const today = new Date().toISOString().slice(0, 10);
-        const mergedStreak = mergeStreakStates(guestStreak, nextStreak, today);
-        await upsertStreak(mergedStreak);
+        if (bookmarkDeltas.length > 0) {
+          await syncProgressToServer(bookmarkDeltas);
+        }
 
         if (cancelled) return;
 
         setXPState(nextXP);
-        setStreakState(mergedStreak);
+        setStreakState(nextStreak);
 
         // 4) Consume guest session
         if (guestSid) {

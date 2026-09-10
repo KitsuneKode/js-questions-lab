@@ -11,6 +11,25 @@ export function buildGuestSubmissionId(questionId: number, attemptedAt: string):
   return `guest:${questionId}:${attemptedAt}`;
 }
 
+export const MAX_REPLAY_AGE_MS = 400 * 24 * 60 * 60 * 1000;
+
+export function clampReplayAttemptedAt(attemptedAt: string, now: Date): string | null {
+  const t = new Date(attemptedAt).getTime();
+  if (!Number.isFinite(t)) return null;
+  if (t > now.getTime() + 60_000) return null;
+  if (now.getTime() - t > MAX_REPLAY_AGE_MS) return null;
+  return new Date(t).toISOString();
+}
+
+export function resolveReplayAttemptedAt(
+  attempt: GuestAttemptReplay,
+  now: Date,
+  options: { questionExists: boolean; alreadyPersisted: boolean },
+): string | null {
+  if (!options.questionExists || options.alreadyPersisted) return null;
+  return clampReplayAttemptedAt(attempt.attemptedAt, now);
+}
+
 /**
  * Decide which guest attempts should be replayed through recordAttempt.
  * Strategy: if guest item is missing on server OR guest.updatedAt is newer,

@@ -157,6 +157,7 @@ export function buildAuthoritativeAttemptResult({
     srsData: baseProgress.srsData,
     priorAttempts: priorAttemptSummaries,
     isFirstAnswerToday,
+    now: new Date(answeredAt),
   }).map((event) => ({ ...event, timestamp: answeredAt }));
 
   const progressItem: ProgressItem = {

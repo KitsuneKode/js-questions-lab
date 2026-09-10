@@ -30,6 +30,8 @@ export interface ComputeXPParams {
   priorAttempts: AttemptSummary[];
   /** Whether this is the first answer of the day across ALL questions. */
   isFirstAnswerToday: boolean;
+  /** Clock used for cooldown and "today". Defaults to wall clock. */
+  now?: Date;
 }
 
 const BASE_XP: Record<Difficulty, number> = {
@@ -44,11 +46,10 @@ const STREAK_BONUS = 15;
 const MASTERY_CAP_XP = 2;
 const COOLDOWN_MINUTES = 10;
 
-function isWithinCooldown(attempts: AttemptSummary[]): boolean {
-  if (attempts.length === 0) return false;
+function isWithinCooldown(attempts: AttemptSummary[], now: Date): boolean {
   const last = attempts[attempts.length - 1];
-  const elapsed = Date.now() - new Date(last.attemptedAt).getTime();
-  return elapsed < COOLDOWN_MINUTES * 60 * 1000;
+  if (!last) return false;
+  return now.getTime() - new Date(last.attemptedAt).getTime() < COOLDOWN_MINUTES * 60 * 1000;
 }
 
 function isMastered(srsData: SRSData | undefined): boolean {
@@ -62,11 +63,12 @@ function isMastered(srsData: SRSData | undefined): boolean {
  */
 export function computeXP(params: ComputeXPParams): XPEvent[] {
   const { questionId, status, difficulty, srsData, priorAttempts, isFirstAnswerToday } = params;
-  const now = new Date().toISOString();
+  const clock = params.now ?? new Date();
+  const now = clock.toISOString();
   const todayStr = now.slice(0, 10);
 
   // Cooldown: same question answered within 10 minutes → 0 XP (time-based, not date-based)
-  if (isWithinCooldown(priorAttempts)) {
+  if (isWithinCooldown(priorAttempts, clock)) {
     return [{ questionId, xpDelta: 0, eventType: 'cooldown', timestamp: now }];
   }
 

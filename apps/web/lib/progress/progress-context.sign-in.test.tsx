@@ -74,7 +74,7 @@ describe('ProgressProvider sign-in merge', () => {
         '1': {
           questionId: 1,
           attempts: [{ selected: 'A', status: 'correct', attemptedAt }],
-          bookmarked: false,
+          bookmarked: true,
           updatedAt: attemptedAt,
         },
       },
@@ -143,20 +143,21 @@ describe('ProgressProvider sign-in merge', () => {
     expect(replayOrder).toBeLessThan(syncOrder as number);
 
     expect(result.current.xpState.totalXP).toBe(30);
-    expect(result.current.streakState.currentStreak).toBe(5);
-    expect(result.current.streakState.longestStreak).toBe(5);
+    expect(result.current.streakState.currentStreak).toBe(2);
+    expect(result.current.streakState.longestStreak).toBe(2);
 
     expect(localStorage.getItem(`jsq_progress_v2_${oldSid}`)).toBeNull();
     expect(localStorage.getItem(`jsq_xp_v2_${oldSid}`)).toBeNull();
     expect(localStorage.getItem(`jsq_streak_v2_${oldSid}`)).toBeNull();
 
-    expect(upsertStreak).toHaveBeenCalledWith(
+    expect(upsertStreak).not.toHaveBeenCalled();
+    expect(syncProgressToServer).toHaveBeenCalledWith([
       expect.objectContaining({
-        currentStreak: 5,
-        longestStreak: 5,
-        lastActivityDate: yesterdayDate,
+        questionId: 1,
+        bookmarked: true,
+        attempts: [],
       }),
-    );
+    ]);
   });
 
   // First mount with isSignedIn=true still runs the merge path because wasSignedInForMergeRef

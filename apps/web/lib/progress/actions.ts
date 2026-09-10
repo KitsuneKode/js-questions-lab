@@ -49,7 +49,7 @@ export async function upsertSingleQuestion(item: ProgressItem): Promise<void> {
   const supabase = createServerSupabaseClient();
   const { data: existing } = await supabase
     .from('user_progress')
-    .select('srs_data')
+    .select('attempts, srs_data')
     .eq('user_id', userId)
     .eq('question_id', item.questionId)
     .maybeSingle();
@@ -58,9 +58,9 @@ export async function upsertSingleQuestion(item: ProgressItem): Promise<void> {
     {
       user_id: userId,
       question_id: item.questionId,
-      attempts: item.attempts,
+      attempts: existing?.attempts ?? [],
       bookmarked: item.bookmarked,
-      srs_data: existing?.srs_data ?? null,
+      srs_data: existing?.srs_data ?? item.srsData ?? null,
       updated_at: item.updatedAt,
     },
     { onConflict: 'user_id,question_id' },
@@ -79,28 +79,34 @@ export async function syncProgressToServer(items: ProgressItem[]): Promise<void>
   const supabase = createServerSupabaseClient();
   const { data: existingRows } = await supabase
     .from('user_progress')
-    .select('question_id, srs_data')
+    .select('question_id, attempts, srs_data')
     .eq('user_id', userId)
     .in(
       'question_id',
       items.map((item) => item.questionId),
     );
 
-  const existingSrsByQuestionId = new Map<number, ProgressItem['srsData'] | null>(
+  const existingByQuestionId = new Map(
     (existingRows ?? []).map((row) => [
       row.question_id as number,
-      row.srs_data as ProgressItem['srsData'] | null,
+      {
+        attempts: row.attempts as ProgressItem['attempts'],
+        srsData: row.srs_data as ProgressItem['srsData'] | null,
+      },
     ]),
   );
 
-  const rows = items.map((item) => ({
-    user_id: userId,
-    question_id: item.questionId,
-    attempts: item.attempts,
-    bookmarked: item.bookmarked,
-    srs_data: item.srsData ?? existingSrsByQuestionId.get(item.questionId) ?? null,
-    updated_at: item.updatedAt,
-  }));
+  const rows = items.map((item) => {
+    const existing = existingByQuestionId.get(item.questionId);
+    return {
+      user_id: userId,
+      question_id: item.questionId,
+      attempts: existing?.attempts ?? [],
+      bookmarked: item.bookmarked,
+      srs_data: existing?.srsData ?? item.srsData ?? null,
+      updated_at: item.updatedAt,
+    };
+  });
 
   const { error } = await supabase
     .from('user_progress')
