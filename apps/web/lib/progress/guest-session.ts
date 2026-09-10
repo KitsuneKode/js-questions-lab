@@ -4,6 +4,7 @@ const DATA_KEYS = {
   progress: (sid: string) => `jsq_progress_v2_${sid}`,
   xp: (sid: string) => `jsq_xp_v2_${sid}`,
   streak: (sid: string) => `jsq_streak_v2_${sid}`,
+  react: (sid: string) => `jsq_react_progress_v1_${sid}`,
 };
 
 /**
@@ -50,4 +51,5 @@ export function clearGuestData(sid: string): void {
   window.localStorage.removeItem(DATA_KEYS.progress(sid));
   window.localStorage.removeItem(DATA_KEYS.xp(sid));
   window.localStorage.removeItem(DATA_KEYS.streak(sid));
+  window.localStorage.removeItem(DATA_KEYS.react(sid));
 }

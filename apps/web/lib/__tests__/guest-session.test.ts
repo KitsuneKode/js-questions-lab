@@ -5,6 +5,7 @@ const SID_KEY = 'jsq_guest_sid';
 const PROGRESS_KEY = (sid: string) => `jsq_progress_v2_${sid}`;
 const XP_KEY = (sid: string) => `jsq_xp_v2_${sid}`;
 const STREAK_KEY = (sid: string) => `jsq_streak_v2_${sid}`;
+const REACT_KEY = (sid: string) => `jsq_react_progress_v1_${sid}`;
 
 describe('guest session', () => {
   beforeEach(() => {
@@ -74,7 +75,7 @@ describe('guest session', () => {
   });
 
   describe('clearGuestData', () => {
-    it('removes progress, xp, and streak keys for the given SID', () => {
+    it('removes progress, xp, streak, and react keys for the given SID', () => {
       const sid = 'abc-123';
       window.localStorage.setItem(PROGRESS_KEY(sid), '{"version":2,"questions":{}}');
       window.localStorage.setItem(XP_KEY(sid), '{"version":1,"totalXP":100,"events":[]}');
@@ -82,12 +83,14 @@ describe('guest session', () => {
         STREAK_KEY(sid),
         '{"version":1,"currentStreak":3,"longestStreak":5,"lastActivityDate":"2026-04-06"}',
       );
+      window.localStorage.setItem(REACT_KEY(sid), '{"version":1,"questions":{}}');
 
       clearGuestData(sid);
 
       expect(window.localStorage.getItem(PROGRESS_KEY(sid))).toBeNull();
       expect(window.localStorage.getItem(XP_KEY(sid))).toBeNull();
       expect(window.localStorage.getItem(STREAK_KEY(sid))).toBeNull();
+      expect(window.localStorage.getItem(REACT_KEY(sid))).toBeNull();
     });
 
     it('does not touch keys belonging to a different SID', () => {

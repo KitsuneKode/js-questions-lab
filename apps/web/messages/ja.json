@@ -13,7 +13,8 @@
     "shortcuts": "ショートカット",
     "signIn": "サインイン",
     "leaderboard": "ランキング",
-    "paths": "パス"
+    "paths": "パス",
+    "react": "React"
   },
   "questions": {
     "title": "問題ライブラリ",

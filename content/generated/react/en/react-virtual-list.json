@@ -1,0 +1,38 @@
+{
+  "id": "react-virtual-list",
+  "title": "Build a Basic Virtualised List",
+  "difficulty": "advanced",
+  "tags": ["performance", "virtualisation", "scroll", "large-data"],
+  "category": "component",
+  "prompt": "Build a `VirtualList` component that renders only the visible items from a large array, not all items.\n\nRequirements:\n- Accept `items: T[]`, `itemHeight: number` (fixed row height), and `renderItem: (item: T, index: number) => ReactNode`\n- Render a scrollable container with a total height equal to `items.length * itemHeight`\n- Calculate the visible range from `scrollTop` using `Math.floor(scrollTop / itemHeight)` for `startIndex`\n- Render only the visible items plus a small overscan buffer (2 items above and below)\n- Position each rendered item absolutely using `top: index * itemHeight`\n- Demo: render a list of 10,000 items efficiently",
+  "context": "**Virtualisation** is the performance technique of only rendering the DOM nodes currently visible in a scrollable container. Without it, a 10,000-item list creates 10,000 DOM nodes — slow to paint and slow to update.\n\nThe math is straightforward: given `scrollTop` and a fixed `itemHeight`, you can calculate exactly which items are visible. Everything outside that window is not rendered — instead, a spacer element at full list height maintains the correct scroll range.\n\nFixed-height virtualisation (this exercise) is the simplest form. Production libraries like `react-virtual` and `react-window` extend this to variable heights, horizontal lists, and grid layouts — but they all apply the same core principle: measure, calculate visible range, render only that range.",
+  "starterCode": {
+    "App.tsx": "import { VirtualList } from './VirtualList';\n\nconst ITEMS = Array.from({ length: 10_000 }, (_, i) => ({ id: i, label: `Item ${i + 1}` }));\n\nexport default function App() {\n  return (\n    <div style={{ padding: '1rem' }}>\n      <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', color: '#6b7280' }}>\n        Rendering 10,000 items virtually\n      </p>\n      <VirtualList\n        items={ITEMS}\n        itemHeight={40}\n        renderItem={(item) => (\n          <div\n            style={{\n              display: 'flex',\n              alignItems: 'center',\n              height: '100%',\n              padding: '0 1rem',\n              borderBottom: '1px solid #e5e7eb',\n              fontSize: '0.875rem',\n            }}\n          >\n            {item.label}\n          </div>\n        )}\n      />\n    </div>\n  );\n}\n",
+    "VirtualList.tsx": "import { type ReactNode, useRef, useState } from 'react';\n\ninterface VirtualListProps<T> {\n  items: T[];\n  itemHeight: number;\n  renderItem: (item: T, index: number) => ReactNode;\n  height?: number;\n  overscan?: number;\n}\n\nexport function VirtualList<T>({\n  items,\n  itemHeight,\n  renderItem,\n  height = 400,\n  overscan = 2,\n}: VirtualListProps<T>) {\n  const [scrollTop, setScrollTop] = useState(0);\n  const containerRef = useRef<HTMLDivElement>(null);\n\n  const totalHeight = items.length * itemHeight;\n\n  // TODO: calculate startIndex and endIndex from scrollTop\n  // TODO: slice items to only the visible range + overscan\n  // TODO: render each item absolutely positioned at index * itemHeight\n\n  return (\n    <div\n      ref={containerRef}\n      onScroll={e => setScrollTop((e.target as HTMLDivElement).scrollTop)}\n      style={{\n        height,\n        overflowY: 'auto',\n        border: '1px solid #e5e7eb',\n        borderRadius: '0.5rem',\n        position: 'relative',\n      }}\n    >\n      <div style={{ height: totalHeight, position: 'relative' }}>\n        {/* TODO: render visible items */}\n      </div>\n    </div>\n  );\n}\n"
+  },
+  "entryFile": "VirtualList.tsx",
+  "solutionCode": {
+    "App.tsx": "import { VirtualList } from './VirtualList';\n\nconst ITEMS = Array.from({ length: 10_000 }, (_, i) => ({ id: i, label: `Item ${i + 1}` }));\n\nexport default function App() {\n  return (\n    <div style={{ padding: '1rem' }}>\n      <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', color: '#6b7280' }}>\n        Rendering 10,000 items virtually\n      </p>\n      <VirtualList\n        items={ITEMS}\n        itemHeight={40}\n        renderItem={(item) => (\n          <div\n            style={{\n              display: 'flex',\n              alignItems: 'center',\n              height: '100%',\n              padding: '0 1rem',\n              borderBottom: '1px solid #e5e7eb',\n              fontSize: '0.875rem',\n            }}\n          >\n            {item.label}\n          </div>\n        )}\n      />\n    </div>\n  );\n}\n",
+    "VirtualList.tsx": "import { type ReactNode, useRef, useState } from 'react';\n\ninterface VirtualListProps<T> {\n  items: T[];\n  itemHeight: number;\n  renderItem: (item: T, index: number) => ReactNode;\n  height?: number;\n  overscan?: number;\n}\n\nexport function VirtualList<T>({\n  items,\n  itemHeight,\n  renderItem,\n  height = 400,\n  overscan = 2,\n}: VirtualListProps<T>) {\n  const [scrollTop, setScrollTop] = useState(0);\n  const containerRef = useRef<HTMLDivElement>(null);\n\n  const totalHeight = items.length * itemHeight;\n  const visibleCount = Math.ceil(height / itemHeight);\n\n  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);\n  const endIndex = Math.min(items.length - 1, startIndex + visibleCount + overscan * 2);\n\n  const visibleItems = items.slice(startIndex, endIndex + 1);\n\n  return (\n    <div\n      ref={containerRef}\n      onScroll={e => setScrollTop((e.target as HTMLDivElement).scrollTop)}\n      style={{\n        height,\n        overflowY: 'auto',\n        border: '1px solid #e5e7eb',\n        borderRadius: '0.5rem',\n        position: 'relative',\n      }}\n    >\n      <div style={{ height: totalHeight, position: 'relative' }}>\n        {visibleItems.map((item, i) => {\n          const index = startIndex + i;\n          return (\n            <div\n              key={index}\n              style={{\n                position: 'absolute',\n                top: index * itemHeight,\n                left: 0,\n                right: 0,\n                height: itemHeight,\n              }}\n            >\n              {renderItem(item, index)}\n            </div>\n          );\n        })}\n      </div>\n    </div>\n  );\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [
+    {
+      "title": "react-virtual – TanStack",
+      "url": "https://tanstack.com/virtual/latest",
+      "type": "article"
+    },
+    {
+      "title": "Building a Virtualised List from Scratch",
+      "url": "https://blog.logrocket.com/virtual-scrolling-core-principles-and-basic-implementation-in-react/",
+      "type": "article"
+    }
+  ],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/patterns",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

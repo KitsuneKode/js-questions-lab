@@ -13,7 +13,8 @@
     "shortcuts": "Tastenkürzel",
     "signIn": "Anmelden",
     "leaderboard": "Rangliste",
-    "paths": "Pfade"
+    "paths": "Pfade",
+    "react": "React"
   },
   "questions": {
     "title": "Fragenbibliothek",

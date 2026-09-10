@@ -13,6 +13,8 @@
   "scripts": {
     "sync:upstream": "node scripts/sync-upstream.mjs",
     "parse:questions": "node scripts/parse-readme.mjs",
+    "parse:react": "node scripts/parse-react-patterns.mjs",
+    "content:react": "bun run parse:react",
     "parse:changelog": "node scripts/parse-changelog.mjs",
     "github:protect-branches": "node scripts/github/apply-branch-protection.mjs",
     "github:check-release-train": "node scripts/github/check-release-train.mjs",

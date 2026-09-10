@@ -1,0 +1,27 @@
+{
+  "id": "react-use-event-listener",
+  "title": "Build a useEventListener Hook",
+  "difficulty": "beginner",
+  "tags": ["hooks", "events", "refs", "cleanup", "DOM"],
+  "category": "hook",
+  "prompt": "Build a `useEventListener<K extends keyof WindowEventMap>(eventName: K, handler: (event: WindowEventMap[K]) => void, element?: EventTarget)` hook.\n\nRequirements:\n- Attach the event listener to `window` by default, or to a custom `element` if provided\n- Use a ref to keep the handler stable — the listener should never be re-added just because the handler function changes\n- Clean up the listener on unmount and when `eventName` or `element` changes\n- Demo: a keypress detector and a click-outside component",
+  "context": "**useEventListener** encapsulates the repetitive `addEventListener` / `removeEventListener` lifecycle that appears in many hooks (keyboard shortcuts, click-outside, resize, scroll). The subtle issue it solves is **handler stability**: if you put the handler directly in a `useEffect` dependency array and the handler is an inline function, it re-registers the listener on every render.\n\nThe fix is a **handler ref**: store the current handler in a ref, then pass a stable wrapper function to `addEventListener`. The wrapper reads from the ref at call time — getting the latest handler — without being a new function reference on every render. This pattern eliminates unnecessary listener churn.",
+  "starterCode": {
+    "App.tsx": "import { useRef } from 'react';\nimport { useEventListener } from './useEventListener';\n\nexport default function App() {\n  const boxRef = useRef<HTMLDivElement>(null);\n\n  // Global key listener\n  useEventListener('keydown', (e) => {\n    console.log('Key pressed:', e.key);\n  });\n\n  // Element-level click listener\n  useEventListener('click', (e) => {\n    console.log('Box clicked at', e.clientX, e.clientY);\n  }, boxRef.current ?? undefined);\n\n  return (\n    <div style={{ padding: '2rem' }}>\n      <p style={{ marginBottom: '1rem', fontSize: '0.875rem', color: '#6b7280' }}>Press any key or click the box. Check the console.</p>\n      <div\n        ref={boxRef}\n        style={{\n          width: '12rem',\n          height: '8rem',\n          border: '2px dashed #d1d5db',\n          borderRadius: '0.5rem',\n          display: 'flex',\n          alignItems: 'center',\n          justifyContent: 'center',\n          cursor: 'pointer',\n          userSelect: 'none',\n        }}\n      >\n        Click me\n      </div>\n    </div>\n  );\n}\n",
+    "useEventListener.ts": "import { useEffect, useRef } from 'react';\n\nexport function useEventListener<K extends keyof WindowEventMap>(\n  eventName: K,\n  handler: (event: WindowEventMap[K]) => void,\n  element: EventTarget = window,\n) {\n  const handlerRef = useRef(handler);\n  handlerRef.current = handler;\n\n  useEffect(() => {\n    if (!element?.addEventListener) return;\n    // TODO: create stable listener via handlerRef, add and clean up\n  }, [eventName, element]);\n}\n"
+  },
+  "entryFile": "useEventListener.ts",
+  "solutionCode": {
+    "App.tsx": "import { useRef } from 'react';\nimport { useEventListener } from './useEventListener';\n\nexport default function App() {\n  const boxRef = useRef<HTMLDivElement>(null);\n\n  useEventListener('keydown', (e) => {\n    console.log('Key pressed:', e.key);\n  });\n\n  useEventListener('click', (e) => {\n    console.log('Box clicked at', e.clientX, e.clientY);\n  }, boxRef.current ?? undefined);\n\n  return (\n    <div style={{ padding: '2rem' }}>\n      <p style={{ marginBottom: '1rem', fontSize: '0.875rem', color: '#6b7280' }}>Press any key or click the box. Check the console.</p>\n      <div\n        ref={boxRef}\n        style={{\n          width: '12rem',\n          height: '8rem',\n          border: '2px dashed #d1d5db',\n          borderRadius: '0.5rem',\n          display: 'flex',\n          alignItems: 'center',\n          justifyContent: 'center',\n          cursor: 'pointer',\n          userSelect: 'none',\n        }}\n      >\n        Click me\n      </div>\n    </div>\n  );\n}\n",
+    "useEventListener.ts": "import { useEffect, useRef } from 'react';\n\nexport function useEventListener<K extends keyof WindowEventMap>(\n  eventName: K,\n  handler: (event: WindowEventMap[K]) => void,\n  element: EventTarget = window,\n) {\n  // Keep handler in a ref so the effect never re-runs due to handler identity changes\n  const handlerRef = useRef(handler);\n  handlerRef.current = handler;\n\n  useEffect(() => {\n    if (!element?.addEventListener) return;\n\n    const listener = (event: Event) => handlerRef.current(event as WindowEventMap[K]);\n    element.addEventListener(eventName, listener);\n    return () => element.removeEventListener(eventName, listener);\n  }, [eventName, element]);\n}\n"
+  },
+  "previewVisible": false,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { isSafeHttpUrl } from '@/lib/content/safe-url';
 import type { QuestionResource } from '@/lib/content/types';
 import { cn } from '@/lib/utils';
 
@@ -57,6 +58,7 @@ export function ResourcesPanel({ resources }: ResourcesPanelProps) {
       {open && (
         <div className="border-t border-border/30 divide-y divide-border/20">
           {resources.map((resource) => {
+            if (!isSafeHttpUrl(resource.url)) return null;
             const Icon = RESOURCE_ICONS[resource.type];
             return (
               <a

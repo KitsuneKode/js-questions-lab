@@ -13,7 +13,8 @@
     "shortcuts": "Atajos",
     "signIn": "Iniciar sesión",
     "leaderboard": "Clasificación",
-    "paths": "Rutas"
+    "paths": "Rutas",
+    "react": "React"
   },
   "questions": {
     "title": "Biblioteca de preguntas",

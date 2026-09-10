@@ -13,7 +13,8 @@
     "shortcuts": "Raccourcis",
     "signIn": "Connexion",
     "leaderboard": "Classement",
-    "paths": "Parcours"
+    "paths": "Parcours",
+    "react": "React"
   },
   "questions": {
     "title": "Bibliothèque de questions",

@@ -12,7 +12,7 @@ interface MonacoEditorProps {
   onReset?: () => void;
   onEditorMount?: (editor: Parameters<OnMount>[0]) => void;
   autoFocus?: boolean;
-  language?: 'html' | 'javascript' | 'typescript';
+  language?: string;
   readOnly?: boolean;
   path?: string;
 }

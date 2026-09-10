@@ -87,6 +87,7 @@ export function SiteHeader() {
 
   const navLinks = [
     { href: withLocale(locale, siteLinks.questions), label: t('questions'), badge: false },
+    { href: withLocale(locale, siteLinks.react), label: t('react'), badge: false },
     { href: withLocale(locale, siteLinks.paths), label: t('paths'), badge: false },
     { href: withLocale(locale, siteLinks.progress), label: t('progress'), badge: true },
     { href: withLocale(locale, siteLinks.leaderboard), label: t('leaderboard'), badge: false },
@@ -123,6 +124,7 @@ export function SiteHeader() {
         className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-12 sm:px-6"
       >
         <header
+          data-site-header
           className="pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full border border-border/50 px-4 shadow-sm sm:px-5"
           style={{ backdropFilter: 'blur(16px)', background: 'rgba(9, 9, 11, 0.8)' }}
         >
