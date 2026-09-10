@@ -10,7 +10,11 @@ import {
   buildAuthoritativeSelfGradeResult,
   rebuildXPState,
 } from '@/lib/engagement/engine';
-import type { GuestAttemptReplay } from '@/lib/engagement/guest-replay';
+import {
+  clampReplayAttemptedAt,
+  type GuestAttemptReplay,
+  resolveReplayAttemptedAt,
+} from '@/lib/engagement/guest-replay';
 import { revalidateLeaderboardCaches } from '@/lib/engagement/leaderboard-cache';
 import { srsClearSubmissionId } from '@/lib/engagement/srs-clear';
 import { DEFAULT_LOCALE, isValidLocale, type LocaleCode } from '@/lib/i18n/config';
@@ -44,7 +48,7 @@ interface RecordAttemptInput {
   submissionId?: string;
   recallAnswer?: string | null;
   locale?: string;
-  answeredAt?: string;
+  replay?: { attemptedAt: string };
   mode?: 'quiz' | 'recall';
   timeMs?: number;
   errorType?: 'misread' | 'forgot' | 'wrong_concept' | 'guess';
@@ -143,6 +147,14 @@ export async function recordAttempt(
     throw new Error(`Question not found: ${input.questionId}`);
   }
 
+  const now = new Date();
+  let answeredAt = now.toISOString();
+  if (input.replay) {
+    const clamped = clampReplayAttemptedAt(input.replay.attemptedAt, now);
+    if (!clamped) return null;
+    answeredAt = clamped;
+  }
+
   const [progressItems, xpEvents, streakState] = await Promise.all([
     fetchProgressRows(userId),
     fetchXPEvents(userId),
@@ -157,7 +169,7 @@ export async function recordAttempt(
     previousStreakState: streakState ?? defaultStreakState,
     selected: input.selected,
     recallAnswer: input.recallAnswer,
-    answeredAt: input.answeredAt,
+    answeredAt,
     mode: input.mode,
     timeMs: input.timeMs,
     submissionId,
@@ -366,7 +378,7 @@ export async function upsertStreak(state: StreakState): Promise<StreakState | nu
   return state;
 }
 
-// Callers should replay BEFORE syncProgressToServer, or sync after replay, to avoid duplicate attempts (recordAttempt appends).
+// Callers should replay BEFORE bookmark sync so attempt arrays are server-authored.
 export async function replayGuestAttempts(
   attempts: GuestAttemptReplay[],
   locale?: string,
@@ -374,34 +386,147 @@ export async function replayGuestAttempts(
   const { userId } = await auth();
   if (!userId) return null;
 
-  let toReplay = attempts;
-  if (attempts.length > 200) {
-    console.warn(
-      `replayGuestAttempts: truncating ${attempts.length - 200} attempts (cap 200); full arrays still sync via progress`,
-    );
-    toReplay = attempts.slice(0, 200);
+  const now = new Date();
+  const localeCode = toLocaleCode(locale);
+  const supabase = createServiceRoleSupabaseClient();
+
+  const [progressItems, xpEvents, streakState, submissionResult] = await Promise.all([
+    fetchProgressRows(userId),
+    fetchXPEvents(userId),
+    fetchStreak(),
+    supabase.from('xp_events').select('submission_id').eq('user_id', userId),
+  ]);
+
+  if (submissionResult.error) {
+    throw submissionResult.error;
   }
 
-  let last: RecordAttemptResult | null = null;
+  const seenSubmissions = new Set(
+    (submissionResult.data ?? [])
+      .map((row) => row.submission_id)
+      .filter((id): id is string => typeof id === 'string' && id.length > 0),
+  );
+
+  const progressById = new Map(progressItems.map((item) => [item.questionId, item]));
+  let xpState = rebuildXPState(xpEvents);
+  let nextStreak = streakState ?? defaultStreakState;
+  const progressWrites = new Map<number, ProgressItem>();
+  const xpRows: Array<{
+    user_id: string;
+    submission_id: string;
+    event_index: number;
+    question_id: number;
+    event_type: XPEvent['eventType'];
+    xp_delta: number;
+    created_at: string;
+    metadata: { mode: 'quiz'; source: 'guest_replay' };
+  }> = [];
+
+  const toReplay = [...attempts]
+    .sort((a, b) => a.attemptedAt.localeCompare(b.attemptedAt))
+    .slice(0, 200);
+
   for (const attempt of toReplay) {
-    last = await recordAttempt({
-      questionId: attempt.questionId,
+    const answeredAt = resolveReplayAttemptedAt(attempt, now, {
+      questionExists: Boolean(
+        getQuestionById(localeCode, attempt.questionId) ??
+          getQuestionById(DEFAULT_LOCALE, attempt.questionId),
+      ),
+      alreadyPersisted: seenSubmissions.has(attempt.submissionId),
+    });
+    if (!answeredAt) continue;
+
+    const question =
+      getQuestionById(localeCode, attempt.questionId) ??
+      getQuestionById(DEFAULT_LOCALE, attempt.questionId);
+    if (!question) continue;
+
+    const result = buildAuthoritativeAttemptResult({
+      question,
+      previousProgress: progressById.get(attempt.questionId),
+      previousXPState: xpState,
+      previousStreakState: nextStreak,
       selected: attempt.selected,
+      answeredAt,
       submissionId: attempt.submissionId,
-      locale,
-      answeredAt: attempt.attemptedAt,
+    });
+
+    progressById.set(attempt.questionId, result.progressItem);
+    progressWrites.set(attempt.questionId, result.progressItem);
+    xpState = result.xpState;
+    nextStreak = result.streakState;
+    seenSubmissions.add(attempt.submissionId);
+
+    result.xpEvents.forEach((event, index) => {
+      xpRows.push({
+        user_id: userId,
+        submission_id: attempt.submissionId,
+        event_index: index,
+        question_id: event.questionId,
+        event_type: event.eventType,
+        xp_delta: event.xpDelta,
+        created_at: event.timestamp,
+        metadata: { mode: 'quiz', source: 'guest_replay' },
+      });
     });
   }
 
-  if (!last) {
-    const [xpState, streakState] = await Promise.all([fetchXPState(), fetchStreak()]);
-    return {
-      xpState,
-      streakState: streakState ?? defaultStreakState,
-    };
+  if (progressWrites.size === 0 && xpRows.length === 0) {
+    return { xpState, streakState: nextStreak };
   }
 
-  return { xpState: last.xpState, streakState: last.streakState };
+  const [{ error: progressError }, xpInsertResult, { error: streakError }] = await Promise.all([
+    progressWrites.size > 0
+      ? supabase.from('user_progress').upsert(
+          [...progressWrites.values()].map((item) => ({
+            user_id: userId,
+            question_id: item.questionId,
+            attempts: item.attempts,
+            bookmarked: item.bookmarked,
+            srs_data: item.srsData ?? null,
+            updated_at: item.updatedAt,
+          })),
+          { onConflict: 'user_id,question_id' },
+        )
+      : Promise.resolve({ error: null }),
+    xpRows.length > 0
+      ? supabase.from('xp_events').upsert(xpRows, {
+          onConflict: 'user_id,submission_id,event_index',
+          ignoreDuplicates: true,
+        })
+      : Promise.resolve({ error: null }),
+    supabase.from('user_streaks').upsert(
+      {
+        user_id: userId,
+        current_streak: nextStreak.currentStreak,
+        longest_streak: nextStreak.longestStreak,
+        last_activity_date: nextStreak.lastActivityDate,
+        updated_at: now.toISOString(),
+      },
+      { onConflict: 'user_id' },
+    ),
+  ]);
+
+  if (progressError) throw progressError;
+  if (xpInsertResult.error) throw xpInsertResult.error;
+  if (streakError) throw streakError;
+
+  const persisted = rebuildXPState(await readXPEvents(supabase, userId));
+  const { error: totalsError } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: persisted.totalXP,
+      updated_at: now.toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+  if (totalsError) throw totalsError;
+
+  if (xpRows.length > 0) {
+    revalidateLeaderboardCaches();
+  }
+
+  return { xpState: persisted, streakState: nextStreak };
 }
 
 export async function fetchDisplayName(): Promise<string | null> {

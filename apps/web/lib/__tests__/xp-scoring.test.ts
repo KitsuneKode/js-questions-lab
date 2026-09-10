@@ -101,6 +101,20 @@ describe('computeXP', () => {
     });
   });
 
+  it('evaluates cooldown against params.now, not wall clock', () => {
+    const now = new Date('2020-01-01T12:10:00.000Z');
+    const events = computeXP({
+      questionId: 7,
+      status: 'correct',
+      difficulty: 'beginner',
+      srsData: undefined,
+      priorAttempts: [createAttempt('incorrect', '2020-01-01T12:05:00.000Z')],
+      isFirstAnswerToday: false,
+      now,
+    });
+    expect(events[0]?.eventType).toBe('cooldown');
+  });
+
   it('awards base, precision, and streak bonus for an eligible correct first answer', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-04-06T12:00:00.000Z'));
