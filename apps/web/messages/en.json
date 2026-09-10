@@ -13,7 +13,8 @@
     "shortcuts": "Shortcuts",
     "signIn": "Sign In",
     "leaderboard": "Leaderboard",
-    "paths": "Paths"
+    "paths": "Paths",
+    "react": "React"
   },
   "questions": {
     "title": "Question Library",

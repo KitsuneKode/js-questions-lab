@@ -28,6 +28,13 @@ import {
 } from '@/lib/progress/actions';
 import { countDueReviews } from '@/lib/progress/analytics';
 import { clearGuestData, getOrCreateGuestSid, rotateGuestSid } from '@/lib/progress/guest-session';
+import {
+  defaultReactProgressState,
+  type ReactProgressItem,
+  type ReactProgressState,
+  readReactProgress,
+  writeReactProgress,
+} from '@/lib/progress/react-storage';
 import { useSectionProgressStore } from '@/lib/progress/section-progress-store';
 import { calculateNextReview, type Grade } from '@/lib/progress/srs';
 import {
@@ -196,11 +203,91 @@ function progressReducer(state: ProgressState, action: ProgressAction): Progress
 }
 
 // ---------------------------------------------------------------------------
+// React progress (string IDs, local-first; server sync is not implemented yet)
+// ---------------------------------------------------------------------------
+
+type ReactProgressAction =
+  | { type: 'init'; state: ReactProgressState }
+  | { type: 'attempt'; questionId: string; status: AnswerStatus }
+  | { type: 'complete'; questionId: string }
+  | { type: 'grade'; questionId: string; grade: Grade };
+
+function ensureReactItem(state: ReactProgressState, questionId: string): ReactProgressItem {
+  return (
+    state.questions[questionId] ?? {
+      questionId,
+      attempts: [],
+      updatedAt: new Date(0).toISOString(),
+    }
+  );
+}
+
+function reactProgressReducer(
+  state: ReactProgressState,
+  action: ReactProgressAction,
+): ReactProgressState {
+  switch (action.type) {
+    case 'init':
+      return action.state;
+    case 'attempt': {
+      const now = new Date().toISOString();
+      const prev = ensureReactItem(state, action.questionId);
+      return {
+        ...state,
+        questions: {
+          ...state.questions,
+          [action.questionId]: {
+            ...prev,
+            attempts: [
+              ...prev.attempts,
+              { selected: null, status: action.status, attemptedAt: now },
+            ],
+            updatedAt: now,
+          },
+        },
+      };
+    }
+    case 'complete': {
+      const now = new Date().toISOString();
+      const prev = ensureReactItem(state, action.questionId);
+      return {
+        ...state,
+        questions: {
+          ...state.questions,
+          [action.questionId]: {
+            ...prev,
+            completed: true,
+            updatedAt: now,
+          },
+        },
+      };
+    }
+    case 'grade': {
+      const now = new Date().toISOString();
+      const prev = ensureReactItem(state, action.questionId);
+      const newSrsData = calculateNextReview(action.grade, prev.srsData);
+      return {
+        ...state,
+        questions: {
+          ...state.questions,
+          [action.questionId]: {
+            ...prev,
+            srsData: newSrsData,
+            updatedAt: now,
+          },
+        },
+      };
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Context
 // ---------------------------------------------------------------------------
 
 interface ProgressContextValue {
   state: ProgressState;
+  reactState: ReactProgressState;
   ready: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
   saveAttempt: (
@@ -218,6 +305,9 @@ interface ProgressContextValue {
     },
   ) => void;
   saveSelfGrade: (questionId: number, grade: Grade, errorType?: AttemptErrorType) => void;
+  saveReactAttempt: (questionId: string, status: AnswerStatus) => void;
+  saveReactComplete: (questionId: string) => void;
+  saveReactSelfGrade: (questionId: string, grade: Grade) => void;
   toggleBookmark: (questionId: number) => void;
   xpState: XPState;
   streakState: StreakState;
@@ -227,11 +317,13 @@ const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(progressReducer, defaultProgressState);
+  const [reactState, reactDispatch] = useReducer(reactProgressReducer, defaultReactProgressState);
   const [ready, setReady] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle');
   const [xpState, setXPState] = useState<XPState>(defaultXPState);
   const [streakState, setStreakState] = useState<StreakState>(defaultStreakState);
   const prevStateRef = useRef(state);
+  const prevReactStateRef = useRef(reactState);
   const stateRef = useRef(state);
   stateRef.current = state;
 
@@ -253,6 +345,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     const sid = getOrCreateGuestSid();
     guestSidRef.current = sid;
     dispatch({ type: 'init', state: readProgress(sid) });
+    reactDispatch({ type: 'init', state: readReactProgress(sid) });
     setXPState(readXP(sid));
     setStreakState(readStreak(sid));
     setReady(true);
@@ -268,6 +361,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const newSid = rotateGuestSid();
       guestSidRef.current = newSid;
       dispatch({ type: 'init', state: defaultProgressState });
+      reactDispatch({ type: 'init', state: defaultReactProgressState });
       setXPState(defaultXPState);
       setStreakState(defaultStreakState);
     }
@@ -387,6 +481,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       writeProgress(guestSidRef.current, state);
     }
   }, [ready, state, isSignedIn]);
+
+  // React progress is local-first for now (server schema is numeric JS question IDs).
+  useEffect(() => {
+    if (!ready) return;
+    if (reactState === prevReactStateRef.current) return;
+    prevReactStateRef.current = reactState;
+    if (guestSidRef.current) {
+      writeReactProgress(guestSidRef.current, reactState);
+    }
+  }, [ready, reactState]);
 
   // ---------------------------------------------------------------------------
   // Mutations — dispatch to reducer + immediate server sync if signed in
@@ -561,6 +665,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     [isSignedIn],
   );
 
+  const saveReactAttempt = useCallback((questionId: string, status: AnswerStatus) => {
+    reactDispatch({ type: 'attempt', questionId, status });
+  }, []);
+
+  const saveReactComplete = useCallback((questionId: string) => {
+    reactDispatch({ type: 'complete', questionId });
+  }, []);
+
+  const saveReactSelfGrade = useCallback((questionId: string, grade: Grade) => {
+    reactDispatch({ type: 'grade', questionId, grade });
+  }, []);
+
   const toggleBookmark = useCallback(
     (questionId: number) => {
       const now = new Date().toISOString();
@@ -586,10 +702,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const value: ProgressContextValue = {
     state,
+    reactState,
     ready,
     syncStatus,
     saveAttempt,
     saveSelfGrade,
+    saveReactAttempt,
+    saveReactComplete,
+    saveReactSelfGrade,
     toggleBookmark,
     xpState,
     streakState,

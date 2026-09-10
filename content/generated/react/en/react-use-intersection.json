@@ -1,0 +1,27 @@
+{
+  "id": "react-use-intersection",
+  "title": "Build a useIntersectionObserver Hook",
+  "difficulty": "beginner",
+  "tags": ["hooks", "intersection-observer", "scroll", "lazy-loading"],
+  "category": "hook",
+  "prompt": "Build a `useIntersectionObserver(ref, options?)` hook that returns `isIntersecting: boolean`. It should observe the element attached to the given ref, report when it enters or leaves the viewport, and clean up the observer on unmount.\n\nRequirements:\n- Accept an `options` object (threshold, rootMargin, root) with sensible defaults\n- Return `{ isIntersecting: boolean, entry: IntersectionObserverEntry | null }`\n- Clean up the observer when the component unmounts or when the ref changes",
+  "context": "The **IntersectionObserver** API lets you detect when an element enters or exits the viewport without expensive scroll-event listeners. It is the foundation of lazy image loading, infinite scroll triggers, and read-tracking analytics.\n\nThe key subtlety when wrapping it in a hook is that the observer must be re-created when the observed element changes, and torn down when the component unmounts. The `ref.current` value is not a reactive dependency in the React sense — you need a callback ref or a `useEffect` that re-runs when the ref's element changes.\n\nAnother common mistake is ignoring the `options` object in the dependency array. Since objects are reference-compared, wrapping options in `useMemo` or accepting primitive parameters prevents unnecessary observer re-creation on every render.",
+  "starterCode": {
+    "App.tsx": "import { useRef } from 'react';\nimport { useIntersectionObserver } from './useIntersectionObserver';\n\nexport default function App() {\n  const ref = useRef<HTMLDivElement>(null);\n  const { isIntersecting } = useIntersectionObserver(ref, { threshold: 0.5 });\n\n  return (\n    <div className=\"p-8\">\n      <p className=\"mb-4 text-sm text-gray-500\">Scroll down to reveal the box</p>\n      <div style={{ height: '120vh' }} />\n      <div\n        ref={ref}\n        style={{\n          padding: '2rem',\n          border: '2px solid',\n          borderColor: isIntersecting ? '#22c55e' : '#6b7280',\n          borderRadius: '0.5rem',\n          textAlign: 'center',\n          transition: 'border-color 0.3s, opacity 0.3s',\n          opacity: isIntersecting ? 1 : 0.3,\n        }}\n      >\n        {isIntersecting ? '✅ Visible!' : '👆 Scroll to see me'}\n      </div>\n    </div>\n  );\n}\n",
+    "useIntersectionObserver.ts": "import { type RefObject, useEffect, useState } from 'react';\n\ninterface IntersectionResult {\n  isIntersecting: boolean;\n  entry: IntersectionObserverEntry | null;\n}\n\nexport function useIntersectionObserver(\n  ref: RefObject<Element | null>,\n  options: IntersectionObserverInit = {},\n): IntersectionResult {\n  const [result, setResult] = useState<IntersectionResult>({\n    isIntersecting: false,\n    entry: null,\n  });\n\n  useEffect(() => {\n    const element = ref.current;\n    if (!element) return;\n\n    // TODO: create IntersectionObserver, observe element, return cleanup\n  }, [ref]);\n\n  return result;\n}\n"
+  },
+  "entryFile": "useIntersectionObserver.ts",
+  "solutionCode": {
+    "App.tsx": "import { useRef } from 'react';\nimport { useIntersectionObserver } from './useIntersectionObserver';\n\nexport default function App() {\n  const ref = useRef<HTMLDivElement>(null);\n  const { isIntersecting } = useIntersectionObserver(ref, { threshold: 0.5 });\n\n  return (\n    <div className=\"p-8\">\n      <p className=\"mb-4 text-sm text-gray-500\">Scroll down to reveal the box</p>\n      <div style={{ height: '120vh' }} />\n      <div\n        ref={ref}\n        style={{\n          padding: '2rem',\n          border: '2px solid',\n          borderColor: isIntersecting ? '#22c55e' : '#6b7280',\n          borderRadius: '0.5rem',\n          textAlign: 'center',\n          transition: 'border-color 0.3s, opacity 0.3s',\n          opacity: isIntersecting ? 1 : 0.3,\n        }}\n      >\n        {isIntersecting ? '✅ Visible!' : '👆 Scroll to see me'}\n      </div>\n    </div>\n  );\n}\n",
+    "useIntersectionObserver.ts": "import { type RefObject, useEffect, useState } from 'react';\n\ninterface IntersectionResult {\n  isIntersecting: boolean;\n  entry: IntersectionObserverEntry | null;\n}\n\nexport function useIntersectionObserver(\n  ref: RefObject<Element | null>,\n  options: IntersectionObserverInit = {},\n): IntersectionResult {\n  const [result, setResult] = useState<IntersectionResult>({\n    isIntersecting: false,\n    entry: null,\n  });\n\n  useEffect(() => {\n    const element = ref.current;\n    if (!element) return;\n\n    const observer = new IntersectionObserver(\n      ([entry]) => {\n        setResult({ isIntersecting: entry.isIntersecting, entry });\n      },\n      options,\n    );\n\n    observer.observe(element);\n    return () => observer.disconnect();\n    // options spread intentionally omitted from deps — callers should memoize\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [ref]);\n\n  return result;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

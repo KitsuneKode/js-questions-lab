@@ -1,0 +1,27 @@
+{
+  "id": "react-use-local-storage",
+  "title": "Build a useLocalStorage Hook",
+  "difficulty": "intermediate",
+  "tags": ["hooks", "localStorage", "state", "persistence"],
+  "category": "hook",
+  "prompt": "Build a `useLocalStorage<T>(key: string, initialValue: T)` hook that works like `useState` but persists values to `localStorage`. On mount it should read the stored value (falling back to `initialValue`). On every update it should write to `localStorage`.",
+  "context": "`useLocalStorage` is a classic hook composition problem. The tricky part is initialization — `localStorage` is not available during SSR, and JSON parse can fail on corrupt stored data. The setter should accept both a value and an updater function (matching the `useState` API).",
+  "starterCode": {
+    "App.tsx": "import { useLocalStorage } from './useLocalStorage';\n\nexport default function App() {\n  const [name, setName] = useLocalStorage('name', '');\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <input\n        value={name}\n        onChange={e => setName(e.target.value)}\n        placeholder=\"Enter your name\"\n        className=\"border p-2 rounded\"\n      />\n      <p>Stored: <strong>{name || '(empty)'}</strong></p>\n      <p className=\"text-sm text-gray-500\">Refresh the page — value persists!</p>\n    </div>\n  );\n}\n",
+    "useLocalStorage.ts": "import { useState } from 'react';\n\nexport function useLocalStorage<T>(key: string, initialValue: T) {\n  // TODO: implement\n  const [storedValue, setStoredValue] = useState<T>(initialValue);\n\n  const setValue = (value: T | ((val: T) => T)) => {\n    // TODO: persist to localStorage\n    setStoredValue(value instanceof Function ? value(storedValue) : value);\n  };\n\n  return [storedValue, setValue] as const;\n}\n"
+  },
+  "entryFile": "useLocalStorage.ts",
+  "solutionCode": {
+    "App.tsx": "import { useLocalStorage } from './useLocalStorage';\n\nexport default function App() {\n  const [name, setName] = useLocalStorage('name', '');\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <input\n        value={name}\n        onChange={e => setName(e.target.value)}\n        placeholder=\"Enter your name\"\n        className=\"border p-2 rounded\"\n      />\n      <p>Stored: <strong>{name || '(empty)'}</strong></p>\n      <p className=\"text-sm text-gray-500\">Refresh the page — value persists!</p>\n    </div>\n  );\n}\n",
+    "useLocalStorage.ts": "import { useState } from 'react';\n\nexport function useLocalStorage<T>(key: string, initialValue: T) {\n  const [storedValue, setStoredValue] = useState<T>(() => {\n    if (typeof window === 'undefined') return initialValue;\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? (JSON.parse(item) as T) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  const setValue = (value: T | ((val: T) => T)) => {\n    const next = value instanceof Function ? value(storedValue) : value;\n    setStoredValue(next);\n    if (typeof window !== 'undefined') {\n      window.localStorage.setItem(key, JSON.stringify(next));\n    }\n  };\n\n  return [storedValue, setValue] as const;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}

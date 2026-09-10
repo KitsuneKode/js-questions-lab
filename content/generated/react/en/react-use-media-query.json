@@ -1,0 +1,27 @@
+{
+  "id": "react-use-media-query",
+  "title": "Build a useMediaQuery Hook",
+  "difficulty": "beginner",
+  "tags": ["hooks", "media-query", "responsive", "window"],
+  "category": "hook",
+  "prompt": "Build a `useMediaQuery(query: string)` hook that returns `boolean` — `true` when the media query matches, `false` otherwise.\n\nRequirements:\n- Accept any valid CSS media query string (e.g. `'(max-width: 768px)'`)\n- Return the current match state and update it when the viewport changes\n- Clean up the listener on unmount\n- Handle SSR safely (no `window` on the server)",
+  "context": "**useMediaQuery** moves responsive breakpoint logic from CSS into JavaScript, enabling components to conditionally render different markup — not just different styles — at different viewport sizes.\n\nThe implementation relies on `window.matchMedia`, which returns a `MediaQueryList` object. You can attach a `change` event listener to it (modern approach) or use the older `addListener` API (deprecated). The `matches` property gives the initial state.\n\nThe key SSR pitfall: `window` does not exist on the server. The safest initial state is `false` (or a provided default), letting the client hydrate and immediately update to the correct value on mount.",
+  "starterCode": {
+    "App.tsx": "import { useMediaQuery } from './useMediaQuery';\n\nexport default function App() {\n  const isMobile = useMediaQuery('(max-width: 640px)');\n  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <div\n        style={{\n          padding: '1rem',\n          borderRadius: '0.5rem',\n          background: isMobile ? '#fef3c7' : '#d1fae5',\n          color: '#111827',\n        }}\n      >\n        {isMobile ? '📱 Mobile layout' : '🖥️ Desktop layout'}\n      </div>\n      <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>\n        prefers-reduced-motion: {prefersReducedMotion ? 'yes' : 'no'}\n      </p>\n    </div>\n  );\n}\n",
+    "useMediaQuery.ts": "import { useEffect, useState } from 'react';\n\nexport function useMediaQuery(query: string): boolean {\n  const [matches, setMatches] = useState(false);\n\n  useEffect(() => {\n    // TODO: create MediaQueryList, read initial state, subscribe to changes, clean up\n  }, [query]);\n\n  return matches;\n}\n"
+  },
+  "entryFile": "useMediaQuery.ts",
+  "solutionCode": {
+    "App.tsx": "import { useMediaQuery } from './useMediaQuery';\n\nexport default function App() {\n  const isMobile = useMediaQuery('(max-width: 640px)');\n  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');\n\n  return (\n    <div className=\"p-8 flex flex-col gap-4\">\n      <div\n        style={{\n          padding: '1rem',\n          borderRadius: '0.5rem',\n          background: isMobile ? '#fef3c7' : '#d1fae5',\n          color: '#111827',\n        }}\n      >\n        {isMobile ? '📱 Mobile layout' : '🖥️ Desktop layout'}\n      </div>\n      <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>\n        prefers-reduced-motion: {prefersReducedMotion ? 'yes' : 'no'}\n      </p>\n    </div>\n  );\n}\n",
+    "useMediaQuery.ts": "import { useEffect, useState } from 'react';\n\nexport function useMediaQuery(query: string): boolean {\n  // SSR-safe: window is undefined on the server\n  const [matches, setMatches] = useState(() => {\n    if (typeof window === 'undefined') return false;\n    return window.matchMedia(query).matches;\n  });\n\n  useEffect(() => {\n    const mql = window.matchMedia(query);\n    setMatches(mql.matches);\n\n    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);\n    mql.addEventListener('change', handler);\n    return () => mql.removeEventListener('change', handler);\n  }, [query]);\n\n  return matches;\n}\n"
+  },
+  "previewVisible": true,
+  "sandpackTemplate": "react-ts",
+  "resources": [],
+  "source": {
+    "repo": "lydiahallie/javascript-react-patterns",
+    "path": "pages/hooks",
+    "author": "Lydia Hallie",
+    "license": "MIT"
+  }
+}
