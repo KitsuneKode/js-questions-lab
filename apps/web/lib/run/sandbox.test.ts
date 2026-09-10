@@ -797,6 +797,17 @@ describe('worker-source', () => {
   });
 });
 
+describe('content security policy', () => {
+  it('allows the jsDelivr origin Monaco loads from by default', async () => {
+    const source = await fs.readFile(path.join(__dirname, '../../next.config.ts'), 'utf8');
+
+    expect(source).toContain('https://cdn.jsdelivr.net');
+    expect(source).toMatch(/script-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
+    expect(source).toMatch(/worker-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
+    expect(source).toMatch(/connect-src[^"]*https:\/\/cdn\.jsdelivr\.net/);
+  });
+});
+
 /**
  * Browser Integration Tests
  *
