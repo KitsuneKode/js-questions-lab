@@ -13,7 +13,7 @@
     "shortcuts": "Raccourcis",
     "signIn": "Connexion",
     "leaderboard": "Classement",
-    "paths": "Paths"
+    "paths": "Parcours"
   },
   "questions": {
     "title": "Bibliothèque de questions",
@@ -215,10 +215,10 @@
       "proficient": "Compétent",
       "mastered": "Maîtrisé"
     },
-    "browseAll": "Browse all",
-    "dailyReviewTitle": "Today's review",
-    "dailyReviewEmpty": "You're caught up. Keep practicing to grow your review queue.",
-    "dailyReviewCta": "Start today's reviews"
+    "browseAll": "Tout parcourir",
+    "dailyReviewTitle": "Révisions du jour",
+    "dailyReviewEmpty": "Vous êtes à jour. Continuez à pratiquer pour alimenter votre file de révisions.",
+    "dailyReviewCta": "Commencer les révisions du jour"
   },
   "accountDashboard": {
     "eyebrow": "Compte",
@@ -238,16 +238,16 @@
     "displayNameSave": "Enregistrer",
     "displayNameSaved": "Enregistré",
     "displayNameHint": "2–24 caractères. Lettres, chiffres, espaces, _ . -",
-    "reviewTitle": "Reviews due",
-    "reviewBody": "Jump into spaced-repetition reviews from your progress hub. Sync keeps bookmarks and attempts available across devices.",
-    "openReviews": "Open review queue",
-    "leaderboardTitle": "Climb the ranks",
-    "leaderboardBody": "Signed-in practice earns XP on the public leaderboard. Guests can browse rankings anytime.",
-    "openLeaderboard": "View leaderboard",
-    "savedTitle": "Saved questions",
-    "savedBody": "Bookmarks sync with your account. Practice them from the library Saved filter or the progress hub.",
-    "openSaved": "Browse saved",
-    "openPaths": "Browse guided paths"
+    "reviewTitle": "Révisions dues",
+    "reviewBody": "Lancez les révisions par répétition espacée depuis le hub de progression. La synchro conserve favoris et tentatives sur tous les appareils.",
+    "openReviews": "Ouvrir la file de révisions",
+    "leaderboardTitle": "Monter au classement",
+    "leaderboardBody": "La pratique connectée rapporte de l’XP sur le classement public. Les invités peuvent consulter le classement à tout moment.",
+    "openLeaderboard": "Voir le classement",
+    "savedTitle": "Questions enregistrées",
+    "savedBody": "Les favoris se synchronisent avec votre compte. Entraînez-vous via le filtre Enregistrées de la bibliothèque ou le hub de progression.",
+    "openSaved": "Parcourir les enregistrées",
+    "openPaths": "Parcourir les parcours guidés"
   },
   "credits": {
     "label": "Crédits et attribution",
@@ -457,10 +457,10 @@
     "clickToInspect": "Cliquez sur un nœud pour inspecter la sortie console propagée.",
     "clickable": "Cliquable",
     "resourcesHeader": "Références",
-    "runCode": "Run Code",
-    "running": "Running...",
-    "correct": "Correct!",
-    "answerLabel": "Answer: {option}",
+    "runCode": "Exécuter le code",
+    "running": "Exécution...",
+    "correct": "Correct !",
+    "answerLabel": "Réponse : {option}",
     "questionCode": "Question Code",
     "questionHtml": "Question HTML",
     "questionSnippet": "Question Snippet",
@@ -485,9 +485,9 @@
     "scratchpadHint": "Run the snippet here or send it to Scratchpad to experiment without losing the original.",
     "domReplayBadge": "DOM Replay",
     "staticBadge": "Static",
-    "tabPrompt": "Prompt",
+    "tabPrompt": "Énoncé",
     "tabCode": "Code",
-    "tabAnswer": "Answer",
+    "tabAnswer": "Réponse",
     "searchPlaceholder": "Type a keyword, concept, or question number...",
     "noResults": "No results found.",
     "groupQuestions": "Questions"
@@ -557,26 +557,26 @@
     "empty": "Aucune entrée pour le moment. Soyez le premier à gagner des XP !",
     "you": "Vous",
     "guestCta": "Connectez-vous pour réclamer votre rang",
-    "guestCtaTitle": "Join the board",
-    "guestCtaBody": "Sign in to earn XP, keep your streak, and appear on the weekly rankings.",
-    "guestCtaButton": "Sign in to compete",
-    "streakLabel": "{count} day streak",
+    "guestCtaTitle": "Rejoindre le tableau",
+    "guestCtaBody": "Connectez-vous pour gagner de l’XP, garder votre série et apparaître au classement hebdomadaire.",
+    "guestCtaButton": "Se connecter pour compétir",
+    "streakLabel": "Série de {count} jours",
     "proBadge": "Pro"
   },
   "paths": {
-    "eyebrow": "Guided Paths",
-    "title": "Practice paths",
-    "subtitle": "Follow a focused topic sequence instead of browsing at random.",
-    "start": "Start path",
+    "eyebrow": "Parcours guidés",
+    "title": "Parcours d’entraînement",
+    "subtitle": "Suivez une séquence thématique plutôt que de parcourir au hasard.",
+    "start": "Démarrer le parcours",
     "questions": "{count} questions",
-    "progress": "{done}/{total} done",
+    "progress": "{done}/{total} faites",
     "pathScopeTitle": "Scope & Closures",
-    "pathScopeDesc": "Build a foundation in lexical scope, hoisting, and closure behavior.",
+    "pathScopeDesc": "Posez les bases du scope lexical, du hoisting et des closures.",
     "pathPrototypesTitle": "Prototypes & Objects",
-    "pathPrototypesDesc": "Practice prototype chains, object identity, and inheritance patterns.",
+    "pathPrototypesDesc": "Pratiquez les chaînes de prototypes, l’identité des objets et l’héritage.",
     "pathAsyncTitle": "Async & Event Loop",
-    "pathAsyncDesc": "Trace promises, timers, and the event loop with runnable snippets.",
+    "pathAsyncDesc": "Suivez promises, timers et event loop avec des extraits exécutables.",
     "pathArraysTitle": "Arrays & Types",
-    "pathArraysDesc": "Sharpen array methods, coercion, and type quirks that show up in interviews."
+    "pathArraysDesc": "Affûtez méthodes de tableau, coercition et bizarreries de types d’entretien."
   }
 }

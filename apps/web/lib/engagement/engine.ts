@@ -55,8 +55,12 @@ function ensureProgressItem(questionId: number, progress: ProgressItem | undefin
   );
 }
 
+export function isUnjudgeableQuestion(question: QuestionForAttempt): boolean {
+  return question.correctOption == null;
+}
+
 function evaluateRecallAnswer(question: QuestionForAttempt, recallAnswer: string): AnswerStatus {
-  if (!question.correctOption) return 'incorrect';
+  if (isUnjudgeableQuestion(question) || !question.correctOption) return 'incorrect';
 
   const correctKey = question.correctOption.toLowerCase();
   const correctOption = question.options.find((option) => option.key === question.correctOption);
@@ -75,6 +79,10 @@ export function resolveAttemptStatus(
   selected: AttemptRecord['selected'],
   recallAnswer?: string | null,
 ): AnswerStatus {
+  if (isUnjudgeableQuestion(question)) {
+    return 'incorrect';
+  }
+
   if (typeof recallAnswer === 'string' && recallAnswer.trim().length > 0) {
     return evaluateRecallAnswer(question, recallAnswer);
   }
@@ -137,6 +145,7 @@ export function buildAuthoritativeAttemptResult({
   answeredAt = new Date().toISOString(),
 }: AttemptInput): AttemptResult {
   const baseProgress = ensureProgressItem(question.id, previousProgress);
+  const unjudgeable = isUnjudgeableQuestion(question);
   const status = resolveAttemptStatus(question, selected, recallAnswer);
   const today = answeredAt.slice(0, 10);
   const isFirstAnswerToday = previousXPState.events.every(
@@ -150,15 +159,17 @@ export function buildAuthoritativeAttemptResult({
     mode ??
     (typeof recallAnswer === 'string' && recallAnswer.trim().length > 0 ? 'recall' : 'quiz');
 
-  const xpEvents = computeXP({
-    questionId: question.id,
-    status,
-    difficulty: question.difficulty,
-    srsData: baseProgress.srsData,
-    priorAttempts: priorAttemptSummaries,
-    isFirstAnswerToday,
-    now: new Date(answeredAt),
-  }).map((event) => ({ ...event, timestamp: answeredAt }));
+  const xpEvents = unjudgeable
+    ? []
+    : computeXP({
+        questionId: question.id,
+        status,
+        difficulty: question.difficulty,
+        srsData: baseProgress.srsData,
+        priorAttempts: priorAttemptSummaries,
+        isFirstAnswerToday,
+        now: new Date(answeredAt),
+      }).map((event) => ({ ...event, timestamp: answeredAt }));
 
   const progressItem: ProgressItem = {
     ...baseProgress,
@@ -175,6 +186,7 @@ export function buildAuthoritativeAttemptResult({
             : undefined,
         timeMs,
         submissionId,
+        unjudgeable: unjudgeable || undefined,
       }),
     ],
     updatedAt: answeredAt,

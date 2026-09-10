@@ -8,6 +8,7 @@ let terminalLogKeySeed = 0;
 const mockSearchParams = vi.hoisted(() => ({
   value: new URLSearchParams(),
 }));
+const isMdUp = vi.hoisted(() => ({ value: true }));
 
 function getTerminalLogKey(log: { content: string }) {
   const existingKey = terminalLogKeys.get(log);
@@ -237,6 +238,10 @@ vi.mock('@/lib/progress/use-question-progress', () => ({
   }),
 }));
 
+vi.mock('@/lib/hooks/use-media-query', () => ({
+  useIsMdUp: () => isMdUp.value,
+}));
+
 vi.mock('@/lib/run/sandbox', () => ({
   runJavaScript: vi.fn(),
 }));
@@ -291,6 +296,7 @@ for (let i = 0; i < 3; i++) {
 describe('QuestionIDEClient autorun', () => {
   beforeEach(() => {
     mockSearchParams.value = new URLSearchParams();
+    isMdUp.value = true;
     runJavaScriptMock.mockReset();
     runJavaScriptMock.mockResolvedValue({
       logs: ['3', '3', '3', '0', '1', '2'],
@@ -347,5 +353,18 @@ describe('QuestionIDEClient autorun', () => {
     expect(screen.getByRole('button', { name: 'gradeHard' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'gradeGood' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'gradeEasy' })).toBeInTheDocument();
+  });
+
+  it('shows the error-type select after an incorrect mobile answer', async () => {
+    isMdUp.value = false;
+    render(<QuestionIDEClient question={baseQuestion} locale="en" />);
+
+    fireEvent.click(screen.getByRole('button', { name: /0 1 2 and 0 1 2/i }));
+
+    await waitFor(() => {
+      expect(document.getElementById('mobile-error-type-select')).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: 'gradeHard' })).toBeDisabled();
   });
 });

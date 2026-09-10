@@ -13,7 +13,7 @@
     "shortcuts": "Tastenkürzel",
     "signIn": "Anmelden",
     "leaderboard": "Rangliste",
-    "paths": "Paths"
+    "paths": "Pfade"
   },
   "questions": {
     "title": "Fragenbibliothek",
@@ -215,10 +215,10 @@
       "proficient": "Kompetent",
       "mastered": "Gemeistert"
     },
-    "browseAll": "Browse all",
-    "dailyReviewTitle": "Today's review",
-    "dailyReviewEmpty": "You're caught up. Keep practicing to grow your review queue.",
-    "dailyReviewCta": "Start today's reviews"
+    "browseAll": "Alle ansehen",
+    "dailyReviewTitle": "Heutige Wiederholung",
+    "dailyReviewEmpty": "Du bist auf dem Stand. Übe weiter, um deine Wiederholungswarteschlange zu füllen.",
+    "dailyReviewCta": "Heutige Wiederholungen starten"
   },
   "accountDashboard": {
     "eyebrow": "Konto",
@@ -238,16 +238,16 @@
     "displayNameSave": "Speichern",
     "displayNameSaved": "Gespeichert",
     "displayNameHint": "2–24 Zeichen. Buchstaben, Zahlen, Leerzeichen, _ . -",
-    "reviewTitle": "Reviews due",
-    "reviewBody": "Jump into spaced-repetition reviews from your progress hub. Sync keeps bookmarks and attempts available across devices.",
-    "openReviews": "Open review queue",
-    "leaderboardTitle": "Climb the ranks",
-    "leaderboardBody": "Signed-in practice earns XP on the public leaderboard. Guests can browse rankings anytime.",
-    "openLeaderboard": "View leaderboard",
-    "savedTitle": "Saved questions",
-    "savedBody": "Bookmarks sync with your account. Practice them from the library Saved filter or the progress hub.",
-    "openSaved": "Browse saved",
-    "openPaths": "Browse guided paths"
+    "reviewTitle": "Fällige Wiederholungen",
+    "reviewBody": "Starte Spaced-Repetition-Wiederholungen im Fortschrittshub. Sync hält Lesezeichen und Versuche geräteübergreifend bereit.",
+    "openReviews": "Wiederholungswarteschlange öffnen",
+    "leaderboardTitle": "Die Rangliste erklimmen",
+    "leaderboardBody": "Angemeldetes Üben bringt XP auf der öffentlichen Rangliste. Gäste können die Platzierungen jederzeit ansehen.",
+    "openLeaderboard": "Rangliste ansehen",
+    "savedTitle": "Gespeicherte Fragen",
+    "savedBody": "Lesezeichen synchronisieren mit deinem Konto. Übe sie über den Filter „Gespeichert“ in der Bibliothek oder im Fortschrittshub.",
+    "openSaved": "Gespeicherte durchsuchen",
+    "openPaths": "Geführte Pfade durchsuchen"
   },
   "credits": {
     "label": "Credits & Mitwirkende",
@@ -457,10 +457,10 @@
     "clickToInspect": "Klicken Sie auf einen Knoten, um die propagierte Konsolenausgabe zu untersuchen.",
     "clickable": "Klickbar",
     "resourcesHeader": "Referenzen",
-    "runCode": "Run Code",
-    "running": "Running...",
-    "correct": "Correct!",
-    "answerLabel": "Answer: {option}",
+    "runCode": "Code ausführen",
+    "running": "Läuft...",
+    "correct": "Richtig!",
+    "answerLabel": "Antwort: {option}",
     "questionCode": "Question Code",
     "questionHtml": "Question HTML",
     "questionSnippet": "Question Snippet",
@@ -485,9 +485,9 @@
     "scratchpadHint": "Run the snippet here or send it to Scratchpad to experiment without losing the original.",
     "domReplayBadge": "DOM Replay",
     "staticBadge": "Static",
-    "tabPrompt": "Prompt",
+    "tabPrompt": "Aufgabe",
     "tabCode": "Code",
-    "tabAnswer": "Answer",
+    "tabAnswer": "Antwort",
     "searchPlaceholder": "Type a keyword, concept, or question number...",
     "noResults": "No results found.",
     "groupQuestions": "Questions"
@@ -557,26 +557,26 @@
     "empty": "Noch keine Einträge. Sei der Erste, der XP verdient!",
     "you": "Du",
     "guestCta": "Melde dich an, um deinen Rang zu beanspruchen",
-    "guestCtaTitle": "Join the board",
-    "guestCtaBody": "Sign in to earn XP, keep your streak, and appear on the weekly rankings.",
-    "guestCtaButton": "Sign in to compete",
-    "streakLabel": "{count} day streak",
+    "guestCtaTitle": "Auf die Tafel",
+    "guestCtaBody": "Melde dich an, um XP zu verdienen, deine Serie zu halten und in der Wochenrangliste zu erscheinen.",
+    "guestCtaButton": "Anmelden und mitmachen",
+    "streakLabel": "{count}-Tage-Serie",
     "proBadge": "Pro"
   },
   "paths": {
-    "eyebrow": "Guided Paths",
-    "title": "Practice paths",
-    "subtitle": "Follow a focused topic sequence instead of browsing at random.",
-    "start": "Start path",
-    "questions": "{count} questions",
-    "progress": "{done}/{total} done",
+    "eyebrow": "Geführte Pfade",
+    "title": "Übungspfade",
+    "subtitle": "Folge einer fokussierten Themenreihe statt zufällig zu stöbern.",
+    "start": "Pfad starten",
+    "questions": "{count} Fragen",
+    "progress": "{done}/{total} erledigt",
     "pathScopeTitle": "Scope & Closures",
-    "pathScopeDesc": "Build a foundation in lexical scope, hoisting, and closure behavior.",
+    "pathScopeDesc": "Lege ein Fundament in lexikalischem Scope, Hoisting und Closures.",
     "pathPrototypesTitle": "Prototypes & Objects",
-    "pathPrototypesDesc": "Practice prototype chains, object identity, and inheritance patterns.",
+    "pathPrototypesDesc": "Übe Prototypketten, Objektidentität und Vererbungsmuster.",
     "pathAsyncTitle": "Async & Event Loop",
-    "pathAsyncDesc": "Trace promises, timers, and the event loop with runnable snippets.",
+    "pathAsyncDesc": "Verfolge Promises, Timer und die Event Loop mit ausführbaren Snippets.",
     "pathArraysTitle": "Arrays & Types",
-    "pathArraysDesc": "Sharpen array methods, coercion, and type quirks that show up in interviews."
+    "pathArraysDesc": "Schärfe Array-Methoden, Coercion und Typ-Eigenheiten aus Interviews."
   }
 }

@@ -561,19 +561,24 @@ export async function setDisplayName(
   const writer = createServiceRoleSupabaseClient();
   const { data: existing } = await reader
     .from('user_xp_totals')
-    .select('total_xp')
+    .select('user_id')
     .eq('user_id', userId)
     .maybeSingle();
 
-  const { error } = await writer.from('user_xp_totals').upsert(
-    {
-      user_id: userId,
-      total_xp: existing?.total_xp ?? 0,
-      display_name: normalized.displayName,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'user_id' },
-  );
+  const { error } = existing
+    ? await writer
+        .from('user_xp_totals')
+        .update({
+          display_name: normalized.displayName,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+    : await writer.from('user_xp_totals').insert({
+        user_id: userId,
+        total_xp: 0,
+        display_name: normalized.displayName,
+        updated_at: new Date().toISOString(),
+      });
 
   if (error) {
     console.error('Failed to set display name:', error.message);
