@@ -22,6 +22,7 @@ vi.mock('@/lib/auth-utils', () => ({
 vi.mock('@/lib/engagement/actions', () => ({
   recordAttempt: vi.fn(),
   applyServerSelfGrade: vi.fn(),
+  awardSrsClearBonus: vi.fn(),
   fetchXPState: (...args: unknown[]) => fetchXPState(...args),
   fetchStreak: (...args: unknown[]) => fetchStreak(...args),
   replayGuestAttempts: (...args: unknown[]) => replayGuestAttempts(...args),

@@ -4,6 +4,12 @@ import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './'),
+      'server-only': path.resolve(__dirname, './lib/test-stubs/server-only.ts'),
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
@@ -11,6 +17,7 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, 'e2e/**/*'],
     alias: {
       '@': path.resolve(__dirname, './'),
+      'server-only': path.resolve(__dirname, './lib/test-stubs/server-only.ts'),
     },
   },
 });

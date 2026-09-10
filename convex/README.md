@@ -41,7 +41,7 @@ Set `CONVEX_AGENT_MODE=anonymous` in the agent environment so `convex dev` does 
 ## Functions
 
 - **`progress.ts`** — `listMine`, `upsertOne`, `upsertMany`
-- **`xp.ts`** — `listEvents`, `appendEvents`, `getTotals`, `setDisplayName`, `upsertTotals`
+- **`xp.ts`** — `listEvents`, `appendEvents` (rebuilds totals from persisted events; does not take client `totalXp`), `getTotals`, `setDisplayName`
 - **`streaks.ts`** — `getMine`, `upsertMine`
 - **`leaderboard.ts`** — `weekly`, `allTime`, `myWeeklyPosition`, `myAllTimePosition`
 

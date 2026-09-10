@@ -13,8 +13,8 @@ import {
 import { useSafeAuth } from '@/lib/auth-utils';
 import type { Difficulty } from '@/lib/content/types';
 import {
-  appendXPEvents,
   applyServerSelfGrade,
+  awardSrsClearBonus,
   fetchStreak,
   fetchXPState,
   recordAttempt,
@@ -534,8 +534,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         if (!clearedQueue) return;
         const event = buildSrsClearEvent(questionId);
         if (isSignedIn) {
-          const submissionId = `srs-clear:${new Date().toISOString().slice(0, 10)}:${questionId}`;
-          appendXPEvents([event], submissionId)
+          awardSrsClearBonus(questionId)
             .then((nextXP) => {
               if (nextXP) setXPState(nextXP);
             })

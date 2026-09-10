@@ -2,6 +2,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { auth } from '@clerk/nextjs/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { getQuestionById } from '@/lib/content/loaders';
 import { normalizeDisplayName } from '@/lib/engagement/display-name';
 import {
@@ -11,12 +12,14 @@ import {
 } from '@/lib/engagement/engine';
 import type { GuestAttemptReplay } from '@/lib/engagement/guest-replay';
 import { revalidateLeaderboardCaches } from '@/lib/engagement/leaderboard-cache';
+import { srsClearSubmissionId } from '@/lib/engagement/srs-clear';
 import { DEFAULT_LOCALE, isValidLocale, type LocaleCode } from '@/lib/i18n/config';
 import type { Grade } from '@/lib/progress/srs';
 import type { ProgressItem } from '@/lib/progress/storage';
 import { defaultStreakState, type StreakState } from '@/lib/streaks/calculator';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import type { XPEvent } from '@/lib/xp/scoring';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/service-role';
+import { buildSrsClearEvent, SRS_CLEAR_XP, type XPEvent } from '@/lib/xp/scoring';
 import { defaultXPState, type XPState } from '@/lib/xp/storage';
 
 interface SupabaseProgressRow {
@@ -92,25 +95,32 @@ async function fetchProgressRows(userId: string): Promise<ProgressItem[]> {
   return (data as SupabaseProgressRow[]).map(toProgressItem);
 }
 
-async function fetchXPEvents(userId: string): Promise<XPEvent[]> {
-  const supabase = createServerSupabaseClient();
+async function readXPEvents(supabase: SupabaseClient, userId: string): Promise<XPEvent[]> {
   const { data, error } = await supabase
     .from('xp_events')
     .select('question_id, event_type, xp_delta, created_at')
     .eq('user_id', userId)
     .order('created_at', { ascending: true });
 
-  if (error || !Array.isArray(data)) {
-    console.error('Failed to fetch XP events:', error?.message);
-    return [];
+  if (error) {
+    throw error;
+  }
+  if (!Array.isArray(data)) {
+    throw new Error('Failed to fetch XP events');
   }
 
   return (data as XPEventRow[]).map(toXPEvent);
 }
 
-// ---------------------------------------------------------------------------
-// Fetch engagement state
-// ---------------------------------------------------------------------------
+async function fetchXPEvents(userId: string): Promise<XPEvent[]> {
+  try {
+    return await readXPEvents(createServerSupabaseClient(), userId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Failed to fetch XP events:', message);
+    return [];
+  }
+}
 
 export async function fetchXPState(): Promise<XPState> {
   const { userId } = await auth();
@@ -118,10 +128,6 @@ export async function fetchXPState(): Promise<XPState> {
 
   return rebuildXPState(await fetchXPEvents(userId));
 }
-
-// ---------------------------------------------------------------------------
-// Server-authoritative attempt + SRS writes
-// ---------------------------------------------------------------------------
 
 export async function recordAttempt(
   input: RecordAttemptInput,
@@ -170,45 +176,36 @@ export async function recordAttempt(
       ...(input.errorType ? { errorType: input.errorType } : {}),
     },
   }));
-  const supabase = createServerSupabaseClient();
-  const [{ error: progressError }, xpInsertResult, { error: streakError }, { error: totalsError }] =
-    await Promise.all([
-      supabase.from('user_progress').upsert(
-        {
-          user_id: userId,
-          question_id: result.progressItem.questionId,
-          attempts: result.progressItem.attempts,
-          bookmarked: result.progressItem.bookmarked,
-          srs_data: result.progressItem.srsData ?? null,
-          updated_at: result.progressItem.updatedAt,
-        },
-        { onConflict: 'user_id,question_id' },
-      ),
-      rows.length > 0
-        ? supabase.from('xp_events').upsert(rows, {
-            onConflict: 'user_id,submission_id,event_index',
-            ignoreDuplicates: true,
-          })
-        : Promise.resolve({ error: null }),
-      supabase.from('user_streaks').upsert(
-        {
-          user_id: userId,
-          current_streak: result.streakState.currentStreak,
-          longest_streak: result.streakState.longestStreak,
-          last_activity_date: result.streakState.lastActivityDate,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'user_id' },
-      ),
-      supabase.from('user_xp_totals').upsert(
-        {
-          user_id: userId,
-          total_xp: result.xpState.totalXP,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'user_id' },
-      ),
-    ]);
+  const supabase = createServiceRoleSupabaseClient();
+  const [{ error: progressError }, xpInsertResult, { error: streakError }] = await Promise.all([
+    supabase.from('user_progress').upsert(
+      {
+        user_id: userId,
+        question_id: result.progressItem.questionId,
+        attempts: result.progressItem.attempts,
+        bookmarked: result.progressItem.bookmarked,
+        srs_data: result.progressItem.srsData ?? null,
+        updated_at: result.progressItem.updatedAt,
+      },
+      { onConflict: 'user_id,question_id' },
+    ),
+    rows.length > 0
+      ? supabase.from('xp_events').upsert(rows, {
+          onConflict: 'user_id,submission_id,event_index',
+          ignoreDuplicates: true,
+        })
+      : Promise.resolve({ error: null }),
+    supabase.from('user_streaks').upsert(
+      {
+        user_id: userId,
+        current_streak: result.streakState.currentStreak,
+        longest_streak: result.streakState.longestStreak,
+        last_activity_date: result.streakState.lastActivityDate,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id' },
+    ),
+  ]);
 
   if (progressError) {
     console.error('Failed to upsert question progress:', progressError.message);
@@ -225,6 +222,15 @@ export async function recordAttempt(
     throw streakError;
   }
 
+  const xpState = rebuildXPState(await readXPEvents(supabase, userId));
+  const { error: totalsError } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: xpState.totalXP,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
   if (totalsError) {
     console.error('Failed to upsert XP totals:', totalsError.message);
     throw totalsError;
@@ -234,46 +240,43 @@ export async function recordAttempt(
     revalidateLeaderboardCaches();
   }
 
-  return result;
+  return { ...result, xpState };
 }
 
-export async function appendXPEvents(
-  events: XPEvent[],
-  submissionId: string,
-): Promise<XPState | null> {
+export async function awardSrsClearBonus(questionId: number): Promise<XPState | null> {
   const { userId } = await auth();
-  if (!userId || events.length === 0) return null;
+  if (!userId) return null;
 
-  const supabase = createServerSupabaseClient();
-  const rows = events.map((event, index) => ({
-    user_id: userId,
-    submission_id: submissionId,
-    event_index: index,
-    question_id: event.questionId,
-    event_type: event.eventType,
-    xp_delta: event.xpDelta,
-    created_at: event.timestamp,
-  }));
+  const today = new Date().toISOString().slice(0, 10);
+  const submissionId = srsClearSubmissionId(questionId, today);
+  const event = buildSrsClearEvent(questionId);
+  const supabase = createServiceRoleSupabaseClient();
 
-  const existing = await fetchXPEvents(userId);
-  const next = rebuildXPState([...existing, ...events]);
-
-  const [{ error: xpError }, { error: totalsError }] = await Promise.all([
-    supabase.from('xp_events').upsert(rows, {
-      onConflict: 'user_id,submission_id,event_index',
-      ignoreDuplicates: true,
-    }),
-    supabase.from('user_xp_totals').upsert(
+  const { error: xpError } = await supabase.from('xp_events').upsert(
+    [
       {
         user_id: userId,
-        total_xp: next.totalXP,
-        updated_at: new Date().toISOString(),
+        submission_id: submissionId,
+        event_index: 0,
+        question_id: questionId,
+        event_type: event.eventType,
+        xp_delta: SRS_CLEAR_XP,
+        created_at: event.timestamp,
       },
-      { onConflict: 'user_id' },
-    ),
-  ]);
-
+    ],
+    { onConflict: 'user_id,submission_id,event_index', ignoreDuplicates: true },
+  );
   if (xpError) throw xpError;
+
+  const next = rebuildXPState(await readXPEvents(supabase, userId));
+  const { error: totalsError } = await supabase.from('user_xp_totals').upsert(
+    {
+      user_id: userId,
+      total_xp: next.totalXP,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
   if (totalsError) throw totalsError;
 
   revalidateLeaderboardCaches();
@@ -318,10 +321,6 @@ export async function applyServerSelfGrade(
   return result;
 }
 
-// ---------------------------------------------------------------------------
-// Fetch streak (for server-side merge on sign-in)
-// ---------------------------------------------------------------------------
-
 export async function fetchStreak(): Promise<StreakState | null> {
   const { userId } = await auth();
   if (!userId) return null;
@@ -347,7 +346,7 @@ export async function upsertStreak(state: StreakState): Promise<StreakState | nu
   const { userId } = await auth();
   if (!userId) return null;
 
-  const supabase = createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
   const { error } = await supabase.from('user_streaks').upsert(
     {
       user_id: userId,
@@ -405,10 +404,6 @@ export async function replayGuestAttempts(
   return { xpState: last.xpState, streakState: last.streakState };
 }
 
-// ---------------------------------------------------------------------------
-// Leaderboard display name
-// ---------------------------------------------------------------------------
-
 export async function fetchDisplayName(): Promise<string | null> {
   const { userId } = await auth();
   if (!userId) return null;
@@ -437,14 +432,15 @@ export async function setDisplayName(
   const normalized = normalizeDisplayName(rawName);
   if (!normalized.ok) return normalized;
 
-  const supabase = createServerSupabaseClient();
-  const { data: existing } = await supabase
+  const reader = createServerSupabaseClient();
+  const writer = createServiceRoleSupabaseClient();
+  const { data: existing } = await reader
     .from('user_xp_totals')
     .select('total_xp')
     .eq('user_id', userId)
     .maybeSingle();
 
-  const { error } = await supabase.from('user_xp_totals').upsert(
+  const { error } = await writer.from('user_xp_totals').upsert(
     {
       user_id: userId,
       total_xp: existing?.total_xp ?? 0,

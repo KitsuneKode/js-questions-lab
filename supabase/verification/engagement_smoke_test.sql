@@ -102,16 +102,16 @@ $$;
 DO $$
 DECLARE
   missing_policy_count integer;
+  leftover_write_policy_count integer;
+  xp_delta_bounded boolean;
 BEGIN
   SELECT COUNT(*)
   INTO missing_policy_count
   FROM (
     VALUES
       ('xp_events', 'users can read own xp_events', 'authenticated'),
-      ('xp_events', 'users can insert own xp_events', 'authenticated'),
       ('user_streaks', 'users can read own user_streaks', 'authenticated'),
-      ('user_streaks', 'users can insert own user_streaks', 'authenticated'),
-      ('user_streaks', 'users can update own user_streaks', 'authenticated')
+      ('user_xp_totals', 'users can read own user_xp_totals', 'authenticated')
   ) AS expected(tablename, policyname, role_name)
   LEFT JOIN pg_policies p
     ON p.tablename = expected.tablename
@@ -120,7 +120,36 @@ BEGIN
   WHERE p.policyname IS NULL;
 
   IF missing_policy_count <> 0 THEN
-    RAISE EXCEPTION 'Expected RLS policies are missing or not scoped to authenticated';
+    RAISE EXCEPTION 'Expected RLS SELECT policies are missing or not scoped to authenticated';
+  END IF;
+
+  SELECT COUNT(*)
+  INTO leftover_write_policy_count
+  FROM pg_policies
+  WHERE tablename IN ('xp_events', 'user_streaks', 'user_xp_totals')
+    AND cmd IN ('INSERT', 'UPDATE', 'DELETE', '*');
+
+  IF leftover_write_policy_count <> 0 THEN
+    RAISE EXCEPTION 'Engagement tables must not allow authenticated writes via RLS';
+  END IF;
+
+  IF has_table_privilege('authenticated', 'public.xp_events', 'INSERT')
+    OR has_table_privilege('authenticated', 'public.user_xp_totals', 'INSERT')
+    OR has_table_privilege('authenticated', 'public.user_streaks', 'INSERT')
+    OR has_table_privilege('anon', 'public.xp_events', 'INSERT')
+  THEN
+    RAISE EXCEPTION 'authenticated/anon must not have INSERT on engagement write tables';
+  END IF;
+
+  SELECT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'xp_events_xp_delta_bounds'
+  )
+  INTO xp_delta_bounded;
+
+  IF xp_delta_bounded IS DISTINCT FROM TRUE THEN
+    RAISE EXCEPTION 'xp_events must constrain xp_delta between -50 and 50';
   END IF;
 END
 $$;
