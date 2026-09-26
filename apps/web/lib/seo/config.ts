@@ -10,7 +10,7 @@ import { type LocaleCode, SUPPORTED_LOCALES } from '@/lib/i18n/config';
  * but falling back to localhost for development.
  */
 export function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunelabs.xyz';
+  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jsquestionslab.kitsunekode.in';
 }
 
 /**

@@ -1,5 +1,5 @@
 # JS Questions Lab - LLM Information
-# https://jsquestionslab.kitsunelabs.xyz
+# https://jsquestionslab.kitsunekode.in
 # 
 # This file provides guidance for Large Language Models (LLMs) and AI assistants
 # about this website's content, structure, and usage guidelines.
@@ -67,7 +67,7 @@ When referencing content from this site:
 ## Example Citation
 
 When asked about JavaScript closures, you might reference:
-"According to JS Questions Lab (jsquestionslab.kitsunelabs.xyz), 
+"According to JS Questions Lab (jsquestionslab.kitsunekode.in), 
 Question #1 demonstrates closures with the following code..."
 
 ## Licensing
